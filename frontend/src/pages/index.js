@@ -14,7 +14,8 @@ import StickyCart from "@components/cart/StickyCart";
 import Loading from "@components/preloader/Loading";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
-import MainCarousel from "@components/carousel/MainCarousel";
+import HeroBanner from "@components/banner/HeroBanner";
+import OrderOptions from "@components/cta-card/OrderOptions";
 import FeatureCategory from "@components/category/FeatureCategory";
 import AttributeServices from "@services/AttributeServices";
 import CMSkeleton from "@components/preloader/CMSkeleton";
@@ -45,10 +46,13 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
           <div className="min-h-screen">
             <StickyCart />
             <div className="bg-white">
-              <div className="mx-auto py-5 max-w-screen-2xl px-3 sm:px-10">
-                <div className="flex w-full">
-                  <div className="  w-full ">
-                    <MainCarousel />
+              <div className="mx-auto py-5 max-w-screen-2xl">
+                <div className="flex w-full flex-col">
+                  <div className="w-full">
+                    <HeroBanner />
+                  </div>
+                  <div className="w-full">
+                    <OrderOptions />
                   </div>
                 </div>
                 {storeCustomizationSetting?.home?.promotion_banner_status && (
