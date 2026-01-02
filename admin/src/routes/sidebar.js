@@ -9,6 +9,7 @@
   FiTarget,
   FiStar,
   FiHelpCircle,
+  FiFileText,
 } from "react-icons/fi";
 
 /**
@@ -23,6 +24,11 @@ const sidebar = [
     path: "/dashboard", // the url
     icon: FiGrid, // icon
     name: "Dashboard", // name that appear in Sidebar
+  },
+  {
+    path: "/prescriptions",
+    icon: FiFileText,
+    name: "Prescriptions",
   },
 
   {

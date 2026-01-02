@@ -11,11 +11,15 @@ import MobileFooter from "@layout/footer/MobileFooter";
 import FeatureCard from "@components/feature-card/FeatureCard";
 import useGetSetting from "@hooks/useGetSetting";
 import { getPalette } from "@utils/themeColors";
+import useCartSync from "@hooks/useCartSync";
 
 const Layout = ({ title, description, children, hideMobileHeader }) => {
   const { storeCustomizationSetting } = useGetSetting();
   const storeColor = storeCustomizationSetting?.theme?.color || "pink";
   const palette = getPalette(storeColor);
+
+  // Sync prescription medicines to cart
+  useCartSync();
 
   return (
     <>

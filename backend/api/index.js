@@ -24,6 +24,7 @@ const shiprocketRoutes = require("../routes/shiprocketRoutes");
 const taxRoutes = require("../routes/taxRoutes");
 const reviewRoutes = require("../routes/reviewRoutes");
 const faqRoutes = require("../routes/faqRoutes");
+const prescriptionRoutes = require("../routes/prescriptionRoutes");
 const { isAuth, isAdmin } = require("../config/auth");
 // const {
 //   getGlobalSetting,
@@ -70,6 +71,7 @@ app.use("/api/shiprocket", shiprocketRoutes);
 app.use("/api/brand", brandRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/faqs", faqRoutes);
+app.use("/api/prescriptions", prescriptionRoutes);
 
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);

@@ -12,6 +12,11 @@ const notificationSchema = new mongoose.Schema(
       ref: "Product",
       required: false,
     },
+    prescriptionId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Prescription",
+      required: false,
+    },
     adminId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Admin",

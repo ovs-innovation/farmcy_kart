@@ -27,6 +27,7 @@ import { SidebarContext } from "@context/SidebarContext";
 import Loading from "@components/preloader/Loading";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import PrescriptionStatus from "@components/prescription/PrescriptionStatus";
 
 const Dashboard = ({ title, description, children }) => {
   const router = useRouter();
@@ -185,6 +186,9 @@ const Dashboard = ({ title, description, children }) => {
                         className={`text-store-600 bg-store-200`}
                       />
                     </div>
+                    {status === "authenticated" && session?.user?.id && (
+                      <PrescriptionStatus userId={session.user.id} />
+                    )}
                     <RecentOrder data={data} loading={loading} error={error} />
                   </div>
                 )}

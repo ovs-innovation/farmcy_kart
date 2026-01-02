@@ -762,14 +762,15 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
     const newItem = {
       ...updatedProduct,
       id: `${
-        !hasVariants || p.variants.length <= 1
+        !hasVariants || p.variants.length === 0
           ? p._id
           : p._id +
+            "-" +
             variantTitle?.map((att) => selectVariant[att._id]).join("-")
       }`,
 
       title: `${
-        !hasVariants || p.variants.length <= 1
+        !hasVariants || p.variants.length === 0
           ? dynamicTitle || showingTranslateValue(product?.title)
           : (dynamicTitle || showingTranslateValue(product?.title)) +
             "-" +

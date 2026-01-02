@@ -36,12 +36,21 @@ const CouponTable = ({ isCheck, coupons, setIsCheck }) => {
 
   useEffect(() => {
     const result = coupons?.map((el) => {
-      const newDate = new Date(el?.updatedAt).toLocaleString("en-US", {
-        timeZone: globalSetting?.default_time_zone,
-      });
+      let newDate;
+      try {
+        const timeZone = globalSetting?.default_time_zone && globalSetting.default_time_zone.trim() !== "" 
+          ? globalSetting.default_time_zone 
+          : undefined;
+        newDate = new Date(el?.updatedAt).toLocaleString("en-US", 
+          timeZone ? { timeZone } : undefined
+        );
+      } catch (error) {
+        // If timezone is invalid, use default locale string without timezone
+        newDate = new Date(el?.updatedAt).toLocaleString("en-US");
+      }
       const newObj = {
         ...el,
-        updatedDate: newDate,
+        updatedDate: newDate === "Invalid Date" || !newDate ? "" : newDate,
       };
       return newObj;
     });

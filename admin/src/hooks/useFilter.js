@@ -122,12 +122,21 @@ const useFilter = (data) => {
     const date = new Date();
     date.setDate(date.getDate() - time);
     let services = data?.map((el) => {
-      const newDate = new Date(el?.updatedAt).toLocaleString("en-US", {
-        timeZone: globalSetting?.default_time_zone,
-      });
+      let newDate;
+      try {
+        const timeZone = globalSetting?.default_time_zone && globalSetting.default_time_zone.trim() !== "" 
+          ? globalSetting.default_time_zone 
+          : undefined;
+        newDate = new Date(el?.updatedAt).toLocaleString("en-US", 
+          timeZone ? { timeZone } : undefined
+        );
+      } catch (error) {
+        // If timezone is invalid, use default locale string without timezone
+        newDate = new Date(el?.updatedAt).toLocaleString("en-US");
+      }
       const newObj = {
         ...el,
-        updatedDate: newDate === "Invalid Date" ? "" : newDate,
+        updatedDate: newDate === "Invalid Date" || !newDate ? "" : newDate,
       };
       return newObj;
     });

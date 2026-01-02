@@ -22,7 +22,7 @@ import { addToWishlist } from "@lib/wishlist";
 const ProductCard = ({ product, attributes }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const { items, addItem, updateItemQuantity, inCart } = useCart();
+  const { items, addItem, updateItemQuantity, inCart, getItem } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { storeCustomizationSetting } = useGetSetting();
@@ -230,9 +230,10 @@ const ProductCard = ({ product, attributes }) => {
             {/* Add Button */}
             {inCart(product._id) ? (
               <div>
-                {items.map(
-                  (item) =>
-                    item.id === product._id && (
+                {(() => {
+                  const item = getItem(product._id);
+                  return (
+                    item && (
                       <div
                         key={item.id}
                         className={`h-9 w-auto flex items-center justify-evenly py-1 px-3 bg-store-500 text-white rounded-md`}
@@ -262,7 +263,8 @@ const ProductCard = ({ product, attributes }) => {
                         </button>
                       </div>
                     )
-                )}
+                  );
+                })()}
               </div>
             ) : (
               <button

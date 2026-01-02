@@ -10,7 +10,7 @@ const MainModal = ({ modalOpen, setModalOpen, children }) => {
       <Transition appear show={modalOpen} as={Fragment}>
         <Dialog
           as="div"
-          className="fixed inset-0 z-30 overflow-y-auto text-center"
+          className="fixed inset-0 z-[100] overflow-y-auto text-center"
           onClose={() => setModalOpen(false)}
           initialFocus={cancelButtonRef}
         >

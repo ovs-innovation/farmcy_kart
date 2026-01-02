@@ -47,8 +47,16 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       setToken(session.user.token);
+      const user = {
+        ...session.user,
+        _id: session.user._id || session.user.id,
+      };
+      Cookies.set("userInfo", JSON.stringify(user), { expires: 1 });
+      dispatch({ type: "USER_LOGIN", payload: user });
     } else if (status === "unauthenticated") {
       setToken(null);
+      Cookies.remove("userInfo");
+      dispatch({ type: "USER_LOGOUT" });
     }
   }, [session, status]);
 

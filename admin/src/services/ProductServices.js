@@ -10,11 +10,11 @@ const ProductServices = {
     brand,
     status,
   }) => {
-    const searchCategory = category !== null ? category : "";
-    const searchTitle = title !== null ? title : "";
-    const searchPrice = price !== null ? price : "";
-    const searchBrand = brand !== null && brand !== undefined ? brand : "";
-    const searchStatus = status ?? "";
+    const searchCategory = category || "";
+    const searchTitle = title || "";
+    const searchPrice = price || "";
+    const searchBrand = brand || "";
+    const searchStatus = status || "";
 
     return requests.get(
       `/products?page=${page}&limit=${limit}&category=${searchCategory}&title=${searchTitle}&price=${searchPrice}&brand=${searchBrand}&status=${searchStatus}`

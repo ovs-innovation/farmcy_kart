@@ -50,6 +50,10 @@ const CustomerServices = {
       shippingAddressData
     );
   },
+
+  getCustomerById: async (id) => {
+    return requests.get(`/customer/${id}`);
+  },
 };
 
 export default CustomerServices;

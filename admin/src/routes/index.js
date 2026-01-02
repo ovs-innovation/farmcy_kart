@@ -28,6 +28,8 @@ const Notifications = lazy(() => import("@/pages/Notifications"));
 const Taxes = lazy(() => import("@/pages/Taxes"));
 const Reviews = lazy(() => import("@/pages/Reviews"));
 const Faqs = lazy(() => import("@/pages/Faqs"));
+const Prescriptions = lazy(() => import("@/pages/Prescriptions"));
+const PrescriptionDetails = lazy(() => import("@/pages/PrescriptionDetails"));
 /*
 //  * ⚠ These are internal routes!
 //  * They will be rendered inside the app, using the default `containers/Layout`.
@@ -43,6 +45,14 @@ const routes = [
   {
     path: "/dashboard",
     component: Dashboard,
+  },
+  {
+    path: "/prescriptions",
+    component: Prescriptions,
+  },
+  {
+    path: "/prescriptions/:id",
+    component: PrescriptionDetails,
   },
   {
     path: "/products",

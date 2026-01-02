@@ -183,8 +183,6 @@ const loginCustomer = async (req, res) => {
   try {
     const customer = await Customer.findOne({ email: req.body.email });
 
-    // console.log("loginCustomer", req.body.password, "customer", customer);
-
     if (
       customer &&
       customer.password &&
@@ -194,15 +192,22 @@ const loginCustomer = async (req, res) => {
       customer.lastLogin = new Date();
       await customer.save();
 
-      const token = signInToken(customer);
+      // Fetch fresh customer data with populated cart to ensure we have latest details
+      const customerWithCart = await Customer.findById(customer._id).populate({
+        path: "cart.productId",
+        select: "title prices image slug",
+      });
+
+      const token = signInToken(customerWithCart);
       res.send({
         token,
-        _id: customer._id,
-        name: customer.name,
-        email: customer.email,
-        address: customer.address,
-        phone: customer.phone,
-        image: customer.image,
+        _id: customerWithCart._id,
+        name: customerWithCart.name,
+        email: customerWithCart.email,
+        address: customerWithCart.address,
+        phone: customerWithCart.phone,
+        image: customerWithCart.image,
+        cart: customerWithCart.cart,
       });
     } else {
       res.status(401).send({
@@ -504,7 +509,11 @@ const getAllCustomers = async (req, res) => {
 
 const getCustomerById = async (req, res) => {
   try {
-    const customer = await Customer.findById(req.params.id);
+    const customer = await Customer.findById(req.params.id).populate({
+      path: "cart.productId",
+      select: "title prices image slug",
+    });
+    // console.log("getCustomerById cart:", JSON.stringify(customer?.cart, null, 2));
     res.send(customer);
   } catch (err) {
     res.status(500).send({
