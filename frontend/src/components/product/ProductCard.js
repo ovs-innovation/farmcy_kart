@@ -254,7 +254,7 @@ const ProductCard = ({ product, attributes }) => {
                           onClick={() =>
                             item?.variants?.length > 0
                               ? handleAddItem(item)
-                              : handleIncreaseQuantity(item)
+                              : handleIncreaseQuantity({ ...item, stock: product.stock })
                           }
                         >
                           <span className="text-white text-base">

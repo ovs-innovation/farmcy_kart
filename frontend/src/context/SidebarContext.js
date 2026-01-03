@@ -8,6 +8,7 @@ export const SidebarProvider = ({ children }) => {
   const [categoryDrawerOpen, setCategoryDrawerOpen] = useState(false);
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -22,6 +23,9 @@ export const SidebarProvider = ({ children }) => {
 
   const toggleModal = () => setIsModalOpen(!isModalOpen);
   const closeModal = () => setIsModalOpen(false);
+  
+  const toggleSearch = () => setShowSearch(!showSearch);
+  const closeSearch = () => setShowSearch(false);
 
   const handleChangePage = (p) => {
     setCurrentPage(p);
@@ -42,6 +46,10 @@ export const SidebarProvider = ({ children }) => {
       isModalOpen,
       toggleModal,
       closeModal,
+      showSearch,
+      toggleSearch,
+      closeSearch,
+      setShowSearch,
       currentPage,
       setCurrentPage,
       handleChangePage,
@@ -56,6 +64,7 @@ export const SidebarProvider = ({ children }) => {
       isModalOpen,
       currentPage,
       isLoading,
+      showSearch,
     ]
   );
 

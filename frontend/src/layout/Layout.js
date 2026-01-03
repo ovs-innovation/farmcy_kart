@@ -8,6 +8,7 @@ import Footer from "@layout/footer/Footer";
 import NavBarTop from "./navbar/NavBarTop";
 import FooterTop from "@layout/footer/FooterTop";
 import MobileFooter from "@layout/footer/MobileFooter";
+import MobileBottomNavigation from "@layout/footer/MobileBottomNavigation";
 import FeatureCard from "@components/feature-card/FeatureCard";
 import useGetSetting from "@hooks/useGetSetting";
 import { getPalette } from "@utils/themeColors";
@@ -60,8 +61,11 @@ const Layout = ({ title, description, children, hideMobileHeader }) => {
         {/* Mobile header bar (fixed) */}
         {!hideMobileHeader && <MobileFooter />}
 
+        {/* Mobile Bottom Navigation */}
+        {!hideMobileHeader && <MobileBottomNavigation />}
+
         {/* Add top padding on mobile so content doesn't sit behind fixed header */}
-        <div className={`bg-gray-50 ${hideMobileHeader ? "pt-0" : "pt-16"} lg:pt-0`}>{children}</div>
+        <div className={`bg-gray-50 ${hideMobileHeader ? "pt-0" : "pt-16"} lg:pt-0 pb-16 lg:pb-0`}>{children}</div>
         <div className="  w-full">
           <FooterTop  />
           <div className="hidden  relative lg:block mx-auto max-w-screen-2xl py-6 px-3 sm:px-10">

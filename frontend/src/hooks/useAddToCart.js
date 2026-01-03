@@ -28,6 +28,8 @@ const useAddToCart = () => {
         result?.quantity + item <=
         (product?.variants?.length > 0
           ? product?.variant?.quantity
+          : product?.variant?.quantity !== undefined
+          ? product?.variant?.quantity
           : product?.stock)
       ) {
         addItem(updatedProduct, item);
@@ -39,6 +41,8 @@ const useAddToCart = () => {
       if (
         item <=
         (product?.variants?.length > 0
+          ? product?.variant?.quantity
+          : product?.variant?.quantity !== undefined
           ? product?.variant?.quantity
           : product?.stock)
       ) {
@@ -64,6 +68,8 @@ const useAddToCart = () => {
       if (
         result?.quantity + item <=
         (product?.variants?.length > 0
+          ? product?.variant?.quantity
+          : product?.variant?.quantity !== undefined
           ? product?.variant?.quantity
           : product?.stock)
       ) {

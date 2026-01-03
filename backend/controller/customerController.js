@@ -634,7 +634,7 @@ const deleteShippingAddress = async (req, res) => {
 const updateCustomer = async (req, res) => {
   try {
     // Validate the input
-    const { name, email, address, phone, image } = req.body;
+    const { name, email, address, phone, image, cart } = req.body;
 
     // Find the customer by ID
     const customer = await Customer.findById(req.params.id);
@@ -656,11 +656,12 @@ const updateCustomer = async (req, res) => {
     }
 
     // Update customer details
-    customer.name = name;
-    customer.email = email;
-    customer.address = address;
-    customer.phone = phone;
-    customer.image = image;
+    if (name) customer.name = name;
+    if (email) customer.email = email;
+    if (address) customer.address = address;
+    if (phone) customer.phone = phone;
+    if (image) customer.image = image;
+    if (cart) customer.cart = cart;
 
     // Save the updated customer
     const updatedUser = await customer.save();

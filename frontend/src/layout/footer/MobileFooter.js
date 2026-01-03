@@ -4,7 +4,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useCart } from "react-use-cart";
 import { FiHome, FiUser, FiShoppingCart, FiAlignLeft, FiHeart } from "react-icons/fi";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoSearchOutline, IoLockClosedOutline } from "react-icons/io5";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 
@@ -17,11 +17,9 @@ import useWishlist from "@hooks/useWishlist";
 
 const MobileFooter = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [showSearch, setShowSearch] = useState(false);
+  // const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const { toggleCartDrawer, toggleCategoryDrawer } = useContext(SidebarContext);
-  const { totalItems } = useCart();
-  const { count: wishlistCount } = useWishlist();
+  const { toggleCategoryDrawer, showSearch, setShowSearch } = useContext(SidebarContext);
   const userInfo = getUserSession();
   const router = useRouter();
   const { t } = useTranslation("common");
@@ -47,15 +45,6 @@ const MobileFooter = () => {
       <CategoryDrawer />
       <footer className="lg:hidden fixed z-30 top-0 bg-white flex items-center justify-between w-full h-16 px-3 sm:px-10 shadow-sm">
        <div className="flex items-center gap-4">
-         <button
-          aria-label="Bar"
-          onClick={toggleCategoryDrawer}
-          className="flex items-center justify-center flex-shrink-0 h-auto relative focus:outline-none"
-        >
-          <span className={`text-xl text-store-500`}>
-            <FiAlignLeft className="w-6 h-6 drop-shadow-xl" />
-          </span>
-        </button>
         <Link
           href="/"
           className="flex items-center justify-center"
@@ -74,31 +63,6 @@ const MobileFooter = () => {
         </Link>
        </div>
         <div className="flex items-center gap-4">
-          <button
-          aria-label="Search"
-          onClick={() => setShowSearch((prev) => !prev)}
-          className={`h-9 w-9 flex items-center justify-center text-store-500 text-lg`}
-        >
-          <IoSearchOutline className="w-6 h-6 drop-shadow-xl" />
-        </button>
-        <Link
-          href="/wishlist"
-          className={`h-9 w-9 relative whitespace-nowrap inline-flex items-center justify-center text-store-500 text-lg`}
-        >
-          <span className={`absolute z-10 top-0 right-0 inline-flex items-center justify-center p-1 h-5 w-5 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 bg-store-500 rounded-full`}>
-            {wishlistCount}
-          </span>
-          <FiHeart className="w-6 h-6 drop-shadow-xl" />
-        </Link>
-        <button
-          onClick={toggleCartDrawer}
-          className={`h-9 w-9 relative whitespace-nowrap inline-flex items-center justify-center text-store-500 text-lg`}
-        >
-          <span className={`absolute z-10 top-0 right-0 inline-flex items-center justify-center p-1 h-5 w-5 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 bg-store-500 rounded-full`}>
-            {totalItems}
-          </span>
-          <FiShoppingCart className="w-6 h-6 drop-shadow-xl" />
-        </button>
         <button
           aria-label="User"
           type="button"
@@ -122,10 +86,22 @@ const MobileFooter = () => {
               {userInfo?.name[0]}
             </Link>
           ) : (
-            <Link href="/auth/login">
-              <FiUser className="w-6 h-6 drop-shadow-xl" />
+            <Link
+              href="/auth/login"
+              className="bg-store-500 text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:bg-store-600 transition-colors"
+            >
+              <IoLockClosedOutline className="text-lg" /> Sign In
             </Link>
           )}
+        </button>
+         <button
+          aria-label="Bar"
+          onClick={toggleCategoryDrawer}
+          className="flex items-center justify-center flex-shrink-0 h-auto relative focus:outline-none"
+        >
+          <span className={`text-xl text-store-500`}>
+            <FiAlignLeft className="w-6 h-6 drop-shadow-xl" />
+          </span>
         </button>
         </div>
       </footer>

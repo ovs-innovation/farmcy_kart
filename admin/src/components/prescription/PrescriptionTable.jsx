@@ -1,11 +1,11 @@
 import { TableBody, TableCell, TableRow, Badge } from "@windmill/react-ui";
 import { useTranslation } from "react-i18next";
-import { FiZoomIn } from "react-icons/fi";
+import { FiZoomIn, FiTrash2 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Tooltip from "@/components/tooltip/Tooltip";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 
-const PrescriptionTable = ({ prescriptions }) => {
+const PrescriptionTable = ({ prescriptions, handleDelete }) => {
   const { t } = useTranslation();
   const { showDateTimeFormat } = useUtilsFunction();
 
@@ -48,7 +48,7 @@ const PrescriptionTable = ({ prescriptions }) => {
           </TableCell>
 
           <TableCell className="text-right flex justify-end">
-            <div className="flex justify-end text-right">
+            <div className="flex justify-end text-right gap-2">
               <Link
                 to={`/prescriptions/${prescription._id}`}
                 className="p-2 cursor-pointer text-gray-400 hover:text-green-600 focus:outline-none"
@@ -60,6 +60,17 @@ const PrescriptionTable = ({ prescriptions }) => {
                   bgColor="#34D399"
                 />
               </Link>
+              <div
+                onClick={() => handleDelete(prescription._id)}
+                className="p-2 cursor-pointer text-gray-400 hover:text-red-600 focus:outline-none"
+              >
+                <Tooltip
+                  id="delete"
+                  Icon={FiTrash2}
+                  title={t("Delete")}
+                  bgColor="#EF4444"
+                />
+              </div>
             </div>
           </TableCell>
         </TableRow>

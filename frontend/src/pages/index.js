@@ -10,7 +10,6 @@ import useGetSetting from "@hooks/useGetSetting";
 import Image from "next/image";
 import Link from "next/link";
 import OfferCard from "@components/offer/OfferCard";
-import StickyCart from "@components/cart/StickyCart";
 import Loading from "@components/preloader/Loading";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
@@ -44,7 +43,6 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
       ) : (
         <Layout>
           <div className="min-h-screen">
-            <StickyCart />
             <div className="bg-white">
               <div className="mx-auto py-5 max-w-screen-2xl">
                 <div className="flex w-full flex-col">

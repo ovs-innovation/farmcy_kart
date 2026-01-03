@@ -36,6 +36,7 @@ const Dashboard = ({ title, description, children }) => {
 
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     data,
@@ -91,11 +92,16 @@ const Dashboard = ({ title, description, children }) => {
       icon: FiSettings,
     },
     {
+      title: "Prescription",
+      href: "/user/prescription",
+      icon: FiFileText,
+    },
+    {
       title: showingTranslateValue(
         storeCustomizationSetting?.dashboard?.change_password
       ),
       href: "/user/change-password",
-      icon: FiFileText,
+      icon: IoLockOpenOutline,
     },
   ];
 
@@ -111,7 +117,23 @@ const Dashboard = ({ title, description, children }) => {
           <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
             <div className="py-10 lg:py-12 flex flex-col lg:flex-row w-full">
               <div className="flex-shrink-0 w-full lg:w-80 mr-7 lg:mr-10  xl:mr-10 ">
-                <div className="bg-white p-4 sm:p-5 lg:p-8 rounded-md sticky top-32">
+                <div className="bg-white p-4 rounded-md mb-5 lg:hidden flex justify-between items-center">
+                  <div>
+                    <h2 className="text-xl font-serif font-semibold text-gray-700">
+                      {session?.user?.name}
+                    </h2>
+                    <span className="text-sm text-gray-500">
+                      {session?.user?.email}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="p-2 bg-store-500 rounded-md text-white hover:bg-store-600 transition-colors"
+                  >
+                    <FiGrid className="w-6 h-6" />
+                  </button>
+                </div>
+                <div className={`${isOpen ? 'block' : 'hidden'} lg:block bg-white p-4 sm:p-5 lg:p-8 rounded-md sticky top-32`}>
                   {userSidebar?.map((item) => (
                     <span
                       key={item.title}
@@ -152,7 +174,7 @@ const Dashboard = ({ title, description, children }) => {
                         storeCustomizationSetting?.dashboard?.dashboard_title
                       )}
                     </h2>
-                    <div className="grid gap-4 mb-8 md:grid-cols-2 xl:grid-cols-4">
+                    <div className="grid gap-4 mb-8 grid-cols-2 xl:grid-cols-4">
                       <Card
                         title={showingTranslateValue(
                           storeCustomizationSetting?.dashboard?.total_order

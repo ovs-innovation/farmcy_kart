@@ -52,12 +52,20 @@ const useCartSync = () => {
             
             // Check if item exists in local cart
             const localItem = getItem(id);
+            
+            // Check if any variant of this product exists in local cart
+            // Variant IDs are constructed as "PRODUCT_ID-VARIANT_INFO"
+            const hasVariantInCart = items.some(item => String(item.id).startsWith(String(id) + '-'));
 
             if (localItem) {
               // If local quantity is less than backend quantity, update it
               if (localItem.quantity < backendQty) {
                 updateItemQuantity(id, backendQty);
               }
+            } else if (hasVariantInCart) {
+              // If a variant exists locally, we assume the backend item corresponds to it.
+              // We do NOT add the generic item to avoid duplication.
+              // This handles the case where backend doesn't store variant info but frontend does.
             } else {
               // Add new item from backend
               const newItem = {

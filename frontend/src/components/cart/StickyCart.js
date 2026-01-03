@@ -8,7 +8,7 @@ import useGetSetting from "@hooks/useGetSetting";
 import { SidebarContext } from "@context/SidebarContext";
 
 const StickyCart = () => {
-  const { totalItems, cartTotal } = useCart();
+  const { totalItems, totalUniqueItems, cartTotal } = useCart();
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { storeCustomizationSetting } = useGetSetting();
   const storeColor = storeCustomizationSetting?.theme?.color || "pink";
@@ -26,7 +26,7 @@ const StickyCart = () => {
             <IoBagHandleOutline />
           </span>
           <span className="px-2 text-sm font-serif font-medium">
-            {totalItems} Items
+            {totalUniqueItems} Items
           </span>
         </div>
         <div className={`flex flex-col items-center justify-center bg-store-700 p-2 text-white text-base font-serif font-medium rounded-bl-lg mx-auto`}>

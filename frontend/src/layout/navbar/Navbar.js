@@ -32,7 +32,7 @@ const Navbar = () => {
   const [brands, setBrands] = useState([]);
   const [matchedBrand, setMatchedBrand] = useState(null);
   const { toggleCartDrawer } = useContext(SidebarContext);
-  const { totalItems } = useCart();
+  const { totalItems, totalUniqueItems } = useCart();
   const { count: wishlistCount } = useWishlist();
   const router = useRouter();
 
@@ -116,7 +116,7 @@ const Navbar = () => {
       <CartDrawer />
       <div className="hidden lg:block sticky top-0 z-50 bg-white w-full shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-8">
-          <div className="top-bar h-14 lg:h-auto flex items-center justify-between gap-3 py-2.5 mx-auto">
+          <div className="top-bar h-8 lg:h-auto flex items-center justify-between gap-3  mx-auto">
             
             {/* Left Side: Logo + Nav Links */}
             <div className="flex items-center gap-8">
@@ -176,6 +176,18 @@ const Navbar = () => {
                 <IoBagHandleOutline />
               </Link>
 
+              {/* Wishlist Icon */}
+              <Link
+                href="/wishlist"
+                className="relative text-2xl text-gray-600 hover:text-store-500 transition-colors"
+                aria-label="Wishlist"
+              >
+                <span className="absolute z-10 top-0 right-0 -mt-1 -mr-1 inline-flex items-center justify-center p-1 h-4 w-4 text-xs font-medium leading-none text-white transform bg-store-500 rounded-full">
+                  {wishlistCount}
+                </span>
+                <FiHeart />
+              </Link>
+
               {/* Cart Icon */}
               <button
                 aria-label="Total"
@@ -183,7 +195,7 @@ const Navbar = () => {
                 className="relative text-2xl text-gray-600 hover:text-store-500 transition-colors"
               >
                 <span className="absolute z-10 top-0 right-0 -mt-1 -mr-1 inline-flex items-center justify-center p-1 h-4 w-4 text-xs font-medium leading-none text-white transform bg-store-500 rounded-full">
-                  {totalItems}
+                  {totalUniqueItems}
                 </span>
                 <FiShoppingCart />
               </button>
