@@ -78,6 +78,19 @@ const useFilter = (data) => {
     if (sortedField === "High") {
       services = [...services].sort((a, b) => b.prices.price - a.prices.price);
     }
+    if (sortedField === "newest") {
+      services = [...services].sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+      );
+    }
+    if (sortedField === "best-selling") {
+      services = [...services].sort((a, b) => (b.sales || 0) - (a.sales || 0));
+    }
+    if (sortedField === "most-discounted") {
+      services = [...services].sort(
+        (a, b) => (b.prices?.discount || 0) - (a.prices?.discount || 0)
+      );
+    }
 
     return services;
 

@@ -1,14 +1,19 @@
-import { SidebarContext } from "@context/SidebarContext";
 import { useContext, useEffect } from "react";
- 
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/autoplay";
 
 //internal import
+import { SidebarContext } from "@context/SidebarContext";
 import Layout from "@layout/Layout";
 import Banner from "@components/banner/Banner";
 import useGetSetting from "@hooks/useGetSetting";
-import Image from "next/image";
-import Link from "next/link";
 import OfferCard from "@components/offer/OfferCard";
 import Loading from "@components/preloader/Loading";
 import ProductServices from "@services/ProductServices";
@@ -21,7 +26,7 @@ import CMSkeleton from "@components/preloader/CMSkeleton";
 import BrandSection from "@components/brand/BrandSection";
 import BrandServices from "@services/BrandServices";
 
-const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
+const Home = ({ popularProducts, discountProducts, bestSellingProducts, attributes, brands }) => {
   const router = useRouter();
   const { isLoading, setIsLoading } = useContext(SidebarContext);
   const { loading, error, storeCustomizationSetting } = useGetSetting();
@@ -67,8 +72,8 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
             {storeCustomizationSetting?.home?.featured_status && (
               <div className="bg-white lg:py-16 py-10">
                 <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                  <div className="mb-10 flex justify-center">
-                    <div className="text-center w-full lg:w-2/5">
+                  <div className="mb-10 flex justify-start">
+                    <div className="text-left w-full">
                       <h2 className="text-xl lg:text-2xl mb-2 font-serif font-semibold">
                         <CMSkeleton
                           count={1}
@@ -101,8 +106,8 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
             {/* popular products */}
             {storeCustomizationSetting?.home?.popular_products_status && (
               <div className="bg-gray-50 lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
-                <div className="mb-10 flex justify-center">
-                  <div className="text-center w-full lg:w-2/5">
+                <div className="mb-10 flex justify-start">
+                  <div className="text-left w-full">
                     <h2 className="text-xl lg:text-2xl mb-2 font-serif font-semibold">
                       <CMSkeleton
                         count={1}
@@ -124,7 +129,7 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
                     </p>
                   </div>
                 </div>
-                <div className="flex">
+                <div className="flex w-full relative group">
                   <div className="w-full">
                     {loading ? (
                       <CMSkeleton
@@ -134,21 +139,131 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
                         loading={loading}
                       />
                     ) : (
-                      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
-                        {popularProducts
-                          ?.slice(
-                            0,
-                            storeCustomizationSetting?.home
-                              ?.popular_product_limit
-                          )
-                          .map((product) => (
-                            <ProductCard
-                              key={product._id}
-                              product={product}
-                              attributes={attributes}
-                            />
-                          ))}
-                      </div>
+                      <>
+                        <Swiper
+                          modules={[Navigation, Autoplay]}
+                          spaceBetween={10}
+                          slidesPerView={2}
+                          navigation={{
+                            prevEl: ".prev-popular",
+                            nextEl: ".next-popular",
+                          }}
+                          autoplay={{
+                            delay: 2500,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                          }}
+                          breakpoints={{
+                            640: { slidesPerView: 2, spaceBetween: 10 },
+                            768: { slidesPerView: 3, spaceBetween: 20 },
+                            1024: { slidesPerView: 4, spaceBetween: 20 },
+                            1280: { slidesPerView: 5, spaceBetween: 20 },
+                          }}
+                          className="mySwiper px-2 py-2"
+                        >
+                          {popularProducts
+                            ?.slice(
+                              0,
+                              storeCustomizationSetting?.home
+                                ?.popular_product_limit
+                            )
+                            .map((product) => (
+                              <SwiperSlide key={product._id}>
+                                <ProductCard
+                                  product={product}
+                                  attributes={attributes}
+                                />
+                              </SwiperSlide>
+                            ))}
+                        </Swiper>
+                        <button className="prev-popular absolute top-1/2 -left-2 md:-left-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <IoChevronBack className="text-xl text-gray-600" />
+                        </button>
+                        <button className="next-popular absolute top-1/2 -right-2 md:-right-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <IoChevronForward className="text-xl text-gray-600" />
+                        </button>
+                        
+                        <div className="flex justify-end mt-4 px-2">
+                          <Link href="/search?sort=newest" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
+                            View All <IoChevronForward />
+                          </Link>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* best selling products */}
+            {bestSellingProducts?.length > 0 && (
+              <div className="bg-white lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
+                <div className="mb-10 flex justify-start">
+                  <div className="text-left w-full">
+                    <h2 className="text-xl lg:text-2xl mb-2 font-serif font-semibold">
+                      Best Selling Products
+                    </h2>
+                    <p className="text-base font-sans text-gray-600 leading-6">
+                      We have compiled the best selling products for you
+                    </p>
+                  </div>
+                </div>
+                <div className="flex w-full relative group">
+                  <div className="w-full">
+                    {loading ? (
+                      <CMSkeleton
+                        count={20}
+                        height={20}
+                        error={error}
+                        loading={loading}
+                      />
+                    ) : (
+                      <>
+                        <Swiper
+                          modules={[Navigation, Autoplay]}
+                          spaceBetween={10}
+                          slidesPerView={2}
+                          navigation={{
+                            prevEl: ".prev-best-selling",
+                            nextEl: ".next-best-selling",
+                          }}
+                          autoplay={{
+                            delay: 2500,
+                            disableOnInteraction: false,
+                            pauseOnMouseEnter: true
+                          }}
+                          breakpoints={{
+                            640: { slidesPerView: 2, spaceBetween: 10 },
+                            768: { slidesPerView: 3, spaceBetween: 20 },
+                            1024: { slidesPerView: 4, spaceBetween: 20 },
+                            1280: { slidesPerView: 5, spaceBetween: 20 },
+                          }}
+                          className="mySwiper px-2 py-2"
+                        >
+                          {bestSellingProducts
+                            ?.slice(0, 10)
+                            .map((product) => (
+                              <SwiperSlide key={product._id}>
+                                <ProductCard
+                                  product={product}
+                                  attributes={attributes}
+                                />
+                              </SwiperSlide>
+                            ))}
+                        </Swiper>
+                        <button className="prev-best-selling absolute top-1/2 -left-2 md:-left-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <IoChevronBack className="text-xl text-gray-600" />
+                        </button>
+                        <button className="next-best-selling absolute top-1/2 -right-2 md:-right-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                          <IoChevronForward className="text-xl text-gray-600" />
+                        </button>
+
+                        <div className="flex justify-end mt-4 px-2">
+                          <Link href="/search?sort=best-selling" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
+                            View All <IoChevronForward />
+                          </Link>
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
@@ -218,8 +333,8 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
                   id="discount"
                   className="bg-gray-50 lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10"
                 >
-                  <div className="mb-10 flex justify-center">
-                    <div className="text-center w-full lg:w-2/5">
+                  <div className="mb-10 flex justify-start">
+                    <div className="text-left w-full">
                       <h2 className="text-xl lg:text-2xl mb-2 font-serif font-semibold">
                         <CMSkeleton
                           count={1}
@@ -244,7 +359,7 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex">
+                  <div className="flex w-full relative group">
                     <div className="w-full">
                       {loading ? (
                         <CMSkeleton
@@ -254,21 +369,56 @@ const Home = ({ popularProducts, discountProducts, attributes, brands }) => {
                           loading={loading}
                         />
                       ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
-                          {discountProducts
-                            ?.slice(
-                              0,
-                              storeCustomizationSetting?.home
-                                ?.latest_discount_product_limit
-                            )
-                            .map((product) => (
-                              <ProductCard
-                                key={product._id}
-                                product={product}
-                                attributes={attributes}
-                              />
-                            ))}
-                        </div>
+                        <>
+                          <Swiper
+                            modules={[Navigation, Autoplay]}
+                            spaceBetween={10}
+                            slidesPerView={2}
+                            navigation={{
+                              prevEl: ".prev-discount",
+                              nextEl: ".next-discount",
+                            }}
+                            autoplay={{
+                              delay: 2500,
+                              disableOnInteraction: false,
+                              pauseOnMouseEnter: true
+                            }}
+                            breakpoints={{
+                              640: { slidesPerView: 2, spaceBetween: 10 },
+                              768: { slidesPerView: 3, spaceBetween: 20 },
+                              1024: { slidesPerView: 4, spaceBetween: 20 },
+                              1280: { slidesPerView: 5, spaceBetween: 20 },
+                            }}
+                            className="mySwiper px-2 py-2"
+                          >
+                            {discountProducts
+                              ?.slice(
+                                0,
+                                storeCustomizationSetting?.home
+                                  ?.latest_discount_product_limit
+                              )
+                              .map((product) => (
+                                <SwiperSlide key={product._id}>
+                                  <ProductCard
+                                    product={product}
+                                    attributes={attributes}
+                                  />
+                                </SwiperSlide>
+                              ))}
+                          </Swiper>
+                          <button className="prev-discount absolute top-1/2 -left-2 md:-left-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <IoChevronBack className="text-xl text-gray-600" />
+                          </button>
+                          <button className="next-discount absolute top-1/2 -right-2 md:-right-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
+                            <IoChevronForward className="text-xl text-gray-600" />
+                          </button>
+
+                          <div className="flex justify-end mt-4 px-2">
+                            <Link href="/search?sort=most-discounted" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
+                              View All <IoChevronForward />
+                            </Link>
+                          </div>
+                        </>
                       )}
                     </div>
                   </div>
@@ -301,6 +451,7 @@ export const getServerSideProps = async (context) => {
       cookies: cookies,
       popularProducts: data.popularProducts,
       discountProducts: data.discountedProducts,
+      bestSellingProducts: data.bestSellingProducts,
       brands,
     },
   };

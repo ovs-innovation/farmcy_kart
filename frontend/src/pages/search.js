@@ -50,6 +50,12 @@ const Search = ({ products, attributes }) => {
     sortedField,
   } = useFilter(products);
 
+  useEffect(() => {
+    if (router.query.sort) {
+      setSortedField(router.query.sort);
+    }
+  }, [router.query.sort, setSortedField]);
+
   const handleClearAll = () => {
     setSelectedBrands([]);
     setPriceRange({ min: 0, max: 100000 });
@@ -218,6 +224,15 @@ const Search = ({ products, attributes }) => {
                       <option className="px-3" value="High">
                         {t("highToLow")}
                       </option>
+                      <option className="px-3" value="newest">
+                        Latest
+                      </option>
+                      <option className="px-3" value="best-selling">
+                        Best Selling
+                      </option>
+                      <option className="px-3" value="most-discounted">
+                        Most Discounted
+                      </option>
                     </select>
                   </span>
                 </div>
@@ -299,6 +314,39 @@ const Search = ({ products, attributes }) => {
                 }`}
               >
                 Price: High to Low
+              </button>
+              <button
+                onClick={() => {
+                  setSortedField("newest");
+                  setIsSortModalOpen(false);
+                }}
+                className={`w-full text-left py-2 px-4 rounded-lg ${
+                  sortedField === "newest" ? "bg-store-100 text-store-600 font-semibold" : "text-gray-700"
+                }`}
+              >
+                Latest
+              </button>
+              <button
+                onClick={() => {
+                  setSortedField("best-selling");
+                  setIsSortModalOpen(false);
+                }}
+                className={`w-full text-left py-2 px-4 rounded-lg ${
+                  sortedField === "best-selling" ? "bg-store-100 text-store-600 font-semibold" : "text-gray-700"
+                }`}
+              >
+                Best Selling
+              </button>
+              <button
+                onClick={() => {
+                  setSortedField("most-discounted");
+                  setIsSortModalOpen(false);
+                }}
+                className={`w-full text-left py-2 px-4 rounded-lg ${
+                  sortedField === "most-discounted" ? "bg-store-100 text-store-600 font-semibold" : "text-gray-700"
+                }`}
+              >
+                Most Discounted
               </button>
               <button
                 onClick={() => {

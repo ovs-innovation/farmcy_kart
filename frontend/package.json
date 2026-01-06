@@ -30,6 +30,7 @@
     "browser-image-compression": "^2.0.2",
     "currency-symbol-map": "^5.0.1",
     "dayjs": "^1.10.7",
+    "firebase": "^12.7.0",
     "html-react-parser": "^3.0.4",
     "i": "^0.3.7",
     "iconv-lite": "^0.6.3",

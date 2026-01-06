@@ -28,6 +28,8 @@ const addOrder = async (req, res) => {
       });
     }
 
+    // console.log("addOrder: Creating order for user:", req.user ? req.user._id : "Guest (null)");
+
     const newOrder = new Order({
       ...req.body,
       user: req.user?._id || null,

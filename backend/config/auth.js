@@ -61,6 +61,26 @@ const isAuth = async (req, res, next) => {
   }
 };
 
+const isAuthOptional = async (req, res, next) => {
+  const { authorization } = req.headers;
+  // console.log("isAuthOptional: Authorization Header:", authorization ? "Present" : "Missing");
+  try {
+    if (authorization) {
+      const token = authorization.split(" ")[1];
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+        // console.log("isAuthOptional: Token verified for user:", decoded._id);
+      }
+    }
+  } catch (err) {
+    // If token is invalid or expired, we just ignore it and proceed as guest
+    console.log("isAuthOptional Error:", err.message);
+  }
+  next();
+};
+
+
 const isAdmin = async (req, res, next) => {
   const admin = await Admin.findOne({ role: "Admin" });
   if (admin) {
@@ -97,6 +117,7 @@ const handleEncryptData = (data) => {
 
 module.exports = {
   isAuth,
+  isAuthOptional,
   isAdmin,
   signInToken,
   tokenForVerify,

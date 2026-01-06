@@ -11,19 +11,19 @@ const {
 } = require("../controller/customerOrderController");
 
 const { emailVerificationLimit } = require("../lib/email-sender/sender");
-const { isAuth } = require("../config/auth");
+const { isAuth, isAuthOptional } = require("../config/auth");
 
 //add a order
-router.post("/add", addOrder);
+router.post("/add", isAuthOptional, addOrder);
 
 // create stripe payment intent
-router.post("/create-payment-intent", createPaymentIntent);
+router.post("/create-payment-intent", isAuthOptional, createPaymentIntent);
 
 //add razorpay order
-router.post("/add/razorpay", addRazorpayOrder);
+router.post("/add/razorpay", isAuthOptional, addRazorpayOrder);
 
 //add a order by razorpay
-router.post("/create/razorpay", createOrderByRazorPay);
+router.post("/create/razorpay", isAuthOptional, createOrderByRazorPay);
 
 //get a order by id
 router.get("/:id", isAuth, getOrderById);
