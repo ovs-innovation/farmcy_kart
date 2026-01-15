@@ -124,25 +124,12 @@ const NavBarTop = () => {
       <div className="hidden lg:block bg-gray-100">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-10">
           <div className="text-gray-700 py-2 font-sans text-xs font-medium border-b flex justify-between items-center">
-            <span className="flex items-center gap-4">
-              <span className="flex items-center">
-                <FiPhoneCall className="mr-2" />
-                {showingTranslateValue(
-                  storeCustomizationSetting?.navbar?.help_text
-                )}
-                <a
-                  href={`tel:${
-                    storeCustomizationSetting?.navbar?.phone || "+099949343"
-                  }`}
-                  className={`font-bold text-store-500 ml-1`}
-                >
-                  {storeCustomizationSetting?.navbar?.phone || "+099949343"}
-                </a>
-              </span>
+            <span className="flex items-center gap-2">
               
+            <FiMapPin className="mr-1.5 text-store-500" size={14} />
               {displayAddress && (
                 <span className="flex items-center text-gray-600">
-                  <FiMapPin className="mr-1.5 text-store-500" size={14} />
+                  
                   <span className="text-xs truncate max-w-xs" title={displayAddress}>
                     {displayAddress}
                   </span>
@@ -151,32 +138,8 @@ const NavBarTop = () => {
             </span>
 
             <div className="lg:text-right flex items-center navBar">
-              {storeCustomizationSetting?.navbar?.about_menu_status && (
-                <div>
-                  <Link
-                    href="/about-us"
-                    className={`font-medium hover:text-store-600`}
-                  >
-                    {showingTranslateValue(
-                      storeCustomizationSetting?.navbar?.about_us
-                    )}
-                  </Link>
-                  <span className="mx-2">|</span>
-                </div>
-              )}
-              {storeCustomizationSetting?.navbar?.contact_menu_status && (
-                <div>
-                  <Link
-                    href="/contact-us"
-                    className={`font-medium hover:text-store-600`}
-                  >
-                    {showingTranslateValue(
-                      storeCustomizationSetting?.navbar?.contact_us
-                    )}
-                  </Link>
-                  <span className="mx-2">|</span>
-                </div>
-              )}
+               
+               
               <Link
                 href="/user/my-account"
                 className={`font-medium hover:text-store-600`}

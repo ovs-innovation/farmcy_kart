@@ -4,8 +4,8 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCart } from "react-use-cart";
-import { IoSearchOutline, IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline } from "react-icons/io5";
-import { FiShoppingCart, FiUser, FiBell, FiHeart, FiShuffle } from "react-icons/fi";
+import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline } from "react-icons/io5";
+import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import useTranslation from "next-translate/useTranslation";
 import { useQuery } from "@tanstack/react-query";
 
@@ -14,11 +14,8 @@ import { getUserSession } from "@lib/auth";
 import useWishlist from "@hooks/useWishlist";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import { handleLogEvent } from "src/lib/analytics";
-import NavbarPromo from "@layout/navbar/NavbarPromo";
 import CartDrawer from "@components/drawer/CartDrawer";
 import { SidebarContext } from "@context/SidebarContext";
-import BrandServices from "@services/BrandServices";
 import CategoryServices from "@services/CategoryServices";
 import LocationButton from "@components/location/LocationButton";
 import SearchSuggestions from "@components/search/SearchSuggestions";
@@ -26,127 +23,84 @@ import SearchSuggestions from "@components/search/SearchSuggestions";
 const Navbar = () => {
   const { t, lang } = useTranslation("common");
   const { showingTranslateValue } = useUtilsFunction();
+  const router = useRouter();
   const { data: categoriesData } = useQuery({
     queryKey: ["category"],
     queryFn: async () => await CategoryServices.getShowingCategory(),
   });
-  const [searchText, setSearchText] = useState("");
-  const [brands, setBrands] = useState([]);
-  const [matchedBrand, setMatchedBrand] = useState(null);
-  const [showSearchInNavbar, setShowSearchInNavbar] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const searchInputRef = useRef(null);
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { totalItems, totalUniqueItems } = useCart();
   const { count: wishlistCount } = useWishlist();
-  const router = useRouter();
 
   const userInfo = getUserSession();
 
   const { storeCustomizationSetting } = useGetSetting();
-  console.log("storeCustomizationSetting", storeCustomizationSetting);
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
 
-  useEffect(() => {
-    let isMounted = true;
-    const fetchBrands = async () => {
-      try {
-        const response = await BrandServices.getShowingBrands();
-        if (isMounted && Array.isArray(response)) {
-          setBrands(response);
-        }
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error("Failed to fetch brands for search", error);
-      }
-    };
-    fetchBrands();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  // Search state
+  const [showSearchInNavbar, setShowSearchInNavbar] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchInputRef = useRef(null);
 
   // Scroll listener to show/hide search bar in navbar
   useEffect(() => {
     const handleScroll = () => {
-      // Get viewport height
-      const viewportHeight = window.innerHeight;
-      // Get current scroll position
       const scrollY = window.scrollY || window.pageYOffset;
-      
-      // Show search bar when scrolled past 50% of viewport height
-      // Hide when scrolled back to top (less than 50% of viewport height)
-      if (scrollY > viewportHeight * 0.5) {
+      // Show search bar when scrolled down more than 100px
+      if (scrollY > 100) {
         setShowSearchInNavbar(true);
       } else {
         setShowSearchInNavbar(false);
       }
     };
 
-    // Add scroll event listener
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
-    // Check initial scroll position
-    handleScroll();
+    handleScroll(); // Check initial scroll position
 
-    // Cleanup
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  const getBrandLabel = (brand = {}) => {
-    if (!brand.name) return "";
-    if (typeof brand.name === "string") return brand.name;
-    return (
-      brand.name[lang] ||
-      brand.name.en ||
-      Object.values(brand.name)[0] ||
-      ""
-    );
-  };
+  // Sync searchText with URL query on search page
+  useEffect(() => {
+    if (router.pathname === "/search" && router.query.query) {
+      setSearchText(router.query.query);
+    }
+  }, [router.pathname, router.query.query]);
 
   const handleSearchChange = (value) => {
     setSearchText(value);
     setShowSuggestions(value.length > 0);
-    if (!value) {
-      setMatchedBrand(null);
-      setShowSuggestions(false);
-      return;
-    }
-    const normalized = value.trim().toLowerCase();
-    const found = brands.find((brand) => {
-      const label = getBrandLabel(brand).toLowerCase();
-      return (
-        label === normalized || brand.slug?.toLowerCase() === normalized
-      );
-    });
-    setMatchedBrand(found || null);
   };
 
-  const handleSubmit = (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    const trimmedSearchText = searchText.trim();
     setShowSuggestions(false);
-
-    if (matchedBrand) {
-      router.push(`/search?brand=${matchedBrand._id}`, undefined, { shallow: false });
-      setSearchText("");
-      setMatchedBrand(null);
-      handleLogEvent("search", `searched brand ${matchedBrand.slug || matchedBrand._id}`);
-      return;
-    }
-
-    if (searchText.trim()) {
-      router.push(`/search?query=${encodeURIComponent(searchText)}`, undefined, { shallow: false });
-      setSearchText("");
-      setMatchedBrand(null);
-      handleLogEvent("search", `searched ${searchText}`);
-    } else {
-      router.push(`/`, undefined, { shallow: false });
-      setSearchText("");
-      setMatchedBrand(null);
+    searchInputRef.current?.blur();
+    
+    if (trimmedSearchText) {
+      router.push(
+        {
+          pathname: "/search",
+          query: { query: trimmedSearchText },
+        },
+        `/search?query=${encodeURIComponent(trimmedSearchText)}`,
+        { shallow: false }
+      ).then(() => {
+        setSearchText("");
+      }).catch((err) => {
+        console.error("Navigation error:", err);
+        window.location.href = `/search?query=${encodeURIComponent(trimmedSearchText)}`;
+      });
     }
   };
+
+
 
   return (
     <>
@@ -215,10 +169,10 @@ const Navbar = () => {
               </div>
             </div>
 
-            {/* Center: Search Bar - Show when scrolled */}
-            {showSearchInNavbar ? (
+            {/* Center: Search Bar - Show when scrolled or on search page */}
+            {(showSearchInNavbar || router.pathname === "/search") ? (
               <div className="flex-1 max-w-2xl mx-4">
-                <form onSubmit={handleSubmit} className="relative flex items-center bg-white border border-gray-300 rounded-lg shadow-sm overflow-visible">
+                <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border border-gray-300 rounded-lg shadow-sm overflow-visible">
                   {/* Location Button */}
                   <LocationButton className="h-full" />
                   
@@ -233,15 +187,11 @@ const Navbar = () => {
                       onChange={(e) => handleSearchChange(e.target.value)}
                       onFocus={() => searchText.length > 0 && setShowSuggestions(true)}
                       onBlur={(e) => {
-                        // Don't close if clicking on suggestions
                         const relatedTarget = e.relatedTarget;
                         const suggestionsContainer = document.querySelector('.search-suggestions-container');
                         
-                        // Check if the blur is happening because of clicking on suggestions
                         if (!relatedTarget || (suggestionsContainer && !suggestionsContainer.contains(relatedTarget))) {
-                          // Delay to allow suggestion click to register
                           setTimeout(() => {
-                            // Double-check that suggestions container is not being interacted with
                             const activeElement = document.activeElement;
                             if (!suggestionsContainer || !suggestionsContainer.contains(activeElement)) {
                               setShowSuggestions(false);

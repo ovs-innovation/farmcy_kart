@@ -2,10 +2,34 @@ import React, { useState, useEffect } from "react";
 import { FiMapPin, FiLoader } from "react-icons/fi";
 import Cookies from "js-cookie";
 import { notifyError, notifySuccess } from "@utils/toast";
+import { useGeolocated } from "react-geolocated";
 
 const LocationButton = ({ className = "" }) => {
   const [location, setLocation] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [shouldGetLocation, setShouldGetLocation] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Use react-geolocated hook for availability checks
+  const {
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 0,
+    },
+    userDecisionTimeout: 5000,
+    watchPosition: false,
+    isOptimisticGeolocationEnabled: false,
+    suppressLocationOnMount: true,
+    watchLocationPermissionChange: false,
+  });
+
+  // Set mounted flag to prevent SSR issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Load location from cookies on mount
   useEffect(() => {
@@ -20,6 +44,106 @@ const LocationButton = ({ className = "" }) => {
     }
   }, []);
 
+  const handleGeocoding = async (lat, lng) => {
+    try {
+      // Get Google Maps API key from environment variables
+      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+      
+      if (!apiKey) {
+        console.warn("Google Maps API key not found. Using coordinates only.");
+        // Still save coordinates even if API key is missing
+        const locationData = {
+          lat,
+          lng,
+          timestamp: Date.now(),
+        };
+        setLocation(locationData);
+        Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
+        
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
+        }
+        
+        notifySuccess("Location set successfully!");
+        return;
+      }
+
+      // Use Google Maps Geocoding API
+      const geocodeResponse = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
+      );
+      
+      const geocodeData = await geocodeResponse.json();
+      
+      if (geocodeData.status === 'OK' && geocodeData.results && geocodeData.results.length > 0) {
+        const result = geocodeData.results[0];
+        const address = result.formatted_address || '';
+        
+        // Extract postal code from address components
+        let pinCode = '';
+        const postalCodeComponent = result.address_components?.find(
+          component => component.types.includes('postal_code')
+        );
+        if (postalCodeComponent) {
+          pinCode = postalCodeComponent.long_name || postalCodeComponent.short_name || '';
+        }
+
+        // Save location to cookies with address info
+        const locationData = {
+          lat,
+          lng,
+          address: address,
+          pinCode: pinCode,
+          timestamp: Date.now(),
+        };
+
+        setLocation(locationData);
+        Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
+        
+        // Trigger custom event to update NavBarTop
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
+        }
+        
+        notifySuccess(`Location set successfully! ${pinCode ? `PIN: ${pinCode}` : ''}`);
+      } else {
+        // API returned error or no results
+        console.error("Google Maps Geocoding API error:", geocodeData.status, geocodeData.error_message);
+        // Still save coordinates even if geocoding fails
+        const locationData = {
+          lat,
+          lng,
+          timestamp: Date.now(),
+        };
+        setLocation(locationData);
+        Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
+        
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
+        }
+        
+        notifySuccess("Location set successfully!");
+      }
+    } catch (error) {
+      console.error("Error getting location details:", error);
+      // Still save coordinates even if geocoding fails
+      const locationData = {
+        lat,
+        lng,
+        timestamp: Date.now(),
+      };
+      setLocation(locationData);
+      Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
+      
+      // Trigger custom event to update NavBarTop
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
+      }
+      
+      notifySuccess("Location set successfully!");
+    }
+  };
+
   const getCurrentLocation = (e) => {
     // Prevent form submission if button is in a form
     if (e) {
@@ -27,92 +151,51 @@ const LocationButton = ({ className = "" }) => {
       e.stopPropagation();
     }
 
-    if (!navigator.geolocation) {
+    // Check if component is mounted and geolocation is available
+    if (!mounted || typeof window === "undefined") return;
+    
+    if (isGeolocationAvailable === false) {
       notifyError("Geolocation is not supported by your browser");
       return;
     }
 
-    setIsLoading(true);
+    // Trigger geolocation request
+    setShouldGetLocation(true);
     
-    // This will trigger the browser's native location permission popup
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        console.log(lat, lng);
-
-        try {
-          // Try to get address from coordinates using Nominatim (free geocoding service)
-          const geocodeResponse = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`,
-            {
-              headers: {
-                'User-Agent': 'Farmacykart-App'
-              }
-            }
-          );
-          
-          const geocodeData = await geocodeResponse.json();
-          const address = geocodeData?.display_name || '';
-          const pinCode = geocodeData?.address?.postcode || '';
-
-          // Save location to cookies with address info
-          const locationData = {
-            lat,
-            lng,
-            address: address,
-            pinCode: pinCode,
-            timestamp: Date.now(),
-          };
-
-          setLocation(locationData);
-          Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
-          setIsLoading(false);
-          
-          // Trigger custom event to update NavBarTop
-          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
-          
-          notifySuccess(`Location set successfully! ${pinCode ? `PIN: ${pinCode}` : ''}`);
-        } catch (error) {
-          console.error("Error getting location details:", error);
-          // Still save coordinates even if geocoding fails
-          const locationData = {
-            lat,
-            lng,
-            timestamp: Date.now(),
-          };
-          setLocation(locationData);
-          Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
-          setIsLoading(false);
-          
-          // Trigger custom event to update NavBarTop
-          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
-          
-          notifySuccess("Location set successfully!");
+    // Use native geolocation API for manual trigger
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setShouldGetLocation(false);
+          await handleGeocoding(lat, lng);
+        },
+        (error) => {
+          setShouldGetLocation(false);
+          let errorMessage = "Location access denied. Please allow location permission.";
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = "Location permission denied. Please allow location access in browser settings.";
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMessage = "Location information unavailable.";
+          } else if (error.code === error.TIMEOUT) {
+            errorMessage = "Location request timeout. Please try again.";
+          }
+          notifyError(errorMessage);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         }
-      },
-      (error) => {
-        console.log("Location access denied", error);
-        setIsLoading(false);
-        
-        let errorMessage = "Location access denied. Please allow location permission.";
-        if (error.code === error.PERMISSION_DENIED) {
-          errorMessage = "Location permission denied. Please allow location access in browser settings.";
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          errorMessage = "Location information unavailable.";
-        } else if (error.code === error.TIMEOUT) {
-          errorMessage = "Location request timeout. Please try again.";
-        }
-        
-        notifyError(errorMessage);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
+      );
+    } else {
+      setShouldGetLocation(false);
+      notifyError("Geolocation is not supported by your browser");
+    }
   };
+
+  const isLoading = shouldGetLocation;
 
   const getDisplayText = () => {
     if (isLoading) return "Getting location...";
@@ -141,5 +224,5 @@ const LocationButton = ({ className = "" }) => {
   );
 };
 
+// Export with dynamic import to prevent SSR issues
 export default LocationButton;
-

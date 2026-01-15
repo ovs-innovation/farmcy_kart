@@ -1185,45 +1185,43 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                       <Discount slug product={product} discount={discount} />
 
                       {/* Flipkart-style Product Image Gallery with buttons inside */}
-                      <div className="relative">
-                        {/* Wishlist, Compare, Share buttons - absolute positioned inside image section */}
-                        <div className="absolute left-4 top-4 z-10 flex flex-col items-center gap-2">
-                          <button
-                            type="button"
-                            onClick={() => handleAddToWishlist(product)}
-                            className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-red-600 border border-gray-200 hover:border-red-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
-                            aria-label="Add to wishlist"
-                          >
-                            <FiHeart className="w-4 h-4" />
-                            <span className="hidden sm:inline">Wishlist</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleAddToCompare(product)}
-                            className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-purple-600 border border-gray-200 hover:border-purple-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
-                            aria-label="Add to compare"
-                          >
-                            <FiShuffle className="w-4 h-4" />
-                            <span className="hidden sm:inline">Compare</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleShareCurrentVariant}
-                            className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-store-600 border border-gray-200 hover:border-store-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
-                            aria-label="Share this product"
-                          >
-                            <FiShare2 className="w-4 h-4" />
-                            <span className="hidden sm:inline">Share</span>
-                          </button>
-                        </div>
-
-                        <ProductImageGallery
-                          images={currentImages.length > 0 ? currentImages : productImages}
-                          productTitle={
-                            dynamicTitle || showingTranslateValue(product?.title)
-                          }
-                        />
-                      </div>
+                      <ProductImageGallery
+                        images={currentImages.length > 0 ? currentImages : productImages}
+                        productTitle={
+                          dynamicTitle || showingTranslateValue(product?.title)
+                        }
+                        buttons={
+                          <div className="absolute left-4 top-4 z-20 flex flex-col items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleAddToWishlist(product)}
+                              className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-red-600 border border-gray-200 hover:border-red-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
+                              aria-label="Add to wishlist"
+                            >
+                              <FiHeart className="w-4 h-4" />
+                              <span className="hidden sm:inline">Wishlist</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleAddToCompare(product)}
+                              className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-purple-600 border border-gray-200 hover:border-purple-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
+                              aria-label="Add to compare"
+                            >
+                              <FiShuffle className="w-4 h-4" />
+                              <span className="hidden sm:inline">Compare</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleShareCurrentVariant}
+                              className="flex items-center gap-1 text-xs sm:text-sm font-semibold text-gray-600 hover:text-store-600 border border-gray-200 hover:border-store-500 rounded-full px-3 py-1 bg-white shadow-sm transition-colors"
+                              aria-label="Share this product"
+                            >
+                              <FiShare2 className="w-4 h-4" />
+                              <span className="hidden sm:inline">Share</span>
+                            </button>
+                          </div>
+                        }
+                      />
 
                       {/* Add to Cart & Buy Now under gallery (Flipkart style) */}
                       <div className="mt-4">

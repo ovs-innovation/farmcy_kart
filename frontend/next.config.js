@@ -23,6 +23,16 @@ const nextConfig = {
     locales: ["en", "es", "fr", "de"],
     defaultLocale: "en",
   },
+
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+      };
+    }
+    return config;
+  },
 };
 
 module.exports = withPWA(nextConfig);

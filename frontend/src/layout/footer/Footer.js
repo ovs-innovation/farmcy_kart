@@ -1,7 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useState } from "react";
 import useTranslation from "next-translate/useTranslation";
+import { IoArrowForward } from "react-icons/io5";
 import {
   FacebookIcon,
   LinkedinIcon,
@@ -17,6 +19,7 @@ import {
   FiPhone, 
   FiMapPin, 
   FiChevronRight,
+  FiChevronDown,
   FiFileText,
   FiShield,
   FiRefreshCw,
@@ -33,14 +36,32 @@ import useGetSetting from "@hooks/useGetSetting";
 import CMSkeleton from "@components/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import FeatureCard from "@components/feature-card/FeatureCard";
+import NewsletterServices from "@services/NewsletterServices";
+import { notifySuccess, notifyError } from "@utils/toast";
 
 const Footer = () => {
   const { t } = useTranslation();
   const userInfo = getUserSession();
 
   const { showingTranslateValue } = useUtilsFunction();
-  const { loading, storeCustomizationSetting } = useGetSetting();
+  const { loading, storeCustomizationSetting, globalSetting } = useGetSetting();
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
+  const [email, setEmail] = useState("");
+  const [loadingSubscribe, setLoadingSubscribe] = useState(false);
+  
+  // State for collapsible sections on mobile (only first 3 blocks)
+  const [openSections, setOpenSections] = useState({
+    block1: false,
+    block2: false,
+    block3: false,
+  });
+
+  const toggleSection = (section) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }));
+  };
 
   // SafeLink: render a Next <Link> only when href is provided, otherwise render a span
   // This prevents Next Link prop-type errors when CMS settings don't include a URL
@@ -58,36 +79,145 @@ const Footer = () => {
     );
   };
 
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!email) {
+      notifyError("Please enter your email address!");
+      return;
+    }
+    setLoadingSubscribe(true);
+    try {
+      await NewsletterServices.addNewsletter({ email });
+      notifySuccess("Subscribed Successfully!");
+      setEmail("");
+    } catch (err) {
+      notifyError(err ? err.response.data.message : err.message);
+    }
+    setLoadingSubscribe(false);
+  };
+
   return (
-    <div className="pb-16 lg:pb-0 xl:pb-0 bg-store-500 text-white rounded-t-[30px] lg:rounded-t-[120px] relative overflow-hidden">
-      {/* Decorative Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
-        <div className="absolute top-20 left-10 w-64 h-64 bg-white rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    <div className="pb-16 lg:pb-0 xl:pb-0 bg-blue-50 text-gray-800 relative overflow-hidden">
+      {/* Decorative Top Section */}
+      <div className="relative bg-gradient-to-b from-store-500/10 via-store-400/5 to-transparent">
+        {/* Decorative Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+            backgroundSize: '60px 60px'
+          }}></div>
+        </div>
+        
+        {/* Decorative Wave - Animated */}
+        <div className="relative overflow-hidden">
+          <style dangerouslySetInnerHTML={{
+            __html: `
+              @keyframes waveMove {
+                0% {
+                  transform: translateX(0);
+                }
+                100% {
+                  transform: translateX(-50%);
+                }
+              }
+              .footer-wave {
+                animation: waveMove 25s linear infinite;
+              }
+            `
+          }} />
+          <div className="footer-wave" style={{ width: '200%', display: 'flex' }}>
+            <svg 
+              className="h-12 md:h-16 lg:h-20 flex-shrink-0" 
+              viewBox="0 0 1440 120" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg" 
+              preserveAspectRatio="none"
+              style={{ width: '50%', height: '100%' }}
+            >
+              <path 
+                d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,64,576,58.7C672,53,768,53,864,58.7C960,64,1056,75,1152,80C1248,85,1344,85,1392,85.3L1440,85L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z" 
+                fill={`var(--store-color-500)`}
+                opacity="0.4"
+              />
+            </svg>
+            <svg 
+              className="h-12 md:h-16 lg:h-20 flex-shrink-0" 
+              viewBox="0 0 1440 120" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg" 
+              preserveAspectRatio="none"
+              style={{ width: '50%', height: '100%' }}
+            >
+              <path 
+                d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,64,576,58.7C672,53,768,53,864,58.7C960,64,1056,75,1152,80C1248,85,1344,85,1392,85.3L1440,85L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z" 
+                fill={`var(--store-color-500)`}
+                opacity="0.4"
+              />
+            </svg>
+          </div>
+        </div>
+        
+       
       </div>
-      
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 relative z-10">
-        <div className="py-6 border-b border-store-400 border-opacity-30">
+
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 lg:px-16 xl:px-20 relative z-10">
+        <div className="py-4 hidden md:block border-b border-gray-200">
            <FeatureCard />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-7 xl:grid-cols-12 gap-5 sm:gap-9 lg:gap-11 xl:gap-7 py-10 lg:py-16 justify-between">
+        
+        {/* Logo at Top Left - Only visible on small screens */}
+        <div className="py-4 border-b border-gray-200 block md:hidden">
+          <Link href="/" className="inline-block" rel="noreferrer">
+            <div className="relative w-32 sm:w-40 transition-transform duration-300 hover:scale-105">
+              <Image
+                src={
+                  storeCustomizationSetting?.footer?.block4_logo ||
+                  "/logo/logo.png"
+                }
+                alt="logo"
+                width={200}
+                height={80}
+                className="w-full h-auto max-h-20 object-contain"
+                sizes="100vw"
+                priority
+              />
+            </div>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-2 md:gap-x-4 lg:gap-x-8 gap-y-4 md:gap-y-6 lg:gap-y-8 py-6 md:py-8 lg:py-12">
           {storeCustomizationSetting?.footer?.block1_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-lg lg:text-xl font-bold mb-5 sm:mb-6 lg:mb-7 pb-2 text-white border-b-2 border-white border-opacity-20 inline-block">
-                <CMSkeleton
-                  count={1}
-                  height={24}
-                  loading={loading}
-                  data={storeCustomizationSetting?.footer?.block1_title}
+            <div className="pb-3.5 sm:pb-0 border-b border-gray-200 md:border-0 md:border-r md:border-b-0 md:pr-6 lg:pr-8">
+              <button
+                onClick={() => toggleSection("block1")}
+                className="w-full flex items-center justify-between py-2 md:py-0 md:pointer-events-none"
+              >
+                <h3 className="text-base md:text-lg font-bold text-gray-800 md:mb-3 relative inline-block">
+                  <span className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 w-1 h-6 bg-store-500 rounded-full opacity-0 md:opacity-100"></span>
+                  <CMSkeleton
+                    count={1}
+                    height={24}
+                    loading={loading}
+                    data={storeCustomizationSetting?.footer?.block1_title}
+                  />
+                </h3>
+                <FiChevronDown
+                  className={`w-5 h-5 text-gray-600 md:hidden transition-transform duration-300 ${
+                    openSections.block1 ? "rotate-180" : ""
+                  }`}
                 />
-              </h3>
-              <ul className="text-sm flex flex-col space-y-3.5">
+              </button>
+              <ul
+                className={`text-sm flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
+                  openSections.block1 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                } md:max-h-none md:opacity-100 md:mb-2`}
+              >
                 <li className="group">
                   <SafeLink
                     href={storeCustomizationSetting?.footer?.block1_sub_link1}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiChevronRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <FiChevronRight className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -101,9 +231,9 @@ const Footer = () => {
                 <li className="group">
                   <SafeLink
                     href={storeCustomizationSetting?.footer?.block1_sub_link2}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiChevronRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <FiChevronRight className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -117,9 +247,9 @@ const Footer = () => {
                 <li className="group">
                   <SafeLink
                     href={storeCustomizationSetting?.footer?.block1_sub_link3}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiChevronRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <FiChevronRight className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     {showingTranslateValue(
                       storeCustomizationSetting?.footer_block_one_link_three_title
                     )}
@@ -136,9 +266,9 @@ const Footer = () => {
                 <li className="group">
                   <SafeLink
                     href={storeCustomizationSetting?.footer?.block1_sub_link4}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiChevronRight className="w-4 h-4 mr-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <FiChevronRight className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -153,22 +283,37 @@ const Footer = () => {
             </div>
           )}
           {storeCustomizationSetting?.footer?.block2_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-lg lg:text-xl font-bold mb-5 sm:mb-6 lg:mb-7 pb-2 text-white border-b-2 border-white border-opacity-20 inline-block">
-                <CMSkeleton
-                  count={1}
-                  height={24}
-                  loading={loading}
-                  data={storeCustomizationSetting?.footer?.block2_title}
+            <div className="pb-3.5 sm:pb-0 border-b border-gray-200 md:border-0 md:border-r md:border-b-0 md:pr-6 lg:pr-8">
+              <button
+                onClick={() => toggleSection("block2")}
+                className="w-full flex items-center justify-between py-2 md:py-0 md:pointer-events-none"
+              >
+                <h3 className="text-base md:text-lg font-bold text-gray-800 md:mb-3 relative inline-block">
+                  <span className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 w-1 h-6 bg-store-500 rounded-full opacity-0 md:opacity-100"></span>
+                  <CMSkeleton
+                    count={1}
+                    height={24}
+                    loading={loading}
+                    data={storeCustomizationSetting?.footer?.block2_title}
+                  />
+                </h3>
+                <FiChevronDown
+                  className={`w-5 h-5 text-gray-600 md:hidden transition-transform duration-300 ${
+                    openSections.block2 ? "rotate-180" : ""
+                  }`}
                 />
-              </h3>
-              <ul className="text-sm lg:text-15px flex flex-col space-y-3.5">
+              </button>
+              <ul
+                className={`text-sm lg:text-15px flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
+                  openSections.block2 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                } md:max-h-none md:opacity-100 md:mb-2`}
+              >
                 <li className="group">
                   <Link
                     href={`${storeCustomizationSetting?.footer?.block2_sub_link1}`}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiFileText className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiFileText className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -183,9 +328,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={`${storeCustomizationSetting?.footer?.block2_sub_link2}`}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiShield className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiShield className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -199,9 +344,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={`${storeCustomizationSetting?.footer?.block2_sub_link3}`}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiRefreshCw className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiRefreshCw className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -215,9 +360,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={`${storeCustomizationSetting?.footer?.block2_sub_link4}`}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiTruck className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiTruck className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -232,22 +377,37 @@ const Footer = () => {
             </div>
           )}
           {storeCustomizationSetting?.footer?.block3_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-lg lg:text-xl font-bold mb-5 sm:mb-6 lg:mb-7 pb-2 text-white border-b-2 border-white border-opacity-20 inline-block">
-                <CMSkeleton
-                  count={1}
-                  height={24}
-                  loading={loading}
-                  data={storeCustomizationSetting?.footer?.block3_title}
+            <div className="pb-3.5 sm:pb-0 border-b border-gray-200 md:border-0 md:border-r md:border-b-0 md:pr-6 lg:pr-8">
+              <button
+                onClick={() => toggleSection("block3")}
+                className="w-full flex items-center justify-between py-2 md:py-0 md:pointer-events-none"
+              >
+                <h3 className="text-base md:text-lg font-bold text-gray-800 md:mb-3 relative inline-block">
+                  <span className="absolute -left-4 md:-left-6 top-1/2 -translate-y-1/2 w-1 h-6 bg-store-500 rounded-full opacity-0 md:opacity-100"></span>
+                  <CMSkeleton
+                    count={1}
+                    height={24}
+                    loading={loading}
+                    data={storeCustomizationSetting?.footer?.block3_title}
+                  />
+                </h3>
+                <FiChevronDown
+                  className={`w-5 h-5 text-gray-600 md:hidden transition-transform duration-300 ${
+                    openSections.block3 ? "rotate-180" : ""
+                  }`}
                 />
-              </h3>
-              <ul className="text-sm lg:text-15px flex flex-col space-y-3.5">
+              </button>
+              <ul
+                className={`text-sm lg:text-15px flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
+                  openSections.block3 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                } md:max-h-none md:opacity-100 md:mb-2`}
+              >
                 <li className="group">
                   <Link
                     href={storeCustomizationSetting?.footer?.block3_sub_link1}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiSettings className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiSettings className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -261,9 +421,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={storeCustomizationSetting?.footer?.block3_sub_link2}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiPackage className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiPackage className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -277,9 +437,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={storeCustomizationSetting?.footer?.block3_sub_link3}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiShoppingBag className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiShoppingBag className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -293,9 +453,9 @@ const Footer = () => {
                 <li className="group">
                   <Link
                     href={storeCustomizationSetting?.footer?.block3_sub_link4}
-                    className="text-gray-100 inline-flex items-center w-full hover:text-white transition-all duration-300 hover:translate-x-2"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
                   >
-                    <FiUser className="w-4 h-4 mr-2 text-store-300 group-hover:text-white transition-colors" />
+                    <FiUser className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     <CMSkeleton
                       count={1}
                       height={16}
@@ -309,31 +469,60 @@ const Footer = () => {
               </ul>
             </div>
           )}
-          {storeCustomizationSetting?.footer?.block4_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3 flex md:flex-col flex-col-reverse items-center lg:items-start text-center lg:text-left">
-              {/* Logo Section */}
-              <Link href="/" className="mb-5 lg:mb-6 group" rel="noreferrer">
-                <div className="relative w-32 sm:w-40 md:w-44 lg:w-48 mx-auto lg:mx-0 transition-transform duration-300 group-hover:scale-105">
-                  <Image
-                    src={
-                      storeCustomizationSetting?.footer?.block4_logo ||
-                      "/logo/logo.png"
-                    }
-                    alt="logo"
-                    width={200}
-                    height={80}
-                    className="w-full h-auto max-h-20 object-contain drop-shadow-lg"
-                    sizes="100vw"
-                    priority
-                  />
-                </div>
-              </Link>
 
-              {/* Address Section */}
-              <div className="space-y-4">
-                <div className="flex items-start gap-3 text-gray-100 group">
-                  <FiMapPin className="w-5 h-5 text-store-300 flex-shrink-0 mt-1 group-hover:text-white transition-colors" />
-                  <p className="leading-7 font-sans text-sm text-left">
+          {storeCustomizationSetting?.footer?.block4_status && (
+            <div className="pb-3.5 sm:pb-0">
+              {/* Newsletter Section - Always Visible */}
+              <div>
+                <h3 className="text-lg font-bold mb-2 text-gray-800">
+                  Sign Up to Our Newsletter
+                </h3>
+                <div className="h-1.5 w-20 bg-store-500 rounded-full mb-3 md:mb-2"></div>
+
+                <form className="max-w-md relative mb-2" onSubmit={handleNewsletterSubmit}>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="w-full pl-6 pr-14 py-3 md:py-3 rounded-full bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-store-500 focus:border-store-500 outline-none shadow-sm text-gray-700 placeholder-gray-400"
+                  />
+                  <button
+                    type="submit"
+                    disabled={loadingSubscribe}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 bg-store-500 rounded-full flex items-center justify-center text-white hover:bg-store-600 transition-colors shadow-md disabled:cursor-not-allowed disabled:bg-gray-400"
+                  >
+                    {loadingSubscribe ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <IoArrowForward size={20} />
+                    )}
+                  </button>
+                </form>
+              </div>
+              
+              {/* Address Section - Always Visible */}
+              <div className="space-y-2 mt-4">
+                <h3 className="text-base font-bold text-gray-800">
+                  Registered Office Address
+                </h3>
+                
+                {/* Company Name */}
+                {loading ? (
+                  <div className="mb-2">
+                    <CMSkeleton count={1} height={24} loading={true} />
+                  </div>
+                ) : globalSetting?.company_name ? (
+                  <div className="mb-1">
+                    <p className="text-base font-semibold text-gray-800">
+                      {globalSetting.company_name}
+                    </p>
+                  </div>
+                ) : null}
+                
+                <div className="flex items-start gap-3 text-gray-600">
+                  <FiMapPin className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
+                  <p className="leading-6 font-sans text-sm text-left">
                     <CMSkeleton
                       count={1}
                       height={40}
@@ -342,8 +531,8 @@ const Footer = () => {
                     />
                   </p>
                 </div>
-                <div className="flex items-center gap-3 text-gray-100 group hover:text-white transition-colors">
-                  <FiPhone className="w-5 h-5 text-store-300 flex-shrink-0 group-hover:text-white transition-colors" />
+                <div className="flex items-center gap-3 text-gray-600 hover:text-store-600 transition-colors">
+                  <FiPhone className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   <a 
                     href={`tel:${storeCustomizationSetting?.footer?.block4_phone}`}
                     className="text-sm hover:underline"
@@ -351,8 +540,8 @@ const Footer = () => {
                     {storeCustomizationSetting?.footer?.block4_phone}
                   </a>
                 </div>
-                <div className="flex items-center gap-3 text-gray-100 group hover:text-white transition-colors">
-                  <FiMail className="w-5 h-5 text-store-300 flex-shrink-0 group-hover:text-white transition-colors" />
+                <div className="flex items-center gap-3 text-gray-600 hover:text-store-600 transition-colors">
+                  <FiMail className="w-5 h-5 text-gray-500 flex-shrink-0" />
                   <a 
                     href={`mailto:${storeCustomizationSetting?.footer?.block4_email}`}
                     className="text-sm hover:underline break-all"
@@ -365,38 +554,23 @@ const Footer = () => {
           )}
         </div>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-store-400 border-opacity-30"></div>
-          </div>
-          <div className="relative flex justify-center">
-            <div className="flex items-center justify-center gap-2 bg-store-500 px-4 py-2 rounded-full">
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-            </div>
-          </div>
-        </div>
+        
 
-        <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 bg-white shadow-xl border border-gray-100 rounded-2xl mb-6 relative overflow-hidden">
-          {/* Decorative gradient background */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-store-400 via-store-500 to-store-600"></div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-5 sm:gap-9 lg:gap-11 xl:gap-7 py-8 items-center justify-between relative z-10">
-            <div className="col-span-1">
-              {storeCustomizationSetting?.footer?.social_links_status && (
-                <div>
-                  {(storeCustomizationSetting?.footer?.social_facebook ||
-                    storeCustomizationSetting?.footer?.social_twitter ||
-                    storeCustomizationSetting?.footer?.social_instagram ||
-                    storeCustomizationSetting?.footer?.social_linkedin ||
-                    storeCustomizationSetting?.footer?.social_whatsapp) && (
-                    <span className="text-base leading-7 font-semibold text-gray-700 block mb-4 pb-2 border-b-2 border-gray-100 inline-block">
-                      {t("follow-us")}
-                    </span>
-                  )}
-                  <ul className="text-sm flex flex-wrap gap-3">
+        {/* Social Media Section */}
+        <div className="py-4 border-t border-gray-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-8">
+            {storeCustomizationSetting?.footer?.social_links_status && (
+              <div>
+                {(storeCustomizationSetting?.footer?.social_facebook ||
+                  storeCustomizationSetting?.footer?.social_twitter ||
+                  storeCustomizationSetting?.footer?.social_instagram ||
+                  storeCustomizationSetting?.footer?.social_linkedin ||
+                  storeCustomizationSetting?.footer?.social_whatsapp) && (
+                  <h3 className="text-base font-bold mb-2 text-gray-800">
+                    Social
+                  </h3>
+                )}
+                <ul className="text-sm flex flex-wrap gap-3">
                     {storeCustomizationSetting?.footer?.social_facebook && (
                       <li className="group">
                         <Link
@@ -406,7 +580,7 @@ const Footer = () => {
                           target="_blank"
                           className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
                         >
-                          <FacebookIcon size={40} round className="shadow-md group-hover:shadow-lg transition-shadow" />
+                          <FacebookIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
                         </Link>
                       </li>
                     )}
@@ -419,7 +593,7 @@ const Footer = () => {
                           target="_blank"
                           className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
                         >
-                          <TwitterIcon size={40} round className="shadow-md group-hover:shadow-lg transition-shadow" />
+                          <TwitterIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
                         </Link>
                       </li>
                     )}
@@ -447,7 +621,7 @@ const Footer = () => {
                           target="_blank"
                           className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
                         >
-                          <LinkedinIcon size={40} round className="shadow-md group-hover:shadow-lg transition-shadow" />
+                          <LinkedinIcon size={40} round className=" rounded-full group-hover:shadow-lg transition-shadow" />
                         </Link>
                       </li>
                     )}
@@ -460,79 +634,110 @@ const Footer = () => {
                           target="_blank"
                           className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
                         >
-                          <WhatsappIcon size={40} round className="shadow-md group-hover:shadow-lg transition-shadow" />
+                          <WhatsappIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
                         </Link>
                       </li>
                     )}
-                  </ul>
-                </div>
-              )}
-            </div>
-            <div className="col-span-1 text-center hidden lg:block md:block">
-              {storeCustomizationSetting?.footer?.bottom_contact_status && (
-                <div className="bg-gradient-to-br from-store-50 to-store-100 rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
-                  <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-store-500 mb-3">
-                    <FiPhone className="w-7 h-7 text-white" />
-                  </div>
-                  <p className="text-base leading-7 font-semibold text-gray-700 block mb-2">
-                    {t("call-us")}
-                  </p>
-                  <a
-                    href={`tel:${storeCustomizationSetting?.footer?.bottom_contact}`}
-                    className="inline-block transition-transform duration-300 hover:scale-105"
-                  >
-                    <h5 className="text-2xl font-bold text-store-600 leading-7 hover:text-store-700">
-                      {storeCustomizationSetting?.footer?.bottom_contact}
-                    </h5>
-                  </a>
-                </div>
-              )}
-            </div>
-            {storeCustomizationSetting?.footer?.payment_method_status && (
-              <div className="col-span-1 hidden lg:block md:block">
-                <div className="bg-gray-50 rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow duration-300">
-                  <p className="text-sm font-semibold text-gray-600 mb-3 text-right">
-                    Secure Payment Methods
-                  </p>
-                  <ul className="lg:text-right">
-                    <li className="px-1 mb-2 md:mb-0 transition-transform duration-300 hover:scale-105 inline-flex">
+                </ul>
+              </div>
+            )}
+            {/* App Store & Google Play Store */}
+            {(storeCustomizationSetting?.home?.daily_need_app_link ||
+              storeCustomizationSetting?.home?.daily_need_google_link ||
+              storeCustomizationSetting?.home?.button1_img ||
+              storeCustomizationSetting?.home?.button2_img) && (
+              <div>
+                <h3 className="text-base font-bold mb-2 text-gray-800">
+                  Download Our App
+                </h3>
+                <div className="flex gap-3">
+                  {(storeCustomizationSetting?.home?.daily_need_app_link ||
+                    storeCustomizationSetting?.home?.button1_img) && (
+                    <Link
+                      href={
+                        storeCustomizationSetting?.home?.daily_need_app_link ||
+                        "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-block transition-transform duration-300 hover:scale-105"
+                    >
                       <Image
-                        width={274}
-                        height={85}
-                        className="w-full rounded-lg"
+                        width={170}
+                        height={50}
+                        className="rounded"
                         src={
-                          storeCustomizationSetting?.footer?.payment_method_img ||
-                          "/payment-method/payment-logo.png"
+                          storeCustomizationSetting?.home?.button1_img ||
+                          "/app/app-store.svg"
                         }
-                        alt="payment method"
+                        alt="Download on the App Store"
                       />
-                    </li>
-                  </ul>
+                    </Link>
+                  )}
+                  {(storeCustomizationSetting?.home?.daily_need_google_link ||
+                    storeCustomizationSetting?.home?.button2_img) && (
+                    <Link
+                      href={
+                        storeCustomizationSetting?.home?.daily_need_google_link ||
+                        "#"
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-block transition-transform duration-300 hover:scale-105"
+                    >
+                      <Image
+                        width={170}
+                        height={50}
+                        className="rounded"
+                        src={
+                          "/app/play-store.svg" ||storeCustomizationSetting?.home?.button2_img 
+                          
+                        }
+                        alt="Get it on Google Play"
+                      />
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
+            {storeCustomizationSetting?.footer?.payment_method_status && (
+              <div>
+                <h3 className="text-base font-bold mb-2 text-gray-800">
+                  Payment Methods
+                </h3>
+                <div className="mt-2">
+                  <Image
+                    width={274}
+                    height={25}
+                    className="w-full max-w-xs rounded-lg"
+                    src={
+                      "/payment-method/payment-logo.png" || storeCustomizationSetting?.footer?.payment_method_img 
+                     
+                    }
+                    alt="payment method"
+                  />
                 </div>
               </div>
             )}
           </div>
         </div>
-      </div>
+ 
 
-      <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex justify-center py-5 border-t border-store-400 border-opacity-20">
-        <div className="flex flex-col items-center gap-2">
-          <p className="text-sm text-gray-200 leading-6 text-center">
-            Copyright 2025 @{" "}
-            <Link
-              href="/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-white font-bold hover:text-store-200 transition-colors duration-300"
-            >
-              Farmacykart
-            </Link>
-            , All rights reserved.
-          </p>
-          <div className="flex items-center gap-2">
-            <div className="w-1 h-1 bg-store-300 rounded-full"></div>
-            <div className="w-1 h-1 bg-store-300 rounded-full"></div>
-            <div className="w-1 h-1 bg-store-300 rounded-full"></div>
+        {/* Copyright Section */}
+        <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex justify-center py-5 border-t border-gray-200">
+          <div className="flex flex-col items-center gap-2">
+            <p className="text-sm text-gray-600 leading-6 text-center">
+              Copyright 2025 @{" "}
+              <Link
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-store-600 font-bold hover:text-store-700 transition-colors duration-300"
+              >
+                Farmacykart
+              </Link>
+              , All rights reserved.
+            </p>
           </div>
         </div>
       </div>

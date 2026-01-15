@@ -52,12 +52,12 @@ const FeatureCard = () => {
         >
           <div className="mr-3">
             <promo.icon
-              className={`flex-shrink-0 h-4 w-4 text-white`}
+              className={`flex-shrink-0 h-4 w-4`}
               aria-hidden="true"
             />
           </div>
           <div className="">
-            <span className="block font-serif text-sm font-medium leading-5 text-white">
+            <span className="block font-serif text-sm font-medium leading-5">
               {promo?.title}
             </span>
           </div>

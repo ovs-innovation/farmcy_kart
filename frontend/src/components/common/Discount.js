@@ -29,10 +29,10 @@ const Discount = ({ discount, product, slug, modal }) => {
         <span
           className={
             modal
-              ? "absolute text-sm text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-4 whitespace-nowrap"
+              ? "absolute text-xs sm:text-sm text-white py-1 sm:py-1.5 px-2 sm:px-3 md:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-6 whitespace-nowrap"
               : slug
-              ? "absolute text-sm text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-4 whitespace-nowrap"
-              : "absolute text-xs text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-2 whitespace-nowrap"
+              ? "absolute text-xs sm:text-sm text-white py-1 sm:py-1.5 px-2 sm:px-3 md:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-6 whitespace-nowrap"
+              : "absolute text-[10px] sm:text-xs md:text-sm text-white py-0.5 sm:py-1 md:py-1.5 px-1.5 sm:px-2 md:px-3 lg:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-1 sm:top-2 whitespace-nowrap"
           }
           style={{ backgroundColor: '#006E44' }}
         >
@@ -43,10 +43,10 @@ const Discount = ({ discount, product, slug, modal }) => {
         <span
           className={
             modal
-              ? "absolute text-sm text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-4 whitespace-nowrap"
+              ? "absolute text-xs sm:text-sm text-white py-1 sm:py-1.5 px-2 sm:px-3 md:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-6 whitespace-nowrap"
               : slug
-              ? "absolute text-sm text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-4 whitespace-nowrap"
-              : "absolute text-xs text-white py-1.5 px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-2 whitespace-nowrap"
+              ? "absolute text-xs sm:text-sm text-white py-1 sm:py-1.5 px-2 sm:px-3 md:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-6 whitespace-nowrap"
+              : "absolute text-[10px] sm:text-xs md:text-sm text-white py-0.5 sm:py-1 md:py-1.5 px-1.5 sm:px-2 md:px-3 lg:px-4 rounded-l-none rounded-r-full font-bold uppercase z-10 left-0 top-1 sm:top-2 whitespace-nowrap"
           }
           style={{ backgroundColor: '#006E44' }}
         >

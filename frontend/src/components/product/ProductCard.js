@@ -19,7 +19,7 @@ import ImageWithFallback from "@components/common/ImageWithFallBack";
 import { handleLogEvent } from "src/lib/analytics";
 import { addToWishlist } from "@lib/wishlist";
 
-const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
+const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscount = false, hideWishlistCompare = false }) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const { items, addItem, updateItemQuantity, inCart, getItem } = useCart();
@@ -120,12 +120,12 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
         />
       )}
 
-  <div className="group box-border w-full h-full max-w-[270px] overflow-hidden flex rounded-lg border border-gray-200 flex-col items-center bg-white relative transition-shadow duration-300">
+  <div className="group box-border w-full h-full max-w-full overflow-hidden flex rounded-lg border border-gray-200 flex-col items-center bg-white relative transition-shadow duration-300">
         
         {/* Product Name - Moved to top */}
-        <div className="w-full px-4 pt-4 pb-1 flex-shrink-0">
+        <div className="w-full px-2 sm:px-3 md:px-4 pt-1.5 sm:pt-2 md:pt-2.5 pb-0.5 flex-shrink-0">
           <h2 
-            className="text-heading mb-0 block text-sm font-normal text-gray-600 leading-tight line-clamp-2 h-10" 
+            className="text-heading mb-0 block text-xs sm:text-sm font-normal text-gray-600 leading-tight truncate overflow-hidden text-ellipsis whitespace-nowrap z-20" 
             title={showingTranslateValue(product?.title)}
           >
             {showingTranslateValue(product?.title)}
@@ -141,12 +141,14 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
               `navigated to ${showingTranslateValue(product?.title)} product page`
             );
           }}
-          className="relative flex justify-center items-center cursor-pointer w-full p-2 h-[200px] flex-shrink-0"
+          className="relative flex justify-center items-center cursor-pointer w-full p-1 sm:p-1.5 h-[80px] sm:h-[100px] md:h-[140px] lg:h-[160px] flex-shrink-0"
         >
-          {/* Discount Badge - Bottom Left */}
-          <div className="absolute bottom-10 left-0 z-10">
-            <Discount product={product} />
-          </div>
+          {/* Discount Badge - Top Left (hide if hideDiscount prop is true) */}
+          {!hideDiscount && (
+            <div className="absolute top-2 sm:top-2 md:bottom-10 left-0 z-10">
+              <Discount product={product} />
+            </div>
+          )}
           
           {/* Stock Badge - Top Right (only show if out of stock) */}
           {product.stock < 1 && (
@@ -155,23 +157,25 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
             </div>
           )}
 
-          {/* Wishlist and Compare buttons - visible on hover on desktop, always on mobile */}
-          <div className="absolute bottom-0 right-2 z-20 flex gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={handleAddToWishlist}
-              className={`p-2 bg-white rounded-full shadow-md hover:bg-red-500 hover:text-white transition-colors`}
-              aria-label="Add to wishlist"
-            >
-              <FiHeart className="w-4 h-4" />
-            </button>
-            <button
-              onClick={handleAddToCompare}
-              className={`p-2 bg-white rounded-full shadow-md hover:bg-purple-500 hover:text-white transition-colors`}
-              aria-label="Add to compare"
-            >
-              <FiShuffle className="w-4 h-4" />
-            </button>
-          </div>
+          {/* Wishlist and Compare buttons - Bottom Right */}
+          {!hideWishlistCompare && (
+            <div className="absolute bottom-2 right-2 z-30 flex gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
+              <button
+                onClick={handleAddToWishlist}
+                className={`p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:bg-red-500 hover:text-white transition-colors`}
+                aria-label="Add to wishlist"
+              >
+                <FiHeart className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+              <button
+                onClick={handleAddToCompare}
+                className={`p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:bg-purple-500 hover:text-white transition-colors`}
+                aria-label="Add to compare"
+              >
+                <FiShuffle className="w-3 h-3 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+          )}
 
           <div className="relative w-full h-full flex items-center justify-center">
             {product.image[0] ? (
@@ -180,7 +184,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
                 alt="product"
                 width={300}
                 height={300}
-                className="w-full h-auto max-h-[180px] object-contain"
+                className="w-full h-auto max-h-[80px] sm:max-h-[100px] md:max-h-[140px] lg:max-h-[160px] object-contain"
                 style={{ objectFit: 'contain' }}
               />
             ) : (
@@ -190,7 +194,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
                 height={300}
                 style={{
                   objectFit: "contain",
-                  maxHeight: "180px"
+                  maxHeight: "100px"
                 }}
                 sizes="100%"
                 alt="product"
@@ -201,11 +205,11 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
         </div>
 
         {/* Product Details */}
-        <div className="w-full px-4 pb-4 overflow-hidden flex-shrink-0 mt-auto">
+        <div className="w-full px-2 sm:px-3 md:px-4 pb-1.5 sm:pb-2 md:pb-2.5 overflow-hidden flex-shrink-0 mt-auto">
           <hr />
           {/* Price and Add Button */}
           {!hidePriceAndAdd && (
-          <div className="flex justify-between items-end mt-4">
+          <div className="flex justify-between items-end mt-2 sm:mt-3">
             {/* Price Section */}
             <div className="flex flex-col">
               {(() => {
@@ -232,7 +236,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
                         MRP <span className="line-through">{currency}{getNumberTwo(originalPriceValue)}</span>
                       </p>
                     )}
-                    <p className="text-lg font-bold text-gray-900">
+                    <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
                       {currency}{getNumberTwo(currentPrice)}
                     </p>
                   </>
@@ -283,7 +287,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false }) => {
               <button
                 onClick={() => handleAddItem(product)}
                 aria-label="Add to cart"
-                className={`h-9 px-10 min-w-[80px] flex items-center justify-center bg-blue-100 text-blue-700 border border-blue-300 rounded-md font-medium text-sm hover:bg-blue-200 transition-colors`}
+                className={`h-8 sm:h-9 px-4 sm:px-6 md:px-10 min-w-[60px] sm:min-w-[80px] flex items-center justify-center bg-blue-100 text-blue-700 border border-blue-300 rounded-md font-medium text-xs sm:text-sm hover:bg-blue-200 transition-colors`}
                 style={{
                   backgroundColor: `var(--store-color-50)`,
                   color: `var(--store-color-700)`,

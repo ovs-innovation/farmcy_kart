@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
@@ -15,11 +15,13 @@ import CategoryDrawer from "@components/drawer/CategoryDrawer";
 import useGetSetting from "@hooks/useGetSetting";
 import useWishlist from "@hooks/useWishlist";
 import LocationButton from "@components/location/LocationButton";
+import SearchSuggestions from "@components/search/SearchSuggestions";
 
 const MobileFooter = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  // const [showSearch, setShowSearch] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchInputRef = useRef(null);
   const { toggleCategoryDrawer, showSearch, setShowSearch } = useContext(SidebarContext);
   const userInfo = getUserSession();
   const router = useRouter();
@@ -27,12 +29,34 @@ const MobileFooter = () => {
   const { storeCustomizationSetting } = useGetSetting();
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
 
+  const handleSearchChange = (value) => {
+    setSearchText(value);
+    setShowSuggestions(value.trim().length > 0);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchText) {
-      router.push(`/search?query=${searchText}`);
-      setSearchText("");
-      setShowSearch(false);
+    e.stopPropagation();
+    
+    const trimmedSearchText = searchText.trim();
+    setShowSuggestions(false);
+    searchInputRef.current?.blur();
+    
+    if (trimmedSearchText) {
+      router.push(
+        {
+          pathname: "/search",
+          query: { query: trimmedSearchText },
+        },
+        `/search?query=${encodeURIComponent(trimmedSearchText)}`,
+        { shallow: false }
+      ).then(() => {
+        setSearchText("");
+        setShowSearch(false);
+      }).catch((err) => {
+        console.error("Navigation error:", err);
+        window.location.href = `/search?query=${encodeURIComponent(trimmedSearchText)}`;
+      });
     } else {
       router.push(`/`);
       setSearchText("");
@@ -107,30 +131,56 @@ const MobileFooter = () => {
         </div>
       </footer>
       {showSearch && (
-        <div className="fixed z-30 top-16 left-0 w-full bg-white px-3 py-2 shadow">
+        <div className="fixed z-50 top-16 left-0 w-full bg-white px-3 py-2 shadow" style={{ overflow: 'visible' }}>
           <form
             onSubmit={handleSubmit}
-            className="relative pr-12 bg-white overflow-hidden shadow-sm rounded-md w-full flex items-center"
+            className="relative bg-white shadow-sm rounded-md w-full flex items-center overflow-visible"
           >
             {/* Location Button */}
             <LocationButton className="h-10 flex-shrink-0" />
             
             {/* Search Input */}
-            <label className="flex items-center py-0.5 flex-1">
+            <div className="flex-1 relative">
               <input
-                onChange={(e) => setSearchText(e.target.value)}
+                ref={searchInputRef}
+                onChange={(e) => handleSearchChange(e.target.value)}
                 value={searchText}
-                className="form-input w-full pl-3 appearance-none transition ease-in-out border text-input text-sm font-sans rounded-md min-h-10 h-10 duration-200 bg-[#F3F4F6] focus:ring-0 outline-none border-none focus:outline-none placeholder-gray-500 placeholder-opacity-75"
-                placeholder={t("Search Health and Herbs...")}
+                type="text"
+                placeholder="Search for medicine or store..."
+                className="w-full pl-3 pr-12 appearance-none transition ease-in-out text-input text-sm font-sans rounded-md min-h-10 h-10 duration-200 bg-[#F3F4F6] focus:ring-2 focus:ring-store-500 outline-none border-none focus:outline-none placeholder-gray-500 placeholder-opacity-75"
+                onFocus={() => searchText.trim().length > 0 && setShowSuggestions(true)}
+                onBlur={(e) => {
+                  const relatedTarget = e.relatedTarget;
+                  const suggestionsContainer = document.querySelector('.search-suggestions-container');
+                  
+                  if (!relatedTarget || (suggestionsContainer && !suggestionsContainer.contains(relatedTarget))) {
+                    setTimeout(() => {
+                      const activeElement = document.activeElement;
+                      if (!suggestionsContainer || !suggestionsContainer.contains(activeElement)) {
+                        setShowSuggestions(false);
+                      }
+                    }, 200);
+                  }
+                }}
               />
-            </label>
-            <button
-              aria-label="Search"
-              type="submit"
-              className={`outline-none text-xl text-gray-400 absolute top-0 right-0 end-0 w-12 h-full flex items-center justify-center transition duration-200 ease-in-out hover:text-heading focus:outline-none text-store-500`}
-            >
-              <IoSearchOutline />
-            </button>
+              <button
+                aria-label="Search"
+                type="submit"
+                className={`outline-none text-xl text-gray-400 absolute top-0 right-0 end-0 w-12 h-full flex items-center justify-center transition duration-200 ease-in-out hover:text-heading focus:outline-none text-store-500 z-10`}
+              >
+                <IoSearchOutline />
+              </button>
+              <SearchSuggestions
+                searchText={searchText}
+                showSuggestions={showSuggestions}
+                onSelect={() => {
+                  setSearchText("");
+                  setShowSuggestions(false);
+                  setShowSearch(false);
+                }}
+                onClose={() => setShowSuggestions(false)}
+              />
+            </div>
           </form>
         </div>
       )}

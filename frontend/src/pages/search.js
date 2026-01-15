@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
-import { IoArrowBack, IoSearchOutline, IoClose } from "react-icons/io5";
+import { IoArrowBack, IoClose, IoSearchOutline } from "react-icons/io5";
 import { FiHeart, FiShoppingCart, FiUser, FiFilter, FiList } from "react-icons/fi";
 import { useCart } from "react-use-cart";
+import LocationButton from "@components/location/LocationButton";
+import SearchSuggestions from "@components/search/SearchSuggestions";
 
 //internal import
 import Layout from "@layout/Layout";
@@ -156,43 +158,120 @@ const Search = ({ products, attributes }) => {
   const handleClearAll = () => {
     setSelectedBrands([]);
     setPriceRange({ min: 0, max: 100000 });
-    setSelectedCategories([]);-
+    setSelectedCategories([]);
     setSelectedRating(0);
     setSelectedDiscount(0);
     clearSearchQuery();
   };
 
+  // Mobile search state
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchInputRef = useRef(null);
+
+  // Sync searchText with URL query parameter
+  useEffect(() => {
+    if (router.query.query) {
+      setSearchText(router.query.query);
+    } else {
+      setSearchText("");
+    }
+  }, [router.query.query]);
+
+  const handleSearchChange = (value) => {
+    setSearchText(value);
+    setShowSuggestions(value.length > 0);
+  };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchText.trim()) {
-      router.push(`/search?query=${searchText}`);
-      setIsSearchOpen(false);
+    e.stopPropagation();
+    
+    const trimmedSearchText = searchText.trim();
+    setShowSuggestions(false);
+    searchInputRef.current?.blur();
+    
+    if (trimmedSearchText) {
+      router.push(
+        {
+          pathname: "/search",
+          query: { ...router.query, query: trimmedSearchText },
+        },
+        `/search?query=${encodeURIComponent(trimmedSearchText)}`,
+        { shallow: false }
+      ).then(() => {
+        setSearchText("");
+        setIsSearchOpen(false);
+      }).catch((err) => {
+        console.error("Navigation error:", err);
+        window.location.href = `/search?query=${encodeURIComponent(trimmedSearchText)}`;
+      });
     }
   };
+
 
   return (
     <Layout title="Search" description="This is search page" hideMobileHeader={true}>
       {/* Mobile Header */}
       <div className="lg:hidden sticky top-0 z-30 bg-white border-b border-gray-100 px-4 py-3">
         {isSearchOpen ? (
-          <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
-            <button type="button" onClick={() => setIsSearchOpen(false)} className="text-gray-700">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border border-gray-300 rounded-lg shadow-sm overflow-visible">
+            <button 
+              type="button" 
+              onClick={() => {
+                setIsSearchOpen(false);
+                setShowSuggestions(false);
+              }} 
+              className="text-gray-700 px-3"
+            >
               <IoArrowBack size={24} />
             </button>
-            <input
-              autoFocus
-              type="text"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              placeholder="Search products..."
-              className="flex-1 border-none focus:ring-0 text-sm"
-            />
-            <button type="submit" className="text-gray-700">
-              <IoSearchOutline size={22} />
-            </button>
+            {/* Location Button */}
+            <LocationButton className="h-full" />
+            
+            {/* Search Input */}
+            <div className="flex-1 relative">
+              <input
+                ref={searchInputRef}
+                autoFocus
+                type="text"
+                value={searchText}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                placeholder="Search for medicine or store..."
+                className="w-full py-2.5 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-store-500 text-gray-700 text-sm bg-transparent"
+                onFocus={() => searchText.length > 0 && setShowSuggestions(true)}
+                onBlur={(e) => {
+                  const relatedTarget = e.relatedTarget;
+                  const suggestionsContainer = document.querySelector('.search-suggestions-container');
+                  
+                  if (!relatedTarget || (suggestionsContainer && !suggestionsContainer.contains(relatedTarget))) {
+                    setTimeout(() => {
+                      const activeElement = document.activeElement;
+                      if (!suggestionsContainer || !suggestionsContainer.contains(activeElement)) {
+                        setShowSuggestions(false);
+                      }
+                    }, 200);
+                  }
+                }}
+              />
+              <button 
+                type="submit" 
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-store-600 transition-colors"
+              >
+                <IoSearchOutline className="text-lg" />
+              </button>
+              <SearchSuggestions
+                searchText={searchText}
+                showSuggestions={showSuggestions}
+                onSelect={() => {
+                  setSearchText("");
+                  setShowSuggestions(false);
+                  setIsSearchOpen(false);
+                }}
+                onClose={() => setShowSuggestions(false)}
+              />
+            </div>
           </form>
         ) : (
           <div className="flex items-center justify-between">

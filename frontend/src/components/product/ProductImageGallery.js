@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const ProductImageGallery = ({ images, productTitle = "Product" }) => {
+const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   
   // Only treat direct video files as video; YouTube URLs will be shown as images (thumbnail)
@@ -131,6 +131,8 @@ const ProductImageGallery = ({ images, productTitle = "Product" }) => {
       {/* Main Preview Image / Video - Right Side (Flipkart Style) */}
       <div className="flex-1 order-1 lg:order-2 w-full">
         <div className="relative w-full aspect-square bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          {/* Buttons overlay - positioned inside main image container */}
+          {buttons}
           {activeImage ? (
             isVideoUrl(activeImage) ? (
               <video

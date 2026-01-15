@@ -147,38 +147,7 @@ const FooterTop = () => {
         </div>
       </div>
 
-      <div className="relative pt-10 md:pt-16 pb-0 overflow-hidden z-0 -mb-20 md:-mb-32">
-        {/* Arc Border */}
-        <div className="absolute bottom-[-2px] left-1/2 -translate-x-1/2 w-[100%] opacity-20 sm:opacity-100 md:w-[90%] lg:w-[70%] xl:w-[80%] h-[250px] md:h-[350px] border-[20px] md:border-[40px] border-store-500 rounded-t-[100%] border-b-0 bg-white z-0"></div>
-
-        <div className="relative z-10 container mx-auto px-4 text-center pb-32 md:pb-40 pt-6 md:pt-10">
-          <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
-            Sign Up to Our Newsletter
-          </h3>
-          <div className="h-1.5 w-20 bg-store-500 mx-auto rounded-full mb-6"></div>
-
-          <form className="max-w-md mx-auto relative" onSubmit={handleSubmit}>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email address"
-              className="w-full pl-6 pr-14 py-3 md:py-4 rounded-full bg-gray-50 border-none focus:ring-2 focus:ring-store-500 outline-none shadow-sm text-gray-700 placeholder-gray-400"
-            />
-            <button
-              type="submit"
-              disabled={loadingSubscribe}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 bg-store-500 rounded-full flex items-center justify-center text-white hover:bg-store-600 transition-colors shadow-md disabled:cursor-not-allowed disabled:bg-gray-400"
-            >
-              {loadingSubscribe ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <IoArrowForward size={20} />
-              )}
-            </button>
-          </form>
-        </div>
-      </div>
+       
     </>
   );
 };

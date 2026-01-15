@@ -331,7 +331,8 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
   return (
     <div
       ref={suggestionsRef}
-      className="search-suggestions-container absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"
+      className="search-suggestions-container absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-[100] max-h-96 overflow-y-auto"
+      style={{ position: 'absolute', zIndex: 100 }}
     >
       {isLoading ? (
         <div className="p-4 text-center text-gray-500 text-sm">Searching...</div>
