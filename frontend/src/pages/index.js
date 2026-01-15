@@ -30,6 +30,7 @@ import TrustedBrandsSection from "@components/brand/TrustedBrandsSection";
 import BrandServices from "@services/BrandServices";
 import SectionHeader from "@components/common/SectionHeader";
 import SliderCarousel from "@components/carousel/SliderCarousel";
+import TestimonialsSection from "@components/testimonial/TestimonialsSection";
 
 const Home = ({ popularProducts, discountProducts, bestSellingProducts, attributes, brands }) => {
   const router = useRouter();
@@ -384,6 +385,9 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
               {/* Category Cards Section */}
             <CategoryCards />
+
+            {/* Testimonials Section */}
+            <TestimonialsSection />
           </div>
         </Layout>
       )}

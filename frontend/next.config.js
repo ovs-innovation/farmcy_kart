@@ -16,7 +16,7 @@ const nextConfig = {
   reactStrictMode: false,
   turbopack: {},
   images: {
-    domains: ["res.cloudinary.com", "i.postimg.cc"],
+    domains: ["res.cloudinary.com", "i.postimg.cc", "img.youtube.com"],
   },
 
   i18n: {

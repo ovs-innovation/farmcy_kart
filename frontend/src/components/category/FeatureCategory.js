@@ -98,15 +98,15 @@ const FeatureCategory = ({ attributes }) => {
                 <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
                   {leftSidebarCategories.map((category, i) => (
                     <div
-                      key={i + 1}
+                  key={i + 1}
                       onClick={() => handleCategoryClick(category)}
                       className={`cursor-pointer flex flex-col items-center gap-2 min-w-[80px] transition-all duration-200 ${
-                        selectedCategory?._id === category._id
+                    selectedCategory?._id === category._id
                           ? "opacity-100"
                           : "opacity-70 hover:opacity-100"
-                      }`}
-                    >
-                      {category.icon && (
+                  }`}
+                >
+                    {category.icon && (
                         <div 
                           className={`relative w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all shadow-sm ${
                             selectedCategory?._id === category._id
@@ -117,13 +117,13 @@ const FeatureCategory = ({ attributes }) => {
                             boxShadow: '0 0 0 3px var(--store-color-100)'
                           } : {}}
                         >
-                          <Image
-                            src={category.icon}
+                      <Image
+                        src={category.icon}
                             alt={showingTranslateValue(category?.name)}
                             width={48}
                             height={48}
                             className="object-contain w-12 h-12"
-                          />
+                      />
                           {selectedCategory?._id === category._id && (
                             <div 
                               className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center"
@@ -187,8 +187,8 @@ const FeatureCategory = ({ attributes }) => {
                           ? "text-store-600 font-semibold"
                           : "text-gray-700"
                       }`}>
-                        {showingTranslateValue(category?.name)}
-                      </span>
+                      {showingTranslateValue(category?.name)}
+                    </span>
                     </div>
                   </div>
                 ))}
@@ -218,8 +218,8 @@ const FeatureCategory = ({ attributes }) => {
                           <span className="text-sm font-semibold text-store-500">
                             Up to 50% off
                           </span>
-                        </div>
-                        
+          </div>
+
                         {/* Product Images Grid */}
                         <div className="grid grid-cols-3 gap-1.5">
                           {categoryProducts.length > 0 ? (
@@ -344,29 +344,29 @@ const FeatureCategory = ({ attributes }) => {
                       </p>
                     </div>
                   </div>
-                  {loadingProducts ? (
-                    <CMSkeleton count={10} height={20} error={error} loading={loadingProducts} />
-                  ) : (
+            {loadingProducts ? (
+              <CMSkeleton count={10} height={20} error={error} loading={loadingProducts} />
+            ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-                      {products.length > 0 ? (
-                        products.map((product) => (
+                {products.length > 0 ? (
+                  products.map((product) => (
                           <div key={product._id} className="w-full">
-                            <ProductCard
-                              product={product}
-                              attributes={attributes}
-                              hidePriceAndAdd={true}
+                    <ProductCard
+                      product={product}
+                      attributes={attributes}
+                      hidePriceAndAdd={true}
                               hideDiscount={true}
                               hideWishlistCompare={true}
-                            />
+                    />
                           </div>
-                        ))
-                      ) : (
-                        <div className="col-span-full flex flex-col items-center justify-center py-10 text-gray-400">
-                          <p>No products found</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+                  ))
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-center py-10 text-gray-400">
+                    <p>No products found</p>
+                  </div>
+                )}
+              </div>
+            )}
                 </div>
               )}
             </div>
