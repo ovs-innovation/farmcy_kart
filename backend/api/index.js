@@ -27,6 +27,7 @@ const faqRoutes = require("../routes/faqRoutes");
 const newsletterRoutes = require("../routes/newsletterRoutes");
 const prescriptionRoutes = require("../routes/prescriptionRoutes");
 const testimonialRoutes = require("../routes/testimonialRoutes");
+const locationRoutes = require("../routes/locationRoutes");
 const { isAuth, isAdmin } = require("../config/auth");
 // const {
 //   getGlobalSetting,
@@ -76,6 +77,7 @@ app.use("/api/faqs", faqRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/newsletter", newsletterRoutes);
 app.use("/api/testimonials", testimonialRoutes);
+app.use("/api/location", locationRoutes);
 
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);

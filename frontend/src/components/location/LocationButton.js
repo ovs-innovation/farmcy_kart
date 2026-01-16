@@ -3,6 +3,7 @@ import { FiMapPin, FiLoader } from "react-icons/fi";
 import Cookies from "js-cookie";
 import { notifyError, notifySuccess } from "@utils/toast";
 import { useGeolocated } from "react-geolocated";
+import LocationServices from "@services/LocationServices";
 
 const LocationButton = ({ className = "" }) => {
   const [location, setLocation] = useState(null);
@@ -46,36 +47,10 @@ const LocationButton = ({ className = "" }) => {
 
   const handleGeocoding = async (lat, lng) => {
     try {
-      // Get Google Maps API key from environment variables
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-      
-      if (!apiKey) {
-        console.warn("Google Maps API key not found. Using coordinates only.");
-        // Still save coordinates even if API key is missing
-        const locationData = {
-          lat,
-          lng,
-          timestamp: Date.now(),
-        };
-        setLocation(locationData);
-        Cookies.set("userLocation", JSON.stringify(locationData), { expires: 30 });
-        
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent('locationUpdated', { detail: locationData }));
-        }
-        
-        notifySuccess("Location set successfully!");
-        return;
-      }
-
-      // Use Google Maps Geocoding API
-      const geocodeResponse = await fetch(
-        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${apiKey}`
-      );
-      
-      const geocodeData = await geocodeResponse.json();
+      const geocodeData = await LocationServices.getReverseGeocode({ lat, lng });
       
       if (geocodeData.status === 'OK' && geocodeData.results && geocodeData.results.length > 0) {
+
         const result = geocodeData.results[0];
         const address = result.formatted_address || '';
         
