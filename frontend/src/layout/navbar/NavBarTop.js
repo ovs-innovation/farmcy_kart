@@ -141,7 +141,7 @@ const NavBarTop = () => {
                
                
               <Link
-                href="/user/my-account"
+                href={userInfo?.email ? "/user/my-account" : "/auth/login"}
                 className={`font-medium hover:text-store-600`}
               >
                 {showingTranslateValue(

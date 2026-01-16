@@ -225,13 +225,13 @@ const Navbar = () => {
             {/* Right Side: Icons + Sign In */}
             <div className="flex items-center gap-4">
               {/* Box Icon / Orders */}
-              <Link
+              {/* <Link
                 href="/user/my-orders"
                 className="text-2xl text-gray-600 hover:text-store-500 transition-colors"
                 aria-label="Orders"
               >
                 <IoBagHandleOutline />
-              </Link>
+              </Link> */}
 
               {/* Wishlist Icon */}
               <Link
