@@ -201,8 +201,10 @@ const LocationPickerDropdown = ({ className = "" }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 z-50 w-72 md:w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-fade-in-down origin-top-left p-4">
-          <div className="font-semibold text-gray-800 mb-3 text-sm">Choose your location</div>
+        <>
+          <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setIsOpen(false)}></div>
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 md:translate-x-0 md:translate-y-0 md:absolute md:top-full md:left-0 mt-1 z-50 w-72 md:w-80 bg-white rounded-lg shadow-xl border border-gray-100 overflow-hidden animate-fade-in-down origin-top-left p-4">
+            <div className="font-semibold text-gray-800 mb-3 text-sm">Choose your location</div>
           
           <div className="relative mb-4">
             <div className="absolute top-0 left-0 bottom-0 w-1 bg-store-500 rounded-l-md"></div>
@@ -243,6 +245,7 @@ const LocationPickerDropdown = ({ className = "" }) => {
             <FiCrosshair size={18} />
           </button>
         </div>
+        </>
       )}
     </div>
   );

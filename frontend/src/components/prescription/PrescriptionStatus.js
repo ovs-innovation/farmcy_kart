@@ -144,7 +144,7 @@ const PrescriptionStatus = ({ userId }) => {
             </div>
 
             <div className="relative p-6">
-              <div className="flex items-start gap-4">
+              <div className="flex flex-col sm:flex-row items-start gap-4">
                 {/* Icon Section */}
                 <div className={`relative flex-shrink-0 ${statusConfig.pulse ? 'animate-pulse' : ''}`}>
                   <div className={`p-4 rounded-2xl ${statusConfig.iconBg} shadow-md`}>
