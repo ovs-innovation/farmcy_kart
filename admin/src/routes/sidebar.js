@@ -84,11 +84,7 @@ const sidebar = [
     icon: FiStar,
     name: "Reviews",
   },
-  {
-    path: "/newsletters",
-    icon: FiMail,
-    name: "Newsletters",
-  },
+
   {
     path: "/testimonials",
     icon: FiMessageCircle,

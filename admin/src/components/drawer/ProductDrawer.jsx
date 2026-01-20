@@ -1903,6 +1903,7 @@ const ProductDrawer = ({ id }) => {
                     folder="product"
                     imageUrl={imageUrl}
                     setImageUrl={setImageUrl}
+                    useOriginalSize={true} 
                   />
                 </div>
               </div>

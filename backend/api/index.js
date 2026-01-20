@@ -24,7 +24,7 @@ const shiprocketRoutes = require("../routes/shiprocketRoutes");
 const taxRoutes = require("../routes/taxRoutes");
 const reviewRoutes = require("../routes/reviewRoutes");
 const faqRoutes = require("../routes/faqRoutes");
-const newsletterRoutes = require("../routes/newsletterRoutes");
+
 const prescriptionRoutes = require("../routes/prescriptionRoutes");
 const testimonialRoutes = require("../routes/testimonialRoutes");
 const locationRoutes = require("../routes/locationRoutes");
@@ -75,7 +75,7 @@ app.use("/api/brand", brandRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
-app.use("/api/newsletter", newsletterRoutes);
+
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/location", locationRoutes);
 

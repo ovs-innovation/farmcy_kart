@@ -27,7 +27,7 @@ const StoreSetting = lazy(() => import("@/pages/StoreSetting"));
 const Notifications = lazy(() => import("@/pages/Notifications"));
 const Taxes = lazy(() => import("@/pages/Taxes"));
 const Reviews = lazy(() => import("@/pages/Reviews"));
-const Newsletters = lazy(() => import("@/pages/Newsletters"));
+
 const Faqs = lazy(() => import("@/pages/Faqs"));
 const Testimonials = lazy(() => import("@/pages/Testimonials"));
 const Prescriptions = lazy(() => import("@/pages/Prescriptions"));
@@ -129,10 +129,7 @@ const routes = [
     path: "/faqs",
     component: Faqs,
   },
-  {
-    path: "/newsletters",
-    component: Newsletters,
-  },
+
   {
     path: "/testimonials",
     component: Testimonials,
@@ -195,7 +192,7 @@ const routeAccessList = [
   { label: "Coming Soon", value: "coming-soon" },
   { label: "Reviews", value: "reviews" },
   { label: "FAQs", value: "faqs" },
-  { label: "Newsletters", value: "newsletters" },
+
   { label: "Testimonials", value: "testimonials" },
 ];
 

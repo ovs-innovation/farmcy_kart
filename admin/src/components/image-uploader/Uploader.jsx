@@ -205,7 +205,7 @@ const Uploader = ({
         <p className="text-sm mt-2">{t("DragYourImage")}</p>
         <em className="text-xs text-gray-400">
           {t("imageFormat")}
-          {` (${targetWidth}x${targetHeight})`}
+          {useOriginalSize ? " (Original Size)" : ` (${targetWidth}x${targetHeight})`}
         </em>
       </div>
 

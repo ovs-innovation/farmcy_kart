@@ -18,7 +18,7 @@ import useToggleDrawer from "@/hooks/useToggleDrawer";
 import AttributeServices from "@/services/AttributeServices";
 import CurrencyServices from "@/services/CurrencyServices";
 import BrandServices from "@/services/BrandServices";
-import NewsletterServices from "@/services/NewsletterServices";
+
 import { notifyError, notifySuccess } from "@/utils/toast";
 import useDisableForDemo from "@/hooks/useDisableForDemo";
 
@@ -79,26 +79,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
         }
       }
 
-      if (location.pathname === "/newsletters") {
-        if (ids) {
-          const res = await NewsletterServices.deleteManyNewsletter({
-            ids: ids,
-          });
-          setIsUpdate(true);
-          notifySuccess(res.message);
-          setIsCheck([]);
-          setServiceId();
-          closeModal();
-          setIsSubmitting(false);
-        } else {
-          const res = await NewsletterServices.deleteNewsletter(id);
-          setIsUpdate(true);
-          notifySuccess(res.message);
-          setServiceId();
-          closeModal();
-          setIsSubmitting(false);
-        }
-      }
+
 
       if (location.pathname === "/categories" || category) {
         if (ids) {

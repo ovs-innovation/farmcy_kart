@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IoCallOutline, IoDocumentTextOutline } from "react-icons/io5";
+import { FaPhoneVolume, FaFilePrescription } from "react-icons/fa";
 import PrescriptionUploadModal from "@components/prescription/PrescriptionUploadModal";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -35,63 +35,41 @@ const OrderOptions = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
           <a
             href={`tel:${contactNumber.replace(/\s+/g, '')}`}
-            className="flex items-center p-4 rounded-xl transition-colors cursor-pointer group"
-            style={{ 
-              backgroundColor: `${palette[50]}`, 
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = palette[100];
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = palette[50];
-            }}
+            className="flex items-center p-3 md:p-4 rounded-xl transition-all cursor-pointer group border overflow-hidden relative shadow-sm hover:shadow-md bg-white border-green-50"
           >
-            <div 
-              className="bg-white p-3 rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-              style={{ color: palette[600] }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = palette[700];
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = palette[600];
-              }}
-            >
-              <IoCallOutline className="text-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-green-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="relative mr-4">
+              <div className="absolute inset-0 bg-green-400 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+              <div className="relative bg-gradient-to-br from-green-500 to-emerald-600 p-3.5 rounded-full shadow-lg group-hover:shadow-green-300/50 transition-all duration-300 group-hover:-translate-y-1">
+                <FaPhoneVolume className="text-white text-xl" />
+              </div>
             </div>
-            <span className="ml-4 text-gray-700 font-medium">
-              Call <span className="font-bold text-gray-900">{contactNumber}</span>{" "}
-              to place order
-            </span>
+            <div className="flex flex-col">
+              <span className="text-xs text-green-700 font-semibold tracking-wide uppercase mb-0.5">Order via Call</span>
+              <span className="text-gray-900 font-bold text-lg leading-tight group-hover:text-green-700 transition-colors">
+                 {contactNumber}
+              </span>
+            </div>
           </a>
 
           <button
             onClick={() => setModalOpen(true)}
-            className="flex items-center p-4 rounded-xl transition-colors cursor-pointer group w-full text-left"
-            style={{ 
-              backgroundColor: `${palette[50]}`, 
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = palette[100];
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = palette[50];
-            }}
+            className="flex items-center p-3 md:p-4 rounded-xl transition-all cursor-pointer group w-full text-left border overflow-hidden relative shadow-sm hover:shadow-md bg-white border-blue-50"
           >
-            <div 
-              className="bg-white p-3 rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-              style={{ color: palette[600] }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.color = palette[700];
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = palette[600];
-              }}
-            >
-              <IoDocumentTextOutline className="text-2xl" />
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <div className="relative mr-4">
+               <div className="absolute inset-0 bg-blue-400 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+               <div className="relative bg-gradient-to-br from-blue-500 to-cyan-600 p-3.5 rounded-full shadow-lg group-hover:shadow-blue-300/50 transition-all duration-300 group-hover:-translate-y-1">
+                  <FaFilePrescription className="text-white text-xl" />
+               </div>
             </div>
-            <span className="ml-4 text-gray-700 font-medium">
-              Upload a <span className="font-bold text-gray-900">prescription</span>
-            </span>
+            <div className="relative flex flex-col">
+               <span className="text-xs text-blue-700 font-semibold tracking-wide uppercase mb-0.5">Quick Upload</span>
+               <span className="text-gray-900 font-bold text-lg leading-tight group-hover:text-blue-700 transition-colors">
+                 Upload Prescription
+               </span>
+            </div>
           </button>
         </div>
       </div>

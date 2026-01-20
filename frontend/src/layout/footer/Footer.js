@@ -472,37 +472,9 @@ const Footer = () => {
 
           {storeCustomizationSetting?.footer?.block4_status && (
             <div className="pb-3.5 sm:pb-0">
-              {/* Newsletter Section - Always Visible */}
-              <div>
-                <h3 className="text-lg font-bold mb-2 text-gray-800">
-                  Sign Up to Our Newsletter
-                </h3>
-                <div className="h-1.5 w-20 bg-store-500 rounded-full mb-3 md:mb-2"></div>
-
-                <form className="max-w-md relative mb-2" onSubmit={handleNewsletterSubmit}>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    className="w-full pl-6 pr-14 py-3 md:py-3 rounded-full bg-gray-50 border border-gray-200 focus:ring-2 focus:ring-store-500 focus:border-store-500 outline-none shadow-sm text-gray-700 placeholder-gray-400"
-                  />
-                  <button
-                    type="submit"
-                    disabled={loadingSubscribe}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 md:w-11 md:h-11 bg-store-500 rounded-full flex items-center justify-center text-white hover:bg-store-600 transition-colors shadow-md disabled:cursor-not-allowed disabled:bg-gray-400"
-                  >
-                    {loadingSubscribe ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <IoArrowForward size={20} />
-                    )}
-                  </button>
-                </form>
-              </div>
               
               {/* Address Section - Always Visible */}
-              <div className="space-y-2 mt-4">
+              <div className="space-y-2  ">
                 <h3 className="text-base font-bold text-gray-800">
                   Registered Office Address
                 </h3>
@@ -709,9 +681,9 @@ const Footer = () => {
                   <Image
                     width={274}
                     height={20}
-                    className="w-full max-w-xs rounded-lg"
+                    className="h-14 w-auto max-w-full rounded-lg object-contain"
                     src={
-                      "/payment-method/payment_logo.png" || storeCustomizationSetting?.footer?.payment_method_img 
+                      "/payment-method/razorpay_logo.svg" || storeCustomizationSetting?.footer?.payment_method_img 
                      
                     }
                     alt="payment method"

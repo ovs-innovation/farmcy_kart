@@ -65,7 +65,7 @@ const DealsYouLove = ({ products }) => {
             {dealProducts.map((item) => (
               <SwiperSlide key={item._id}>
                 <Link href={`/product/${item.slug}`} className="flex flex-col items-center cursor-pointer group/item">
-                  <div className="relative w-32 h-32 mb-3 overflow-hidden transition-transform duration-300 transform group-hover/item:scale-105">
+                  <div className="relative w-full h-[120px] sm:h-[140px] md:h-[160px] lg:h-[220px] mb-3 overflow-hidden transition-transform duration-300 transform group-hover/item:scale-105">
                     <Image 
                         src={item.image[0] || "https://placehold.co/150x150"} 
                         alt={showingTranslateValue(item.title)} 

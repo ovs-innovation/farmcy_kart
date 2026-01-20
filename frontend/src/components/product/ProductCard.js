@@ -121,16 +121,6 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
       )}
 
   <div className="group box-border w-full h-full max-w-full overflow-hidden flex rounded-lg border border-gray-200 flex-col items-center bg-white relative transition-shadow duration-300">
-        
-        {/* Product Name - Moved to top */}
-        <div className="w-full px-2 sm:px-3 md:px-4 pt-1.5 sm:pt-2 md:pt-2.5 pb-0.5 flex-shrink-0">
-          <h2 
-            className="text-heading mb-0 block text-xs sm:text-sm font-normal text-gray-600 leading-tight truncate overflow-hidden text-ellipsis whitespace-nowrap z-20" 
-            title={showingTranslateValue(product?.title)}
-          >
-            {showingTranslateValue(product?.title)}
-          </h2>
-        </div>
 
         {/* Product Image - Full display, no cover */}
         <div
@@ -141,11 +131,11 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
               `navigated to ${showingTranslateValue(product?.title)} product page`
             );
           }}
-          className="relative flex justify-center items-center cursor-pointer w-full p-1 sm:p-1.5 h-[80px] sm:h-[100px] md:h-[140px] lg:h-[160px] flex-shrink-0"
+          className="relative flex justify-center items-center cursor-pointer w-full p-1 sm:p-1.5 h-[120px] sm:h-[140px] md:h-[160px] lg:h-[220px] flex-shrink-0"
         >
           {/* Discount Badge - Top Left (hide if hideDiscount prop is true) */}
           {!hideDiscount && (
-            <div className="absolute top-2 sm:top-2 md:bottom-10 left-0 z-10">
+            <div className="absolute top-2 left-0 z-10">
               <Discount product={product} />
             </div>
           )}
@@ -184,7 +174,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                 alt="product"
                 width={300}
                 height={300}
-                className="w-full h-auto max-h-[80px] sm:max-h-[100px] md:max-h-[140px] lg:max-h-[160px] object-contain"
+                className="w-full h-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[220px] object-contain"
                 style={{ objectFit: 'contain' }}
               />
             ) : (
@@ -202,6 +192,16 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
               />
             )}
           </div>
+        </div>
+
+        {/* Product Name - Moved below image */}
+        <div className="w-full px-2 sm:px-3 md:px-4 pt-1.5 sm:pt-2 md:pt-2.5 pb-0.5 flex-shrink-0">
+          <h2 
+            className="text-heading mb-0 block text-xs sm:text-sm font-normal text-gray-600 leading-tight truncate overflow-hidden text-ellipsis whitespace-nowrap z-20" 
+            title={showingTranslateValue(product?.title)}
+          >
+            {showingTranslateValue(product?.title)}
+          </h2>
         </div>
 
         {/* Product Details */}
