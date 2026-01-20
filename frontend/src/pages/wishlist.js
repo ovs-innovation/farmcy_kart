@@ -121,7 +121,7 @@ const Wishlist = ({ attributes }) => {
                   <ProductCard product={product} attributes={attributes} />
                   <button
                     onClick={() => removeFromWishlist(product._id)}
-                    className="absolute top-4 left-2 z-20 p-2 bg-white rounded-full shadow-md hover:bg-store-500 hover:text-white transition-colors"
+                    className="absolute top-2 right-2 z-20 p-2 bg-white rounded-full shadow-md hover:bg-store-500 hover:text-white transition-colors"
                     aria-label="Remove from wishlist"
                   >
                     <FiTrash2 className="w-4 h-4" />
