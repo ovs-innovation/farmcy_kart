@@ -29,7 +29,7 @@ import SwitchToggle from "@components/form/SwitchToggle";
 const Checkout = () => {
   const { t } = useTranslation();
   const { storeCustomizationSetting } = useGetSetting();
-  const { showingTranslateValue } = useUtilsFunction();
+  const { showingTranslateValue, currency } = useUtilsFunction();
 
   const { data: storeSetting } = useQuery({
     queryKey: ["storeSetting"],
@@ -45,7 +45,6 @@ const Checkout = () => {
     isEmpty,
     items,
     cartTotal,
-    currency,
     register,
     errors,
     showCard,
@@ -99,7 +98,7 @@ const Checkout = () => {
                           )}
                           name="firstName"
                           type="text"
-                          placeholder="John"
+                          placeholder="firstname"
                         />
                         <Error errorName={errors.firstName} />
                       </div>
@@ -112,7 +111,7 @@ const Checkout = () => {
                           )}
                           name="lastName"
                           type="text"
-                          placeholder="Doe"
+                          placeholder="lastname"
                           required={false}
                         />
                         <Error errorName={errors.lastName} />
@@ -140,7 +139,7 @@ const Checkout = () => {
                           )}
                           name="contact"
                           type="tel"
-                          placeholder="+062-6532956"
+                          placeholder="6265329567"
                         />
 
                         <Error errorName={errors.contact} />
@@ -165,7 +164,7 @@ const Checkout = () => {
                           )}
                           name="address"
                           type="text"
-                          placeholder="123 Boulevard Rd, Beverley Hills"
+                          placeholder="Address line e.g. 1234 Main St"
                         />
                         <Error errorName={errors.address} />
                       </div>
@@ -178,7 +177,7 @@ const Checkout = () => {
                           )}
                           name="city"
                           type="text"
-                          placeholder="Los Angeles"
+                          placeholder="city"
                         />
                         <Error errorName={errors.city} />
                       </div>
@@ -191,7 +190,7 @@ const Checkout = () => {
                           )}
                           name="country"
                           type="text"
-                          placeholder="United States"
+                          placeholder="state"
                         />
                         <Error errorName={errors.country} />
                       </div>
@@ -204,67 +203,13 @@ const Checkout = () => {
                           )}
                           name="zipCode"
                           type="text"
-                          placeholder="2345"
+                          placeholder="pincode"
                         />
                         <Error errorName={errors.zipCode} />
                       </div>
                     </div>
 
-                    <Label
-                      label={showingTranslateValue(
-                        storeCustomizationSetting?.checkout?.shipping_cost
-                      )}
-                    />
-                    <div className="grid grid-cols-6 gap-6">
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputShipping
-                          currency={currency}
-                          handleShippingCost={handleShippingCost}
-                          register={register}
-                          // value="FedEx"
-                          value={showingTranslateValue(
-                            storeCustomizationSetting?.checkout
-                              ?.shipping_name_two
-                          )}
-                          description={showingTranslateValue(
-                            storeCustomizationSetting?.checkout
-                              ?.shipping_one_desc
-                          )}
-                          // time="Today"
-                          cost={
-                            Number(
-                              storeCustomizationSetting?.checkout
-                                ?.shipping_one_cost
-                            ) || 60
-                          }
-                        />
-                        <Error errorName={errors.shippingOption} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputShipping
-                          currency={currency}
-                          handleShippingCost={handleShippingCost}
-                          register={register}
-                          value={showingTranslateValue(
-                            storeCustomizationSetting?.checkout
-                              ?.shipping_name_two
-                          )}
-                          description={showingTranslateValue(
-                            storeCustomizationSetting?.checkout
-                              ?.shipping_two_desc
-                          )}
-                          // time="7 Days"
-                          cost={
-                            Number(
-                              storeCustomizationSetting?.checkout
-                                ?.shipping_two_cost
-                            ) || 20
-                          }
-                        />
-                        <Error errorName={errors.shippingOption} />
-                      </div>
-                    </div>
+                    {/* Shipping Cost Section Removed */}
                   </div>
                   <div className="form-group mt-12">
                     <h2 className="font-semibold text-base text-gray-700 pb-3">
@@ -436,15 +381,7 @@ const Checkout = () => {
                     {cartTotal?.toFixed(2)}
                   </span>
                 </div>
-                <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
-                  {showingTranslateValue(
-                    storeCustomizationSetting?.checkout?.shipping_cost
-                  )}
-                  <span className="ml-auto flex-shrink-0 text-gray-800 font-bold">
-                    {currency}
-                    {shippingCost?.toFixed(2)}
-                  </span>
-                </div>
+                 
                 <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
                   {showingTranslateValue(
                     storeCustomizationSetting?.checkout?.discount

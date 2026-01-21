@@ -409,6 +409,13 @@ const InvoiceForDownload = ({
               </Text>
             </View>
             <View>
+              <Text style={styles.title}>TAX/GST</Text>
+              <Text style={styles.info}>
+                {currency}
+                {getNumberTwo(data?.taxSummary?.totalTax || 0)}
+              </Text>
+            </View>
+            <View>
               <Text style={styles.title}>Total Amount</Text>
               <Text style={styles.amount}>
                 {currency}

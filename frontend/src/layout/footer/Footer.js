@@ -696,21 +696,30 @@ const Footer = () => {
  
 
         {/* Copyright Section */}
-        <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex justify-center py-5 border-t border-gray-200">
-          <div className="flex flex-col items-center gap-2">
-            <p className="text-sm text-gray-600 leading-6 text-center">
-              Copyright 2025 @{" "}
-              <Link
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-store-600 font-bold hover:text-store-700 transition-colors duration-300"
-              >
-                Farmacykart
-              </Link>
-              , All rights reserved.
-            </p>
-          </div>
+        <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex flex-col md:flex-row justify-between items-center py-2 border-t border-gray-200 gap-0 md:gap-2">
+          <p className="text-sm text-gray-600 leading-6 text-center md:text-left mb-0">
+            Copyright 2025 @{" "}
+            <Link
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-store-600 font-bold hover:text-store-700 transition-colors duration-300"
+            >
+              Farmacykart
+            </Link>
+            , All rights reserved.
+          </p>
+          <p className="text-sm text-gray-500 leading-6 text-center md:text-right flex items-center justify-center md:justify-end gap-1">
+            Developed by{" "}
+            <a
+              href="https://vastoratech.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-store-600 font-semibold hover:underline"
+            >
+              Vastora Tech
+            </a>
+          </p>
         </div>
       </div>
     </div>

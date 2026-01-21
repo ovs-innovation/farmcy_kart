@@ -104,14 +104,26 @@ const Search = ({ products, attributes }) => {
     );
   };
 
-  // Clear search query when filters are applied
+  // Clear search query and URL filters when sidebar filters are applied
   const clearSearchQuery = () => {
-    if (router.query.query) {
+    // Check if any filtering params exist in URL that limit the initial data fetch
+    if (
+      router.query.query || 
+      router.query._id || 
+      router.query.category || 
+      router.query.brand
+    ) {
       const newQuery = { ...router.query };
+      
+      // Remove params that restrict the server-side product list
       delete newQuery.query;
+      delete newQuery._id;
+      delete newQuery.category;
+      delete newQuery.brand;
+      
       router.push(
         {
-          pathname: router.pathname,
+          pathname: "/search",
           query: newQuery,
         },
         undefined,

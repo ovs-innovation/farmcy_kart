@@ -593,15 +593,15 @@ const InvoiceForDownload = ({
           </View>
 
           <View style={styles.invoiceThird}>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
               <Text style={styles.title}>{t("InvoicepaymentMethod")}</Text>
               <Text style={{ fontSize: 10, color: "#0e9f6e" }}>
                 {data?.paymentMethod}
               </Text>
             </View>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
               <Text style={styles.title}>
-                <Text style={{ width: "25%", alignItems: "baseline" }}>
+                <Text style={{ width: "16%", alignItems: "baseline" }}>
                   Sub Total
                 </Text>
               </Text>
@@ -616,7 +616,7 @@ const InvoiceForDownload = ({
               </Text>
             </View>
 
-            <View style={{ width: "25%", alignItems: "baseline" }}>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
               <Text style={styles.title}>
                 <Text style={{ textAlign: "left" }}>{t("ShippingCost")}</Text>
               </Text>
@@ -629,7 +629,7 @@ const InvoiceForDownload = ({
                 </Text>
               </Text>
             </View>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
               <Text style={styles.title}>
                 <Text style={{ textAlign: "left" }}>{t("discount")} </Text>
               </Text>
@@ -643,7 +643,21 @@ const InvoiceForDownload = ({
                 </Text>
               </Text>
             </View>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
+              <Text style={styles.title}>
+                <Text style={{ textAlign: "left" }}>TAX/GST</Text>
+              </Text>
+              <Text style={styles.title}>
+                <Text style={{ textAlign: "left" }}>
+                  <Text style={styles.infoCost}>
+                    {" "}
+                    {currency}
+                    {getNumberTwo(data?.taxSummary?.totalTax || 0)}
+                  </Text>
+                </Text>
+              </Text>
+            </View>
+            <View style={{ width: "16%", alignItems: "baseline" }}>
               <Text style={styles.title}>
                 <Text
                   style={{ width: "45%", textAlign: "right", float: "left" }}

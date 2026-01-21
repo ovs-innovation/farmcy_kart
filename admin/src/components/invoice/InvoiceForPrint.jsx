@@ -240,6 +240,13 @@ const InvoiceForPrint = ({ data, printRef, globalSetting }) => {
                       </span>
                     </h5>
                   )}
+                  <h5 className="flex justify-between font-medium text-xs">
+                    <span> TAX/GST :</span>{" "}
+                    <span className="font-semibold">
+                      {currency}
+                      {parseFloat(or?.taxSummary?.totalTax || 0).toFixed(2)}
+                    </span>
+                  </h5>
                   <h3 className="flex justify-between font-medium text-xs border-t border-black mt-2">
                     <span> {t("Total")} : </span>
                     <span className="font-semibold ">
@@ -477,6 +484,13 @@ const InvoiceForPrint = ({ data, printRef, globalSetting }) => {
                     </span>
                   </h5>
                 )}
+                  <h5 className="flex justify-between font-medium text-xs">
+                    <span> TAX/GST :</span>{" "}
+                    <span className="font-semibold">
+                      {currency}
+                      {parseFloat(data?.taxSummary?.totalTax || 0).toFixed(2)}
+                    </span>
+                  </h5>
                 <h3 className="flex justify-between font-medium text-xs border-t border-black mt-2">
                   <span> {t("Total")} : </span>
                   <span className="font-semibold ">

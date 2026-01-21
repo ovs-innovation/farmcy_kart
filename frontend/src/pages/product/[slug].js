@@ -827,10 +827,15 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
     const activeButton = tabContainer.querySelector(`[data-tab="${activeTab}"]`);
     if (activeButton) {
-      activeButton.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center'
+      const containerWidth = tabContainer.offsetWidth;
+      const buttonLeft = activeButton.offsetLeft;
+      const buttonWidth = activeButton.offsetWidth;
+      
+      const scrollLeft = buttonLeft - (containerWidth / 2) + (buttonWidth / 2);
+      
+      tabContainer.scrollTo({
+        left: scrollLeft,
+        behavior: 'smooth'
       });
     }
   }, [activeTab]);
@@ -1147,6 +1152,23 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
   // console.log("discount", discount);
 
+  const handleTabClick = (tabId) => {
+    setActiveTab(tabId);
+    const element = document.getElementById(tabId);
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      // Header is approx 80-100px. Tabs are 50-60px. Total ~140-160px. 
+      // Using 180px provides a safe buffer so the title is clearly visible.
+      const offset = 180; 
+      const targetPosition = window.pageYOffset + rect.top - offset;
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: "smooth"
+      });
+    }
+  };
+
   return (
     <>
       {isLoading ? (
@@ -1195,9 +1217,9 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                
               </div>
               <div className="w-full rounded-lg  bg-white">
-                <div className="flex flex-col xl:flex-row gap-10">
+                <div className="flex flex-col lg:flex-row gap-10">
                   <div className="flex-shrink-0 w-full mx-auto md:w-5/12 lg:w-5/12 xl:w-5/12">
-                    <div className="mt-1 xl:mt-2 xl:sticky xl:top-28 xl:space-y-4">
+                    <div className="mt-1 lg:mt-2 lg:sticky lg:top-28 lg:space-y-4">
                       <Discount slug product={product} discount={discount} />
 
                       {/* Flipkart-style Product Image Gallery with buttons inside */}
@@ -1265,7 +1287,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                     </div>
                   </div>
 
-                  <div className="w-full xl:w-7/12 relative min-w-0">
+                  <div className="w-full lg:w-7/12 relative min-w-0">
                     <div className="flex flex-col md:flex-row lg:flex-row xl:flex-row">
                       <div className="xl:pr-6 md:pr-6 w-full">
                         <div className="mb-6">
@@ -1576,7 +1598,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                           )}
 
                           {/* Tab Navigation */}
-                          <div className="sticky top-16 lg:top-[80px] z-10 bg-white mt-10 opacity-100 mb-6 py-2 shadow-sm w-full">
+                          <div className="sticky top-16 lg:top-[80px] z-40 bg-white mt-10 opacity-100 mb-6 py-2 shadow-sm w-full">
                             <style jsx global>{`
                               .tab-navigation-container {
                                 scrollbar-width: none !important; /* Firefox */
@@ -1591,10 +1613,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                                 {product?.productDescription?.enabled !== false && (
                                 <button
                                   data-tab="product-description"
-                                  onClick={() => {
-                                    setActiveTab("product-description");
-                                    document.getElementById("product-description")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("product-description")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "product-description"
                                       ? "border-store-600 text-store-600"
@@ -1607,10 +1626,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {product?.dynamicSections?.some(s => s?.name?.toLowerCase().includes("specification")) && (
                                 <button
                                   data-tab="specification"
-                                  onClick={() => {
-                                    setActiveTab("specification");
-                                    document.getElementById("specification")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("specification")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "specification"
                                       ? "border-store-600 text-store-600"
@@ -1623,10 +1639,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {product?.keyUses?.enabled !== false && product?.keyUses?.items?.length > 0 && (
                                 <button
                                   data-tab="key-uses"
-                                  onClick={() => {
-                                    setActiveTab("key-uses");
-                                    document.getElementById("key-uses")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("key-uses")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "key-uses"
                                       ? "border-store-600 text-store-600"
@@ -1639,10 +1652,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {product?.howToUse?.enabled !== false && product?.howToUse?.items?.length > 0 && (
                                 <button
                                   data-tab="how-to-use"
-                                  onClick={() => {
-                                    setActiveTab("how-to-use");
-                                    document.getElementById("how-to-use")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("how-to-use")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "how-to-use"
                                       ? "border-store-600 text-store-600"
@@ -1655,10 +1665,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {product?.safetyInformation?.enabled !== false && product?.safetyInformation?.items?.length > 0 && (
                                 <button
                                   data-tab="safety-information"
-                                  onClick={() => {
-                                    setActiveTab("safety-information");
-                                    document.getElementById("safety-information")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("safety-information")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "safety-information"
                                       ? "border-store-600 text-store-600"
@@ -1671,10 +1678,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {product?.additionalInformation?.enabled !== false && product?.additionalInformation?.subsections?.length > 0 && (
                                 <button
                                   data-tab="additional-information"
-                                  onClick={() => {
-                                    setActiveTab("additional-information");
-                                    document.getElementById("additional-information")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("additional-information")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "additional-information"
                                       ? "border-store-600 text-store-600"
@@ -1687,10 +1691,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               {productFaqs.length > 0 && (
                                 <button
                                   data-tab="faq"
-                                  onClick={() => {
-                                    setActiveTab("faq");
-                                    document.getElementById("faq")?.scrollIntoView({ behavior: "smooth", block: "start" });
-                                  }}
+                                  onClick={() => handleTabClick("faq")}
                                   className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors whitespace-nowrap flex-shrink-0 ${
                                     activeTab === "faq"
                                       ? "border-store-600 text-store-600"
@@ -1706,7 +1707,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* Product Description Section */}
                           {product?.productDescription?.enabled !== false && product?.productDescription?.description && (
-                            <div id="product-description" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="product-description" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
                                 {product.productDescription.icon && (
                                   <img src={product.productDescription.icon} alt="" className="w-10 h-10" />
@@ -1723,7 +1724,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* Specification Section */}
                           {product?.dynamicSections?.some(s => s?.name?.toLowerCase().includes("specification")) && (
-                            <div id="specification" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="specification" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               {product.dynamicSections
                                 .filter(s => s?.name?.toLowerCase().includes("specification"))
                                 .map((section, idx) => (
@@ -1749,7 +1750,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* Key Uses Section */}
                           {product?.keyUses?.enabled !== false && product?.keyUses?.items?.length > 0 && (
-                            <div id="key-uses" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="key-uses" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
                                 {product.keyUses.icon && (
                                   <img src={product.keyUses.icon} alt="" className="w-10 h-10" />
@@ -1771,7 +1772,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* How To Use Section */}
                           {product?.howToUse?.enabled !== false && product?.howToUse?.items?.length > 0 && (
-                            <div id="how-to-use" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="how-to-use" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
                                 {product.howToUse.icon && (
                                   <img src={product.howToUse.icon} alt="" className="w-10 h-10" />
@@ -1792,7 +1793,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* Safety Information Section */}
                           {product?.safetyInformation?.enabled !== false && product?.safetyInformation?.items?.length > 0 && (
-                            <div id="safety-information" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="safety-information" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
                                 {product.safetyInformation.icon && (
                                   <img src={product.safetyInformation.icon} alt="" className="w-10 h-10" />
@@ -1813,7 +1814,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* Additional Information Section */}
                           {product?.additionalInformation?.enabled !== false && product?.additionalInformation?.subsections?.length > 0 && (
-                            <div id="additional-information" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="additional-information" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
                                 {product.additionalInformation.icon && (
                                   <img src={product.additionalInformation.icon} alt="" className="w-10 h-10" />
@@ -1852,7 +1853,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
                           {/* FAQ Section */}
                           {productFaqs.length > 0 && (
-                            <div id="faq" className="mt-8 scroll-mt-20 border border-gray-200 rounded-lg p-6 bg-white">
+                            <div id="faq" className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <h3 className="text-xl font-semibold text-gray-900 mb-4">
                                 {product?.faqs?.title || (product?.faqTitle && product.faqTitle.trim().length
                                   ? product.faqTitle

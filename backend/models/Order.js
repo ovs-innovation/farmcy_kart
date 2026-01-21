@@ -51,6 +51,11 @@ const orderSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    taxSummary: {
+      inclusiveTax: { type: Number, default: 0 },
+      exclusiveTax: { type: Number, default: 0 },
+      totalTax: { type: Number, default: 0 },
+    },
     discount: {
       type: Number,
       required: true,
