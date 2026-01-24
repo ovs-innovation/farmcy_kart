@@ -61,18 +61,19 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                   <div className="w-full">
                     <HeroBanner />
                   </div>
+                    {/* Slider Carousel */}
+                 <div className="md:hidden">
+                  <SliderCarousel />
+                 </div>
                   <div className="w-full">
                     <OrderOptions />
                   </div>
-                  
+                     {/* Slider Carousel */}
+                 <div className="hidden md:block">
+                  <SliderCarousel />
+                 </div>
                 </div>
-                {storeCustomizationSetting?.home?.promotion_banner_status && (
-                  <div
-                    className={`bg-store-100 px-10 py-6 rounded-lg mt-6`}
-                  >
-                    <Banner />
-                  </div>
-                )}
+                 
               </div>
             </div>
 
@@ -93,11 +94,24 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
               </div>
             )}
 
+           
+            {/* Suggested For You Section */}
+            <div className="bg-white  ">
+              <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
+                
+                <div className="mt-4">
+                  {/* Renders personalized suggestions for user/guest */}
+                  {/* If you want to move this, just change the position */}
+                  {typeof window !== "undefined" && (
+                    require("@components/product/SuggestedProducts").default()
+                  )}
+                </div>
+              </div>
+            </div>
             {/* Deals You'll Love Section */}
             {discountProducts?.length > 0 && (
                 <DealsYouLove products={discountProducts} />
             )}
-
 
             {/* popular products */}
             {storeCustomizationSetting?.home?.popular_products_status && (
@@ -177,9 +191,9 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
            
 
-                  <div className="w-full px-3 sm:px-10">
+                  {/* <div className="w-full px-3 sm:px-10">
                     <HealthCheckupBanner />
-                  </div>
+                  </div> */}
             {/* best selling products */}
             {bestSellingProducts?.length > 0 && (
               <div className="bg-white lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
@@ -249,8 +263,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                 </div>
               </div>
             )}
-            {/* Slider Carousel */}
-            <SliderCarousel />
+          
             {/* //  promotional banner card */}
             {storeCustomizationSetting?.home?.delivery_status && 
              (storeCustomizationSetting?.home?.promotional_banner_image1 || 

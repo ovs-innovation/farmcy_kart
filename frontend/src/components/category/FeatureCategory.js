@@ -91,78 +91,80 @@ const FeatureCategory = ({ attributes }) => {
         <CMSkeleton count={10} height={20} error={error} loading={loading} />
       ) : (
         <div className="w-full">
-          <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-            {/* Small Screen: Horizontal Scrollable Category Icons */}
-            <div className="lg:hidden w-full">
-              <div className="bg-white rounded-lg border border-gray-200 p-3">
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-2">
-                  {leftSidebarCategories.map((category, i) => (
-                    <div
-                  key={i + 1}
-                      onClick={() => handleCategoryClick(category)}
-                      className={`cursor-pointer flex flex-col items-center gap-2 min-w-[80px] transition-all duration-200 ${
-                    selectedCategory?._id === category._id
-                          ? "opacity-100"
-                          : "opacity-70 hover:opacity-100"
-                  }`}
-                >
-                    {category.icon && (
-                        <div 
-                          className={`relative w-16 h-16 rounded-full flex items-center justify-center border-2 transition-all shadow-sm ${
-                            selectedCategory?._id === category._id
-                              ? "border-store-500 bg-store-50 scale-110"
-                              : "border-gray-200 bg-gray-50"
-                          }`}
-                          style={selectedCategory?._id === category._id ? {
-                            boxShadow: '0 0 0 3px var(--store-color-100)'
-                          } : {}}
-                        >
-                      <Image
-                        src={category.icon}
-                            alt={showingTranslateValue(category?.name)}
-                            width={48}
-                            height={48}
-                            className="object-contain w-12 h-12"
-                      />
-                          {selectedCategory?._id === category._id && (
-                            <div 
-                              className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white flex items-center justify-center"
-                              style={{ backgroundColor: 'var(--store-color-500)' }}
-                            >
-                              <div className="w-2 h-2 rounded-full bg-white"></div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      <span className={`text-xs text-center font-medium ${
-                        selectedCategory?._id === category._id
-                          ? "text-store-600"
-                          : "text-gray-700"
-                      }`}>
-                        {showingTranslateValue(category?.name)}
-                      </span>
-                    </div>
-                  ))}
+          {/* Unified background for both category list and product area */}
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 relative">
+            <div className="hidden lg:block absolute top-0 left-0 w-full h-full  " style={{ background: '#e6f9f0', zIndex: 0 }}></div>
+            {/* Small Screen: Connected Category & Product Section Background */}
+            <div className="lg:hidden w-full relative">
+              {/* Unified background block for both sections - light green */}
+              <div className="absolute top-0 left-0 w-full h-[420px]  " style={{ background: '#e6f9f0', zIndex: 0 }}></div>
+              <div className="relative z-10">
+                <div className="  p-3" style={{ background: '#e6f9f0' }}>
+                  <div className="flex  overflow-x-auto scrollbar-hide pb-2">
+                    {leftSidebarCategories.map((category, i) => (
+                      <div
+                        key={i + 1}
+                        onClick={() => handleCategoryClick(category)}
+                        className={`cursor-pointer flex flex-col items-center gap-2 min-w-[80px] transition-all duration-200 rounded-2xl ${
+                          selectedCategory?._id === category._id
+                            ? "opacity-100"
+                            : "opacity-70 hover:opacity-100"
+                        }`}
+                        style={selectedCategory?._id === category._id ? {
+                           
+                          color: 'var(--store-color-700)',
+                          boxShadow: '0 2px 8px 0 rgba(16,185,129,0.10)'
+                        } : { background: '#fff' }}
+                      >
+                        {category.icon && (
+                          <div 
+                            className={`relative w-16 h-16 flex items-center justify-center transition-all ${
+                              selectedCategory?._id === category._id
+                                ? "scale-110"
+                                : "bg-gray-50"
+                            }`}
+                          >
+                            <Image
+                              src={category.icon}
+                              alt={showingTranslateValue(category?.name)}
+                              width={48}
+                              height={48}
+                              className="object-contain w-12 h-12"
+                            />
+                             
+                          </div>
+                        )}
+                        <span className={`text-xs text-center font-medium ${
+                          selectedCategory?._id === category._id
+                            ? "text-emerald-700"
+                            : "text-gray-700"
+                        }`}>
+                          {showingTranslateValue(category?.name)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Large Screen: Left Sidebar - Vertical Category List */}
             <div className="hidden lg:block w-full lg:w-1/4 flex-shrink-0 relative">
-              <div className="bg-white rounded-lg border border-gray-200 p-3 lg:p-4 space-y-2">
-                {leftSidebarCategories.map((category, i) => (
-                  <div
-                    key={i + 1}
-                    onClick={() => handleCategoryClick(category)}
-                    className={`cursor-pointer p-3 rounded-lg transition-all duration-200 border relative ${
-                      selectedCategory?._id === category._id
-                        ? "bg-store-50 border-store-500 shadow-sm"
-                        : "bg-white border-gray-200 hover:bg-gray-50 hover:border-store-300"
-                    }`}
-                  >
+              <div className="rounded-lg border border-gray-200 p-3 lg:p-4  " style={{ background: '#e6f9f0' }}>
+                  {leftSidebarCategories.map((category, i) => (
+                    <div
+                      key={i + 1}
+                      onClick={() => handleCategoryClick(category)}
+                      className={`cursor-pointer p-3 transition-all duration-200 relative ${
+                        selectedCategory?._id === category._id
+                          ? "shadow-sm"
+                          : "bg-white hover:bg-gray-50"
+                      } ${i !== leftSidebarCategories.length - 1 ? 'border-b border-gray-200' : ''}`}
+                      style={{ marginBottom: 0, borderRadius: 0 }}
+                    >
                     {selectedCategory?._id === category._id && (
                       <div 
-                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-l-8 border-transparent z-10"
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 w-0 h-0  z-10"
                         style={{ borderLeftColor: 'var(--store-color-500)' }}
                       ></div>
                     )}
@@ -199,155 +201,65 @@ const FeatureCategory = ({ attributes }) => {
             <div className="flex-1">
               {/* Category Cards - Only on small/medium screens with discount offers */}
               <div className="lg:hidden grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                {rightGridCategories.map((category, i) => {
-                  const categoryProducts = categoryProductsMap[category._id] || [];
-                  return (
-                    <Link
-                      key={i + 1}
-                      href={`/search?category=${category.slug || category.name?.toLowerCase().replace(/[^A-Z0-9]+/gi, "-")}&_id=${category._id}`}
-                      className="bg-white rounded-lg border border-gray-200 p-3 hover:shadow-md transition-all duration-200 hover:border-store-500 group"
-                    >
-                      <div className="flex flex-col">
-                        {/* Category Title */}
-                        <h3 className="text-base font-bold text-gray-800 mb-2 group-hover:text-store-600 transition-colors">
-                          {showingTranslateValue(category?.name)}
-                        </h3>
-                        
-                        {/* Discount Offer */}
-                        <div className="mb-3">
-                          <span className="text-sm font-semibold text-store-500">
+                <div className="flex flex-wrap -mx-1">
+                  {rightGridCategories.map((category, i) => {
+                    const categoryProducts = categoryProductsMap[category._id] || [];
+                    return (
+                      <Link
+                        key={i + 1}
+                        href={`/search?category=${category.slug || category.name?.toLowerCase().replace(/[^A-Z0-9]+/gi, "-")}&_id=${category._id}`}
+                        className="bg-white rounded-xl shadow p-2 flex flex-col items-center     transition-all duration-200   group w-1/3 px-1 mb-3"
+                        style={{ maxWidth: '33.3333%' }}
+                      >
+                        <div className="w-full h-20 flex items-center justify-center mb-2">
+                          {categoryProducts[0]?.images?.[0] ? (
+                            <Image
+                              src={categoryProducts[0].images[0]}
+                              alt={categoryProducts[0].title}
+                              width={60}
+                              height={60}
+                              className="object-contain h-full w-full"
+                            />
+                          ) : category.icon ? (
+                            <Image
+                              src={category.icon}
+                              alt={showingTranslateValue(category?.name)}
+                              width={48}
+                              height={48}
+                              className="object-contain h-full w-full opacity-60"
+                            />
+                          ) : null}
+                        </div>
+                        <div className="w-full text-center">
+                          <span className="block font-medium text-gray-800 text-sm line-clamp-2">
+                            {showingTranslateValue(category?.name)}
+                          </span>
+                          <span className="block text-xs text-store-500 font-bold mt-1">
                             Up to 50% off
                           </span>
-          </div>
-
-                        {/* Product Images Grid */}
-                        <div className="grid grid-cols-3 gap-1.5">
-                          {categoryProducts.length > 0 ? (
-                            categoryProducts.map((product, idx) => (
-                              <div key={product._id || idx} className="relative aspect-square bg-gray-50 rounded overflow-hidden">
-                                {product.images && product.images[0] ? (
-                                  <Image
-                                    src={product.images[0]}
-                                    alt={product.title}
-                                    fill
-                                    className="object-contain p-0.5"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center text-gray-400 text-[8px]">
-                                    {category.icon && (
-                                      <Image
-                                        src={category.icon}
-                                        alt={showingTranslateValue(category?.name)}
-                                        width={24}
-                                        height={24}
-                                        className="object-contain opacity-50"
-                                      />
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            ))
-                          ) : (
-                            Array.from({ length: 3 }).map((_, idx) => (
-                              <div key={idx} className="relative aspect-square bg-gray-50 rounded overflow-hidden">
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                  {category.icon && (
-                                    <Image
-                                      src={category.icon}
-                                      alt={showingTranslateValue(category?.name)}
-                                      width={24}
-                                      height={24}
-                                      className="object-contain opacity-50"
-                                    />
-                                  )}
-                                </div>
-                              </div>
-                            ))
-                          )}
                         </div>
-                      </div>
-                    </Link>
-                  );
-                })}
+                      </Link>
+                    );
+                  })}
+                </div>
+                 
               </div>
 
               {/* Products Grid - Show on all screens */}
               {selectedCategory && (
                 <div 
-                  className="rounded-lg border-2 p-3 sm:p-4 lg:p-6 mt-4 lg:mt-0 transition-all duration-300 relative"
+                  className="rounded-lg  p-3 sm:p-4 lg:p-6 mt-4 lg:mt-0 transition-all duration-300 relative"
                   style={{
-                    backgroundColor: 'var(--store-color-50)',
-                    borderColor: 'var(--store-color-300)',
+                    
+                   
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)'
                   }}
                 >
-                  {/* Connection Indicator - Small Screen */}
-                  <div className="lg:hidden absolute -top-4 left-4 flex items-center gap-2">
-                    <div 
-                      className="w-8 h-8 rounded-full border-2 flex items-center justify-center"
-                      style={{ 
-                        backgroundColor: 'var(--store-color-500)',
-                        borderColor: 'var(--store-color-500)'
-                      }}
-                    >
-                      {selectedCategory.icon && (
-                        <Image
-                          src={selectedCategory.icon}
-                          alt={showingTranslateValue(selectedCategory?.name)}
-                          width={20}
-                          height={20}
-                          className="object-contain filter brightness-0 invert"
-                        />
-                      )}
-                    </div>
-                    <div 
-                      className="h-0.5 w-8"
-                      style={{ backgroundColor: 'var(--store-color-300)' }}
-                    ></div>
-                  </div>
-
-                  {/* Header with Category Icon and Name */}
-                  <div className="mb-3 sm:mb-4 flex items-center gap-3">
-                    {/* Category Icon */}
-                    {selectedCategory.icon && (
-                      <div 
-                        className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg flex items-center justify-center border-2 flex-shrink-0"
-                        style={{ 
-                          backgroundColor: 'white',
-                          borderColor: 'var(--store-color-300)'
-                        }}
-                      >
-                        <Image
-                          src={selectedCategory.icon}
-                          alt={showingTranslateValue(selectedCategory?.name)}
-                          width={32}
-                          height={32}
-                          className="object-contain"
-                        />
-                      </div>
-                    )}
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-1 h-6 rounded-full"
-                          style={{ backgroundColor: 'var(--store-color-500)' }}
-                        ></div>
-                        <h3 
-                          className="text-lg sm:text-xl font-bold"
-                          style={{ color: 'var(--store-color-800)' }}
-                        >
-                          {showingTranslateValue(selectedCategory?.name)}
-                        </h3>
-                      </div>
-                      <p className="text-xs sm:text-sm text-gray-600 mt-0.5">
-                        {products.length} {products.length === 1 ? 'product' : 'products'} available
-                      </p>
-                    </div>
-                  </div>
+                   
             {loadingProducts ? (
               <CMSkeleton count={10} height={20} error={error} loading={loadingProducts} />
             ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
+                    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
                 {products.length > 0 ? (
                   products.map((product) => (
                           <div key={product._id} className="w-full">

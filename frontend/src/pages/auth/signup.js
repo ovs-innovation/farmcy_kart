@@ -63,18 +63,10 @@ const SignUp = () => {
                         label="Password"
                         name="password"
                         type="password"
-                        placeholder="Create a strong password"
+                        placeholder="Enter password (min 8 characters)"
                         Icon={FiLock}
-                        pattern={
-                          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{8,}$/
-                        }
-                        patternMessage={[
-                          "1. Password must be at least 8 characters long.",
-                          "2. Password must contain at least one uppercase letter.",
-                          "3. Password must contain at least one lowercase letter.",
-                          "4. Password must contain at least one number.",
-                          "5. Password must contain at least one special character.",
-                        ]}
+                        pattern={/^.{8,}$/}
+                        patternMessage={"Password must be at least 8 characters."}
                       />
                       <Error errorName={errors.password} />
                     </div>

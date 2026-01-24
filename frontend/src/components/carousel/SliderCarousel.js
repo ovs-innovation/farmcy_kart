@@ -29,7 +29,7 @@ const SliderCarousel = () => {
   }
 
   return (
-    <div className="w-full bg-white py-10 md:py-16">
+    <div className="w-full bg-white  ">
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
         <div className="relative">
           <Swiper

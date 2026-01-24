@@ -109,7 +109,7 @@ const Navbar = () => {
       <div className="hidden lg:block sticky top-0 z-50 bg-white w-full shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-8">
           <div className="top-bar h-8 lg:h-auto flex items-center justify-between gap-3 mx-auto">
-            
+              
             {/* Left Side: Logo + Nav Links */}
             <div className="flex items-center gap-8">
               <Link href="/" className="mr-3 lg:mr-0 block">
@@ -168,25 +168,16 @@ const Navbar = () => {
                   <button className="flex items-center gap-1 hover:text-store-500 transition-colors py-2">
                     Store Location <IoChevronDownOutline />
                   </button>
-                  <div className="absolute top-full right-0 w-64 bg-white shadow-lg rounded-md py-1 hidden group-hover:block z-50 border border-gray-100">
+                  <div className="absolute top-full right-0 w-64 bg-white shadow-lg rounded-md py-1 px-2 hidden group-hover:block z-50 border border-gray-100">
                     {globalSetting?.address ? (
-                      <a
-                        href={`https://maps.google.com/?q=${encodeURIComponent(
-                          `${globalSetting?.address || ""} ${
-                            globalSetting?.post_code || ""
-                          }`.trim()
-                        )}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-store-500 transition-colors"
-                      >
+                      <>
                         <span className="font-medium block">{globalSetting?.address}</span>
                         {globalSetting?.post_code && (
                           <span className="block text-xs text-gray-500 mt-1 font-semibold">
                             Pincode: {globalSetting?.post_code}
                           </span>
                         )}
-                      </a>
+                      </>
                     ) : (
                       <span className="block px-4 py-2.5 text-sm text-gray-500">
                         Address not available

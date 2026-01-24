@@ -86,7 +86,6 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
               categoryId = product.category;
             }
           }
-          
           // Also check categories array
           if (!categoryId && product.categories && Array.isArray(product.categories) && product.categories.length > 0) {
             const firstCategory = product.categories[0];
@@ -96,7 +95,6 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
               categoryId = firstCategory;
             }
           }
-          
           // Extract brand ID properly
           let brandId = null;
           if (product.brand) {
@@ -106,7 +104,13 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
               brandId = product.brand;
             }
           }
-          
+          // Use product image if available, else fallback to icon
+          let image = null;
+          if (product.images && Array.isArray(product.images) && product.images[0]) {
+            image = product.images[0];
+          } else if (product.image && Array.isArray(product.image) && product.image[0]) {
+            image = product.image[0];
+          }
           return {
             type: "product",
             id: product._id,
@@ -114,7 +118,8 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
             slug: product.slug,
             category: categoryId,
             brand: brandId,
-            icon: <FiPackage className="w-4 h-4" />,
+            image,
+            icon: !image ? <FiPackage className="w-4 h-4" /> : null,
           };
         });
       results.push(...matchedProducts);
@@ -129,13 +134,18 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
           return name.includes(query) || slug.includes(query);
         })
         .slice(0, 3) // Limit to 3 brands
-        .map((brand) => ({
-          type: "brand",
-          id: brand._id,
-          title: showingTranslateValue(brand?.name),
-          slug: brand.slug,
-          icon: <FiTag className="w-4 h-4" />,
-        }));
+        .map((brand) => {
+          // Prefer logo, then coverImage
+          let image = brand.logo || brand.coverImage || null;
+          return {
+            type: "brand",
+            id: brand._id,
+            title: showingTranslateValue(brand?.name),
+            slug: brand.slug,
+            image,
+            icon: !image ? <FiTag className="w-4 h-4" /> : null,
+          };
+        });
       results.push(...matchedBrands);
     }
 
@@ -157,13 +167,18 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
           return name.includes(query);
         })
         .slice(0, 3) // Limit to 3 categories
-        .map((category) => ({
-          type: "category",
-          id: category._id,
-          title: showingTranslateValue(category?.name),
-          slug: category.slug,
-          icon: <FiGrid className="w-4 h-4" />,
-        }));
+        .map((category) => {
+          // Use icon as image if available
+          let image = category.icon || null;
+          return {
+            type: "category",
+            id: category._id,
+            title: showingTranslateValue(category?.name),
+            slug: category.slug,
+            image,
+            icon: !image ? <FiGrid className="w-4 h-4" /> : null,
+          };
+        });
       results.push(...matchedCategories);
     }
 
@@ -352,7 +367,13 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
               }}
               className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 transition-colors text-left cursor-pointer"
             >
-              <span className="text-gray-400 flex-shrink-0">{suggestion.icon}</span>
+              {suggestion.image ? (
+                <span className="flex-shrink-0 w-7 h-7 rounded bg-gray-100 flex items-center justify-center overflow-hidden">
+                  <img src={suggestion.image} alt={suggestion.title} className="object-contain w-7 h-7" />
+                </span>
+              ) : (
+                <span className="text-gray-400 flex-shrink-0">{suggestion.icon}</span>
+              )}
               <div className="flex-1 min-w-0">
                 <div className="text-sm font-medium text-gray-800 truncate">
                   {suggestion.title}

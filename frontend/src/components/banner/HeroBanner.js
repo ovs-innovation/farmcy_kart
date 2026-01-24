@@ -278,12 +278,12 @@ const HeroBanner = () => {
           variants={contentVariants}
           initial="initial"
           animate="animate"
-          className="relative z-10 text-center w-full max-w-4xl mx-auto mb-6 md:mb-8 px-2"
+          className="relative z-10 text-center w-full max-w-6xl mx-auto mb-6 md:mb-8 px-2"
         >
-          <h1 className="text-3xl md:text-5xl   font-bold mb-4 md:mb-6 leading-tight text-emerald-950 drop-shadow-sm">
+          <h1 className="text-2xl md:text-5xl   font-bold mb-4 md:mb-6 leading-tight text-emerald-950 drop-shadow-sm">
             Affordable Medicines, Delivered to Your Doorstep
           </h1>
-          <p className="text-base md:text-lg lg:text-xl text-emerald-800 drop-shadow-sm mb-6 md:mb-8">
+          <p className="text-base md:text-lg lg:text-xl text-emerald-800 drop-shadow-sm mb-6 md:mb-8" style={{ fontFamily: 'Poppins, Arial, sans-serif' }}>
             Trusted pharmacy • Genuine medicines • Fast delivery
           </p>
           {/* Search Box Section */}
@@ -294,10 +294,10 @@ const HeroBanner = () => {
           transition={{ delay: 0.5 }}
           className="relative z-50 w-full flex flex-col items-center px-3 sm:px-4"
         >
-          <div className="w-full max-w-3xl">
+          <div className="w-full max-w-4xl">
             <form onSubmit={handleSubmit} className="w-full relative flex items-center bg-white rounded-md shadow-lg border-2 border-emerald-500/20 transition-all duration-300 z-30 p-1.5">
               {/* Location Button */}
-              <div className="border-r border-gray-200 mr-1 md:mr-2 relative z-50">
+              <div className="border-r  border-gray-200 mr-1 md:mr-2 relative z-50">
                 <LocationPickerDropdown className="!px-2 md:!px-4 !border-none" />
               </div>
               

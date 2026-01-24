@@ -58,6 +58,7 @@ import { getExpectedDeliveryTime } from "@utils/deliveryTime";
 import CustomerServices from "@services/CustomerServices";
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
+import SuggestedProducts from "@components/product/SuggestedProducts";
 
 const ProductScreen = ({ product, attributes, relatedProducts }) => {
   const router = useRouter();
@@ -79,6 +80,41 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
   const { handleAddItem, item, setItem } = useAddToCart();
   const { setItems, addItem } = useCart();
   const { storeCustomizationSetting, globalSetting } = useGetSetting();
+
+  // Handle Product View Tracking
+  useEffect(() => {
+    if (product?._id) {
+       // 1. Backend Tracking (fire and forget)
+       ProductServices.addProductView({ productId: product._id }).catch(err => 
+         console.error("Tracking view failed", err)
+       );
+
+       // 2. Guest LocalStorage Tracking
+       if (!session?.user && typeof window !== "undefined") {
+          try {
+             let history = [];
+             const stored = localStorage.getItem("recentlyViewed");
+             if (stored) history = JSON.parse(stored);
+             
+             // Remove if exists (to move to top)
+             history = history.filter(p => p._id !== product._id);
+             
+             // Add current
+             history.unshift({
+               _id: product._id,
+               viewedAt: Date.now()
+             });
+             
+             // Limit to 10
+             if(history.length > 10) history = history.slice(0, 10);
+             
+             localStorage.setItem("recentlyViewed", JSON.stringify(history));
+          } catch(e) {
+             console.error("LS Error", e);
+          }
+       }
+    }
+  }, [product, session]);
 
   // react hook
 
@@ -2126,11 +2162,13 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                 </div>
               )} */}
 
+             
+
               {/* related products */}
               {relatedProducts?.length >= 2 && (
                 <div className="pt-10 lg:pt-20 lg:pb-10">
                   <h3 className="leading-7 text-lg lg:text-xl mb-3 font-semibold font-serif hover:text-gray-600">
-                    {t("relatedProducts")}
+                    {t("Related Products")}
                   </h3>
                   <div className="flex">
                     <div className="w-full">

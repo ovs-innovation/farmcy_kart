@@ -9,6 +9,7 @@ import "swiper/css/navigation";
 import "swiper/css/autoplay";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useGetSetting from "@hooks/useGetSetting";
+import SectionHeader from "@components/common/SectionHeader";
 
 const DealsYouLove = ({ products }) => {
   const prevRef = useRef(null);
@@ -33,10 +34,13 @@ const DealsYouLove = ({ products }) => {
   return (
     <div className="bg-white lg:py-16 py-6 mx-auto max-w-screen-2xl px-3 sm:px-10">
       <div className="mb-10 flex justify-between items-center">
-            <div className="w-full">
-                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Deals you'll love</h2>
-                 <p className="text-gray-600 inline-block mr-2">Buy now to get the best deals</p>
-            </div>
+        <div className="w-full">
+          <SectionHeader
+            title="Deals You'll Love"
+            subtitle="Buy now to get the best deals"
+            align="left"
+          />
+        </div>
       </div>
 
       <div className="flex w-full relative group">

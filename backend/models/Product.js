@@ -262,6 +262,11 @@ const productSchema = new mongoose.Schema(
   }
 );
 
+// Indexes for recommendation performance
+productSchema.index({ status: 1, sales: -1 }); // Fast sorting by sales
+productSchema.index({ status: 1, category: 1 }); // Fast category lookups
+productSchema.index({ status: 1, brand: 1 }); // Fast brand lookups
+
 // module.exports = productSchema;
 
 const Product = mongoose.model("Product", productSchema);

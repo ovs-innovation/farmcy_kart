@@ -2,6 +2,7 @@ const Product = require("../models/Product");
 const mongoose = require("mongoose");
 const Category = require("../models/Category");
 const Brand = require("../models/Brand");
+const UserProductView = require("../models/UserProductView");
 const { languageCodes } = require("../utils/data");
 
 const normalizeTaxPayload = (payload = {}) => {
@@ -854,7 +855,183 @@ const deleteManyProducts = async (req, res) => {
   }
 };
 
+const addProductView = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.user?._id;
+
+    // If user is not logged in, we rely on frontend localStorage
+    // The controller returns success so frontend code doesn't break
+    if (!userId) {
+      return res.status(200).json({
+        success: true,
+        message: "Guest view (handled by client)",
+      });
+    }
+
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required",
+      });
+    }
+
+    // 1. Validate Product Exists & Get Category
+    const product = await Product.findById(productId);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    // 2. Prevent Duplicate Views (24 Hours Logic)
+    // We check if this user viewed this product in the last 24 hours
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const existingView = await UserProductView.findOne({
+      userId,
+      productId,
+      viewedAt: { $gte: twentyFourHoursAgo },
+    });
+
+    if (existingView) {
+      // Update the existing view time to now, but strictly speaking
+      // for "duplicate prevention", we might just want to acknowledge it.
+      // Updating keeps "most recently viewed" accurate.
+      existingView.viewedAt = Date.now();
+      await existingView.save();
+      return res.status(200).json({
+        success: true,
+        message: "Product view updated",
+      });
+    }
+
+    // 3. Create New View Record
+    // We store the category to help with "Recommended" queries later
+    await UserProductView.create({
+      userId,
+      productId,
+      category: product.category, // Assuming direct relationship or use product.categories[0]
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Product view tracked successfully",
+    });
+  } catch (err) {
+    // console.log("addProductView Error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const getRecommendations = async (req, res) => {
+  try {
+    const userId = req.user?._id;
+    // Allow frontend to pass guest history via body (POST) or query (GET)
+    let guestProductIds = req.body.guestProductIds;
+    
+    // If using GET, parsing query params (expecting comma separated string)
+    if (!guestProductIds && req.query.productIds) {
+       guestProductIds = req.query.productIds.split(',');
+    }
+
+    let seedProducts = [];
+    let viewedIds = [];
+
+    // 1. Gather Seed Data (User History)
+    if (userId) {
+      // Fetch last 10 viewed user history
+      const views = await UserProductView.find({ userId })
+        .sort({ viewedAt: -1 })
+        .limit(10)
+        .populate("productId", "category brand");
+
+      // Filter out any products that might have been deleted but still in history
+      seedProducts = views
+        .map((v) => v.productId)
+        .filter((p) => p != null);
+        
+      viewedIds = seedProducts.map((p) => p._id);
+    } 
+    
+    // If guest or limited history, combine with guestProductIds provided by frontend
+    if (guestProductIds && Array.isArray(guestProductIds) && guestProductIds.length > 0) {
+      const guestProds = await Product.find({
+        _id: { $in: guestProductIds },
+        status: "show",
+      }).select("category brand");
+      
+      seedProducts = [...seedProducts, ...guestProds];
+      viewedIds = [...viewedIds, ...guestProds.map(p => p._id)];
+    }
+
+    // 2. Fallback: If absolutely no history, return Top Selling / Popular
+    if (seedProducts.length === 0) {
+      const fallbackProducts = await Product.find({ status: "show" })
+        .sort({ sales: -1 }) // sort by sales descending
+        .limit(10);
+      return res.status(200).json(fallbackProducts);
+    }
+
+    // 3. Extract Categories and Brands for Finding Similar Items
+    // Using Set to get unique values
+    const categories = [
+      ...new Set(
+        seedProducts.map((p) => p.category?.toString()).filter(Boolean)
+      ),
+    ];
+    const brands = [
+      ...new Set(seedProducts.map((p) => p.brand?.toString()).filter(Boolean)),
+    ];
+
+    // 4. Find Recommended Products
+    // Rule: Same Category OR Same Brand, excluding the ones already viewed
+    const recommendations = await Product.find({
+      status: "show",
+      _id: { $nin: viewedIds }, // Don't show what they just looked at
+      $or: [
+        { category: { $in: categories } },
+        { brand: { $in: brands } },
+      ],
+    })
+      .limit(10)
+      .sort({ sales: -1 }); // Rank by popularity among similar items
+
+    // 5. Fill functionality (if < 10 recommendations found)
+    if (recommendations.length < 10) {
+      const limit = 10 - recommendations.length;
+      // Exclude already found recommendations and viewed items
+      const excludeIds = [
+        ...viewedIds,
+        ...recommendations.map((p) => p._id),
+      ];
+
+      const fillers = await Product.find({
+        status: "show",
+        _id: { $nin: excludeIds },
+      })
+        .sort({ sales: -1 }) // Top selling generally
+        .limit(limit);
+
+      recommendations.push(...fillers);
+    }
+
+    res.status(200).json(recommendations);
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
+  addProductView,
+  getRecommendations,
   addProduct,
   addAllProducts,
   getAllProducts,

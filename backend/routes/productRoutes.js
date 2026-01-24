@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const rateLimit = require("express-rate-limit");
+const { isAuthOptional } = require("../config/auth");
 const {
+  addProductView,
+  getRecommendations,
   addProduct,
   addAllProducts,
   getAllProducts,
@@ -15,8 +19,31 @@ const {
   getShowingStoreProducts,
 } = require("../controller/productController");
 
+// Rate limiters to prevent abuse
+const viewLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 100, // Limit each IP to 100 views per hour
+  message: "Too many views from this IP, please try again after an hour"
+});
+
+const recommendationLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 20, // Limit each IP to 20 recommendation requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 //add a product
 router.post("/add", addProduct);
+
+//track product view
+router.post("/view", viewLimiter, isAuthOptional, addProductView);
+
+//get recommendations (using POST to allow body with guest IDs if needed)
+router.post("/recommendations", recommendationLimiter, isAuthOptional, getRecommendations);
+
+//get suggested products (GET endpoint as requested)
+router.get("/suggested", recommendationLimiter, isAuthOptional, getRecommendations);
 
 //add multiple products
 router.post("/all", addAllProducts);
