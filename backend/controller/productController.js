@@ -321,6 +321,9 @@ const addProduct = async (req, res) => {
     const payload = {
       ...req.body,
       ...taxFields,
+      isWholesaler: req.body.isWholesaler === true || req.body.isWholesaler === 'true',
+      wholePrice: Number(req.body.wholePrice) || 0,
+      minQuantity: Number(req.body.minQuantity) || 0,
       dynamicSections: sanitizeDynamicSections(req.body.dynamicSections),
       mediaSections: sanitizeMediaSections(req.body.mediaSections),
       faqs: sanitizeFaqSection(req.body.faqs),
@@ -497,6 +500,16 @@ const getProductById = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
+        // Wholesaler fields
+        if (Object.prototype.hasOwnProperty.call(req.body, "isWholesaler")) {
+          product.isWholesaler = req.body.isWholesaler === true || req.body.isWholesaler === 'true';
+        }
+        if (Object.prototype.hasOwnProperty.call(req.body, "wholePrice")) {
+          product.wholePrice = Number(req.body.wholePrice) || 0;
+        }
+        if (Object.prototype.hasOwnProperty.call(req.body, "minQuantity")) {
+          product.minQuantity = Number(req.body.minQuantity) || 0;
+        }
   // console.log('update product')
   // console.log('variant',req.body.variants)
   try {

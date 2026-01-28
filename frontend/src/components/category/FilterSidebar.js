@@ -117,32 +117,61 @@ const FilterSidebar = ({
               </span>
             );
           })}
-          {selectedCategories.map((catId) => {
-            // Search in both parent and child categories
-            let cat = categories.find((c) => c._id === catId);
-            if (!cat) {
-              // Try to find in subcategories
+          {
+            (() => {
+              const tags = [];
+              const consumed = new Set();
+
+              // If all children of a parent are selected, show parent tag once
               for (const parentCat of categories) {
-                if (parentCat.children) {
-                  cat = parentCat.children.find((c) => c._id === catId);
-                  if (cat) break;
+                if (parentCat.children && parentCat.children.length > 0) {
+                  const childIds = parentCat.children.map((c) => c._id);
+                  const allSelected = childIds.every((id) => selectedCategories.includes(id));
+                  if (allSelected) {
+                    tags.push({ id: parentCat._id, name: parentCat.name, isParent: true });
+                    childIds.forEach((id) => consumed.add(id));
+                  }
                 }
               }
-            }
-            if (!cat) return null;
-            return (
-              <span
-                key={catId}
-                className="inline-flex items-center px-2 py-1 bg-gray-100 text-xs rounded-sm"
-              >
-                {showingTranslateValue(cat.name)}
-                <IoClose
-                  className="ml-1 cursor-pointer hover:text-red-600"
-                  onClick={() => handleCategoryChange(catId)}
-                />
-              </span>
-            );
-          })}
+
+              // Remaining selected categories not part of a complete parent
+              for (const catId of selectedCategories) {
+                if (consumed.has(catId)) continue;
+                // find parent or child by id
+                let cat = categories.find((c) => c._id === catId);
+                if (!cat) {
+                  for (const parentCat of categories) {
+                    if (parentCat.children) {
+                      const child = parentCat.children.find((c) => c._id === catId);
+                      if (child) {
+                        cat = child;
+                        break;
+                      }
+                    }
+                  }
+                }
+                if (cat) tags.push({ id: catId, name: cat.name, isParent: false });
+              }
+
+              return tags.map((t) => (
+                <span key={t.id} className="inline-flex items-center px-2 py-1 bg-gray-100 text-xs rounded-sm">
+                  {showingTranslateValue(t.name)}
+                  <IoClose
+                    className="ml-1 cursor-pointer hover:text-red-600"
+                    onClick={() => {
+                      if (t.isParent) {
+                        const parent = categories.find((c) => c._id === t.id);
+                        const childIds = parent?.children?.map((c) => c._id) || [t.id];
+                        handleCategoryChange(childIds);
+                      } else {
+                        handleCategoryChange(t.id);
+                      }
+                    }}
+                  />
+                </span>
+              ));
+            })()
+          }
           {priceRange.min > 0 && (
             <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-xs rounded-sm">
               Min: {priceRange.min}
@@ -207,8 +236,16 @@ const FilterSidebar = ({
                       <input
                         type="checkbox"
                         id={`cat-${cat._id}`}
-                        checked={selectedCategories.includes(cat._id)}
-                        onChange={() => handleCategoryChange(cat._id)}
+                        // Consider a parent checked if it or all its children are selected
+                        checked={
+                          selectedCategories.includes(cat._id) || 
+                          (cat.children && cat.children.length > 0 && cat.children.every((c) => selectedCategories.includes(c._id)))
+                        }
+                        onChange={() => {
+                          // If parent has children, toggle all child ids together
+                          const ids = (cat.children && cat.children.length > 0) ? [cat._id, ...cat.children.map(c => c._id)] : [cat._id];
+                          handleCategoryChange(ids);
+                        }}
                         className="rounded border-gray-300 text-store-600 focus:ring-store-500"
                       />
                       <label

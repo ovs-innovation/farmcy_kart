@@ -17,6 +17,7 @@ import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
 import { SidebarContext } from "@context/SidebarContext";
 import AttributeServices from "@services/AttributeServices";
+import CategoryServices from "@services/CategoryServices";
 import CategoryCarousel from "@components/carousel/CategoryCarousel";
 import FilterSidebar from "@components/category/FilterSidebar";
 import FilterDrawer from "@components/drawer/FilterDrawer";
@@ -36,6 +37,9 @@ const Search = ({ products, attributes }) => {
     setIsLoading(false);
   }, [products, setIsLoading]);
 
+  // Maintain local products state so we can refetch when query params change (category/_id etc.)
+  const [initialProducts, setInitialProducts] = useState(products || []);
+
   // Call useFilter hook FIRST to get sortedField and other values
   const {
     setSortedField,
@@ -51,7 +55,7 @@ const Search = ({ products, attributes }) => {
     selectedDiscount,
     setSelectedDiscount,
     sortedField,
-  } = useFilter(products);
+  } = useFilter(initialProducts);
 
   // Reset visible products when sort or filters change
   // This useEffect must come AFTER useFilter call
@@ -142,8 +146,25 @@ const Search = ({ products, attributes }) => {
     }
   };
 
-  const handleCategoryChange = (catId) => {
+  const handleCategoryChange = (catIdOrIds) => {
     clearSearchQuery();
+
+    // If an array of ids is passed (parent toggle), add/remove them in bulk
+    if (Array.isArray(catIdOrIds)) {
+      const idsToToggle = catIdOrIds;
+      const anySelected = idsToToggle.some((id) => selectedCategories.includes(id));
+      if (anySelected) {
+        // Remove all provided ids
+        setSelectedCategories((prev) => prev.filter((id) => !idsToToggle.includes(id)));
+      } else {
+        // Add missing ids
+        setSelectedCategories((prev) => [...prev, ...idsToToggle.filter((id) => !prev.includes(id))]);
+      }
+      return;
+    }
+
+    // Single id toggle (subcategory or parent id directly)
+    const catId = catIdOrIds;
     if (selectedCategories.includes(catId)) {
       setSelectedCategories(selectedCategories.filter((id) => id !== catId));
     } else {
@@ -190,6 +211,79 @@ const Search = ({ products, attributes }) => {
       setSearchText("");
     }
   }, [router.query.query]);
+
+  // Re-fetch products client-side when category/_id or brand or query changes in the URL
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const fetchByQuery = async () => {
+      try {
+        setIsLoading(true);
+        const q = router.query.query || "";
+        const id = router.query._id || "";
+        const brand = router.query.brand || "";
+        const response = await ProductServices.getShowingStoreProducts({
+          category: id ? id : "",
+          title: q ? encodeURIComponent(q) : "",
+          brand: brand ? brand : "",
+        });
+        setInitialProducts(response?.products || []);
+        // scrolling disabled to avoid jump
+      } catch (err) {
+        console.error("Error fetching products for query:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    (async () => {
+      try {
+        await fetchByQuery();
+
+        // Also set selectedCategories so sidebar filters reflect the URL
+        if (router.query._id) {
+          try {
+            const catRes = await CategoryServices.getShowingCategory();
+            const parents = (catRes && (catRes[0]?.children || catRes)) || [];
+            let found = null;
+            for (const parentCat of parents) {
+              if (parentCat._id === router.query._id) {
+                found = parentCat;
+                break;
+              }
+              if (parentCat.children) {
+                const child = parentCat.children.find((c) => c._id === router.query._id);
+                if (child) {
+                  found = child;
+                  break;
+                }
+              }
+            }
+
+            if (found) {
+              if (found.children && found.children.length > 0) {
+                // parent selected => select all child ids
+                const childIds = found.children.map((c) => c._id);
+                setSelectedCategories(childIds);
+              } else {
+                // child's id
+                setSelectedCategories([found._id]);
+              }
+            } else {
+              setSelectedCategories([router.query._id]);
+            }
+          } catch (err) {
+            console.error("Error fetching categories for selection", err);
+            setSelectedCategories([router.query._id]);
+          }
+        } else {
+          setSelectedCategories([]);
+        }
+      } catch (err) {
+        console.error("Error fetching products for query:", err);
+      }
+    })();
+  }, [router.isReady, router.query._id, router.query.query, router.query.brand]);
 
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -375,9 +469,9 @@ const Search = ({ products, attributes }) => {
               <div className="w-full grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:gap-6">
                 {/* <Card /> */}
               </div>
-              <div className="relative block">
+              {/* <div className="relative block">
                 <CategoryCarousel />
-              </div>
+              </div> */}
               {productData?.length === 0 ? (
                 <div className="mx-auto p-5 my-5">
                   <Image

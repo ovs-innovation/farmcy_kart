@@ -104,6 +104,19 @@ const faqSchema = new mongoose.Schema(
 
 const productSchema = new mongoose.Schema(
   {
+        // Wholesaler fields
+        isWholesaler: {
+          type: Boolean,
+          default: false,
+        },
+        wholePrice: {
+          type: Number,
+          default: 0,
+        },
+        minQuantity: {
+          type: Number,
+          default: 0,
+        },
     productId: {
       type: String,
       required: false,

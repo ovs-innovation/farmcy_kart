@@ -77,10 +77,7 @@ const CategoryCards = () => {
             __html: `
               .category-cards-swiper .swiper-button-next,
               .category-cards-swiper .swiper-button-prev {
-                background-color: white !important;
-                width: 40px !important;
-                height: 40px !important;
-                border-radius: 50% !important;
+               
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
                 transition: all 0.3s ease !important;
               }
@@ -134,7 +131,7 @@ const CategoryCards = () => {
               return (
                 <SwiperSlide key={category.id}>
                   <div
-                    className="group relative overflow-hidden rounded-3xl bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] h-full border border-gray-100 flex flex-col"
+                    className="group relative overflow-hidden  transition-all duration-500   h-full   flex flex-col"
                     style={{
                       minHeight: "300px",
                     }}
@@ -163,13 +160,13 @@ const CategoryCards = () => {
                     <div className="relative z-10 p-8 flex flex-col flex-1 -mt-6">
                       
                       {/* Content */}
-                      <h3 className="text-xl md:text-2xl font-black text-gray-800 mb-3 uppercase tracking-tight group-hover:text-gray-900 line-clamp-2">
+                      <h3 className="text-xl md:text-2xl text-center font-black text-gray-800 mb-3 uppercase tracking-tight group-hover:text-gray-900 line-clamp-2">
                         {category.title}
                       </h3>
                       
-                      <p className="text-gray-500 leading-relaxed mb-6 flex-1 text-sm md:text-base line-clamp-3">
+                      {/* <p className="text-gray-500 leading-relaxed mb-6 flex-1 text-sm md:text-base line-clamp-3">
                         {category.description}
-                      </p>
+                      </p> */}
 
                       
                     </div>

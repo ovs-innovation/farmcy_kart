@@ -1,3 +1,4 @@
+// Wholesaler Section moved inside the ProductDrawer component's return below
 import ReactTagInput from "@pathofdev/react-tag-input";
 import {
   Button,
@@ -1951,6 +1952,7 @@ const ProductDrawer = ({ id }) => {
                 <LabelArea label={`${t("ProductSKU")} / ${t("ProductBarcode")}`} />
                 <div className="col-span-8 sm:col-span-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
+
                     <InputArea
                       register={register}
                       label={t("ProductSKU")}
@@ -2094,7 +2096,6 @@ const ProductDrawer = ({ id }) => {
                   <Error errorName={errors.discount} />
                 </div>
               </div>
-
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label="Sale Price" />
                 <div className="col-span-8 sm:col-span-4">
@@ -2104,6 +2105,55 @@ const ProductDrawer = ({ id }) => {
                    </div>
                 </div>
               </div>
+              {/* Wholesaler Section (conditional fields)
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label="Wholesaler?" />
+                <div className="col-span-8 sm:col-span-4 flex items-center gap-4">
+                  <input
+                    type="checkbox"
+                    {...register("isWholesaler")}
+                    className="h-5 w-5 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500"
+                  />
+                  <span className="text-sm text-gray-700">Enable wholesaler pricing for this product</span>
+                </div>
+              </div>
+              {Boolean(watch && watch("isWholesaler")) && (
+                <>
+                  <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                    <LabelArea label="Wholesale Price" />
+                    <div className="col-span-8 sm:col-span-4">
+                      <InputValue
+                        register={register}
+                        minValue={0}
+                        defaultValue={0}
+                        label="Wholesale Price"
+                        name="wholePrice"
+                        type="number"
+                        placeholder="Wholesale Price"
+                        currency={currency}
+                      />
+                      <Error errorName={errors.wholePrice} />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                    <LabelArea label="Min Wholesale Quantity" />
+                    <div className="col-span-8 sm:col-span-4">
+                      <InputValue
+                        register={register}
+                        minValue={0}
+                        defaultValue={0}
+                        label="Min Wholesale Quantity"
+                        name="minQuantity"
+                        type="number"
+                        placeholder="Minimum quantity for wholesale price"
+                      />
+                      <Error errorName={errors.minQuantity} />
+                    </div>
+                  </div>
+                </>
+              )} */}
+              
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label="HSN Code" />

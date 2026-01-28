@@ -81,14 +81,22 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
             {storeCustomizationSetting?.home?.featured_status && (
               <div id="feature-category" className="bg-white lg:py-16 py-10">
                 <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                  <SectionHeader
-                    title={storeCustomizationSetting?.home?.feature_title || "Featured Categories"}
-                    subtitle={storeCustomizationSetting?.home?.feature_description || "Explore our handpicked selection of featured categories"}
-                    loading={loading}
-                    error={error}
-                    align="left"
-                  />
-
+                  <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                    <SectionHeader
+                      title={storeCustomizationSetting?.home?.feature_title || "Featured Categories"}
+                      subtitle={storeCustomizationSetting?.home?.feature_description || "Explore our handpicked selection of featured categories"}
+                      loading={loading}
+                      error={error}
+                      align="left"
+                    />
+                    <Link
+                      href="/categories"
+                      className="border border-emerald-700 text-emerald-700 font-bold rounded-full px-6 py-2 flex items-center gap-2 hover:bg-emerald-50 transition text-base whitespace-nowrap"
+                      style={{ minWidth: 120 }}
+                    >
+                      View All <span className="text-lg">&gt;</span>
+                    </Link>
+                  </div>
                   <FeatureCategory attributes={attributes} />
                 </div>
               </div>
