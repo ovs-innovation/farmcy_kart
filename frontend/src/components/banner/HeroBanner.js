@@ -292,10 +292,10 @@ const HeroBanner = () => {
           initial="initial"
           animate="animate"
           transition={{ delay: 0.5 }}
-          className="relative z-50 w-full flex flex-col items-center px-3 sm:px-4"
+          className="relative z-50 w-full flex flex-col items-center  "
         >
           <div className="w-full max-w-4xl">
-            <form onSubmit={handleSubmit} className="w-full relative flex items-center bg-white rounded-md shadow-lg border-2 border-emerald-500/20 transition-all duration-300 z-30 p-1.5">
+            <form onSubmit={handleSubmit} className="w-full relative flex items-center bg-white rounded-full shadow-lg border border-gray-600 transition-all duration-300 z-30 p-1.5">
               {/* Location Button */}
               <div className="border-r  border-gray-200 mr-1 md:mr-2 relative z-50">
                 <LocationPickerDropdown className="!px-2 md:!px-4 !border-none" />
@@ -310,7 +310,7 @@ const HeroBanner = () => {
                   ref={searchInputRef}
                   type="text"
                   placeholder="Search for medicine"
-                  className="w-full py-3 pl-10 pr-4 focus:outline-none focus:ring-0 text-gray-700 font-medium border-0 focus:border-0 placeholder-gray-400 bg-transparent"
+                  className="w-full py-2 pl-10 pr-4 focus:outline-none focus:ring-0 text-gray-700 font-medium border-0 focus:border-0 placeholder-gray-400 bg-transparent"
                   value={searchText}
                   onChange={(e) => handleSearchChange(e.target.value)}
                   onFocus={() => {

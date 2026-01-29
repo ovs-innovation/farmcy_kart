@@ -48,6 +48,9 @@ const CustomerTable = ({ customers }) => {
               <span className="text-sm">{user.email}</span>{" "}
             </TableCell>
             <TableCell>
+              <span className="text-sm">{user.role || 'customer'}</span>
+            </TableCell>
+            <TableCell>
               <span className="text-sm font-medium">{user.phone}</span>
             </TableCell>
 

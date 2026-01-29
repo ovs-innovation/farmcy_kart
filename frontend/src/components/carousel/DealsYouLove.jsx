@@ -11,7 +11,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import useGetSetting from "@hooks/useGetSetting";
 import SectionHeader from "@components/common/SectionHeader";
 
-const DealsYouLove = ({ products }) => {
+const DealsYouLove = ({ products, sectionColor }) => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
   const { showingTranslateValue, getNumber } = useUtilsFunction();
@@ -30,20 +30,22 @@ const DealsYouLove = ({ products }) => {
   }).filter(p => p.discountPercent >= 20);
 
   if (!dealProducts || dealProducts.length === 0) return null;
-
+  const sectionBg = sectionColor ? `bg-${sectionColor}-50` : 'bg-white';
+ 
   return (
-    <div className="bg-white lg:py-16 py-6 mx-auto max-w-screen-2xl px-3 sm:px-10">
+    <div className={` lg:py-16 py-6 mx-auto max-w-screen-2xl px-3 sm:px-10`}>
       <div className="mb-10 flex justify-between items-center">
         <div className="w-full">
           <SectionHeader
             title="Deals You'll Love"
             subtitle="Buy now to get the best deals"
             align="left"
+             
           />
         </div>
       </div>
 
-      <div className="flex w-full relative group">
+      <div className={` flex w-full relative group`}>
         <div className="w-full">
           <Swiper
             modules={[Navigation, Autoplay]}

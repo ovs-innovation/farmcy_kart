@@ -322,8 +322,8 @@ const addProduct = async (req, res) => {
       ...req.body,
       ...taxFields,
       isWholesaler: req.body.isWholesaler === true || req.body.isWholesaler === 'true',
-      wholePrice: Number(req.body.wholePrice) || 0,
-      minQuantity: Number(req.body.minQuantity) || 0,
+      wholePrice: Number(req.body.wholePrice ?? req.body.wholesalerPrice) || 0,
+      minQuantity: Number.isFinite(Number(req.body.minQuantity ?? req.body.wholesalerMinQuantity)) ? parseInt(req.body.minQuantity ?? req.body.wholesalerMinQuantity, 10) : 0,
       dynamicSections: sanitizeDynamicSections(req.body.dynamicSections),
       mediaSections: sanitizeMediaSections(req.body.mediaSections),
       faqs: sanitizeFaqSection(req.body.faqs),
@@ -500,16 +500,6 @@ const getProductById = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-        // Wholesaler fields
-        if (Object.prototype.hasOwnProperty.call(req.body, "isWholesaler")) {
-          product.isWholesaler = req.body.isWholesaler === true || req.body.isWholesaler === 'true';
-        }
-        if (Object.prototype.hasOwnProperty.call(req.body, "wholePrice")) {
-          product.wholePrice = Number(req.body.wholePrice) || 0;
-        }
-        if (Object.prototype.hasOwnProperty.call(req.body, "minQuantity")) {
-          product.minQuantity = Number(req.body.minQuantity) || 0;
-        }
   // console.log('update product')
   // console.log('variant',req.body.variants)
   try {
@@ -551,6 +541,21 @@ const updateProduct = async (req, res) => {
       product.prices = req.body.prices;
       product.image = req.body.image;
       product.tag = req.body.tag;
+
+      // Wholesaler fields (accept different request field names)
+      if (Object.prototype.hasOwnProperty.call(req.body, "isWholesaler")) {
+        product.isWholesaler = req.body.isWholesaler === true || req.body.isWholesaler === 'true';
+      }
+      if (Object.prototype.hasOwnProperty.call(req.body, "wholePrice") || Object.prototype.hasOwnProperty.call(req.body, "wholesalerPrice")) {
+        const val = Number(req.body.wholePrice ?? req.body.wholesalerPrice);
+        product.wholePrice = Number.isFinite(val) ? val : 0;
+      }
+      if (Object.prototype.hasOwnProperty.call(req.body, "minQuantity") || Object.prototype.hasOwnProperty.call(req.body, "wholesalerMinQuantity")) {
+        const raw = req.body.minQuantity ?? req.body.wholesalerMinQuantity;
+        const val = Number.isFinite(Number(raw)) ? parseInt(raw, 10) : 0;
+        product.minQuantity = val;
+      }
+
       const { hsnCode, taxRate, isPriceInclusive } = normalizeTaxPayload(
         req.body
       );

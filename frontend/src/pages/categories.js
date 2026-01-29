@@ -74,9 +74,9 @@ const Categories = () => {
     router.push(
       {
         pathname: "/search",
-        query: { category: name, _id: parent._id },
+        query: { category: name },
       },
-      `/search?category=${encodeURIComponent(name)}&_id=${parent._id}`,
+      `/search?category=${encodeURIComponent(name)}`,
       { shallow: false }
     );
   };

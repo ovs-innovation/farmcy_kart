@@ -123,7 +123,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
             {/* popular products */}
             {storeCustomizationSetting?.home?.popular_products_status && (
-              <div className="bg-gray-50 lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
+              <div className="lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
                 <SectionHeader
                   title={storeCustomizationSetting?.home?.popular_title || "Popular Products"}
                   subtitle={storeCustomizationSetting?.home?.popular_description || "Discover our most loved and trending products"}
@@ -131,7 +131,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                   error={error}
                   align="left"
                 />
-                <div className="flex w-full relative group">
+                <div className="bg-purple-50 flex w-full relative group px-4 py-4">
                   <div className="w-full">
                     {loading ? (
                       <CMSkeleton
@@ -204,7 +204,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                   </div> */}
             {/* best selling products */}
             {bestSellingProducts?.length > 0 && (
-              <div className="bg-white lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
+              <div className=" lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
                 <SectionHeader
                   title="Best Selling Products"
                   subtitle="We have compiled the best selling products for you"
@@ -333,7 +333,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
               discountProducts?.length > 0 && (
                 <div
                   id="discount"
-                  className="bg-gray-50 lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10"
+                  className="lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10"
                 >
                   <SectionHeader
                     title={storeCustomizationSetting?.home?.latest_discount_title || "Discounted Products"}
@@ -342,7 +342,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                     error={error}
                     align="left"
                   />
-                  <div className="flex w-full relative group">
+                  <div className="bg-rose-50 py-4 px-4 flex w-full relative group">
                     <div className="w-full">
                       {loading ? (
                         <CMSkeleton
@@ -410,10 +410,12 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
               {/* Category Cards Section */}
             <CategoryCards />
-             {/* Trusted Brands Section */}
-            <TrustedBrandsSection brands={brands} />
+             
             {/* Testimonials Section */}
             <TestimonialsSection />
+
+            {/* Trusted Brands Section */}
+            <TrustedBrandsSection brands={brands} />
           </div>
         </Layout>
       )}

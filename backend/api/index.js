@@ -92,6 +92,9 @@ app.use((err, req, res, next) => {
 // Serve static files from the "public" directory
 app.use("/static", express.static(path.join(__dirname, "../public")));
 
+// Serve uploaded files (e.g., wholesaler documents)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 // 404 Handler for undefined routes
 app.use((req, res) => {
   console.log(`404 - Route Not Found: ${req.method} ${req.originalUrl}`);

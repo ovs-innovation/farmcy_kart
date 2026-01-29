@@ -75,28 +75,12 @@ const CategoryCards = () => {
         <div className="relative">
           <style dangerouslySetInnerHTML={{
             __html: `
-              .category-cards-swiper .swiper-button-next,
-              .category-cards-swiper .swiper-button-prev {
-               
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-                transition: all 0.3s ease !important;
-              }
-              .category-cards-swiper .swiper-button-next:hover,
-              .category-cards-swiper .swiper-button-prev:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
-                transform: scale(1.1) !important;
-              }
+              /* Simplified navigation styles */
+              .category-cards-swiper .swiper-button-next { right: 10px !important; color: #333 !important; }
+              .category-cards-swiper .swiper-button-prev { left: 10px !important; color: #333 !important; }
               .category-cards-swiper .swiper-button-next::after,
               .category-cards-swiper .swiper-button-prev::after {
-                font-size: 18px !important;
-                font-weight: bold !important;
-                color: #333 !important;
-              }
-              .category-cards-swiper .swiper-button-next {
-                right: 10px !important;
-              }
-              .category-cards-swiper .swiper-button-prev {
-                left: 10px !important;
+                font-size: 16px !important;
               }
             `
           }} />
@@ -110,11 +94,11 @@ const CategoryCards = () => {
                 spaceBetween: 20,
               },
               768: {
-                slidesPerView: 2,
+                slidesPerView: 3,
                 spaceBetween: 25,
               },
               1024: {
-                slidesPerView: 3,
+                slidesPerView: 4,
                 spaceBetween: 30,
               },
             }}
@@ -137,24 +121,15 @@ const CategoryCards = () => {
                     }}
                     onClick={() => router.push(`/search`)}
                   >
-                    {/* Top Accent Line */}
-                    <div 
-                      className="absolute top-0 left-0 w-full h-1.5 transition-all duration-500 group-hover:h-2 z-20" 
-                      style={{ backgroundColor: palette[500] }}
-                    />
-
-                    {/* Image Area - Expanded */}
-                    <div className="relative w-full h-48 overflow-hidden bg-gray-50">
-                       <Image
+                    {/* Image Area - Simple */}
+                    <div className="relative w-full h-48 overflow-hidden  ">
+                      <Image
                         src={category.image}
                         alt={category.title}
                         layout="fill"
-                        objectFit="contain" 
-                        className="transition-transform duration-700 group-hover:scale-110 p-4"
+                        objectFit="contain"
+                        className="transition-transform duration-300 p-4"
                       />
-                      
-                      {/* Overlay gradient */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-80" />
                     </div>
 
                     <div className="relative z-10 p-8 flex flex-col flex-1 -mt-6">

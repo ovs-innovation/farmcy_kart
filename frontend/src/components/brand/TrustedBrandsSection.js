@@ -17,155 +17,66 @@ const TrustedBrandsSection = ({ brands = [] }) => {
   if (!brandsWithLogos.length) return null;
 
   return (
-    <div className="bg-white py-12 md:py-16 lg:py-20">
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+    <div className="bg-white ">
+      <div className="w-full px-4 sm:px-6 lg:px-10">
+        <div className=" ">
           {/* Left Side - Title and Description */}
-          <div className="order-1 lg:order-1">
+          {/* <div className="order-1 lg:order-1">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-store-900 mb-4">
               Top Brands You Can Trust
             </h2>
-            {/* Wavy line graphic */}
-            <div className="flex justify-start mb-6">
-              <svg
-                width="100"
-                height="16"
-                viewBox="0 0 120 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                style={{ color: palette[600] }}
-              >
-                <path
-                  d="M0 10 L30 10 L35 5 L40 15 L45 10 L75 10 L80 5 L85 15 L90 10 L120 10"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <div className="space-y-4 text-gray-600 text-base md:text-lg leading-relaxed text-justify">
-              <p>
-              Shop medicines and healthcare essentials from leading brands known for their quality, authenticity, and reliability in healthcare.
-              </p>
-              <p>
-              All featured brands follow established medical standards, ensuring that every product meets safety and compliance requirements.
-              </p>
-              <p>With trusted names in one place, Farmacykart helps you choose genuine healthcare products for your everyday health needs with confidence.</p>
-            </div>
-          </div>
+           
+          
+          </div> */}
 
-          {/* Right Side - Scrolling Brand Logos (Vertical) */}
-          <div className="order-1 lg:order-2">
-            <div className="relative p-6 md:p-8 overflow-hidden h-[450px] flex flex-row justify-center gap-4">
-              {/* First Column - Scroll Top to Bottom */}
-              <div className="relative overflow-hidden h-full">
-                <div 
-                  className="flex flex-col gap-6 w-full items-center trusted-brands-scroll-down"
-                  style={{
-                     height: 'max-content',
-                  }}
-                >
-                  {/* First set of brands */}
-                  {brandsWithLogos.map((brand, index) => {
-                    const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-                    return (
-                      <Link
-                        key={`brand-col1-1-${brand._id}`}
-                        href={`/search?brand=${brand._id}`}
-                        className="flex-shrink-0 group w-full flex justify-center"
-                      >
-                        <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
-                          <Image
-                            src={logoUrl}
-                            alt={showingTranslateValue(brand.name) || "Brand"}
-                            fill
-                            sizes="(max-width: 768px) 80px, 112px"
-                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                            unoptimized
-                          />
-                        </div>
-                      </Link>
-                    );
-                  })}
-                  {/* Duplicate set */}
-                  {brandsWithLogos.map((brand, index) => {
-                    const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-                    return (
-                      <Link
-                        key={`brand-col1-2-${brand._id}`}
-                        href={`/search?brand=${brand._id}`}
-                        className="flex-shrink-0 group w-full flex justify-center"
-                      >
-                        <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
-                          <Image
-                            src={logoUrl}
-                            alt={showingTranslateValue(brand.name) || "Brand"}
-                            fill
-                            sizes="(max-width: 768px) 80px, 112px"
-                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                            unoptimized
-                          />
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Second Column - Scroll Bottom to Top */}
-              <div className="relative overflow-hidden w-1/2 h-full">
-                <div 
-                  className="flex flex-col gap-6 w-full items-center trusted-brands-scroll-up"
-                  style={{
-                    height: 'max-content',
-                  }}
-                >
-                  {/* First set of brands */}
-                  {brandsWithLogos.map((brand, index) => {
-                    const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-                    return (
-                      <Link
-                        key={`brand-col2-1-${brand._id}`}
-                        href={`/search?brand=${brand._id}`}
-                        className="flex-shrink-0 group w-full flex justify-center"
-                      >
-                        <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
-                          <Image
-                            src={logoUrl}
-                            alt={showingTranslateValue(brand.name) || "Brand"}
-                            fill
-                            sizes="(max-width: 768px) 80px, 112px"
-                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                            unoptimized
-                          />
-                        </div>
-                      </Link>
-                    );
-                  })}
-                  {/* Duplicate set for seamless loop */}
-                  {brandsWithLogos.map((brand, index) => {
-                    const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-                    return (
-                      <Link
-                        key={`brand-col2-2-${brand._id}`}
-                        href={`/search?brand=${brand._id}`}
-                        className="flex-shrink-0 group w-full flex justify-center"
-                      >
-                        <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
-                          <Image
-                            src={logoUrl}
-                            alt={showingTranslateValue(brand.name) || "Brand"}
-                            fill
-                            sizes="(max-width: 768px) 80px, 112px"
-                            className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
-                            unoptimized
-                          />
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
+          {/* Right Side - Full-width horizontal marquee */}
+          <div className="  w-full">
+            <div className="relative overflow-hidden w-full">
+              <div className="flex gap-6 items-center marquee-track"  >
+                {/* First set of brands */}
+                {brandsWithLogos.map((brand) => {
+                  const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
+                  return (
+                    <Link
+                      key={`brand-marquee-1-${brand._id}`}
+                      href={`/search?brand=${brand._id}`}
+                      className="flex-shrink-0 group"
+                    >
+                      <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
+                        <Image
+                          src={logoUrl}
+                          alt={showingTranslateValue(brand.name) || "Brand"}
+                          fill
+                          sizes="(max-width: 768px) 80px, 112px"
+                          className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                          unoptimized
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
+                {/* Duplicate set for seamless looping */}
+                {brandsWithLogos.map((brand) => {
+                  const logoUrl = showingImage(brand.logo) || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
+                  return (
+                    <Link
+                      key={`brand-marquee-2-${brand._id}`}
+                      href={`/search?brand=${brand._id}`}
+                      className="flex-shrink-0 group"
+                    >
+                      <div className="bg-white rounded-xl p-3 md:p-4 shadow-sm hover:shadow-md transition-all duration-300 w-20 h-20 md:w-28 md:h-28 flex items-center justify-center border border-gray-100 relative overflow-hidden">
+                        <Image
+                          src={logoUrl}
+                          alt={showingTranslateValue(brand.name) || "Brand"}
+                          fill
+                          sizes="(max-width: 768px) 80px, 112px"
+                          className="object-contain p-2 group-hover:scale-110 transition-transform duration-300"
+                          unoptimized
+                        />
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -175,32 +86,37 @@ const TrustedBrandsSection = ({ brands = [] }) => {
       {/* CSS Animation for Vertical Scrolling */}
       <style dangerouslySetInnerHTML={{
         __html: `
-          @keyframes trustedBrandsScrollUp {
-            0% {
-              transform: translateY(0);
-            }
-            100% {
-              transform: translateY(calc(-50% - 12px));
-            }
+          /* Horizontal marquee animation */
+          @keyframes marqueeLeft {
+            0% { transform: translateX(50%); }
+            100% { transform: translateX(-50%); }
           }
-          @keyframes trustedBrandsScrollDown {
-            0% {
-              transform: translateY(calc(-50% - 12px));
-            }
-            100% {
-              transform: translateY(0);
-            }
+          .marquee-track {
+            display: inline-flex;
+            gap: 1.5rem;
+            width: max-content;
+            will-change: transform;
+            /* Start from right by default (helps when animation begins) */
+            transform: translateX(50%);
+            animation: marqueeLeft 30s linear infinite;
           }
-          .trusted-brands-scroll-up {
-            animation: trustedBrandsScrollUp 35s linear infinite;
-          }
-          .trusted-brands-scroll-down {
-            animation: trustedBrandsScrollDown 35s linear infinite;
-          }
-          /* Hover effect to pause the animation */
-          .trusted-brands-scroll-up:hover, 
-          .trusted-brands-scroll-down:hover {
+          /* Pause on hover */
+          .marquee-track:hover {
             animation-play-state: paused;
+          }
+
+          /* Ensure images don't stretch when container shrinks */
+          .marquee-track .group {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          /* Reduce movement speed on small screens */
+          @media (max-width: 640px) {
+            .marquee-track {
+              animation-duration: 45s;
+            }
           }
         `
       }} />

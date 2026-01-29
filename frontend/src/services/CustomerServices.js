@@ -19,6 +19,13 @@ const CustomerServices = {
     return requests.post(`/customer/register/${token}`, body);
   },
 
+  createWholesaler: async (formData) => {
+    // formData should be a FormData instance
+    return requests.post(`/customer/wholesaler`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+
   signUpWithOauthProvider: async (body) => {
     return requests.post(`/customer/signup/oauth`, body);
   },
@@ -41,6 +48,15 @@ const CustomerServices = {
 
   updateCustomer: async (id, body) => {
     return requests.put(`/customer/${id}`, body);
+  },
+
+  // Create wholesaler - accepts JSON payload with file URLs
+  createWholesaler: async (body) => {
+    return requests.post(`/customer/wholesaler`, body);
+  },
+
+  deleteCloudinary: async (body) => {
+    return requests.post(`/customer/cloudinary-delete`, body);
   },
 
   getShippingAddress: async ({ userId = "" }) => {

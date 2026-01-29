@@ -70,6 +70,11 @@ const sidebar = [
     name: "Customers",
   },
   {
+    path: "/wholesalers",
+    icon: FiUsers,
+    name: "Wholesalers",
+  },
+  {
     path: "/orders",
     icon: FiCompass,
     name: "Orders",

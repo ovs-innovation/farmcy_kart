@@ -26,7 +26,8 @@ const InputValue = ({
       message: `Minimum value ${minValue}!`,
     },
     pattern: {
-      value: /^[0-9]*$/,
+      // allow integers and decimals (e.g., 100, 100.00)
+      value: /^[0-9]*\.?[0-9]*$/,
       message: `Invalid ${label}!`,
     },
   };
@@ -34,9 +35,9 @@ const InputValue = ({
   return (
     <>
       <div className={`flex flex-row`}>
-        {product && (
+        {(currency || product) && (
           <span className="inline-flex items-center px-3 rounded rounded-r-none border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm  focus:border-store-300 dark:bg-gray-700 dark:text-gray-300 dark:border dark:border-gray-600">
-            {currency}
+            {currency || '₹'}
           </span>
         )}
         <Input
@@ -47,7 +48,7 @@ const InputValue = ({
           disabled={disabled}
           placeholder={placeholder}
           defaultValue={defaultValue}
-          className={`mr-2 p-2 ${product && "rounded-l-none"}`}
+          className={`mr-2 p-2 ${(currency || product) && "rounded-l-none"}`}
         />
       </div>
     </>

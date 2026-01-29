@@ -322,7 +322,7 @@ const Search = ({ products, attributes }) => {
       {/* Mobile Header */}
       <div className="lg:hidden sticky top-0 z-50 bg-white border-b border-gray-100 px-4 py-3">
         {isSearchOpen ? (
-          <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border border-gray-300 rounded-lg shadow-sm overflow-visible">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border-2 border-gray-200 rounded-full shadow-sm overflow-visible">
             <button 
               type="button" 
               onClick={() => {
@@ -345,7 +345,7 @@ const Search = ({ products, attributes }) => {
                 value={searchText}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search for medicine or store..."
-                className="w-full py-2.5 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-store-500 text-gray-700 text-sm bg-transparent"
+                className="w-full py-2.5 pl-4 pr-12 rounded-full bg-white focus:outline-none outline-none focus:ring-0 focus:border-transparent focus:shadow-none text-gray-700 text-sm"
                 onFocus={() => searchText.length > 0 && setShowSuggestions(true)}
                 onBlur={(e) => {
                   const relatedTarget = e.relatedTarget;

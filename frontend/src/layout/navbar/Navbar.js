@@ -20,6 +20,7 @@ import CategoryServices from "@services/CategoryServices";
 // import LocationButton from "@components/location/LocationButton";
 import LocationPickerDropdown from "@components/location/LocationPickerDropdown";
 import SearchSuggestions from "@components/search/SearchSuggestions";
+import WholesalerModal from "@components/modal/WholesalerModal";
 
 const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -44,12 +45,16 @@ const Navbar = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchInputRef = useRef(null);
 
+  // Sign In dropdown & wholesaler modal
+  const [showSignDropdown, setShowSignDropdown] = useState(false);
+  const [wholesalerModalOpen, setWholesalerModalOpen] = useState(false);
+
   // Scroll listener to show/hide search bar in navbar
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset;
       // Show search bar when scrolled down more than 100px
-      if (scrollY > 100) {
+      if (scrollY > 50) {
         setShowSearchInNavbar(true);
       } else {
         setShowSearchInNavbar(false);
@@ -191,7 +196,7 @@ const Navbar = () => {
             {/* Center: Search Bar - Show when scrolled or on search page */}
             {(showSearchInNavbar || router.pathname === "/search") ? (
               <div className="flex-1 max-w-2xl mx-4">
-                <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border border-gray-300 rounded-lg shadow-sm overflow-visible z-20">
+                <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border-2 border-gray-200 rounded-full shadow-sm overflow-visible z-20 focus-within:ring-0 focus-within:shadow-none focus-within:border-gray-200 focus-within:outline-none">
                   {/* Location Button */}
                   <LocationPickerDropdown className="h-full z-30" />
                   
@@ -201,7 +206,7 @@ const Navbar = () => {
                       ref={searchInputRef}
                       type="text"
                       placeholder="Search for medicine or store..."
-                      className="w-full py-2.5 pl-4 pr-12 focus:outline-none focus:ring-2 focus:ring-store-500 text-gray-700 text-sm bg-transparent"
+                      className="w-full py-2.5 pl-4 pr-12 rounded-full bg-white focus:outline-none outline-none focus:ring-0 focus:border-transparent focus:shadow-none focus-visible:outline-none focus-visible:shadow-none focus-visible:border-transparent text-gray-700 text-sm"
                       value={searchText}
                       onChange={(e) => handleSearchChange(e.target.value)}
                       onFocus={() => searchText.length > 0 && setShowSuggestions(true)}
@@ -296,12 +301,34 @@ const Navbar = () => {
                     {userInfo?.name[0]}
                   </Link>
                 ) : (
-                  <Link
-                    href="/auth/login"
-                    className="bg-store-500 text-white px-5 py-2 rounded-full flex items-center gap-2 font-bold hover:bg-store-600 transition-colors"
-                  >
-                    <IoLockClosedOutline className="text-lg" /> Sign In
-                  </Link>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowSignDropdown((prev) => !prev)}
+                      className="bg-store-500 text-white px-5 py-2 rounded-full flex items-center gap-2 font-bold hover:bg-store-600 transition-colors"
+                    >
+                      <IoLockClosedOutline className="text-lg" /> Sign In
+                    </button>
+
+                    {showSignDropdown && (
+                      <div className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg py-1 z-50">
+                        <a
+                          href="/auth/login"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Customer
+                        </a>
+                        <button
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          onClick={() => {
+                            setShowSignDropdown(false);
+                            setWholesalerModalOpen(true);
+                          }}
+                        >
+                          Wholesaler
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             </div>
@@ -313,6 +340,7 @@ const Navbar = () => {
       {/* <div className="hidden lg:block bg-white">
         <NavbarPromo />
       </div> */}
+      <WholesalerModal modalOpen={wholesalerModalOpen} setModalOpen={setWholesalerModalOpen} />
     </>
   );
 };

@@ -2105,7 +2105,7 @@ const ProductDrawer = ({ id }) => {
                    </div>
                 </div>
               </div>
-              {/* Wholesaler Section (conditional fields)
+              {/* Wholesaler Section (conditional fields) */}
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label="Wholesaler?" />
                 <div className="col-span-8 sm:col-span-4 flex items-center gap-4">
@@ -2151,8 +2151,18 @@ const ProductDrawer = ({ id }) => {
                       <Error errorName={errors.minQuantity} />
                     </div>
                   </div>
+
+                  {/* Wholesale total (wholePrice * minQuantity) */}
+                  <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                    <LabelArea label="Wholesale Total" />
+                    <div className="col-span-8 sm:col-span-4">
+                      <div className="block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700 font-semibold">
+                        {currency}{(Number(watch && watch("wholePrice") ? watch("wholePrice") : 0) * Number(watch && watch("minQuantity") ? watch("minQuantity") : 0)).toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
                 </>
-              )} */}
+              )}
               
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">

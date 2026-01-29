@@ -307,6 +307,11 @@ const useProductSubmit = (id) => {
         stock: variants?.length < 1 ? data.stock : Number(totalStock),
         tag: JSON.stringify(tag),
 
+        // Wholesaler fields
+        isWholesaler: Boolean(data.isWholesaler),
+        wholePrice: Number(data.wholePrice ?? data.wholesalerPrice) || 0,
+        minQuantity: Number(data.minQuantity ?? data.wholesalerMinQuantity) || 0,
+
         prices: {
           price: getNumberTwo(data.originalPrice) - getNumber(data.discount),
           originalPrice: getNumberTwo(data.originalPrice),
@@ -339,6 +344,11 @@ const useProductSubmit = (id) => {
       if (updatedId) {
         const res = await ProductServices.updateProduct(updatedId, productData);
         if (res) {
+          // Update form fields with response to ensure UI reflects server values
+          setValue("isWholesaler", Boolean(res?.isWholesaler));
+          setValue("wholePrice", res?.wholePrice ?? 0);
+          setValue("minQuantity", res?.minQuantity ?? 0);
+
           if (isCombination) {
             setIsUpdate(true);
             notifySuccess(res.message);
@@ -416,6 +426,12 @@ const useProductSubmit = (id) => {
         } else {
           setIsUpdate(true);
           notifySuccess("Product Added Successfully!");
+
+          // Wholesaler fields
+          setValue("isWholesaler", Boolean(res?.isWholesaler));
+          setValue("wholePrice", res?.wholePrice ?? 0);
+          setValue("minQuantity", res?.minQuantity ?? 0);
+
           setDynamicSections(res.dynamicSections || []);
           setMediaSections(res.mediaSections || []);
           setFaqs(hydrateFaqs(res.faqs || []));
@@ -546,6 +562,12 @@ const useProductSubmit = (id) => {
                 : Number(res?.taxRate || 0)
             );
             setValue("isPriceInclusive", Boolean(res?.isPriceInclusive));
+
+            // Wholesaler fields
+            setValue("isWholesaler", Boolean(res?.isWholesaler));
+            setValue("wholePrice", res?.wholePrice ?? 0);
+            setValue("minQuantity", res?.minQuantity ?? 0);
+
             setProductId(res.productId ? res.productId : res._id);
             setBarcode(res.barcode);
             setSku(res.sku);
@@ -1218,6 +1240,12 @@ const useProductSubmit = (id) => {
       categories: selectedCategory.map((item) => item._id),
       category: defaultCategory[0]?._id || resData?.category?._id || resData?.category || "",
       image: imageUrl,
+
+      // Wholesaler fields
+      isWholesaler: updatedData.isWholesaler !== undefined ? Boolean(updatedData.isWholesaler) : Boolean(resData?.isWholesaler),
+      wholePrice: updatedData.wholePrice !== undefined ? Number(updatedData.wholePrice) : Number(resData?.wholePrice || 0),
+      minQuantity: updatedData.minQuantity !== undefined ? Number(updatedData.minQuantity) : Number(resData?.minQuantity || 0),
+
       stock: formattedVariants?.length > 0 ? Number(totalStock) : resData?.stock || 0,
       tag: resData?.tag ? resData.tag : JSON.stringify(tag),
       prices: {

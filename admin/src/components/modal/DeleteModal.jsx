@@ -127,7 +127,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
         setIsSubmitting(false);
       }
 
-      if (location.pathname === "/customers") {
+      if (location.pathname === "/customers" || location.pathname === "/wholesalers") {
         const res = await CustomerServices.deleteCustomer(id);
         setIsUpdate(true);
         notifySuccess(res.message);

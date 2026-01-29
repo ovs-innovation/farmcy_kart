@@ -21,6 +21,10 @@ const {
   updateShippingAddress,
   deleteShippingAddress,
   getCustomerStatistics,
+  createWholesaler,
+  deleteCloudinaryAsset,
+  cloudinarySign,
+  getAllWholesalers,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
@@ -51,6 +55,52 @@ router.delete("/shipping/address/:userId/:shippingId", deleteShippingAddress);
 
 //register a user
 router.post("/register/:token", registerCustomer);
+
+// Wholesaler registration - accepts JSON (with Cloudinary URLs) or multipart files (handled in controller)
+router.post("/wholesaler", createWholesaler);
+
+// Delete uploaded Cloudinary asset
+router.post("/cloudinary-delete", deleteCloudinaryAsset);
+
+// Server-side cloudinary upload endpoint (accepts data URL)
+router.post("/cloudinary-upload", async (req, res) => {
+  // delegate to controller
+  try {
+    const controller = require('../controller/customerController');
+    return controller.cloudinaryUpload(req, res);
+  } catch (err) {
+    console.error('cloudinary-upload route error:', err);
+    res.status(500).send({ message: err.message });
+  }
+});
+
+// Provide a signature for signed client uploads (allows return_delete_token)
+router.post("/cloudinary-sign", cloudinarySign);
+
+// Cloudinary status
+router.get("/cloudinary-status", (req, res) => {
+  try {
+    const controller = require('../controller/customerController');
+    return controller.cloudinaryStatus(req, res);
+  } catch (err) {
+    console.error('cloudinary-status route error:', err);
+    res.status(500).send({ message: err.message });
+  }
+});
+
+// Send credentials to wholesaler
+router.post('/send-credentials/:id', async (req, res) => {
+  try {
+    const controller = require('../controller/customerController');
+    return controller.sendCredentials(req, res);
+  } catch (err) {
+    console.error('send-credentials route error:', err);
+    res.status(500).send({ message: err.message });
+  }
+});
+
+// Admin: get wholesalers
+router.get("/wholesalers", getAllWholesalers);
 
 //login a user
 router.post("/login", loginCustomer);

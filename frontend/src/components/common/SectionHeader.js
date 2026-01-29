@@ -36,7 +36,7 @@ const SectionHeader = ({ title, subtitle, loading = false, error = null, align =
           displayTitle
         )}
       </h2>
-      <div className={`flex ${containerClass} mb-3`}>
+      {/* <div className={`flex ${containerClass} mb-3`}>
         <svg
           width="100"
           height="16"
@@ -53,7 +53,7 @@ const SectionHeader = ({ title, subtitle, loading = false, error = null, align =
             strokeLinejoin="round"
           />
         </svg>
-      </div>
+      </div> */}
       {displaySubtitle && (
         <p className={`text-gray-600 text-sm md:text-base ${align === "center" ? "max-w-2xl mx-auto" : ""}`}>
           {loading ? (
