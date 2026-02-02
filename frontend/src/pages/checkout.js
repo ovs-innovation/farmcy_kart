@@ -63,6 +63,31 @@ const Checkout = () => {
     taxSummary,
   } = useCheckoutSubmit(storeSetting);
 
+  // Calculate totals for order summary
+  const calculateTotals = () => {
+    let totalMRP = 0;
+    let totalDiscount = 0;
+    
+    items.forEach(item => {
+      const originalPrice = item.originalPrice || item.mrp || item.prices?.original || (item.price * 1.2);
+      const currentPrice = item.price || item.prices?.sale || 0;
+      const quantity = item.quantity || 1;
+      
+      totalMRP += originalPrice * quantity;
+      totalDiscount += (originalPrice - currentPrice) * quantity;
+    });
+    
+    return {
+      totalMRP,
+      totalDiscount,
+      subtotal: cartTotal,
+      taxAmount: taxSummary?.exclusiveTax || 0,
+      total: parseFloat(total)
+    };
+  };
+
+  const totals = calculateTotals();
+
   return (
     <>
       <Layout title="Checkout" description="this is checkout page">
@@ -372,25 +397,30 @@ const Checkout = () => {
                     )}
                   </form>
                 </div>
+                
+                {/* Total MRP */}
                 <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
-                  {showingTranslateValue(
-                    storeCustomizationSetting?.checkout?.sub_total
-                  )}
+                  Total MRP
                   <span className="ml-auto flex-shrink-0 text-gray-800 font-bold">
                     {currency}
-                    {cartTotal?.toFixed(2)}
+                    {totals.totalMRP.toFixed(2)}
                   </span>
                 </div>
+                
+                {/* Total Discount */}
+                {totals.totalDiscount > 0 && (
+                  <div className="flex items-center py-2 text-sm w-full font-semibold text-green-600 last:border-b-0 last:text-base last:pb-0">
+                    Total Discount
+                    <span className="ml-auto flex-shrink-0 font-bold text-green-600">
+                      -{currency}
+                      {totals.totalDiscount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+
                  
-                <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
-                  {showingTranslateValue(
-                    storeCustomizationSetting?.checkout?.discount
-                  )}
-                  <span className="ml-auto flex-shrink-0 font-bold text-orange-400">
-                    {currency}
-                    {discountAmount.toFixed(2)}
-                  </span>
-                </div>
+                 
+                {/* Tax Display */}
                 {taxSummary?.inclusiveTax > 0 && (
                   <div className="flex items-center py-2 text-xs sm:text-sm w-full font-semibold text-gray-500">
                     GST (included in price)
@@ -409,11 +439,49 @@ const Checkout = () => {
                     </span>
                   </div>
                 )}
+                
+                {/* Additional Charges */}
+                {discountAmount > 0 && (
+                  <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
+                    {showingTranslateValue(
+                      storeCustomizationSetting?.checkout?.discount
+                    )}
+                    <span className="ml-auto flex-shrink-0 font-bold text-orange-400">
+                      {currency}
+                      {discountAmount.toFixed(2)}
+                    </span>
+                  </div>
+                )}
+                
+                {/* Shipping Cost */}
+                {shippingCost > 0 ? (
+                  <div className="flex items-center py-2 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
+                    Shipping Cost
+                    <span className="ml-auto flex-shrink-0 text-gray-800 font-bold">
+                      {currency}
+                      {shippingCost.toFixed(2)}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center py-2 text-sm w-full font-semibold text-green-600 last:border-b-0 last:text-base last:pb-0">
+                    Shipping Cost
+                    <span className="ml-auto flex-shrink-0 font-bold text-green-600">
+                      FREE
+                    </span>
+                  </div>
+                )}
                 <div className="border-t mt-4">
                   <div className="flex items-center font-bold font-serif justify-between pt-5 text-sm uppercase">
-                    {showingTranslateValue(
-                      storeCustomizationSetting?.checkout?.total_cost
-                    )}
+                    <div className="flex flex-col">
+                      <span>
+                        {showingTranslateValue(
+                          storeCustomizationSetting?.checkout?.total_cost
+                        )}
+                      </span>
+                      <span className="text-medium font-bold text-gray-900 capitalize">
+                        Estimated Payable
+                      </span>
+                    </div>
                     <span className="font-serif font-extrabold text-lg">
                       {currency}
                       {parseFloat(total).toFixed(2)}

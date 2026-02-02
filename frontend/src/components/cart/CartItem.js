@@ -13,6 +13,22 @@ const CartItem = ({ item, currency = "₹" }) => {
   const { updateItemQuantity, removeItem } = useCart();
   const { closeCartDrawer } = useContext(SidebarContext);
   const { handleIncreaseQuantity } = useAddToCart();
+  
+  // Calculate MRP and discount - Check multiple possible price fields
+  const originalPrice = item.originalPrice || item.mrp || item.prices?.original || (item.price * 1.2); // Add 20% markup as fallback
+  const currentPrice = item.price || item.prices?.sale || 0;
+  const discount = originalPrice > currentPrice ? originalPrice - currentPrice : 0;
+  const discountPercentage = originalPrice > currentPrice ? ((discount / originalPrice) * 100).toFixed(0) : 0;
+  
+  // Debug logging
+  console.log('CartItem Debug:', {
+    title: item.title,
+    originalPrice,
+    currentPrice,
+    discount,
+    discountPercentage,
+    itemData: item
+  });
 
 
   return (
@@ -39,6 +55,22 @@ const CartItem = ({ item, currency = "₹" }) => {
         >
           {item.title}
         </Link>
+        
+        {/* Show MRP and Discount */}
+        {originalPrice > currentPrice && (
+          <div className="flex items-center gap-2 text-xs mb-1">
+            <span className="text-gray-400 line-through">
+              MRP: {currency}{originalPrice.toFixed(2)}
+            </span>
+            <span className="text-green-600 rounded text-xs font-bold">
+              {discountPercentage}% OFF
+            </span>
+             
+          </div>
+        )}
+        
+         
+        
         <span className="text-xs text-gray-400 mb-1">
           Item Price {currency}{item.price}
         </span>
