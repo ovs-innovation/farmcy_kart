@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React from "react";
+import React, {useEffect} from "react";
 import { FiPlus } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 
@@ -8,17 +8,27 @@ import { getUserSession } from "@lib/auth";
 import Dashboard from "@pages/user/dashboard";
 import Error from "@components/form/Error";
 import CustomerServices from "@services/CustomerServices";
+import { setToken } from "@services/httpServices";
 
 const MyAccount = () => {
   const userInfo = getUserSession();
+  const userId = userInfo?._id || userInfo?.id || null;
+
+  // ensure axios has token if cookie holds token but context hasn't set it
+  useEffect(() => {
+    if (userInfo?.token) {
+      setToken(userInfo.token);
+    }
+  }, [userInfo?.token]);
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["shippingAddress", { id: userInfo?.id }],
+    queryKey: ["shippingAddress", { id: userId }],
     queryFn: async () =>
       await CustomerServices.getShippingAddress({
-        userId: userInfo?.id,
+        userId: userId,
       }),
     select: (data) => data?.shippingAddress,
+    enabled: !!userId,
   });
 
   const hasShippingAddress = data && Object.keys(data).length > 0;
@@ -68,7 +78,7 @@ const MyAccount = () => {
             <div className="flex h-full relative">
               <div className="flex items-center border border-gray-200 w-full rounded-lg p-4 relative">
                 <Link
-                  href={`/user/add-shipping-address?id=${userInfo?.id}`}
+                  href={`/user/add-shipping-address?id=${userId}`}
                   className="absolute top-2 right-2 bg-store-500 text-white px-3 py-1 rounded hover:bg-store-600"
                 >
                   Edit

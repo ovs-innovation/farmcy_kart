@@ -41,10 +41,18 @@ const useShippingAddressSubmit = (id) => {
     ) {
       return notifyError("Country, city and area is required!");
     }
+
+    // prefer explicit id param (page query) over session cookie
+    // some flows store user id as `_id` in cookie, so check both
+    const resolvedUserId = id || userInfo?._id || userInfo?.id;
+    if (!resolvedUserId) {
+      return notifyError("User not found. Please login to add shipping address.");
+    }
+
     setIsSubmitting(true);
     try {
       const res = await CustomerServices.addShippingAddress({
-        userId: userInfo?.id,
+        userId: resolvedUserId,
         shippingAddressData: {
           ...data,
           country: selectedValue.country,
@@ -83,13 +91,18 @@ const useShippingAddressSubmit = (id) => {
     }
   };
 
+  // prefer explicit id param (from page query) over session user id
+  // account for user stored as `_id` in cookie
+  const resolvedUserId = id || userInfo?._id || userInfo?.id;
+
   const { data, isFetched } = useQuery({
-    queryKey: ["shippingAddress", { id: userInfo?.id }],
+    queryKey: ["shippingAddress", { id: resolvedUserId }],
     queryFn: async () =>
       await CustomerServices.getShippingAddress({
-        userId: userInfo?.id,
+        userId: resolvedUserId,
       }),
     select: (data) => data?.shippingAddress,
+    enabled: !!resolvedUserId,
   });
 
   useEffect(() => {

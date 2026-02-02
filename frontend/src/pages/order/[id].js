@@ -33,7 +33,7 @@ const Order = ({ params }) => {
         <Loading loading={isLoading} />
       ) : error ? (
         <h2 className="text-xl text-center my-10 mx-auto w-11/12 text-red-400">
-          {error}
+          {error?.response?.data?.message || error?.message || String(error)}
         </h2>
       ) : (
         <div className="max-w-screen-2xl mx-auto py-10 px-3 sm:px-6">

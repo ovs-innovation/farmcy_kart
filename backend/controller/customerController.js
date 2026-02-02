@@ -23,7 +23,7 @@ const verifyEmailAddress = async (req, res) => {
   } else {
     const token = tokenForVerify(req.body);
     const globalSetting = await Setting.findOne({ name: "globalSetting" });
-
+    console.log("verifyEmailAddress globalSetting:", token);
     const option = {
       name: req.body.name,
       email: req.body.email,
@@ -41,7 +41,13 @@ const verifyEmailAddress = async (req, res) => {
     };
 
     const message = "Please check your email to verify your account!";
-    sendEmail(body, res, message);
+    try {
+      await sendEmail(body);
+      res.send({ message });
+    } catch (emailErr) {
+      console.error("Email send failed (non-blocking):", emailErr.message || emailErr);
+      res.status(200).send({ message, emailError: emailErr.message || String(emailErr) });
+    }
   }
 };
 
@@ -139,6 +145,7 @@ const loginWithPhone = async (req, res) => {
       address: user.address || "",
       image: user.image || "",
       message: "Login Successful!",
+      role: user.role || "customer", // Added role
     });
   } catch (err) {
     res.status(500).send({
@@ -164,6 +171,7 @@ const registerCustomer = async (req, res) => {
         name: isAdded.name,
         email: isAdded.email,
         password: password,
+        role: isAdded.role || "customer",
         message: "Email Already Verified!",
       });
     }
@@ -199,6 +207,7 @@ const registerCustomer = async (req, res) => {
               _id: newUser._id,
               name: newUser.name,
               email: newUser.email,
+              role: newUser.role || "customer",
               message: "Email Verified, Please Login Now!",
             });
           }
@@ -488,6 +497,7 @@ const loginCustomer = async (req, res) => {
         address: customerWithCart.address,
         phone: customerWithCart.phone,
         image: customerWithCart.image,
+        role: customerWithCart.role || "customer", // Added role
         cart: customerWithCart.cart,
       });
     } else {
@@ -530,7 +540,13 @@ const forgetPassword = async (req, res) => {
     };
 
     const message = "Please check your email to reset password!";
-    sendEmail(body, res, message);
+    try {
+      await sendEmail(body);
+      res.send({ message });
+    } catch (emailErr) {
+      console.error("Email send failed (non-blocking):", emailErr.message || emailErr);
+      res.status(200).send({ message, emailError: emailErr.message || String(emailErr) });
+    }
   }
 };
 
@@ -669,6 +685,7 @@ const signUpWithProvider = async (req, res) => {
         address: isAdded.address,
         phone: isAdded.phone,
         image: isAdded.image,
+        role: isAdded.role || "customer",
       });
     } else {
       const newUser = new Customer({
@@ -685,6 +702,7 @@ const signUpWithProvider = async (req, res) => {
         name: signUpCustomer.name,
         email: signUpCustomer.email,
         image: signUpCustomer.image,
+        role: signUpCustomer.role || "customer",
       });
     }
   } catch (err) {
@@ -709,6 +727,7 @@ const signUpWithOauthProvider = async (req, res) => {
         address: isAdded.address,
         phone: isAdded.phone,
         image: isAdded.image,
+        role: isAdded.role || "customer",
       });
     } else {
       const newUser = new Customer({
@@ -725,6 +744,7 @@ const signUpWithOauthProvider = async (req, res) => {
         name: signUpCustomer.name,
         email: signUpCustomer.email,
         image: signUpCustomer.image,
+        role: signUpCustomer.role || "customer",
       });
     }
   } catch (err) {
@@ -877,9 +897,10 @@ const getAllWholesalers = async (req, res) => {
 
 const getCustomerById = async (req, res) => {
   try {
+    // Populate cart.productId with prices and wholesaler metadata so admin/frontend can determine effective price
     const customer = await Customer.findById(req.params.id).populate({
       path: "cart.productId",
-      select: "title prices image slug",
+      select: "title prices image slug wholePrice minQuantity",
     });
     // console.log("getCustomerById cart:", JSON.stringify(customer?.cart, null, 2));
     res.send(customer);
@@ -1068,6 +1089,7 @@ const updateCustomer = async (req, res) => {
       address: updatedUser.address,
       phone: updatedUser.phone,
       image: updatedUser.image,
+      role: updatedUser.role || "customer",
       message: "Customer updated successfully!",
     });
   } catch (err) {

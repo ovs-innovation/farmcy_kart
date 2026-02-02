@@ -38,6 +38,7 @@ import Loading from "@components/preloader/Loading";
 import ProductCard from "@components/product/ProductCard";
 import VariantList from "@components/variants/VariantList";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import AttributeServices from "@services/AttributeServices";
 import ProductServices from "@services/ProductServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -63,18 +64,25 @@ import SuggestedProducts from "@components/product/SuggestedProducts";
 const ProductScreen = ({ product, attributes, relatedProducts }) => {
   const router = useRouter();
   const { data: session } = useSession();
-  
-  // Get user info from session or cookies
-  const userInfo = session?.user || (typeof window !== "undefined" ? (() => {
-    try {
-      const cookieUserInfo = Cookies.get("userInfo");
-      return cookieUserInfo ? JSON.parse(cookieUserInfo) : null;
-    } catch (e) {
-      return null;
-    }
-  })() : null);
+  const { state: userState } = useContext(UserContext) || {};
 
-  const { lang, showingTranslateValue, getNumber, currency } =
+  // Get user info from session, context, or cookies
+  const cookieUserInfo = (typeof window !== "undefined") ? (() => {
+    try { const c = Cookies.get("userInfo"); return c ? JSON.parse(c) : null; } catch (e) { return null; }
+  })() : null;
+
+  const sessionRole = session?.user?.role;
+  const contextRole = userState?.userInfo?.role;
+  const cookieRole = cookieUserInfo?.role;
+  const userRole = sessionRole || contextRole || cookieRole || null;
+
+  // also expose a userInfo object for other usages (cookies/context/session)
+  const userInfo = session?.user || userState?.userInfo || cookieUserInfo || null;
+
+  // normalized wholesaler check (case-insensitive)
+  const isWholesaler = userRole && userRole.toString().toLowerCase() === 'wholesaler';
+
+  const { lang, showingTranslateValue, getNumber, currency, getNumberTwo } =
     useUtilsFunction();
   const { isLoading, setIsLoading } = useContext(SidebarContext);
   const { handleAddItem, item, setItem } = useAddToCart();
@@ -889,21 +897,20 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
 
     const { variants, categories, description, ...updatedProduct } = product;
 
-    // Ensure we have a valid price
-    const currentPrice =
-      price > 0
-        ? price
-        : getNumber(
-            selectVariant?.price ?? product?.prices?.price ?? 0
-          );
-    const currentOriginalPrice =
-      originalPrice > 0
-        ? originalPrice
-        : getNumber(
-            selectVariant?.originalPrice ??
-              product?.prices?.originalPrice ??
-              currentPrice
-          );
+    // Ensure we have a valid price (prefer wholesaler price when applicable)
+    const currentPrice = (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+      ? Number(product.wholePrice)
+      : (price > 0
+          ? price
+          : getNumber(selectVariant?.price ?? product?.prices?.price ?? 0)
+        );
+
+    const currentOriginalPrice = (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+      ? (product?.prices?.originalPrice ?? product?.prices?.price ?? 0)
+      : (originalPrice > 0
+          ? originalPrice
+          : getNumber(selectVariant?.originalPrice ?? product?.prices?.originalPrice ?? currentPrice)
+        );
 
     const newItem = {
       ...updatedProduct,
@@ -931,7 +938,9 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
       price: currentPrice,
       originalPrice: currentOriginalPrice,
     };
-    handleAddItem(newItem);
+
+    const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
+    handleAddItem(newItem, minQty);
   };
 
   const handleAddToWishlist = (p) => {
@@ -1015,22 +1024,21 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
       // Prepare product item for direct checkout
       const { variants, categories, description, ...updatedProduct } = product;
 
-      // Ensure we have a valid price
-      const currentPrice =
-        price > 0
-          ? price
-          : getNumber(
-              selectVariant?.price ?? product?.prices?.price ?? 0
-            );
-      const currentOriginalPrice =
-        originalPrice > 0
-          ? originalPrice
-          : getNumber(
-              selectVariant?.originalPrice ??
-                product?.prices?.originalPrice ??
-                currentPrice
-            );
+      // Ensure we have a valid price (prefer wholesaler price when applicable)
+      const currentPrice = (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+        ? Number(product.wholePrice)
+        : (price > 0
+            ? price
+            : getNumber(selectVariant?.price ?? product?.prices?.price ?? 0)
+          );
+      const currentOriginalPrice = (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+        ? (product?.prices?.originalPrice ?? product?.prices?.price ?? 0)
+        : (originalPrice > 0
+            ? originalPrice
+            : getNumber(selectVariant?.originalPrice ?? product?.prices?.originalPrice ?? currentPrice)
+          );
 
+      const minQtyBuy = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : item;
       const newItem = {
         ...updatedProduct,
         id: `${
@@ -1054,7 +1062,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
         variant: selectVariant || {},
         price: currentPrice,
         originalPrice: currentOriginalPrice,
-        quantity: item,
+        quantity: minQtyBuy,
       };
 
       // Replace entire cart with only this product (Flipkart style - Buy Now replaces cart)
@@ -1256,7 +1264,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                 <div className="flex flex-col lg:flex-row gap-10">
                   <div className="flex-shrink-0 w-full mx-auto md:w-5/12 lg:w-5/12 xl:w-5/12">
                     <div className="mt-1 lg:mt-2 lg:sticky lg:top-28 lg:space-y-4">
-                      <Discount slug product={product} discount={discount} />
+                      {!isWholesaler && <Discount slug product={product} discount={discount} />} 
 
                       {/* Flipkart-style Product Image Gallery with buttons inside */}
                       <ProductImageGallery
@@ -1303,7 +1311,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                           <button
                             onClick={() => handleAddToCart(product)}
                             type="button"
-                            className="w-full h-12 rounded-md text-sm font-semibold flex items-center justify-center border border-store-500 bg-store-50 text-store-700 hover:bg-store-800 hover:text-store-100 transition-colors"
+                            className="w-full h-12 rounded-md text-sm font-semibold flex items-center justify-center border border-store-500 bg-store-50 text-store-700 hover:bg-store-800 hover:text-gray-100 transition-colors"
                           >
                             {t("AddToCart")}
                           </button>
@@ -1399,15 +1407,16 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                          
                         </div>
                         <Price
-                          // Ensure we never show ₹0 by mistake when variants exist:
-                          // fall back to first variant or base product price if local state is 0.
+                          // If wholesaler and product has wholesale price, show that price
                           price={
-                            price > 0
-                              ? price
-                              : getNumber(
-                                  (product?.variants?.[0]?.price ??
-                                    product?.prices?.price) || 0
-                                )
+                            (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+                              ? Number(product.wholePrice)
+                              : (price > 0
+                                  ? price
+                                  : getNumber(
+                                      (product?.variants?.[0]?.price ??
+                                        product?.prices?.price) || 0
+                                    ))
                           }
                           product={product}
                           currency={currency}
@@ -1422,8 +1431,14 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                                     product?.prices?.price) || 0
                                 )
                           }
+                          hideDiscountAndMRP={isWholesaler}
                           showTaxLabel
                         />
+ 
+
+                        {isWholesaler && product?.minQuantity && Number(product.minQuantity) > 0 && (
+                          <p className="text-xs md:text-sm text-gray-500 mt-2">Min order quantity: <span className="font-semibold">{product.minQuantity}</span></p>
+                        )}
 
                         {/* Flipkart-style Variant Selection */}
                         <div className="mb-6 space-y-4">
@@ -2038,27 +2053,36 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                                     <div className="flex items-center gap-2 flex-wrap">
                                       <Price
                                         price={
-                                          price > 0
-                                            ? price
-                                            : getNumber(
-                                                (product?.variants?.[0]?.price ??
-                                                  product?.prices?.price) || 0
-                                              )
+                                          (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+                                            ? Number(product.wholePrice)
+                                            : (price > 0
+                                                ? price
+                                                : getNumber(
+                                                    (product?.variants?.[0]?.price ??
+                                                      product?.prices?.price) || 0
+                                                  ))
                                         }
                                         product={product}
                                         currency={currency}
                                         originalPrice={
-                                          originalPrice > 0
-                                            ? originalPrice
-                                            : getNumber(
-                                                (product?.variants?.[0]?.originalPrice ??
-                                                  product?.prices?.originalPrice ??
-                                                  product?.variants?.[0]?.price ??
-                                                  product?.prices?.price) || 0
-                                              )
+                                          (isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0)
+                                            ? (product?.prices?.originalPrice || product?.prices?.price || 0)
+                                            : (originalPrice > 0
+                                                ? originalPrice
+                                                : getNumber(
+                                                    (product?.variants?.[0]?.originalPrice ??
+                                                      product?.prices?.originalPrice ??
+                                                      product?.variants?.[0]?.price ??
+                                                      product?.prices?.price) || 0
+                                                  ))
                                         }
                                         card
                                       />
+
+                                      {product?.wholePrice && Number(product.wholePrice) > 0 && (
+                                        <p className="text-xs text-gray-500 mt-1 w-full">Wholesale: <span className="font-semibold">{currency}{getNumberTwo(Number(product.wholePrice))}</span>{product.minQuantity ? ` (Min ${product.minQuantity})` : ""}{!isWholesaler ? <span className="text-xs text-gray-400"> (Available to wholesalers)</span> : null}</p>
+                                      )}
+
                                       {discount > 0 && (
                                         <span className="text-xs font-semibold" style={{ color: '#006E44' }}>
                                           {discount}% OFF
@@ -2173,7 +2197,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                   <div className="flex">
                     <div className="w-full">
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
-                        {relatedProducts?.slice(1, 13).map((product, i) => (
+                        {(isWholesaler ? relatedProducts?.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : relatedProducts)?.slice(1, 13).map((product, i) => (
                           <ProductCard
                             key={product._id}
                             product={product}

@@ -707,9 +707,32 @@ const getShowingStoreProducts = async (req, res) => {
     // console.log("query", req);
 
     if (category) {
-      queryObject.categories = {
-        $in: [category],
-      };
+      // Accept either a category ObjectId or a category name/slug
+      // If it's a valid ObjectId, use it directly; otherwise try to resolve by name (across languages)
+      if (mongoose.Types.ObjectId.isValid(category)) {
+        queryObject.categories = { $in: [category] };
+      } else {
+        try {
+          const decoded = decodeURIComponent(category).toString();
+          // Try matching category name across languages using a case-insensitive regex
+          const categoryNameQueries = languageCodes.map((lang) => ({ [`name.${lang}`]: { $regex: decoded.replace(/[-]+/g, ' '), $options: 'i' } }));
+          const matchingCategories = await Category.find({ $or: categoryNameQueries, status: 'show' }).select('_id');
+          if (matchingCategories && matchingCategories.length > 0) {
+            const categoryIds = matchingCategories.map((c) => c._id);
+            queryObject.categories = { $in: categoryIds };
+          } else {
+            // fallback: try loose regex with hyphens preserved
+            const looseQueries = languageCodes.map((lang) => ({ [`name.${lang}`]: { $regex: decoded, $options: 'i' } }));
+            const looseMatches = await Category.find({ $or: looseQueries, status: 'show' }).select('_id');
+            if (looseMatches && looseMatches.length > 0) {
+              queryObject.categories = { $in: looseMatches.map((c) => c._id) };
+            }
+          }
+        } catch (err) {
+          // If anything fails, fall back to treating category as-is (may be an id string)
+          queryObject.categories = { $in: [category] };
+        }
+      }
     }
 
     if (brand) {

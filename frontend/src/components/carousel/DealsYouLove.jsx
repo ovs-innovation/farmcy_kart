@@ -10,6 +10,9 @@ import "swiper/css/autoplay";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import useGetSetting from "@hooks/useGetSetting";
 import SectionHeader from "@components/common/SectionHeader";
+import { useContext } from "react";
+import { UserContext } from "@context/UserContext";
+import Cookies from "js-cookie";
 
 const DealsYouLove = ({ products, sectionColor }) => {
   const prevRef = useRef(null);
@@ -18,16 +21,38 @@ const DealsYouLove = ({ products, sectionColor }) => {
   const { globalSetting } = useGetSetting();
   const currency = globalSetting?.default_currency || "₹";
 
-  // Calculate discount and filter products
-  const dealProducts = products?.map(p => {
-      const price = getNumber(p?.prices?.price);
-      const originalPrice = getNumber(p?.prices?.originalPrice);
-      let discountPercent = 0;
-      if(originalPrice > price) {
-          discountPercent = Math.round(((originalPrice - price) / originalPrice) * 100);
+  // Determine wholesaler status (context first, then cookie fallback)
+  const { state } = useContext(UserContext) || {};
+  let role = state?.userInfo?.role;
+  if (!role && typeof window !== "undefined") {
+    try {
+      const cookieUser = Cookies.get("userInfo");
+      if (cookieUser) {
+        role = JSON.parse(cookieUser)?.role;
       }
-      return { ...p, discountPercent, price, originalPrice };
-  }).filter(p => p.discountPercent >= 20);
+    } catch (e) {
+      // ignore
+    }
+  }
+  const isWholesaler = role && role.toString().toLowerCase() === "wholesaler";
+
+  // Calculate discount and filter products; compute wholesale price & min qty
+  const dealProducts = products?.map(p => {
+      const retailPrice = getNumber(p?.prices?.price);
+      const originalPrice = getNumber(p?.prices?.originalPrice);
+      const wholesalePrice = p?.wholePrice && Number(p.wholePrice) > 0 ? Number(p.wholePrice) : null;
+      const price = (isWholesaler && wholesalePrice) ? wholesalePrice : retailPrice;
+      const minQty = p?.minQuantity || p?.minWholesaleQty || null;
+      let discountPercent = 0;
+      if(originalPrice > retailPrice) {
+          discountPercent = Math.round(((originalPrice - retailPrice) / originalPrice) * 100);
+      }
+      return { ...p, discountPercent, price, originalPrice, retailPrice, wholesalePrice, minQty };
+  }).filter(p => p.discountPercent >= 20)
+    .filter(p => {
+      if (!isWholesaler) return true;
+      return (p.wholesalePrice && Number(p.wholesalePrice) > 0) || p.isWholesaler;
+    });
 
   if (!dealProducts || dealProducts.length === 0) return null;
   const sectionBg = sectionColor ? `bg-${sectionColor}-50` : 'bg-white';
@@ -83,20 +108,29 @@ const DealsYouLove = ({ products, sectionColor }) => {
                       {showingTranslateValue(item.title)}
                   </h3>
                   
-                  {/* Amazon style logic: Show discount prominence */}
-                  {item.discountPercent >= 20 ? (
-                      <div className="flex flex-col items-center">
-                          <span className="bg-store-600 text-white text-xs font-bold px-2 py-1 rounded-sm mb-1">
-                              {item.discountPercent}% off
-                          </span>
-                          
-                          <div className="text-xs text-gray-500 line-through">
-                              {currency}{item.originalPrice}
-                          </div>
-                          <span className="font-bold text-black">
-                             {currency}{item.price}
-                          </span>
-                      </div>
+                  {/* For wholesalers show wholesale price & min qty and hide discount/MRP; for others show discount prominence */}
+                  {isWholesaler ? (
+                    <div className="flex flex-col items-center">
+                      <span className="font-bold text-black">
+                        {currency}{item.price}
+                      </span>
+                      {item.minQty && (
+                        <div className="text-xs text-gray-500 mt-1">Min {item.minQty}</div>
+                      )}
+                    </div>
+                  ) : item.discountPercent >= 20 ? (
+                    <div className="flex flex-col items-center">
+                        <span className="bg-store-600 text-white text-xs font-bold px-2 py-1 rounded-sm mb-1">
+                            {item.discountPercent}% off
+                        </span>
+                        
+                        <div className="text-xs text-gray-500 line-through">
+                            {currency}{item.originalPrice}
+                        </div>
+                        <span className="font-bold text-black">
+                           {currency}{item.price}
+                        </span>
+                    </div>
                   ) : (
                       <p className="text-sm font-bold text-black">
                         From {currency}{item.price}

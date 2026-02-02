@@ -18,9 +18,10 @@ const Prescription = () => {
   const {
     state: { userInfo },
   } = useContext(UserContext);
+  const isWholesaler = userInfo?.role && String(userInfo.role).toLowerCase() === 'wholesaler';
   const { removeItem } = useCart();
   const queryClient = useQueryClient();
-  const { showingTranslateValue, currency } = useUtilsFunction();
+  const { showingTranslateValue, currency, getNumberTwo } = useUtilsFunction();
 
   const { data: customer, isLoading, refetch } = useQuery({
     queryKey: ["customer", userInfo?._id],
@@ -42,8 +43,9 @@ const Prescription = () => {
   const handleRemoveItem = async (productId) => {
     if (!customer?.cart) return;
 
+    // Defensive: only consider cart entries with a populated productId and valid _id
     const updatedCart = customer.cart
-      .filter((item) => item.productId._id !== productId)
+      .filter((item) => item.productId && item.productId._id && item.productId._id !== productId)
       .map((item) => ({
         productId: item.productId._id,
         quantity: item.quantity,
@@ -59,7 +61,7 @@ const Prescription = () => {
     <Dashboard title="Prescription" description="Manage your prescriptions and added products">
       <div className="overflow-hidden rounded-md font-serif">
         <div className="flex flex-col">
-          <h2 className="text-xl font-serif font-semibold mb-5">Prescription Status</h2>
+       
           <PrescriptionStatus userId={userInfo?._id} />
 
           <h2 className="text-xl font-serif font-semibold my-5">Added Products</h2>
@@ -99,7 +101,10 @@ const Prescription = () => {
                         </p>
                         <p className="font-bold text-gray-800">
                           {currency}
-                          {item.productId.prices?.price}
+                          {isWholesaler && item.productId?.wholePrice && Number(item.productId.wholePrice) > 0
+                            ? getNumberTwo(Number(item.productId.wholePrice))
+                            : (item.productId.prices?.price || 0)}
+                           
                         </p>
                       </div>
                     </div>

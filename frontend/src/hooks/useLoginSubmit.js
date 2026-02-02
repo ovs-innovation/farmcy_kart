@@ -1,8 +1,10 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useForm } from "react-hook-form";
 import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
+import Cookies from "js-cookie";
+import { UserContext } from "@context/UserContext";
 
 //internal import
 
@@ -13,6 +15,7 @@ const useLoginSubmit = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const redirectUrl = useSearchParams().get("redirectUrl");
+  const { dispatch } = useContext(UserContext);
 
   const {
     control,
@@ -60,23 +63,38 @@ const useLoginSubmit = () => {
         // console.log("sing up with phone", phone, "result", res);
         return setLoading(false);
       } else {
-        // Login logic (no changes)
-        const result = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
-          callbackUrl: "/user/dashboard",
-        });
+        // Login via backend directly so we can get role and set a readable cookie
+        try {
+          const res = await CustomerServices.loginCustomer({ email, password });
 
-        // console.log("result", result);
+          if (res && res.token) {
+            // setToken(res.token); // Assuming setToken is imported if needed
+            const userInfo = {
+              _id: res._id,
+              name: res.name,
+              email: res.email,
+              phone: res.phone,
+              address: res.address || "",
+              image: res.image || "",
+              token: res.token,
+              role: res.role || "customer",
+            };
 
-        if (result?.error) {
-          notifyError(result?.error);
-          console.error("Error during sign-in:", result.error);
-          setLoading(false);
-        } else if (result?.ok) {
-          const url = redirectUrl ? "/checkout" : result.url;
-          router.push(url);
+            Cookies.set("userInfo", JSON.stringify(userInfo), { expires: 1 });
+
+            if (dispatch) {
+              dispatch({ type: "USER_LOGIN", payload: userInfo });
+            }
+
+            const url = redirectUrl ? "/checkout" : "/";
+            router.push(url);
+            setLoading(false);
+          } else {
+            throw new Error("Invalid login response");
+          }
+        } catch (err) {
+          console.error("Login error:", err);
+          notifyError(err.response?.data?.message || err.message || "Login failed");
           setLoading(false);
         }
       }

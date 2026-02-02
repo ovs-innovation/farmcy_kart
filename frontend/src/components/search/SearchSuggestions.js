@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import ProductServices from "@services/ProductServices";
 import BrandServices from "@services/BrandServices";
 import CategoryServices from "@services/CategoryServices";
+import Cookies from "js-cookie";
 
 const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) => {
   const router = useRouter();
@@ -70,13 +71,27 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
 
     // Search in Products
     if (productsData && Array.isArray(productsData)) {
+      const cookie = Cookies.get("userInfo");
+      let currentUser = null;
+      try {
+        currentUser = cookie ? JSON.parse(cookie) : null;
+      } catch (e) {
+        currentUser = null;
+      }
+
       const matchedProducts = productsData
         .filter((product) => {
           const title = showingTranslateValue(product?.title)?.toLowerCase() || "";
           return title.includes(query);
         })
-        .slice(0, 5) // Limit to 5 products
-        .map((product) => {
+        .slice(0, 20) // get more then trim to 5 after filtering wholesaler condition
+        .reduce((acc, product) => {
+          // If wholesaler, skip products that are not wholesale-eligible
+          if (currentUser?.role && currentUser.role.toString().toLowerCase() === "wholesaler") {
+            const eligible = (product.wholePrice && Number(product.wholePrice) > 0) || product.isWholesaler;
+            if (!eligible) return acc;
+          }
+
           // Extract category ID properly
           let categoryId = null;
           if (product.category) {
@@ -111,7 +126,8 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
           } else if (product.image && Array.isArray(product.image) && product.image[0]) {
             image = product.image[0];
           }
-          return {
+
+          acc.push({
             type: "product",
             id: product._id,
             title: showingTranslateValue(product?.title),
@@ -120,8 +136,12 @@ const SearchSuggestions = ({ searchText, onSelect, showSuggestions, onClose }) =
             brand: brandId,
             image,
             icon: !image ? <FiPackage className="w-4 h-4" /> : null,
-          };
-        });
+          });
+
+          return acc;
+        }, [])
+        .slice(0, 5); // Limit to 5 final products
+
       results.push(...matchedProducts);
     }
 

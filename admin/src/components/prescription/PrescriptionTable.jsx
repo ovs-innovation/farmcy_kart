@@ -33,6 +33,12 @@ const PrescriptionTable = ({ prescriptions, handleDelete }) => {
             <span className="text-sm">{prescription?.user?.email || "N/A"}</span>
           </TableCell>
 
+          <TableCell>
+            <span className="text-sm">
+              {prescription?.user?.role || "N/A"}
+            </span>
+          </TableCell>
+
           <TableCell className="text-center">
             <span className="font-serif">
               {prescription?.status === "pending" && (

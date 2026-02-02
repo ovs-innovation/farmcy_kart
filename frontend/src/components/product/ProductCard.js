@@ -1,6 +1,6 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { IoAdd, IoBagAddSharp, IoRemove } from "react-icons/io5";
 import { FiHeart, FiShuffle } from "react-icons/fi";
 import { useCart } from "react-use-cart";
@@ -11,6 +11,7 @@ import Price from "@components/common/Price";
 import Stock from "@components/common/Stock";
 import { notifyError, notifySuccess } from "@utils/toast";
 import useAddToCart from "@hooks/useAddToCart";
+import { UserContext } from "@context/UserContext";
 import useGetSetting from "@hooks/useGetSetting";
 import Discount from "@components/common/Discount";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -23,6 +24,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
   const [modalOpen, setModalOpen] = useState(false);
 
   const { items, addItem, updateItemQuantity, inCart, getItem } = useCart();
+  const { state } = useContext(UserContext) || {}; 
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler"; 
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { storeCustomizationSetting } = useGetSetting();
@@ -43,16 +46,24 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
     }
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
+
+    // Determine price to use for cart: wholesaler price if user is wholesaler and product has wholesale price
+    const wholesalePriceValue = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+    const priceToUse = isWholesaler && wholesalePriceValue ? wholesalePriceValue : (p.prices?.price || 0);
+
     const newItem = {
       ...updatedProduct,
       title: showingTranslateValue(p?.title),
       id: p._id,
       variant: p.prices,
-      price: p.prices.price,
+      price: priceToUse,
       originalPrice: product.prices?.originalPrice,
       image: product.image?.[0] || product.images?.[0],
     };
-    addItem(newItem);
+
+    // If wholesaler and product requires a minimum quantity, add that minimum amount instead of 1
+    const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
+    addItem(newItem, minQty);
   };
 
   const handleAddToWishlist = (e) => {
@@ -133,12 +144,12 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
           }}
           className="relative flex justify-center items-center cursor-pointer w-full p-1 sm:p-1.5 h-[120px] sm:h-[140px] md:h-[160px] lg:h-[190px] flex-shrink-0"
         >
-          {/* Discount Badge - Top Left (hide if hideDiscount prop is true) */}
-          {!hideDiscount && (
+          {/* Discount Badge - Top Left (hide if hideDiscount prop is true or if wholesaler) */}
+          {!hideDiscount && !isWholesaler && (
             <div className="absolute top-2 left-0 z-10">
               <Discount product={product} />
             </div>
-          )}
+          )} 
           
           {/* Stock Badge - Top Right (only show if out of stock) */}
           {product.stock < 1 && (
@@ -213,10 +224,13 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
             {/* Price Section */}
             <div className="flex flex-col">
               {(() => {
-                const currentPrice = product?.isCombination
+                const basePrice = product?.isCombination
                   ? product?.variants[0]?.price
                   : product?.prices?.price;
-                
+
+                const wholesalePrice = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+                const currentPrice = isWholesaler && wholesalePrice ? wholesalePrice : basePrice;
+
                 const discount = product?.isCombination
                   ? product?.variants[0]?.discount
                   : product?.prices?.discount;
@@ -226,19 +240,22 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                   : product?.prices?.originalPrice;
 
                 if (!originalPriceValue && discount) {
-                  originalPriceValue = (currentPrice || 0) + (discount || 0);
+                  originalPriceValue = (basePrice || 0) + (discount || 0);
                 }
                 
                 return (
                   <>
-                    {originalPriceValue > currentPrice && (
+                    {!isWholesaler && originalPriceValue > currentPrice && (
                       <p className="text-xs text-gray-500 mb-1 font-normal">
                         MRP <span className="line-through">{currency}{getNumberTwo(originalPriceValue)}</span>
                       </p>
-                    )}
+                    )} 
                     <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
                       {currency}{getNumberTwo(currentPrice)}
                     </p>
+                    {isWholesaler && wholesalePrice && (
+                      <p className="text-xs text-gray-500 mt-1">Wholesale: <span className="font-semibold">{currency}{getNumberTwo(wholesalePrice)}</span>{product.minQuantity ? ` (Min ${product.minQuantity})` : ""}</p>
+                    )}
                   </>
                 );
               })()}
@@ -256,9 +273,16 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                         className={`h-8 w-auto flex items-center justify-evenly py-1 px-2 bg-store-500 text-white rounded-md`}
                       >
                         <button
-                          onClick={() =>
-                            updateItemQuantity(item.id, item.quantity - 1)
-                          }
+                          onClick={() => {
+                            const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
+                            if (isWholesaler && product?.minQuantity && item.quantity <= minQty) {
+                              notifyError(`Minimum quantity is ${minQty}`);
+                              return;
+                            }
+                            updateItemQuantity(item.id, item.quantity - 1);
+                          }}
+                          disabled={isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity)}
+                          className={`${isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity) ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                           <span className="text-white text-sm">
                             <IoRemove />

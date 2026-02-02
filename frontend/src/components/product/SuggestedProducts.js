@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import Cookies from "js-cookie";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -10,6 +11,8 @@ import SectionHeader from "@components/common/SectionHeader";
 const SuggestedProducts = () => {
   const { showingTranslateValue } = useUtilsFunction();
   const { isLoading, setIsLoading } = useContext(SidebarContext);
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   const [products, setProducts] = useState([]);
   const [fetchLoading, setFetchLoading] = useState(true);
   const [showAll, setShowAll] = useState(false);
@@ -67,6 +70,12 @@ const SuggestedProducts = () => {
           ? res.filter((p, i, arr) => p && arr.findIndex(x => x._id === p._id) === i)
           : [];
         setProducts(filtered);
+      // If wholesaler, filter to wholesale-eligible products only
+      if (isWholesaler) {
+        setProducts(filtered.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler));
+      } else {
+        setProducts(filtered);
+      }
       } catch (err) {
         console.error("Error fetching suggested products:", err);
         setProducts([]);
@@ -94,7 +103,7 @@ const SuggestedProducts = () => {
         align="left"
       />
       <div className=" grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
-        {(showAll ? products : products.slice(0, visibleCount)).map((product, i) => (
+        {(isWholesaler ? (showAll ? products : products.slice(0, visibleCount)).filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : (showAll ? products : products.slice(0, visibleCount))).map((product, i) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>

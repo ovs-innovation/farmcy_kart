@@ -1,44 +1,41 @@
 const nodemailer = require("nodemailer");
 const rateLimit = require("express-rate-limit");
 
-const sendEmail = (body, res, message) => {
-  const transporter = nodemailer.createTransport({
-    host: process.env.HOST,
-    // service: process.env.SERVICE, //comment this line if you use custom server/domain
-    port: process.env.EMAIL_PORT,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
+const sendEmail = (body) => {
+  return new Promise((resolve, reject) => {
+    const transporter = nodemailer.createTransport({
+      host: process.env.HOST,
+      // service: process.env.SERVICE, //comment this line if you use custom server/domain
+      port: process.env.EMAIL_PORT,
+      secure: String(process.env.EMAIL_PORT) === "465",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
 
-    //comment out this one if you usi custom server/domain
-    // tls: {
-    //   rejectUnauthorized: false,
-    // },
-  });
+      // uncomment for debugging or custom servers (not recommended in prod)
+      // tls: {
+      //   rejectUnauthorized: false,
+      // },
+    });
 
-  transporter.verify((err, success) => {
-    if (err) {
-      console.error("Verification error:", err);
-      res.status(403).send({
-        message: `Error during verification: ${err.message}`,
-      });
-    } else {
-      console.log("Server is ready to take our messages");
-      transporter.sendMail(body, (err, data) => {
+    transporter.verify((err, success) => {
+      if (err) {
+        console.error("Verification error:", err);
+        if (err && err.code === 'EAUTH') {
+          return reject(new Error("SMTP authentication failed: check EMAIL_USER and EMAIL_PASS (use App Password for Gmail). " + err.message));
+        }
+        return reject(err);
+      }
+
+      transporter.sendMail(body, (err, info) => {
         if (err) {
           console.error("Error sending email:", err);
-          res.status(403).send({
-            message: `Error sending email: ${err.message}`,
-          });
-        } else {
-          res.send({
-            message: message,
-          });
+          return reject(err);
         }
+        return resolve(info);
       });
-    }
+    });
   });
 };
 //limit email verification and forget password

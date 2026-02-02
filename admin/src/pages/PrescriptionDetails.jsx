@@ -35,10 +35,39 @@ const PrescriptionDetails = () => {
   );
 
   useEffect(() => {
+    const enrichMedicines = async (meds, isWholesalerUser) => {
+      try {
+        const enriched = await Promise.all(
+          meds.map(async (m) => {
+            // fetch product to get minQuantity / wholePrice
+            try {
+              const res = await ProductServices.getProductById(m.productId);
+              const product = res.product || res;
+              // Apply product minQuantity only for wholesaler users. Customers keep their typed qty.
+              const minQ = isWholesalerUser ? (product?.minQuantity || m.minQuantity || 1) : 1;
+              const wholesalePrice = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+              const priceForUser = isWholesalerUser && wholesalePrice ? wholesalePrice : (m.price || product?.prices?.price || 0);
+              const qty = isWholesalerUser ? Math.max(m.quantity || 1, minQ) : (m.quantity || 1);
+              return { ...m, minQuantity: minQ, price: priceForUser, quantity: qty };
+            } catch (err) {
+              // fallback to original medicine object
+              const minQ = isWholesalerUser ? (m.minQuantity || 1) : 1;
+              return { ...m, minQuantity: minQ, quantity: isWholesalerUser ? Math.max(m.quantity || 1, minQ) : (m.quantity || 1) };
+            }
+          })
+        );
+        return enriched;
+      } catch (err) {
+        console.error("Error enriching medicines:", err);
+        return meds;
+      }
+    };
+
     if (data?.prescription) {
       setPrescription(data.prescription);
       if (data.prescription.medicines) {
-        setMedicines(data.prescription.medicines);
+        const isWholesalerUser = data.prescription.user?.role && data.prescription.user.role.toString().toLowerCase() === "wholesaler";
+        enrichMedicines(data.prescription.medicines, isWholesalerUser).then((enriched) => setMedicines(enriched));
       }
     }
   }, [data]);
@@ -50,7 +79,11 @@ const PrescriptionDetails = () => {
         page: 1,
         limit: 15,
       });
-      setSearchResults(res.products);
+      const isWholesalerUser = prescription?.user?.role && prescription.user.role.toString().toLowerCase() === "wholesaler";
+      const filtered = isWholesalerUser
+        ? res.products.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler)
+        : res.products;
+      setSearchResults(filtered);
       setShowResults(true);
     } catch (err) {
       console.error(err);
@@ -80,7 +113,11 @@ const PrescriptionDetails = () => {
               page: 1,
               limit: 15,
             });
-            setSearchResults(res.products);
+            const isWholesalerUser = prescription?.user?.role && prescription.user.role.toString().toLowerCase() === "wholesaler";
+            const filtered = isWholesalerUser
+              ? res.products.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler)
+              : res.products;
+            setSearchResults(filtered);
             setShowResults(true);
           } catch (err) {
             console.error(err);
@@ -94,7 +131,7 @@ const PrescriptionDetails = () => {
     } else {
       isMounted.current = true;
     }
-  }, [searchTerm]);
+  }, [searchTerm, prescription]);
 
   const handleAddMedicine = (product) => {
     const exists = medicines.find((m) => m.productId === product._id);
@@ -104,19 +141,24 @@ const PrescriptionDetails = () => {
       return;
     }
 
+    const isWholesalerUser = prescription?.user?.role && prescription.user.role.toString().toLowerCase() === "wholesaler";
+
     const productImage = Array.isArray(product.image) 
       ? product.image[0] 
       : (typeof product.image === 'string' ? product.image : '');
+
+    const defaultQty = isWholesalerUser ? (product.minQuantity || 1) : 1;
+    const priceForUser = isWholesalerUser && product.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : (product.prices?.price || product.prices?.originalPrice || 0);
 
     setMedicines([
       ...medicines,
       {
         productId: product._id,
-        title: product.title?.en || product.title || "Unknown Product", // Handle multi-language title
-        price: product.prices?.price || product.prices?.originalPrice || 0,
+        title: product.title?.en || product.title || "Unknown Product",
+        price: priceForUser,
         image: productImage,
-        quantity: 1,
-        dosage: "",
+        quantity: defaultQty,
+        minQuantity: defaultQty,
       },
     ]);
     // Do NOT clear search term or results to allow multi-selection
@@ -131,7 +173,9 @@ const PrescriptionDetails = () => {
   const handleUpdateMedicine = (index, field, value) => {
     const newMedicines = [...medicines];
     if (field === "quantity") {
-      newMedicines[index][field] = parseInt(value) || 1;
+      const val = parseInt(value) || 1;
+      const minQ = newMedicines[index].minQuantity || 1;
+      newMedicines[index][field] = Math.max(val, minQ);
     } else {
       newMedicines[index][field] = value;
     }
@@ -229,9 +273,21 @@ const PrescriptionDetails = () => {
               Doctor Review & Medicine Selection
             </h4>
 
+            {/* Customer Info */}
+            {prescription?.user && (
+              <div className="mb-4 text-sm">
+                
+                <div className="text-gray-600">{prescription.user.name} &middot; {prescription.user.email}</div>
+                <div className="mt-1">
+                  <span className="inline-block bg-gray-100 text-gray-800 px-2 py-1 rounded-md text-xs">
+                    {prescription.user.role ? prescription.user.role.charAt(0).toUpperCase() + prescription.user.role.slice(1) : 'N/A'}
+                  </span>
+                </div>
+              </div>
+            )}
+
             {/* Search */}
             <div className="relative mb-6" ref={searchRef}>
-              <Label>Search Medicine</Label>
               <Input
                 className="mt-1"
                 placeholder="Type medicine name..."
@@ -274,11 +330,23 @@ const PrescriptionDetails = () => {
                         />
                         <div className="flex-1">
                           <span className="text-sm font-medium">{productTitle}</span>
-                          {product.prices?.price && (
-                            <span className="text-xs text-gray-500 block">
-                              Price: ₹{product.prices.price}
-                            </span>
-                          )}
+                          {(() => {
+                            const isWholesalerUser = prescription?.user?.role && prescription.user.role.toString().toLowerCase() === "wholesaler";
+                            const wholesalePrice = product.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+                            const displayPrice = isWholesalerUser && wholesalePrice ? wholesalePrice : (product.prices?.price || product.prices?.originalPrice || null);
+                            return (
+                              <>
+                                {displayPrice !== null && (
+                                  <span className="text-xs text-gray-500 block">
+                                    Price: ₹{displayPrice}
+                                    {isWholesalerUser && wholesalePrice && product.minQuantity ? (
+                                      <span className="ml-2 text-xs text-gray-400">(Min {product.minQuantity})</span>
+                                    ) : null}
+                                  </span>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
                       </li>
                     );
@@ -292,7 +360,7 @@ const PrescriptionDetails = () => {
               {medicines.map((medicine, index) => (
                 <div
                   key={index}
-                  className="flex flex-col p-2 border rounded-md dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
+                  className="flex flex-col p-2 relative border rounded-md dark:border-gray-600 bg-gray-50 dark:bg-gray-700"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2 overflow-hidden">
@@ -310,35 +378,62 @@ const PrescriptionDetails = () => {
                       size="icon"
                       aria-label="delete"
                       onClick={() => handleRemoveMedicine(index)}
-                      className="flex-shrink-0"
+                      className="flex-shrink-0 absolute top-1 right-1"
                     >
                       <FiTrash2 className="w-4 h-4 text-red-500" />
                     </Button>
                   </div>
                   <div className="grid grid-cols-4 gap-2">
-                    <div className="col-span-1">
+                    <div className="col-span-2 flex justify-around items-center gap-x-4">
                       <Label className="text-xs">Qty</Label>
-                      <Input
-                        type="number"
-                        min="1"
-                        className="mt-0.5 text-sm py-1 h-8"
-                        value={medicine.quantity}
-                        onChange={(e) =>
-                          handleUpdateMedicine(index, "quantity", e.target.value)
-                        }
-                      />
+                      <div>
+                         {medicine.minQuantity && medicine.minQuantity > 1 && (
+                        <div className="text-xs text-gray-400 mt-1 w-10">Min: {medicine.minQuantity}</div>
+                      )}
+                      </div>
+                      <div className="flex items-center mt-0.5">
+                        <button
+                          type="button"
+                          aria-label="Decrease quantity"
+                          onClick={() => {
+                            const minQ = medicine.minQuantity || 1;
+                            const newQty = Math.max((medicine.quantity || 1) - 1, minQ);
+                            handleUpdateMedicine(index, "quantity", String(newQty));
+                          }}
+                          disabled={(medicine.quantity || 1) <= (medicine.minQuantity || 1)}
+                          className={`px-3 py-1 border rounded-l text-sm ${((medicine.quantity || 1) <= (medicine.minQuantity || 1)) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'}`}
+                        >
+                          -
+                        </button>
+
+                        <Input
+                          type="number"
+                          min={medicine.minQuantity || 1}
+                          readOnly={false}
+                          disabled={false}
+                          className="text-sm py-1 h-8 text-center"
+                          value={medicine.quantity}
+                          onChange={(e) =>
+                            handleUpdateMedicine(index, "quantity", e.target.value)
+                          }
+                        />
+
+                        <button
+                          type="button"
+                          aria-label="Increase quantity"
+                          onClick={() => {
+                            const newQty = (medicine.quantity || 1) + 1;
+                            handleUpdateMedicine(index, "quantity", String(newQty));
+                          }}
+                          className="px-3 py-1 border rounded-r text-sm hover:bg-gray-100"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                     
                     </div>
-                    <div className="col-span-3">
-                      <Label className="text-xs">Dosage</Label>
-                      <Input
-                        className="mt-0.5 text-sm py-1 h-8"
-                        placeholder="e.g. 1-0-1"
-                        value={medicine.dosage}
-                        onChange={(e) =>
-                          handleUpdateMedicine(index, "dosage", e.target.value)
-                        }
-                      />
-                    </div>
+
                   </div>
                 </div>
               ))}

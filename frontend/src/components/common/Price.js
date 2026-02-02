@@ -8,6 +8,7 @@ const Price = ({
   originalPrice,
   discount,
   showTaxLabel,
+  hideDiscountAndMRP = false,
 }) => {
   // console.log("price", price, "originalPrice", originalPrice, "card", card);
   const { getNumberTwo } = useUtilsFunction();
@@ -44,6 +45,9 @@ const Price = ({
     }
   }
 
+  // Use passed `price` prop if provided, otherwise fallback to product prices
+  const effectivePrice = typeof price === 'number' && !Number.isNaN(price) ? price : Number(product?.prices?.price || 0);
+
   return (
     <div className="font-serif product-price font-bold">
       {product?.isCombination ? (
@@ -58,7 +62,7 @@ const Price = ({
             {currency}
             {getNumberTwo(price)}
           </span>
-          {originalPrice > price ? (
+          {(!hideDiscountAndMRP && originalPrice > price) ? (
             <>
               <del
                 className={
@@ -92,9 +96,9 @@ const Price = ({
             }
           >
             {currency}
-            {getNumberTwo(product?.prices?.price)}
+            {getNumberTwo(effectivePrice)}
           </span>
-          {originalPrice > price ? (
+          {(!hideDiscountAndMRP && originalPrice > effectivePrice) ? (
             <>
               <del
                 className={

@@ -16,6 +16,7 @@ import Loading from "@components/preloader/Loading";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import AttributeServices from "@services/AttributeServices";
 import CategoryServices from "@services/CategoryServices";
 import CategoryCarousel from "@components/carousel/CategoryCarousel";
@@ -62,6 +63,10 @@ const Search = ({ products, attributes }) => {
   useEffect(() => {
     setVisibleProduct(18);
   }, [sortedField, selectedBrands, selectedCategories, router.query]);
+
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
+  const filteredProductData = isWholesaler ? (productData || []).filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : productData;
 
   // Sync sort state from URL when route is ready or query changes
   useEffect(() => {
@@ -472,7 +477,7 @@ const Search = ({ products, attributes }) => {
               {/* <div className="relative block">
                 <CategoryCarousel />
               </div> */}
-              {productData?.length === 0 ? (
+              {filteredProductData?.length === 0 ? (
                 <div className="mx-auto p-5 my-5">
                   <Image
                     className="my-4 mx-auto"
@@ -489,7 +494,7 @@ const Search = ({ products, attributes }) => {
                 <div className="hidden lg:flex justify-between my-3 bg-orange-100 border border-gray-100 rounded p-3">
                   <h6 className="text-sm font-serif">
                     {t("totalI")}{" "}
-                    <span className="font-bold">{productData?.length}</span>{" "}
+                    <span className="font-bold">{filteredProductData?.length}</span>{" "}
                     {t("itemsFound")}
                   </h6>
                   <span className="text-sm font-serif">
@@ -526,7 +531,7 @@ const Search = ({ products, attributes }) => {
               ) : (
                 <>
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-5 gap-2 md:gap-3 lg:gap-3">
-                    {productData?.slice(0, visibleProduct).map((product, i) => (
+                    {filteredProductData?.slice(0, visibleProduct).map((product, i) => (
                       <ProductCard
                         key={i + 1}
                         product={product}
@@ -535,7 +540,7 @@ const Search = ({ products, attributes }) => {
                     ))}
                   </div>
 
-                  {productData?.length > visibleProduct && (
+                  {filteredProductData?.length > visibleProduct && (
                     <button
                       onClick={() => setVisibleProduct((pre) => pre + 10)}
                       className={`w-auto mx-auto md:text-sm leading-5 flex items-center transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none bg-indigo-100 text-gray-700 px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-6 text-sm lg:text-sm`}

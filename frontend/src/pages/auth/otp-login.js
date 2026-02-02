@@ -192,7 +192,7 @@ const OTPLogin = () => {
         phoneNumber: user.phoneNumber,
         idToken: idToken,
       });
-
+      // console.log("OTP login response:", response);
       if (response?.token) {
         const userInfo = {
           _id: response._id,
@@ -202,6 +202,7 @@ const OTPLogin = () => {
           address: response.address || "",
           image: response.image || "",
           token: response.token,
+          role: response.role || "customer",
         };
 
         Cookies.set("userInfo", JSON.stringify(userInfo), { expires: 1 });
@@ -279,7 +280,7 @@ const OTPLogin = () => {
 
                 {step === "phone" && error && (
                   <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-                    {error}
+                    {error?.response?.data?.message || error?.message || String(error)}
                   </div>
                 )}
 

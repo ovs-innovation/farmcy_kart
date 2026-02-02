@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { UserContext } from "@context/UserContext";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -22,8 +23,12 @@ const Compare = ({ attributes }) => {
   const { addItem } = useCart();
   const { storeCustomizationSetting, globalSetting } = useGetSetting();
   const { showingTranslateValue } = useUtilsFunction();
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler"; 
   const [compareItems, setCompareItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const displayedCompareItems = isWholesaler ? (compareItems || []).filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : compareItems;
 
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
   const currency = globalSetting?.default_currency || "₹";
@@ -76,15 +81,20 @@ const Compare = ({ attributes }) => {
 
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
+    const wholesalePriceValue = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+    const priceToUse = isWholesaler && wholesalePriceValue ? wholesalePriceValue : (product.prices?.price || 0);
+
     const newItem = {
       ...updatedProduct,
       title: showingTranslateValue(product?.title),
       id: product._id,
       variant: product.prices,
-      price: product.prices.price,
+      price: priceToUse,
       originalPrice: product.prices?.originalPrice,
     };
-    addItem(newItem);
+
+    const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
+    addItem(newItem, minQty);
     notifySuccess("Product added to cart");
   };
 
@@ -149,7 +159,7 @@ const Compare = ({ attributes }) => {
                   <thead>
                     <tr className={`bg-store-500 text-white`}>
                       <th className="p-4 text-left font-semibold">Product</th>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <th
                           key={product._id}
                           className="p-4 text-center font-semibold relative min-w-[200px]"
@@ -168,7 +178,7 @@ const Compare = ({ attributes }) => {
                   <tbody>
                     <tr className="border-b">
                       <td className="p-4 font-semibold">Image</td>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <td key={product._id} className="p-4 text-center">
                           <div className="relative w-full h-48 mb-2">
                             <Image
@@ -187,7 +197,7 @@ const Compare = ({ attributes }) => {
                     </tr>
                     <tr className="border-b bg-gray-50">
                       <td className="p-4 font-semibold">Name</td>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <td key={product._id} className="p-4 text-center">
                           <Link
                             href={`/product/${product.slug}`}
@@ -200,19 +210,22 @@ const Compare = ({ attributes }) => {
                     </tr>
                     <tr className="border-b">
                       <td className="p-4 font-semibold">Price</td>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <td key={product._id} className="p-4 text-center">
                           <Price
                             product={product}
+                            price={isWholesaler && product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : product?.prices?.price}
+                            originalPrice={product?.prices?.originalPrice}
                             currency={currency}
                             storeColor={storeColor}
+                            hideDiscountAndMRP={isWholesaler}
                           />
                         </td>
                       ))}
                     </tr>
                     <tr className="border-b bg-gray-50">
                       <td className="p-4 font-semibold">Stock</td>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <td key={product._id} className="p-4 text-center">
                           <Stock stock={product.stock} />
                         </td>
@@ -221,7 +234,7 @@ const Compare = ({ attributes }) => {
                      
                     <tr className="border-b">
                       <td className="p-4 font-semibold">Action</td>
-                      {compareItems.map((product) => (
+                      {displayedCompareItems.map((product) => (
                         <td key={product._id} className="p-4 text-center">
                           <button
                             onClick={() => addToCart(product)}

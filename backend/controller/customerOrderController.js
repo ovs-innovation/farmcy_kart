@@ -390,7 +390,13 @@ const sendEmailInvoiceToCustomer = async (req, res) => {
       ],
     };
     const message = `Invoice successfully sent to the customer ${user.name}`;
-    sendEmail(body, res, message);
+    try {
+      await sendEmail(body);
+      res.send({ message });
+    } catch (emailErr) {
+      console.error("Email send failed (non-blocking):", emailErr.message || emailErr);
+      res.status(200).send({ message, emailError: emailErr.message || String(emailErr) });
+    }
   } catch (err) {
     res.status(500).send({
       message: err.message,

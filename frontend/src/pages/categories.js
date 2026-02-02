@@ -4,6 +4,7 @@ import Layout from "@layout/Layout";
 import FeatureCategory from "@components/category/FeatureCategory";
 import SliderCarousel from "@components/carousel/SliderCarousel";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import CategoryServices from "@services/CategoryServices";
 import ProductServices from "@services/ProductServices";
 import ProductCard from "@components/product/ProductCard";
@@ -20,6 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 
 const Categories = () => {
   const { setIsLoading } = useContext(SidebarContext);
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   const [parentCategories, setParentCategories] = useState([]);
 
   // Palette for section backgrounds (cycles through these colors)
@@ -151,7 +154,7 @@ const Categories = () => {
                         }}
                         className="mySwiper px-2 py-2"
                       >
-                        {bestSellingProducts?.slice(0, 10).map((product) => (
+                        {(isWholesaler ? bestSellingProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : bestSellingProducts)?.slice(0, 10).map((product) => (
                           <SwiperSlide key={product._id}>
                             <ProductCard product={product} attributes={[]} />
                           </SwiperSlide>

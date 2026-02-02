@@ -131,6 +131,7 @@ const Prescriptions = () => {
                 <TableCell>Date</TableCell>
                 <TableCell>Customer Name</TableCell>
                 <TableCell>Email</TableCell>
+                <TableCell>Role</TableCell>
                 <TableCell className="text-center">Status</TableCell>
                 <TableCell className="text-right">Actions</TableCell>
               </tr>

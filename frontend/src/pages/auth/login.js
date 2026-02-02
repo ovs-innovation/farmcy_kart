@@ -180,6 +180,7 @@ const Login = () => {
           address: response.address || "",
           image: response.image || "",
           token: response.token,
+          role: response.role || "customer",
         };
 
         setToken(response.token);

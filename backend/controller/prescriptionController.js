@@ -1,6 +1,7 @@
 const Prescription = require("../models/Prescription");
 const Notification = require("../models/Notification");
 const Customer = require("../models/Customer");
+const Product = require("../models/Product");
 const { sendEmail } = require("../lib/email-sender/sender");
 const prescriptionStatusEmailBody = require("../lib/email-sender/templates/prescription-status");
 
@@ -77,7 +78,7 @@ const uploadPrescription = async (req, res) => {
 const getAllPrescriptions = async (req, res) => {
   try {
     const prescriptions = await Prescription.find()
-      .populate("user", "name email phone")
+      .populate("user", "name email phone role")
       .sort({ createdAt: -1 });
 
     res.status(200).json({
@@ -125,7 +126,7 @@ const getPrescriptionById = async (req, res) => {
 
     const prescription = await Prescription.findById(id).populate(
       "user",
-      "name email phone"
+      "name email phone role"
     );
 
     if (!prescription) {
@@ -148,6 +149,7 @@ const getPrescriptionById = async (req, res) => {
 
 // Update prescription status
 const updatePrescriptionStatus = async (req, res) => {
+  console.log("updatePrescriptionStatus called");
   try {
     const { id } = req.params;
     const { status, notes, medicines } = req.body;
@@ -170,7 +172,7 @@ const updatePrescriptionStatus = async (req, res) => {
       id,
       updateData,
       { new: true }
-    ).populate("user", "name email phone");
+    ).populate("user", "name email phone role");
 
     if (!prescription) {
       return res.status(404).json({
@@ -186,21 +188,36 @@ const updatePrescriptionStatus = async (req, res) => {
           let cart = customer.cart || [];
           
           // Prevent duplicate medicines in the same request by grouping by productId
+          // Enforce minimum quantity per product server-side to avoid client-side bypass
           const medicineMap = new Map();
-          medicines.forEach((medicine) => {
+          for (const medicine of medicines) {
             const productIdStr = medicine.productId.toString();
+            let qty = medicine.quantity || 1;
+            try {
+              const prod = await Product.findById(medicine.productId).select("minQuantity");
+              // Enforce minQuantity only for wholesaler users
+              const isWholesalerUser = prescription.user && prescription.user.role && String(prescription.user.role).toLowerCase() === 'wholesaler';
+              const minQ = isWholesalerUser ? (prod?.minQuantity || 1) : 1;
+              if (isWholesalerUser && prod?.minQuantity && Number(prod.minQuantity) > 0 && qty < Number(prod.minQuantity)) {
+                console.info(`[Prescriptions] Enforcing minQuantity for wholesaler user ${prescription.user._id} for product ${medicine.productId}: setting qty ${Number(prod.minQuantity)}`);
+              }
+              qty = Math.max(qty, minQ);
+            } catch (err) {
+              // ignore and keep provided qty
+            }
+
             if (medicineMap.has(productIdStr)) {
               medicineMap.set(productIdStr, {
                 productId: medicine.productId,
-                quantity: medicineMap.get(productIdStr).quantity + (medicine.quantity || 1),
+                quantity: medicineMap.get(productIdStr).quantity + qty,
               });
             } else {
               medicineMap.set(productIdStr, {
                 productId: medicine.productId,
-                quantity: medicine.quantity || 1,
+                quantity: qty,
               });
             }
-          });
+          }
 
           // Now add/update items in cart
           medicineMap.forEach((medicine) => {
@@ -237,18 +254,27 @@ const updatePrescriptionStatus = async (req, res) => {
         company_name: "FarmcyKart",
       });
 
-      sendEmail(
-        {
+      try {
+        await sendEmail({
           from: process.env.EMAIL_USER,
           to: prescription.user.email,
           subject: `Prescription Update: ${
             prescription.status === "processed" ? "Approved" : "Rejected"
           }`,
           html: emailBody,
-        },
-        res,
-        "Prescription status updated successfully"
-      );
+        });
+        res.status(200).json({
+          message: "Prescription status updated successfully",
+          prescription: prescription,
+        });
+      } catch (emailErr) {
+        console.error("Email send failed (non-blocking):", emailErr.message || emailErr);
+        res.status(200).json({
+          message: "Prescription status updated successfully (email failed)",
+          prescription: prescription,
+          emailError: emailErr.message || String(emailErr),
+        });
+      }
     } else {
       res.status(200).json({
         message: "Prescription status updated successfully",

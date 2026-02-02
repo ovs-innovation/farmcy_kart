@@ -4,6 +4,7 @@ import { FiPlus, FiMinus } from "react-icons/fi";
 
 //internal imports
 import useGetSetting from "@hooks/useGetSetting";
+import { notifyError } from "@utils/toast";
 
 const CheckoutCard = ({ item }) => {
   const { updateItemQuantity } = useCart();
@@ -42,8 +43,15 @@ const CheckoutCard = ({ item }) => {
           </p>
           <div className="h-8 w-20 flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">
             <div
-              className="cursor-pointer"
-              onClick={() => updateItemQuantity(item.id, item.quantity - 1)}
+              className={`cursor-pointer ${item?.minQuantity && item.quantity <= Number(item.minQuantity) ? 'opacity-50 pointer-events-none' : ''}`}
+              onClick={() => {
+                const minQty = item?.minQuantity ? Number(item.minQuantity) : 1;
+                if (item.quantity - 1 < minQty) {
+                  notifyError(`Minimum quantity is ${minQty}`);
+                  return;
+                }
+                updateItemQuantity(item.id, item.quantity - 1);
+              }}
             >
               <span className="text-dark text-base">
                 <FiMinus />

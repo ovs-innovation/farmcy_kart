@@ -21,13 +21,13 @@ const TrustedBrandsSection = ({ brands = [] }) => {
       <div className="w-full px-4 sm:px-6 lg:px-10">
         <div className=" ">
           {/* Left Side - Title and Description */}
-          {/* <div className="order-1 lg:order-1">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-store-900 mb-4">
+          <div className="order-1 lg:order-1">
+            <h2 className="text-2xl md:text-3xl lg:text-3xl font-bold text-gray-900 mt-10 mb-4">
               Top Brands You Can Trust
             </h2>
            
           
-          </div> */}
+          </div>
 
           {/* Right Side - Full-width horizontal marquee */}
           <div className="  w-full">

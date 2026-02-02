@@ -4,6 +4,8 @@ import { IoBagHandle } from "react-icons/io5";
 import ReactPaginate from "react-paginate";
 import { useSession } from "next-auth/react";
 import { useQuery } from "@tanstack/react-query";
+import Cookies from "js-cookie";
+import { setToken } from "@services/httpServices";
 
 //internal import
 import Dashboard from "@pages/user/dashboard";
@@ -26,18 +28,33 @@ const MyOrders = () => {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedProductForReview, setSelectedProductForReview] = useState(null);
 
+  // Support fetching orders when the user is logged in via cookie (synchronous)
+  // (sometimes next-auth session may be unauthenticated while cookie exists)
+  const userInfoCookie = Cookies.get("userInfo");
+  const parsedUser = userInfoCookie ? JSON.parse(userInfoCookie) : null;
+  const userId = session?.user?.id || parsedUser?._id || parsedUser?.id || null;
+  const hasAuthToken = !!(session?.user?.token || parsedUser?.token);
+  const isClientLoggedIn = status === "authenticated" || !!parsedUser;
+
+  // ensure axios has Authorization header if we have token in cookie
+  useEffect(() => {
+    if (parsedUser?.token && !session?.user?.token) {
+      setToken(parsedUser.token);
+    }
+  }, [parsedUser?.token, session?.user?.token]);
+
   const {
     data,
     error,
     isLoading: loading,
   } = useQuery({
-    queryKey: ["orders", { currentPage, user: session?.user?.id }],
+    queryKey: ["orders", { currentPage, user: userId }],
     queryFn: async () =>
       await OrderServices.getOrderCustomer({
         limit: 10,
         page: currentPage,
       }),
-    enabled: status === "authenticated",
+    enabled: hasAuthToken && isClientLoggedIn,
   });
 
   const pageCount = Math.ceil(data?.totalDoc / 8);

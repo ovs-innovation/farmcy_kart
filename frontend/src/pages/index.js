@@ -1,4 +1,5 @@
 import { useContext, useEffect } from "react";
+import { UserContext } from "@context/UserContext";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,6 +37,8 @@ import DealsYouLove from "@components/carousel/DealsYouLove";
 const Home = ({ popularProducts, discountProducts, bestSellingProducts, attributes, brands }) => {
   const router = useRouter();
   const { isLoading, setIsLoading } = useContext(SidebarContext);
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   const { loading, error, storeCustomizationSetting } = useGetSetting();
 
   // console.log("storeCustomizationSetting", storeCustomizationSetting);
@@ -81,7 +84,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
             {storeCustomizationSetting?.home?.featured_status && (
               <div id="feature-category" className="bg-white lg:py-16 py-10">
                 <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                  <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                  <div className="flex items-center md:justify-between mb-2 justify-center  gap-2">
                     <SectionHeader
                       title={storeCustomizationSetting?.home?.feature_title || "Featured Categories"}
                       subtitle={storeCustomizationSetting?.home?.feature_description || "Explore our handpicked selection of featured categories"}
@@ -91,8 +94,8 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                     />
                     <Link
                       href="/categories"
-                      className="border border-emerald-700 text-emerald-700 font-bold rounded-full px-6 py-2 flex items-center gap-2 hover:bg-emerald-50 transition text-base whitespace-nowrap"
-                      style={{ minWidth: 120 }}
+                      className="border border-emerald-700 text-emerald-700 font-bold rounded-full px-6 py-2 flex items-center gap-2 hover:bg-emerald-50 transition text-sm  md:text-base whitespace-nowrap"
+                      style={{ minWidth: 80 }}
                     >
                       View All <span className="text-lg">&gt;</span>
                     </Link>
@@ -117,7 +120,8 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
               </div>
             </div>
             {/* Deals You'll Love Section */}
-            {discountProducts?.length > 0 && (
+            {/* Do not render deals section for wholesalers */}
+            {!isWholesaler && discountProducts?.length > 0 && (
                 <DealsYouLove products={discountProducts} />
             )}
 
@@ -163,7 +167,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                           }}
                           className="mySwiper px-2 py-2"
                         >
-                          {popularProducts
+                          {(isWholesaler ? popularProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : popularProducts)
                             ?.slice(
                               0,
                               storeCustomizationSetting?.home
@@ -242,7 +246,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                           }}
                           className="mySwiper px-2 py-2"
                         >
-                          {bestSellingProducts
+                          {(isWholesaler ? bestSellingProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : bestSellingProducts)
                             ?.slice(0, 10)
                             .map((product) => (
                               <SwiperSlide key={product._id}>
@@ -374,7 +378,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                             }}
                             className="mySwiper px-2 py-2"
                           >
-                            {discountProducts
+                            {(isWholesaler ? discountProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : discountProducts)
                               ?.slice(
                                 0,
                                 storeCustomizationSetting?.home

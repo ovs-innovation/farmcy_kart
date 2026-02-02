@@ -66,21 +66,37 @@ const useCartSync = () => {
             const hasVariantInCart = items.some(item => String(item.id).startsWith(String(id) + '-'));
 
             if (localItem) {
-              // If local quantity is different from backend quantity, update it
+              // Sync policy: only apply backend quantity updates if backend increased
               if (localItem.quantity !== backendQty) {
-                itemsToProcess.push({ type: 'update', id, quantity: backendQty });
+                if (backendQty > localItem.quantity) {
+                  // Backend has a higher quantity (e.g., admin increased) -> update local
+                  itemsToProcess.push({ type: 'update', id, quantity: backendQty });
+                } else {
+                  // Backend qty is lower than local (user may have increased locally). Preserve user's local choice and do not downgrade.
+                  // Add a console warning for visibility during debugging.
+                  console.warn(`[Cart Sync] Skipping downgrade for item ${id}: localQty=${localItem.quantity}, backendQty=${backendQty}`);
+                }
               }
             } else if (!hasVariantInCart) {
               // Only add if no variant exists and no exact match exists
+              // Determine effective price based on customer role (wholesaler vs retail)
+              const isWholesalerUser = userInfo?.role && String(userInfo.role).toLowerCase() === 'wholesaler';
+              const effectivePrice = isWholesalerUser && product.wholePrice && Number(product.wholePrice) > 0
+                ? Number(product.wholePrice)
+                : (product.prices?.price || product.prices?.originalPrice || 0);
+
               itemsToProcess.push({
                 type: 'add',
                 item: {
                   id: id,
-                  price: product.prices?.price || product.prices?.originalPrice || 0,
+                  price: effectivePrice,
                   title: product.title?.en || product.title || "Product",
                   image: Array.isArray(product.image) ? product.image[0] : (typeof product.image === 'string' ? product.image : ''),
                   quantity: backendQty,
-                  slug: product.slug
+                  slug: product.slug,
+                  // include stock/minQuantity so cart operations (increment/decrement) can work correctly
+                  stock: (product?.stock !== undefined ? product.stock : (product?.variants && product.variants[0] ? product.variants[0].quantity : undefined)),
+                  minQuantity: product?.minQuantity
                 },
                 quantity: backendQty
               });
