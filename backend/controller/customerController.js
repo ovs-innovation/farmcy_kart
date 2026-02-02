@@ -1034,14 +1034,16 @@ const updateCustomer = async (req, res) => {
     }
 
     // Check if the email already exists and does not belong to the current customer
-    const existingCustomer = await Customer.findOne({ email });
-    if (
-      existingCustomer &&
-      existingCustomer._id.toString() !== customer._id.toString()
-    ) {
-      return res.status(400).send({
-        message: "Email already exists.",
-      });
+    if (email) {
+      const existingCustomer = await Customer.findOne({ email });
+      if (
+        existingCustomer &&
+        existingCustomer._id.toString() !== customer._id.toString()
+      ) {
+        return res.status(400).send({
+          message: "Email already exists.",
+        });
+      }
     }
 
     // Update customer details
@@ -1051,7 +1053,7 @@ const updateCustomer = async (req, res) => {
     if (phone) customer.phone = phone;
     if (image) customer.image = image;
     if (cart) customer.cart = cart;
-
+    console.log("req.body", req.body);
     // Allow updating document fields and delete tokens
     if (req.body.aadhar !== undefined) customer.aadhar = req.body.aadhar;
     if (req.body.aadharPublicId !== undefined) customer.aadharPublicId = req.body.aadharPublicId;

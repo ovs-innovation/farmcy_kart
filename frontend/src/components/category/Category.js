@@ -1,7 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { IoClose } from "react-icons/io5";
+import { useRouter } from "next/router";
+import { IoClose, IoChevronDown, IoChevronForward } from "react-icons/io5";
 import {
   FiHome,
   FiGrid,
@@ -29,6 +30,7 @@ import CategoryCard from "@components/category/CategoryCard";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const Category = () => {
+  const router = useRouter();
   const { categoryDrawerOpen, closeCategoryDrawer } = 
     useContext(SidebarContext);
   const { showingTranslateValue } = useUtilsFunction();
@@ -36,6 +38,25 @@ const Category = () => {
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
 
   const [activeTab, setActiveTab] = useState("category");
+  const [expandedCategories, setExpandedCategories] = useState({});
+  const [isMobile, setIsMobile] = useState(false);
+
+  const toggleCategoryExpansion = (categoryId) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId]
+    }));
+  };
+
+  // Check if mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024); // lg breakpoint
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const { data, error, isLoading, isFetched } = useQuery({
     queryKey: ["category"],
@@ -137,14 +158,80 @@ const Category = () => {
               </p>
             ) : (
               <div className="relative grid grid-cols-1 gap-2 p-4 pt-3">
-                {data[0]?.children?.map((category) => (
-                  <CategoryCard
-                    key={category._id}
-                    id={category._id}
-                    icon={category.icon}
-                    nested={category.children}
-                    title={showingTranslateValue(category?.name)}
-                  />
+                {data?.map((mainCategory) => (
+                  <div key={mainCategory._id}>
+                    {/* Main Categories - Direct display without parent */}
+                    {mainCategory?.children?.length > 0 && (
+                      <div className="border-b border-gray-100 last:border-b-0">
+                        {mainCategory.children.map((subcategory1) => (
+                          <div key={subcategory1._id}>
+                            <div 
+                              className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 hover:text-store-500 transition-colors cursor-pointer"
+                              onClick={() => toggleCategoryExpansion(subcategory1._id)}
+                            >
+                              {subcategory1?.icon ? (
+                                <Image
+                                  src={subcategory1.icon}
+                                  alt={showingTranslateValue(subcategory1?.name)}
+                                  width={20}
+                                  height={20}
+                                  className="object-contain flex-shrink-0"
+                                />
+                              ) : (
+                                <div className="w-5 h-5 flex-shrink-0"></div>
+                              )}
+                              <span className="uppercase">
+                                {showingTranslateValue(subcategory1?.name)}
+                              </span>
+                              {subcategory1?.children?.length > 0 && (
+                                <div className="ml-auto">
+                                  {expandedCategories[subcategory1._id] ? (
+                                    <IoChevronDown className="text-gray-400 transition-transform duration-200" />
+                                  ) : (
+                                    <IoChevronForward className="text-gray-400 transition-transform duration-200" />
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Subcategories Level 2 - Collapsible */}
+                            {subcategory1?.children?.length > 0 && expandedCategories[subcategory1._id] && (
+                              <div className="bg-gray-50">
+                                {subcategory1.children.map((subcategory2) => (
+                                  <div
+                                    key={subcategory2._id}
+                                    onClick={() => {
+                                      const name = (subcategory2?.name?.en || subcategory2?.name)
+                                        .toLowerCase()
+                                        .replace(/[^A-Z0-9]+/gi, "-");
+                                      router.push(`/search?category=${name}&_id=${subcategory2._id}`);
+                                      closeCategoryDrawer();
+                                    }}
+                                    className="flex items-center gap-3 px-6 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-store-500 transition-colors cursor-pointer"
+                                  >
+                                    {subcategory2?.icon ? (
+                                      <Image
+                                        src={subcategory2.icon}
+                                        alt={showingTranslateValue(subcategory2?.name)}
+                                        width={16}
+                                        height={16}
+                                        className="object-contain flex-shrink-0"
+                                      />
+                                    ) : (
+                                      <div className="w-4 h-4 flex-shrink-0"></div>
+                                    )}
+                                    <span>
+                                      {showingTranslateValue(subcategory2?.name)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             )}

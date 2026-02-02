@@ -135,7 +135,7 @@ const CategoryCards = () => {
                     <div className="relative z-10 p-8 flex flex-col flex-1 -mt-6">
                       
                       {/* Content */}
-                      <h3 className="text-xl md:text-2xl text-center font-black text-gray-800 mb-3 uppercase tracking-tight group-hover:text-gray-900 line-clamp-2">
+                      <h3 className="text-xl md:text-2xl text-center font-normal text-gray-800 mb-3 capitalize tracking-tight group-hover:text-gray-900 line-clamp-2">
                         {category.title}
                       </h3>
                       

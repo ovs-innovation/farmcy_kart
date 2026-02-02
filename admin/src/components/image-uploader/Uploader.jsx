@@ -20,6 +20,11 @@ const Uploader = ({
   targetWidth = 800, // Set default fixed width
   targetHeight = 800, // Set default fixed height
   useOriginalSize = false,
+  accept,
+  maxSize = 5242880,
+  uniquePublicId = false,
+  onUploadComplete,
+  onRemove,
 }) => {
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,24 +33,26 @@ const Uploader = ({
   const { globalSetting } = useUtilsFunction();
 
   const { getRootProps, getInputProps, fileRejections } = useDropzone({
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-    },
+    accept:
+      accept ||
+      {
+        "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      },
     multiple: product ? true : false,
-    maxSize: 5242880, // 5 MB in bytes
+    maxSize,
     maxFiles: globalSetting?.number_of_image_per_product || 2,
     onDrop: async (acceptedFiles) => {
       let filesToUpload;
 
-      if (useOriginalSize) {
-        filesToUpload = acceptedFiles;
-      } else {
-        filesToUpload = await Promise.all(
-          acceptedFiles.map((file) =>
-            resizeImageToFixedDimensions(file, targetWidth, targetHeight)
-          )
-        );
-      }
+      filesToUpload = await Promise.all(
+        acceptedFiles.map((file) => {
+          if (useOriginalSize) return file;
+          if (file?.type && file.type.startsWith("image/")) {
+            return resizeImageToFixedDimensions(file, targetWidth, targetHeight);
+          }
+          return file;
+        })
+      );
 
       setFiles(
         filesToUpload.map((file) =>
@@ -118,7 +125,8 @@ const Uploader = ({
         setError("Uploading....");
 
         const name = file.name.replaceAll(/\s/g, "");
-        const public_id = name?.substring(0, name.lastIndexOf("."));
+        const basePublicId = name?.substring(0, name.lastIndexOf("."));
+        const public_id = uniquePublicId ? `${basePublicId}_${Date.now()}` : basePublicId;
 
         const formData = new FormData();
         formData.append("file", file);
@@ -130,17 +138,23 @@ const Uploader = ({
         formData.append("folder", folder);
         formData.append("public_id", public_id);
 
+        const baseUrl = import.meta.env.VITE_APP_CLOUDINARY_URL;
+        const uploadUrl =
+          file?.type === "application/pdf" && typeof baseUrl === "string"
+            ? baseUrl.replace("/image/upload", "/auto/upload")
+            : baseUrl;
+
         axios({
-          url: import.meta.env.VITE_APP_CLOUDINARY_URL,
+          url: uploadUrl,
           method: "POST",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-          },
           data: formData,
         })
           .then((res) => {
             notifySuccess("Image Uploaded successfully!");
             setLoading(false);
+            if (typeof onUploadComplete === "function") {
+              onUploadComplete(res.data);
+            }
             if (product) {
               setImageUrl((imgUrl) => [...imgUrl, res.data.secure_url]);
             } else {
@@ -179,6 +193,9 @@ const Uploader = ({
     try {
       setLoading(false);
       notifyError("Image delete successfully!");
+      if (typeof onRemove === "function") {
+        await onRemove(img);
+      }
       if (product) {
         const result = imageUrl?.filter((i) => i !== img);
         setImageUrl(result);
@@ -221,11 +238,22 @@ const Uploader = ({
           </DndProvider>
         ) : !product && imageUrl ? (
           <div className="relative">
-            <img
-              className="inline-flex border rounded-md border-gray-100 dark:border-gray-600 w-24 max-h-24 p-2"
-              src={imageUrl}
-              alt="product"
-            />
+            {typeof imageUrl === "string" && /\.pdf(\?|$)/i.test(imageUrl) ? (
+              <a
+                className="inline-flex border rounded-md border-gray-100 dark:border-gray-600 w-24 max-h-24 p-2 items-center justify-center text-sm underline"
+                href={imageUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                PDF
+              </a>
+            ) : (
+              <img
+                className="inline-flex border rounded-md border-gray-100 dark:border-gray-600 w-24 max-h-24 p-2"
+                src={imageUrl}
+                alt="product"
+              />
+            )}
             <button
               type="button"
               className="absolute top-0 right-0 text-red-500 focus:outline-none"

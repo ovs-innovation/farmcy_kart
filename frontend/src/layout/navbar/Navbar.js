@@ -4,7 +4,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCart } from "react-use-cart";
-import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline } from "react-icons/io5";
+import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline, IoChevronForward, IoChevronDown } from "react-icons/io5";
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import useTranslation from "next-translate/useTranslation";
 import { useQuery } from "@tanstack/react-query";
@@ -29,6 +29,16 @@ const Navbar = () => {
   const { data: categoriesData } = useQuery({
     queryKey: ["category"],
     queryFn: async () => await CategoryServices.getShowingCategory(),
+    onSuccess: (data) => {
+      console.log('Categories API Success:', data);
+      console.log('Categories length:', data?.length);
+      data?.forEach((cat, index) => {
+        console.log(`Category ${index + 1}:`, cat.name, 'Children:', cat.children?.length || 0);
+      });
+    },
+    onError: (error) => {
+      console.error('Categories API Error:', error);
+    }
   });
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { totalItems, totalUniqueItems } = useCart();
@@ -139,55 +149,70 @@ const Navbar = () => {
                   <button className="flex items-center gap-1 hover:text-store-500 transition-colors py-2">
                     Categories <IoChevronDownOutline />
                   </button>
-                  <div className="absolute top-full left-0 w-64 bg-white shadow-lg rounded-md py-1 hidden group-hover:block z-50 border border-gray-100">
-                    {categoriesData?.[0]?.children?.map((category) => (
-                      <Link
-                        key={category._id}
-                        href={`/search?category=${
-                          category.slug ||
-                          (category?.name?.en || category?.name)
-                            .toLowerCase()
-                            .replace(/[^A-Z0-9]+/gi, "-")
-                        }&_id=${category._id}`}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 hover:text-store-500 transition-colors"
-                      >
-                        {category?.icon ? (
-                          <Image
-                            src={category.icon}
-                            alt={showingTranslateValue(category?.name)}
-                            width={20}
-                            height={20}
-                            className="object-contain flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-5 h-5 flex-shrink-0"></div>
+                  <div className="absolute top-full left-0 w-80 bg-white shadow-lg rounded-md py-2 hidden group-hover:block z-50 border border-gray-100 max-h-96 overflow-y-auto">
+                    {categoriesData?.map((mainCategory) => (
+                      <div key={mainCategory._id}>
+                        {/* Subcategories Level 1 - Direct display without parent */}
+                        {mainCategory?.children?.length > 0 && (
+                          <div className="border-b border-gray-100 last:border-b-0">
+                            {mainCategory.children.map((subcategory1) => (
+                              <div key={subcategory1._id}>
+                                <div className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-gray-800 hover:bg-gray-50 hover:text-store-500 transition-colors cursor-default">
+                                  {subcategory1?.icon ? (
+                                    <Image
+                                      src={subcategory1.icon}
+                                      alt={showingTranslateValue(subcategory1?.name)}
+                                      width={20}
+                                      height={20}
+                                      className="object-contain flex-shrink-0"
+                                    />
+                                  ) : (
+                                    <div className="w-5 h-5 flex-shrink-0"></div>
+                                  )}
+                                  <span className="uppercase">
+                                    {showingTranslateValue(subcategory1?.name)}
+                                  </span>
+                                </div>
+                                
+                                {/* Subcategories Level 2 */}
+                                {subcategory1?.children?.length > 0 && (
+                                  <div className="bg-gray-50">
+                                    {subcategory1.children.map((subcategory2) => (
+                                      <Link
+                                        key={subcategory2._id}
+                                        href={`/search?category=${
+                                          subcategory2.slug ||
+                                          (subcategory2?.name?.en || subcategory2?.name)
+                                            .toLowerCase()
+                                            .replace(/[^A-Z0-9]+/gi, "-")
+                                        }&_id=${subcategory2._id}`}
+                                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-store-500 transition-colors"
+                                      >
+                                         
+                                        {subcategory2?.icon ? (
+                                          <Image
+                                            src={subcategory2.icon}
+                                            alt={showingTranslateValue(subcategory2?.name)}
+                                            width={16}
+                                            height={16}
+                                            className="object-contain flex-shrink-0"
+                                          />
+                                        ) : (
+                                          <div className="w-4 h-4 flex-shrink-0"></div>
+                                        )}
+                                        <span>
+                                          {showingTranslateValue(subcategory2?.name)}
+                                        </span>
+                                      </Link>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
                         )}
-                        <span className="font-medium uppercase">
-                          {showingTranslateValue(category?.name)}
-                        </span>
-                      </Link>
+                      </div>
                     ))}
-                  </div>
-                </div>
-                <div className="relative group">
-                  <button className="flex items-center gap-1 hover:text-store-500 transition-colors py-2">
-                    Store Location <IoChevronDownOutline />
-                  </button>
-                  <div className="absolute top-full right-0 w-64 bg-white shadow-lg rounded-md py-1 px-2 hidden group-hover:block z-50 border border-gray-100">
-                    {globalSetting?.address ? (
-                      <>
-                        <span className="font-medium block">{globalSetting?.address}</span>
-                        {globalSetting?.post_code && (
-                          <span className="block text-xs text-gray-500 mt-1 font-semibold">
-                            Pincode: {globalSetting?.post_code}
-                          </span>
-                        )}
-                      </>
-                    ) : (
-                      <span className="block px-4 py-2.5 text-sm text-gray-500">
-                        Address not available
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>

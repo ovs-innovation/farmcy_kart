@@ -15,6 +15,7 @@ const useWholesalerSubmit = (id) => {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -33,6 +34,14 @@ const useWholesalerSubmit = (id) => {
             setValue("drugLicense", res.drugLicense || "");
             setValue("gstNotRequired", !!res.gstNotRequired);
             setValue("drugLicenseNotRequired", !!res.drugLicenseNotRequired);
+            setValue("aadharPublicId", res.aadharPublicId || "");
+            setValue("aadharDeleteToken", res.aadharDeleteToken || "");
+            setValue("panPublicId", res.panPublicId || "");
+            setValue("panDeleteToken", res.panDeleteToken || "");
+            setValue("gstPublicId", res.gstPublicId || "");
+            setValue("gstDeleteToken", res.gstDeleteToken || "");
+            setValue("drugLicensePublicId", res.drugLicensePublicId || "");
+            setValue("drugLicenseDeleteToken", res.drugLicenseDeleteToken || "");
             // store public ids for deletion if needed
             setWholesalerData(res);
           }
@@ -49,17 +58,22 @@ const useWholesalerSubmit = (id) => {
   const onSubmit = async (data) => {
     try {
       setIsSubmitting(true);
+      const aadhar = getValues("aadhar") || "";
+      const pan = getValues("pan") || "";
+      const gst = getValues("gst") || "";
+      const drugLicense = getValues("drugLicense") || "";
+
       const update = {
         name: data.name,
         email: data.email,
         phone: data.phone,
-        aadhar: data.aadhar || "",
+        aadhar,
         aadharPublicId: getValues('aadharPublicId') || "",
-        pan: data.pan || "",
+        pan,
         panPublicId: getValues('panPublicId') || "",
-        gst: data.gst || "",
+        gst,
         gstPublicId: getValues('gstPublicId') || "",
-        drugLicense: data.drugLicense || "",
+        drugLicense,
         drugLicensePublicId: getValues('drugLicensePublicId') || "",
         gstNotRequired: !!data.gstNotRequired,
         drugLicenseNotRequired: !!data.drugLicenseNotRequired,
@@ -80,16 +94,16 @@ const useWholesalerSubmit = (id) => {
           password: data.password || undefined,
           gstNotRequired: !!data.gstNotRequired,
           drugLicenseNotRequired: !!data.drugLicenseNotRequired,
-          aadharUrl: data.aadhar || "",
+          aadharUrl: aadhar,
           aadharPublicId: getValues('aadharPublicId') || "",
           aadharDeleteToken: getValues('aadharDeleteToken') || "",
-          panUrl: data.pan || "",
+          panUrl: pan,
           panPublicId: getValues('panPublicId') || "",
           panDeleteToken: getValues('panDeleteToken') || "",
-          gstUrl: data.gst || "",
+          gstUrl: gst,
           gstPublicId: getValues('gstPublicId') || "",
           gstDeleteToken: getValues('gstDeleteToken') || "",
-          drugUrl: data.drugLicense || "",
+          drugUrl: drugLicense,
           drugPublicId: getValues('drugLicensePublicId') || "",
           drugDeleteToken: getValues('drugLicenseDeleteToken') || "",
         };
@@ -224,6 +238,7 @@ const useWholesalerSubmit = (id) => {
     removeAsset,
     wholesalerData,
     getValues,
+    watch,
     sendCredentials,
   };
 };

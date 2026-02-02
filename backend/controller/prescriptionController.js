@@ -5,7 +5,7 @@ const Product = require("../models/Product");
 const { sendEmail } = require("../lib/email-sender/sender");
 const prescriptionStatusEmailBody = require("../lib/email-sender/templates/prescription-status");
 
-// Upload prescription files
+// Upload prescription files (accepts already uploaded Cloudinary URLs from frontend)
 const uploadPrescription = async (req, res) => {
   try {
     const { files, userId, notes } = req.body;

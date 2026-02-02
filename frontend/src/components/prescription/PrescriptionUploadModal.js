@@ -60,6 +60,12 @@ const PrescriptionUploadModal = ({ modalOpen, setModalOpen }) => {
     try {
       const filesToUpload = await Promise.all(
         validFiles.map(async (file) => {
+          // Show local preview immediately for images
+          let localPreview = null;
+          if (file.type.startsWith("image/")) {
+            localPreview = URL.createObjectURL(file);
+          }
+
           const formData = new FormData();
           formData.append("file", file);
           formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET);
@@ -68,19 +74,31 @@ const PrescriptionUploadModal = ({ modalOpen, setModalOpen }) => {
           // Use auto/upload to support both images and PDFs
           const cloudinaryUrl = process.env.NEXT_PUBLIC_CLOUDINARY_URL.replace("/image/upload", "/auto/upload");
 
-          const res = await axios.post(cloudinaryUrl, formData);
+          const res = await axios.post(cloudinaryUrl, formData, {
+            onUploadProgress: (progressEvent) => {
+              // Progress tracking can be added here if needed
+            },
+          });
           
           const fileType = getFileType(file);
-          return {
+          const uploadedFile = {
             url: res.data.secure_url,
             fileName: file.name,
             fileType: fileType,
             fileSize: file.size,
+            preview: localPreview, // Keep local preview for faster display
           };
+
+          // Revoke local preview after a delay to allow it to be used
+          if (localPreview) {
+            setTimeout(() => URL.revokeObjectURL(localPreview), 1000);
+          }
+
+          return uploadedFile;
         })
       );
 
-      // Add to uploaded files list
+      // Add to uploaded files list with preview
       setUploadedFiles((prev) => [
         ...filesToUpload.map((f) => ({
           ...f,
@@ -88,6 +106,8 @@ const PrescriptionUploadModal = ({ modalOpen, setModalOpen }) => {
         })),
         ...prev,
       ]);
+
+      notifySuccess(`${filesToUpload.length} file(s) uploaded successfully!`);
     } catch (error) {
       console.error("Error uploading prescription:", error);
       notifyError(
@@ -228,34 +248,48 @@ const PrescriptionUploadModal = ({ modalOpen, setModalOpen }) => {
               {uploadedFiles.map((file) => (
                 <div
                   key={file.id}
-                  className="relative border border-gray-200 rounded-lg p-2 bg-gray-50"
+                  className="relative border-2 border-green-200 rounded-lg p-2 bg-green-50 hover:border-green-300 transition-colors"
                 >
                   <button
                     onClick={() => removeFile(file.id)}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors z-10"
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors z-10 shadow-md"
+                    title="Remove file"
                   >
                     <FiX className="w-4 h-4" />
                   </button>
                   {file.type === "image" ? (
-                    <div className="relative w-full aspect-square rounded overflow-hidden bg-white">
+                    <div className="relative w-full aspect-square rounded overflow-hidden bg-white border border-gray-200">
                       <Image
-                        src={file.url}
+                        src={file.preview || file.url}
                         alt={file.fileName}
                         fill
                         className="object-contain"
                         sizes="(max-width: 768px) 100vw, 33vw"
+                        onError={(e) => {
+                          // Fallback to URL if preview fails
+                          if (file.preview && file.preview !== file.url) {
+                            e.target.src = file.url;
+                          }
+                        }}
                       />
+                      <div className="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded">
+                        ✓ Uploaded
+                      </div>
                     </div>
                   ) : (
-                    <div className="w-full aspect-square rounded bg-red-50 flex items-center justify-center">
-                      <IoDocumentTextOutline className="text-4xl text-red-500" />
+                    <div className="w-full aspect-square rounded bg-red-50 border border-red-200 flex flex-col items-center justify-center relative">
+                      <IoDocumentTextOutline className="text-5xl text-red-500 mb-2" />
+                      <span className="text-xs text-red-600 font-medium">PDF</span>
+                      <div className="absolute top-1 left-1 bg-green-500 text-white text-xs px-2 py-0.5 rounded">
+                        ✓ Uploaded
+                      </div>
                     </div>
                   )}
-                  <div className="mt-2 text-xs text-gray-600 truncate">
+                  <div className="mt-2 text-xs text-gray-700 font-medium truncate" title={file.fileName}>
                     {file.fileName}
                   </div>
                   {file.fileSize > 0 && (
-                    <div className="text-xs text-gray-400">
+                    <div className="text-xs text-gray-500">
                       {formatFileSize(file.fileSize)}
                     </div>
                   )}
@@ -263,9 +297,9 @@ const PrescriptionUploadModal = ({ modalOpen, setModalOpen }) => {
                     href={file.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-store-600 hover:text-store-700 mt-1 inline-block"
+                    className="text-xs text-store-600 hover:text-store-700 mt-1 inline-block font-medium"
                   >
-                    View Full
+                    View Full →
                   </a>
                 </div>
               ))}

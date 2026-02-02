@@ -7,12 +7,53 @@ import InputArea from "@/components/form/input/InputArea";
 import LabelArea from "@/components/form/selectOption/LabelArea";
 import useWholesalerSubmit from "@/hooks/useWholesalerSubmit";
 import DrawerButton from "@/components/form/button/DrawerButton";
-import DocumentUploader from "@/components/wholesaler/DocumentUploader";
+import Uploader from "@/components/image-uploader/Uploader";
 import { notifySuccess, notifyError } from "@/utils/toast";
+import CustomerServices from "@/services/CustomerServices";
 
 const WholesalerDrawer = ({ id }) => {
-  const { register, handleSubmit, onSubmit, errors, isSubmitting, setFieldValue, removeAsset, wholesalerData, getValues, sendCredentials } =
+  const { register, handleSubmit, onSubmit, errors, isSubmitting, setFieldValue, removeAsset, wholesalerData, getValues, watch, sendCredentials } =
     useWholesalerSubmit(id);
+
+  const acceptDocs = {
+    "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+    "application/pdf": [".pdf"],
+  };
+
+  const handleDocUploadComplete = async (field, publicField, publicDeleteField, data) => {
+    try {
+      const url = data?.secure_url || data?.url || "";
+      const publicId = data?.public_id || "";
+      const deleteToken = data?.delete_token || "";
+      setFieldValue(field, url, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      setFieldValue(publicField, publicId, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      if (publicDeleteField) {
+        setFieldValue(publicDeleteField, deleteToken, { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      }
+      if (id) {
+        const updateObj = { [field]: url, [publicField]: publicId };
+        if (publicDeleteField && deleteToken) updateObj[publicDeleteField] = deleteToken;
+        await CustomerServices.updateCustomer(id, updateObj);
+      }
+    } catch (err) {
+      notifyError(err?.response?.data?.message || err?.message || "Failed to save document");
+    }
+  };
+
+  const handleDocRemove = async (field, publicField, publicDeleteField) => {
+    try {
+      setFieldValue(field, "", { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      setFieldValue(publicField, "", { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      if (publicDeleteField) {
+        setFieldValue(publicDeleteField, "", { shouldDirty: true, shouldTouch: true, shouldValidate: true });
+      }
+      if (id) {
+        await removeAsset(field);
+      }
+    } catch (err) {
+      notifyError(err?.response?.data?.message || err?.message || "Failed to remove document");
+    }
+  };
 
   return (
     <>
@@ -98,16 +139,16 @@ const WholesalerDrawer = ({ id }) => {
               <LabelArea label={"Aadhar URL"} />
               <div className="col-span-8 sm:col-span-4">
                 <div className="mt-2 text-xs text-gray-600 flex items-center gap-3">
-                  <DocumentUploader
-                    id={id}
-                    name={"aadhar"}
-                    publicField={"aadharPublicId"}
-                    publicDeleteField={"aadharDeleteToken"}
-                    value={wholesalerData?.aadhar || getValues('aadhar') || ""}
-                    publicId={wholesalerData?.aadharPublicId || getValues('aadharPublicId') || ""}
-                    deleteToken={wholesalerData?.aadharDeleteToken || getValues('aadharDeleteToken') || ""}
-                    setValue={setFieldValue}
-                    removeAsset={removeAsset}
+                  <Uploader
+                    imageUrl={watch?.("aadhar") || wholesalerData?.aadhar || getValues("aadhar") || ""}
+                    setImageUrl={(url) => setFieldValue("aadhar", url, { shouldDirty: true, shouldTouch: true, shouldValidate: true })}
+                    folder="wholesaler"
+                    accept={acceptDocs}
+                    maxSize={10 * 1024 * 1024}
+                    useOriginalSize={true}
+                    uniquePublicId={true}
+                    onUploadComplete={(data) => handleDocUploadComplete("aadhar", "aadharPublicId", "aadharDeleteToken", data)}
+                    onRemove={() => handleDocRemove("aadhar", "aadharPublicId", "aadharDeleteToken")}
                   />
                 </div>
               </div>
@@ -117,16 +158,16 @@ const WholesalerDrawer = ({ id }) => {
               <LabelArea label={"PAN URL"} />
               <div className="col-span-8 sm:col-span-4">
                 <div className="mt-2 text-xs text-gray-600 flex items-center gap-3">
-                  <DocumentUploader
-                    id={id}
-                    name={"pan"}
-                    publicField={"panPublicId"}
-                    publicDeleteField={"panDeleteToken"}
-                    value={wholesalerData?.pan || getValues('pan') || ""}
-                    publicId={wholesalerData?.panPublicId || getValues('panPublicId') || ""}
-                    deleteToken={wholesalerData?.panDeleteToken || getValues('panDeleteToken') || ""}
-                    setValue={setFieldValue}
-                    removeAsset={removeAsset}
+                  <Uploader
+                    imageUrl={watch?.("pan") || wholesalerData?.pan || getValues("pan") || ""}
+                    setImageUrl={(url) => setFieldValue("pan", url, { shouldDirty: true, shouldTouch: true, shouldValidate: true })}
+                    folder="wholesaler"
+                    accept={acceptDocs}
+                    maxSize={10 * 1024 * 1024}
+                    useOriginalSize={true}
+                    uniquePublicId={true}
+                    onUploadComplete={(data) => handleDocUploadComplete("pan", "panPublicId", "panDeleteToken", data)}
+                    onRemove={() => handleDocRemove("pan", "panPublicId", "panDeleteToken")}
                   />
                 </div>
               </div>
@@ -136,18 +177,17 @@ const WholesalerDrawer = ({ id }) => {
               <LabelArea label={"GST URL"} />
               <div className="col-span-8 sm:col-span-4">
                 <div className="mt-2 text-xs text-gray-600 flex items-center gap-3">
-                  <DocumentUploader
-                    id={id}
-                    name={"gst"}
-                    publicField={"gstPublicId"}
-                    publicDeleteField={"gstDeleteToken"}
-                    value={wholesalerData?.gst || getValues('gst') || ""}
-                    publicId={wholesalerData?.gstPublicId || getValues('gstPublicId') || ""}
-                    deleteToken={wholesalerData?.gstDeleteToken || getValues('gstDeleteToken') || ""}
-                    setValue={setFieldValue}
-                    removeAsset={removeAsset}
+                  <Uploader
+                    imageUrl={watch?.("gst") || wholesalerData?.gst || getValues("gst") || ""}
+                    setImageUrl={(url) => setFieldValue("gst", url, { shouldDirty: true, shouldTouch: true, shouldValidate: true })}
+                    folder="wholesaler"
+                    accept={acceptDocs}
+                    maxSize={10 * 1024 * 1024}
+                    useOriginalSize={true}
+                    uniquePublicId={true}
+                    onUploadComplete={(data) => handleDocUploadComplete("gst", "gstPublicId", "gstDeleteToken", data)}
+                    onRemove={() => handleDocRemove("gst", "gstPublicId", "gstDeleteToken")}
                   />
-                  <button type="button" className="text-red-500" onClick={() => removeAsset('gst')}>Remove GST</button>
                 </div>
               </div>
             </div>
@@ -156,18 +196,17 @@ const WholesalerDrawer = ({ id }) => {
               <LabelArea label={"Drug License URL"} />
               <div className="col-span-8 sm:col-span-4">
                 <div className="mt-2 text-xs text-gray-600 flex items-center gap-3">
-                  <DocumentUploader
-                    id={id}
-                    name={"drugLicense"}
-                    publicField={"drugLicensePublicId"}
-                    publicDeleteField={"drugLicenseDeleteToken"}
-                    value={wholesalerData?.drugLicense || getValues('drugLicense') || ""}
-                    publicId={wholesalerData?.drugLicensePublicId || getValues('drugLicensePublicId') || ""}
-                    deleteToken={wholesalerData?.drugLicenseDeleteToken || getValues('drugLicenseDeleteToken') || ""}
-                    setValue={setFieldValue}
-                    removeAsset={removeAsset}
+                  <Uploader
+                    imageUrl={watch?.("drugLicense") || wholesalerData?.drugLicense || getValues("drugLicense") || ""}
+                    setImageUrl={(url) => setFieldValue("drugLicense", url, { shouldDirty: true, shouldTouch: true, shouldValidate: true })}
+                    folder="wholesaler"
+                    accept={acceptDocs}
+                    maxSize={10 * 1024 * 1024}
+                    useOriginalSize={true}
+                    uniquePublicId={true}
+                    onUploadComplete={(data) => handleDocUploadComplete("drugLicense", "drugLicensePublicId", "drugLicenseDeleteToken", data)}
+                    onRemove={() => handleDocRemove("drugLicense", "drugLicensePublicId", "drugLicenseDeleteToken")}
                   />
-                  <button type="button" className="text-red-500" onClick={() => removeAsset('drugLicense')}>Remove Drug License</button>
                 </div>
               </div>
             </div>

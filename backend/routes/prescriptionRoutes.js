@@ -10,7 +10,8 @@ const {
   markAsAddedToCart,
 } = require("../controller/prescriptionController");
 
-// Upload prescription (public endpoint)
+// Upload prescription (accepts already uploaded Cloudinary URLs from frontend)
+// Frontend uploads directly to Cloudinary, backend just saves URLs to database
 router.post("/upload", uploadPrescription);
 
 // Get all prescriptions (for admin)
