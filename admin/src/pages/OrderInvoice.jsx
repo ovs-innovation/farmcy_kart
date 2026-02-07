@@ -176,7 +176,7 @@ const OrderInvoice = () => {
               </div>
             )}
 
-            <div className="md:w-auto w-full">
+            {/* <div className="md:w-auto w-full">
               <ReactToPrint
                 trigger={() => (
                   <button className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-store-500 border border-transparent active:bg-store-600 hover:bg-store-600  md:w-auto w-full h-10 justify-center">
@@ -189,7 +189,7 @@ const OrderInvoice = () => {
                 content={() => printRef.current}
                 documentTitle={data?.invoice}
               />
-            </div>
+            </div> */}
           </div>
         </div>
       )}

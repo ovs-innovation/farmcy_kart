@@ -1,17 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@windmill/react-ui";
 import { FiMoreVertical } from "react-icons/fi";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 
 // internal imports
 import { notifyError, notifySuccess } from "@/utils/toast";
 import ShiprocketServices from "@/services/ShiprocketServices";
 import OrderServices from "@/services/OrderServices";
 import { Link } from "react-router-dom";
+import useUtilsFunction from "@/hooks/useUtilsFunction";
+import InvoiceForDownload from "@/components/invoice/InvoiceForDownload";
 
 const OrderActions = ({ order }) => {
   const [open, setOpen] = useState(false);
   const btnRef = useRef(null);
   const menuRef = useRef(null);
+
+  const { currency, globalSetting, getNumberTwo } = useUtilsFunction();
 
   const toggleMenu = () => {
     setOpen((prev) => !prev);
@@ -115,13 +121,41 @@ const OrderActions = ({ order }) => {
           >
             View Invoice
           </Link>
-          <button
-            type="button"
-            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={handleDownloadShiprocketInvoice}
+          <PDFDownloadLink
+            document={
+              <InvoiceForDownload
+                data={order}
+                currency={currency}
+                globalSetting={globalSetting}
+                getNumberTwo={getNumberTwo}
+                logo={globalSetting?.logo}
+                isWholesaler={
+                  order?.user_info?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                  order?.user?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                  order?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                  order?.user_info?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
+                  order?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
+                  order?.cart?.[0]?.wholePrice > 0
+                }
+              />
+            }
+            fileName={`Invoice-${order?.invoice || order?._id}`}
+            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center justify-between text-gray-700 dark:text-gray-300 no-underline"
+            style={{ textDecoration: 'none' }}
           >
-            Download Invoice
-          </button>
+            {({ blob, url, loading, error }) =>
+              loading ? (
+                <span className="flex items-center justify-between w-full">
+                  <span>Loading...</span>
+                </span>
+              ) : (
+                <span className="flex items-center justify-between w-full">
+                  <span>Download Invoice</span>
+                  <IoCloudDownloadOutline />
+                </span>
+              )
+            }
+          </PDFDownloadLink>
           <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
           <button
             type="button"
