@@ -117,7 +117,7 @@ const UpdateProfile = () => {
           </div>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="mt-5 md:mt-0 md:col-span-2">
+          <div className="md:mt-0 md:col-span-2">
             <div className="bg-white space-y-6">
               <div>
                 <Label label="Photo" />

@@ -44,7 +44,7 @@ const RecentOrder = ({ data, loading, error }) => {
                     />
                   ) : data?.orders?.length === 0 ? (
                     <div className="text-center">
-                      <span className={`flex justify-center my-30 pt-16 text-store-500 font-semibold text-6xl`}>
+                      <span className={`flex justify-center my-30 pt-0 text-store-500 font-semibold text-6xl`}>
                         <IoBagHandle />
                       </span>
                       <h2 className="font-medium text-md my-4 text-gray-600">
