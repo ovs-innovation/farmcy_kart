@@ -7,7 +7,9 @@ const MailChecker = require("mailchecker");
 const mongoose = require("mongoose");
 
 const Order = require("../models/Order");
+const Product = require("../models/Product");
 const Setting = require("../models/Setting");
+const Brand = require("../models/Brand");
 const { sendEmail } = require("../lib/email-sender/sender");
 const { formatAmountForStripe } = require("../lib/stripe/stripe");
 const { handleCreateInvoice } = require("../lib/email-sender/create");
@@ -16,6 +18,78 @@ const {
   checkStock,
 } = require("../lib/stock-controller/others");
 const customerInvoiceEmailBody = require("../lib/email-sender/templates/order-to-customer");
+
+// Helper function to populate brand names in order cart items
+const populateBrandNames = async (order) => {
+  if (order && order.cart && order.cart.length > 0) {
+    // Get all unique brand IDs from cart items
+    const brandIds = [...new Set(
+      order.cart
+        .filter(item => item.brand && mongoose.Types.ObjectId.isValid(item.brand))
+        .map(item => item.brand)
+    )];
+    
+    // Fetch brand names if there are brand IDs
+    if (brandIds.length > 0) {
+      const brands = await Brand.find({ _id: { $in: brandIds } }).select('_id name');
+      const brandMap = {};
+      brands.forEach(brand => {
+        // Handle multilingual name object - get English name or first available
+        const nameObj = brand.name || {};
+        brandMap[brand._id.toString()] = nameObj.en || nameObj[Object.keys(nameObj)[0]] || '-';
+      });
+      
+      // Replace brand IDs with brand names in cart items
+      order.cart = order.cart.map(item => {
+        if (item.brand && brandMap[item.brand]) {
+          return { ...item, brand: brandMap[item.brand] };
+        }
+        return item;
+      });
+    }
+  }
+  return order;
+};
+
+// Helper function to populate taxRate and HSN in cart items from Product collection
+const populateCartTaxFields = async (cart) => {
+  if (!cart || cart.length === 0) return cart;
+  
+  // Get all unique product IDs from cart items
+  const productIds = [...new Set(
+    cart
+      .filter(item => item.productId || item.id || item._id)
+      .map(item => item.productId || item.id || item._id)
+      .filter(id => mongoose.Types.ObjectId.isValid(id))
+  )];
+  
+  // Fetch product tax fields if there are product IDs
+  if (productIds.length > 0) {
+    const products = await Product.find({ _id: { $in: productIds } }).select('_id taxRate hsnCode');
+    const productMap = {};
+    products.forEach(product => {
+      productMap[product._id.toString()] = {
+        taxRate: product.taxRate || 0,
+        hsnCode: product.hsnCode || ''
+      };
+    });
+    
+    // Add taxRate and hsnCode to cart items
+    cart = cart.map(item => {
+      const productId = item.productId || item.id || item._id;
+      if (productId && productMap[productId]) {
+        return { 
+          ...item, 
+          taxRate: item.taxRate || productMap[productId].taxRate,
+          hsn: item.hsn || item.hsnCode || productMap[productId].hsnCode
+        };
+      }
+      return item;
+    });
+  }
+  
+  return cart;
+};
 
 const addOrder = async (req, res) => {
   // console.log("addOrder", req.body);
@@ -306,8 +380,13 @@ const getOrderCustomer = async (req, res) => {
       .skip(skip)
       .limit(limits);
 
+    // Populate brand names in all orders
+    const ordersWithBrandNames = await Promise.all(
+      orders.map(order => populateBrandNames(order.toObject()))
+    );
+
     res.send({
-      orders,
+      orders: ordersWithBrandNames,
       limits,
       pages,
       pending: totalPendingOrder.length === 0 ? 0 : totalPendingOrder[0].count,
@@ -328,7 +407,14 @@ const getOrderById = async (req, res) => {
   try {
     // console.log("getOrderById");
     const order = await Order.findById(req.params.id);
-    res.send(order);
+    
+    // Populate brand names in cart items
+    let orderWithBrandNames = await populateBrandNames(order.toObject());
+    
+    // Populate taxRate and HSN from Product collection
+    orderWithBrandNames.cart = await populateCartTaxFields(orderWithBrandNames.cart);
+    
+    res.send(orderWithBrandNames);
   } catch (err) {
     res.status(500).send({
       message: err.message,

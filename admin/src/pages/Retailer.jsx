@@ -14,7 +14,7 @@ import WholesalerDrawer from "@/components/drawer/WholesalerDrawer";
 import { useContext } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 
-const Wholesalers = () => {
+const Retailer = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,7 +48,7 @@ const Wholesalers = () => {
 
   return (
     <>
-      <PageTitle>Wholesalers</PageTitle>
+      <PageTitle>Retailers</PageTitle>
 
       <AnimatedContent>
         <Card className="min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5">
@@ -76,7 +76,7 @@ const Wholesalers = () => {
             onClick={() => toggleDrawer()}
             className="bg-store-700 text-white px-4 py-2 rounded"
           >
-            Add Wholesaler
+            Add Retailer
           </button>
         </div>
 
@@ -119,4 +119,4 @@ const Wholesalers = () => {
   );
 };
 
-export default Wholesalers;
+export default Retailer;

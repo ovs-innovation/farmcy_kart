@@ -16,11 +16,11 @@ const SliderCarousel = () => {
 
   // Get all slider images from CMS
   const sliderImages = [
-    storeCustomizationSetting?.slider?.first_img,
-    storeCustomizationSetting?.slider?.second_img,
-    storeCustomizationSetting?.slider?.third_img,
-    storeCustomizationSetting?.slider?.four_img,
-    storeCustomizationSetting?.slider?.five_img,
+    "/slider/dss11.webp"|| storeCustomizationSetting?.slider?.first_img ,
+     "/slider/dss22.webp"|| storeCustomizationSetting?.slider?.second_img,
+    storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
+    storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
+    storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
   ].filter(Boolean).map(img => showingImage(img));
 
   // Don't render if no images

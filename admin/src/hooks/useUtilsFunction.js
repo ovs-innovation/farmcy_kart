@@ -53,7 +53,8 @@ const useUtilsFunction = () => {
   };
 
   const getNumberTwo = (value = 0) => {
-    return parseFloat(value || 0).toFixed(globalSetting?.floating_number || 2);
+    const num = parseFloat(value || 0);
+    return Math.abs(num).toFixed(globalSetting?.floating_number || 2);
   };
 
   //for translation

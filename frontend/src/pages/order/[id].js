@@ -1,9 +1,10 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import dynamic from "next/dynamic";
-import { useRef } from "react";
+import { useRef, useEffect, useContext } from "react";
 import { IoCloudDownloadOutline, IoPrintOutline } from "react-icons/io5";
 import ReactToPrint from "react-to-print";
 import { useQuery } from "@tanstack/react-query";
+import Cookies from "js-cookie";
 
 //internal import
 
@@ -14,14 +15,30 @@ import Loading from "@components/preloader/Loading";
 import OrderServices from "@services/OrderServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import InvoiceForDownload from "@components/invoice/InvoiceForDownload";
+import { setToken } from "@services/httpServices";
+import { UserContext } from "@context/UserContext";
 
 const Order = ({ params }) => {
   const printRef = useRef();
   const orderId = params.id;
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
+
+  // Set auth token before fetching order
+  useEffect(() => {
+    const userInfo = Cookies.get("userInfo");
+    if (userInfo) {
+      const parsedUser = JSON.parse(userInfo);
+      if (parsedUser?.token) {
+        setToken(parsedUser.token);
+      }
+    }
+  }, []);
 
   const { data, error, isLoading } = useQuery({
-    queryKey: ["order"],
+    queryKey: ["order", orderId],
     queryFn: async () => await OrderServices.getOrderById(orderId),
+    enabled: !!orderId,
   });
 
   const { showingTranslateValue, getNumberTwo, currency } = useUtilsFunction();
@@ -67,6 +84,7 @@ const Order = ({ params }) => {
                       globalSetting={globalSetting}
                       getNumberTwo={getNumberTwo}
                       logo={storeCustomizationSetting?.navbar?.logo}
+                      isWholesaler={isWholesaler}
                     />
                   }
                   fileName="Invoice"
@@ -87,7 +105,7 @@ const Order = ({ params }) => {
                   }
                 </PDFDownloadLink>
 
-                <ReactToPrint
+                {/* <ReactToPrint
                   trigger={() => (
                     <button className="mb-3 sm:mb-0 md:mb-0 lg:mb-0 flex items-center justify-center bg-store-500  text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md">
                       {showingTranslateValue(
@@ -100,7 +118,7 @@ const Order = ({ params }) => {
                   )}
                   content={() => printRef.current}
                   documentTitle="Invoice"
-                />
+                /> */}
               </div>
             </div>
           </div>

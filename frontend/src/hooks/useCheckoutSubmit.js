@@ -40,6 +40,8 @@ const useCheckoutSubmit = (storeSetting) => {
   const [isCouponApplied, setIsCouponApplied] = useState(false);
   const [useExistingAddress, setUseExistingAddress] = useState(false);
   const [isCouponAvailable, setIsCouponAvailable] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [selectedCouponCode, setSelectedCouponCode] = useState("");
 
   const router = useRouter();
   const couponRef = useRef("");
@@ -66,6 +68,7 @@ const useCheckoutSubmit = (storeSetting) => {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -107,6 +110,38 @@ const useCheckoutSubmit = (storeSetting) => {
       setMinimumAmount(0);
     }
   }, [minimumAmount, total, discountAmount, isEmpty, discountPercentage]);
+
+  // Load list of coupons applicable for current cart total
+  useEffect(() => {
+    const loadCoupons = async () => {
+      try {
+        const coupons = await CouponServices.getShowingCoupons();
+        const applicable = (coupons || []).filter((coupon) => {
+          const min = Number(coupon.minimumAmount || 0);
+          const notExpired = coupon.endTime ? !dayjs().isAfter(dayjs(coupon.endTime)) : true;
+          return notExpired && total >= min;
+        });
+        setAvailableCoupons(applicable);
+
+        // Reset selection if current coupon is no longer applicable
+        if (
+          selectedCouponCode &&
+          !applicable.find((c) => c.couponCode === selectedCouponCode)
+        ) {
+          setSelectedCouponCode("");
+        }
+      } catch (err) {
+        console.error("Error loading coupons", err);
+      }
+    };
+
+    if (!isEmpty) {
+      loadCoupons();
+    } else {
+      setAvailableCoupons([]);
+      setSelectedCouponCode("");
+    }
+  }, [total, isEmpty, selectedCouponCode]);
 
   //calculate total and discount value
   //calculate total and discount value
@@ -222,6 +257,10 @@ const useCheckoutSubmit = (storeSetting) => {
         subTotal: cartTotal,
         shippingCost: shippingCost,
         discount: discountAmount,
+        coupon: couponInfo?.couponCode ? {
+          couponCode: couponInfo.couponCode,
+          discountAmount: discountAmount,
+        } : null,
         taxSummary,
         total: total,
       };
@@ -608,8 +647,11 @@ const useCheckoutSubmit = (storeSetting) => {
   const handleCouponCode = async (e) => {
     e.preventDefault();
 
-    if (!couponRef.current.value) {
-      notifyError("Please Input a Coupon Code!");
+    const code =
+      selectedCouponCode || (couponRef.current && couponRef.current.value);
+
+    if (!code) {
+      notifyError("Please select or input a Coupon Code!");
       return;
     }
     setIsCouponAvailable(true);
@@ -617,7 +659,7 @@ const useCheckoutSubmit = (storeSetting) => {
     try {
       const coupons = await CouponServices.getShowingCoupons();
       const result = coupons.filter(
-        (coupon) => coupon.couponCode === couponRef.current.value
+        (coupon) => coupon.couponCode === code
       );
       setIsCouponAvailable(false);
 
@@ -644,6 +686,7 @@ const useCheckoutSubmit = (storeSetting) => {
         setIsCouponApplied(true);
         setMinimumAmount(result[0]?.minimumAmount);
         setDiscountPercentage(result[0].discountType);
+        setCouponInfo(result[0]); // <-- ADD THIS LINE
         dispatch({ type: "SAVE_COUPON", payload: result[0] });
         Cookies.set("couponInfo", JSON.stringify(result[0]));
       }
@@ -655,6 +698,7 @@ const useCheckoutSubmit = (storeSetting) => {
   return {
     register,
     errors,
+    watch,
     showCard,
     setShowCard,
     error,
@@ -676,8 +720,12 @@ const useCheckoutSubmit = (storeSetting) => {
     useExistingAddress,
     hasShippingAddress,
     isCouponAvailable,
+    availableCoupons,
+    selectedCouponCode,
+    setSelectedCouponCode,
     handleDefaultShippingAddress,
     taxSummary,
+    setValue,
   };
 };
 

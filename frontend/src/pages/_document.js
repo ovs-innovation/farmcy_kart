@@ -19,7 +19,7 @@ class MyDocument extends Document {
 
   render() {
     const setting = this.props.setting;
-    const favicon = setting?.favicon || "/favicon.png";
+    const favicon ="/favicon.png" || setting?.favicon ;
     const metaTitle = setting?.meta_title || "Farmacykart – Customized Promotional Items & Advertising Products Online Store";
     const metaDescription = setting?.meta_description || "Discover personalized merchandise, branded giveaways, and advertising essentials. Ideal for businesses, events, and promotions";
     const metaKeywords = setting?.meta_keywords || "ecommerce online store";

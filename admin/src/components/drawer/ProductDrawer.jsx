@@ -1975,6 +1975,38 @@ const ProductDrawer = ({ id }) => {
                 </div>
               </div>
 
+              {/* Batch & Manufacturing Info */}
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label="Batch / Expiry / Manufacturing" />
+                <div className="col-span-8 sm:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <InputArea
+                      register={register}
+                      label="Batch No."
+                      name="batchNo"
+                      type="text"
+                      placeholder="Batch Number"
+                    />
+                  </div>
+                  <div>
+                    <InputArea
+                      register={register}
+                      label="Expiry Date"
+                      name="expDate"
+                      type="date"
+                    />
+                  </div>
+                  <div>
+                    <InputArea
+                      register={register}
+                      label="Manufacturing Date"
+                      name="manufactureDate"
+                      type="date"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label={t("Category")} />
                 <div className="col-span-8 sm:col-span-4">
@@ -2107,29 +2139,29 @@ const ProductDrawer = ({ id }) => {
               </div>
               {/* Wholesaler Section (conditional fields) */}
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                <LabelArea label="Wholesaler?" />
+                <LabelArea label="Retailer?" />
                 <div className="col-span-8 sm:col-span-4 flex items-center gap-4">
                   <input
                     type="checkbox"
                     {...register("isWholesaler")}
                     className="h-5 w-5 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500"
                   />
-                  <span className="text-sm text-gray-700">Enable wholesaler pricing for this product</span>
+                  <span className="text-sm text-gray-700">Enable retailer pricing for this product</span>
                 </div>
               </div>
               {Boolean(watch && watch("isWholesaler")) && (
                 <>
                   <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <LabelArea label="Wholesale Price" />
+                    <LabelArea label="Retailer Price" />
                     <div className="col-span-8 sm:col-span-4">
                       <InputValue
                         register={register}
                         minValue={0}
                         defaultValue={0}
-                        label="Wholesale Price"
+                        label="Retailer Price"
                         name="wholePrice"
                         type="number"
-                        placeholder="Wholesale Price"
+                        placeholder="Retailer Price"
                         currency={currency}
                       />
                       <Error errorName={errors.wholePrice} />
@@ -2137,16 +2169,16 @@ const ProductDrawer = ({ id }) => {
                   </div>
 
                   <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <LabelArea label="Min Wholesale Quantity" />
+                    <LabelArea label="Min Retailer Quantity" />
                     <div className="col-span-8 sm:col-span-4">
                       <InputValue
                         register={register}
                         minValue={0}
                         defaultValue={0}
-                        label="Min Wholesale Quantity"
+                        label="Min Retailer Quantity"
                         name="minQuantity"
                         type="number"
-                        placeholder="Minimum quantity for wholesale price"
+                        placeholder="Minimum quantity for retailer price"
                       />
                       <Error errorName={errors.minQuantity} />
                     </div>
@@ -2154,7 +2186,7 @@ const ProductDrawer = ({ id }) => {
 
                   {/* Wholesale total (wholePrice * minQuantity) */}
                   <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <LabelArea label="Wholesale Total" />
+                    <LabelArea label="Retailer Total" />
                     <div className="col-span-8 sm:col-span-4">
                       <div className="block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-700 font-semibold">
                         {currency}{(Number(watch && watch("wholePrice") ? watch("wholePrice") : 0) * Number(watch && watch("minQuantity") ? watch("minQuantity") : 0)).toFixed(2)}

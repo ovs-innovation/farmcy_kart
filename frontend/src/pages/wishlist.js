@@ -87,11 +87,11 @@ const Wishlist = ({ attributes }) => {
 
   return (
     <Layout title="Wishlist" description="Your wishlist items">
-      <PageHeader
+      {/* <PageHeader
         title="My Wishlist"
         headerBg={storeCustomizationSetting?.offers?.header_bg}
-      />
-      <div className="mx-auto max-w-screen-2xl px-4 py-10 lg:py-20 sm:px-10">
+      /> */}
+      <div className="mx-auto max-w-screen-2xl px-4 py-10   sm:px-10">
         {loading ? (
           <Loading loading={loading} />
         ) : wishlistItems?.length === 0 ? (

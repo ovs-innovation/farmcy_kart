@@ -4,7 +4,7 @@ import Image from "next/image";
 //internal import
 import Layout from "@layout/Layout";
 import useGetSetting from "@hooks/useGetSetting";
-import PageHeader from "@components/header/PageHeader";
+import SimpleHeader from "@components/header/SimpleHeader";
 import CMSkeleton from "@components/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
@@ -14,15 +14,15 @@ const AboutUs = () => {
 
   return (
     <Layout title="About Us" description="This is about us page">
-      <PageHeader
-        headerBg={storeCustomizationSetting?.about_us?.header_bg}
-        title={showingTranslateValue(
-          storeCustomizationSetting?.about_us?.title
-        )}
-      />
+      {/* <SimpleHeader
+        title={
+          showingTranslateValue(storeCustomizationSetting?.about_us?.title) ||
+          "About Us"
+        }
+      /> */}
 
       <div className="bg-white">
-        <div className="max-w-screen-2xl mx-auto lg:py-20 py-10 px-4 sm:px-10">
+        <div className="max-w-screen-2xl mx-auto pb-10 px-4 sm:px-10">
           <div className="grid grid-flow-row lg:grid-cols-2 gap-4 lg:gap-16 items-center">
             <div className="">
               <h3 className="text-xl lg:text-3xl mb-2 font-serif font-semibold text-justify">
@@ -109,13 +109,14 @@ const AboutUs = () => {
 
             <div className="mt-10 lg:mt-0">
               <img
-                width={920}
-                height={750}
+                width={900}
+                height={720}
                 src={
                   storeCustomizationSetting?.about_us?.content_right_img ||
                   "/about-us.jpg"
                 }
                 alt="logo"
+                className="w-full h-full object-cover"
               />
             </div>
           </div>
@@ -143,9 +144,9 @@ const AboutUs = () => {
               />
             </p>
           </div>
-          <div className="mt-10 lg:mt-12 flex flex-col sm:grid gap-4">
+          {/* <div className="mt-10 lg:mt-12 flex flex-col sm:grid gap-4">
             <Image
-              width={1920}
+              width={1020}
               height={570}
               src={
                 storeCustomizationSetting?.about_us?.content_middle_Img ||
@@ -154,11 +155,11 @@ const AboutUs = () => {
               alt="logo"
               className="block rounded-lg"
             />
-          </div>
+          </div> */}
         </div>
-        <div className="bg-gray-50 lg:py-20 py-10">
+        <div className="bg-gray-50 ">
           <div className="max-w-screen-2xl mx-auto px-3 sm:px-10">
-            <div className="relative flex flex-col sm:flex-row sm:items-end justify-between mb-8">
+            {/* <div className="relative flex flex-col sm:flex-row sm:items-end justify-between mb-8">
               <div className="max-w-2xl">
                 <h3 className="text-xl lg:text-3xl mb-2 font-serif font-semibold text-justify">
                   <CMSkeleton
@@ -179,7 +180,7 @@ const AboutUs = () => {
                   />
                 </p>
               </div>
-            </div>
+            </div> */}
             {/* <div className="grid sm:grid-cols-2 gap-x-5 gap-y-8 lg:grid-cols-6 xl:gap-x-8">
               <div className="max-w-sm">
                 <Image

@@ -47,6 +47,11 @@ const useSettingSubmit = (id) => {
           contact: data.contact,
           email: data.email,
           website: data.website,
+          gstin: data.gstin,
+          fssai_license_number: data.fssai_license_number,
+          doctor: data.doctor,
+          dl_number: data.dl_number,
+          cin: data.cin,
           receipt_size: data.receipt_size,
           default_language: data.default_language,
           default_currency: data.default_currency,
@@ -110,6 +115,11 @@ const useSettingSubmit = (id) => {
           setValue("contact", res.contact);
           setValue("email", res.email);
           setValue("website", res.website);
+          setValue("gstin", res.gstin);
+          setValue("fssai_license_number", res.fssai_license_number);
+          setValue("doctor", res.doctor);
+          setValue("dl_number", res.dl_number);
+          setValue("cin", res.cin);
           setValue("receipt_size", res.receipt_size);
           setValue("default_language", res.default_language);
           setValue("default_currency", res.default_currency);

@@ -57,6 +57,23 @@ const CustomerServices = {
   getCustomerStatistics: async () => {
     return requests.get("/customer/statistics");
   },
+
+  // Shipping Address APIs
+  getShippingAddresses: async (customerId) => {
+    return requests.get(`/customer/shipping/address/${customerId}`);
+  },
+
+  addShippingAddress: async (customerId, body) => {
+    return requests.post(`/customer/shipping/address/${customerId}`, body);
+  },
+
+  updateShippingAddress: async (customerId, addressId, body) => {
+    return requests.put(`/customer/shipping/address/${customerId}/${addressId}`, body);
+  },
+
+  deleteShippingAddress: async (customerId, addressId) => {
+    return requests.delete(`/customer/shipping/address/${customerId}/${addressId}`);
+  },
 };
 
 export default CustomerServices;

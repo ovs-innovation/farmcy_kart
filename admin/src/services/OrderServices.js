@@ -13,6 +13,7 @@ const OrderServices = {
     method,
     startDate,
     endDate,
+    userRole,
     // download = "",
   }) => {
     const searchName = customerName !== null ? customerName : "";
@@ -22,9 +23,10 @@ const OrderServices = {
     const searchMethod = method !== null ? method : "";
     const startD = startDate !== null ? startDate : "";
     const endD = endDate !== null ? endDate : "";
+    const roleFilter = userRole !== null ? userRole : "";
 
     return requests.get(
-      `/orders?customerName=${searchName}&status=${searchStatus}&day=${searchDay}&page=${page}&limit=${limit}&startDate=${startD}&endDate=${endD}&method=${searchMethod}`,
+      `/orders?customerName=${searchName}&status=${searchStatus}&day=${searchDay}&page=${page}&limit=${limit}&startDate=${startD}&endDate=${endD}&method=${searchMethod}&userRole=${roleFilter}`,
       body,
       headers
     );

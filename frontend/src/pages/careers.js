@@ -3,7 +3,7 @@ import { FiBriefcase, FiMail, FiUser, FiTrendingUp, FiShoppingBag, FiMessageSqua
 
 //internal import
 import Layout from "@layout/Layout";
-import PageHeader from "@components/header/PageHeader";
+import SimpleHeader from "@components/header/SimpleHeader";
 import useGetSetting from "@hooks/useGetSetting";
 
 const Careers = () => {
@@ -50,30 +50,12 @@ const Careers = () => {
 
   return (
     <Layout title="Careers" description="Join our team and build a purpose-driven healthcare platform">
-      <PageHeader
-        headerBg={storeCustomizationSetting?.privacy_policy?.header_bg}
-        title="Careers"
-      />
+      {/* <SimpleHeader title="Careers" /> */}
       <div className="bg-gray-50 min-h-screen">
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-10 py-10 lg:py-20">
-          {/* Hero Section */}
-          <div className="text-center mb-12 lg:mb-16">
-            <div className="flex justify-center mb-6">
-              <div className="w-20 h-20 rounded-full bg-store-100 flex items-center justify-center">
-                <FiBriefcase className="w-10 h-10 text-store-500" />
-              </div>
-            </div>
-            <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-              Join Our Team
-            </h1>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              We are building a purpose-driven healthcare platform and welcome passionate professionals to join us.
-            </p>
-          </div>
-
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-10 py-10  ">
           {/* Opportunities Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-8 text-center">
+          <div className=" ">
+            <h2 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-8  ">
               Current Opportunities
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

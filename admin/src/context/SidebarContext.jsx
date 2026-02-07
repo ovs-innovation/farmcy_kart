@@ -40,6 +40,7 @@ export const SidebarProvider = ({ children }) => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [method, setMethod] = useState("");
+  const [userRole, setUserRole] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [windowDimension, setWindowDimension] = useState(window.innerWidth);
   const [loading, setLoading] = useState(false);
@@ -199,6 +200,8 @@ export const SidebarProvider = ({ children }) => {
       value={{
         method,
         setMethod,
+        userRole,
+        setUserRole,
         isSidebarOpen,
         toggleSidebar,
         closeSidebar,

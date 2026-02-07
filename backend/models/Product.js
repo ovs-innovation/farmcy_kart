@@ -129,6 +129,20 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    // Batch & manufacturing metadata
+    batchNo: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    expDate: {
+      type: Date,
+      required: false,
+    },
+    manufactureDate: {
+      type: Date,
+      required: false,
+    },
     title: {
       type: Object,
       required: true,

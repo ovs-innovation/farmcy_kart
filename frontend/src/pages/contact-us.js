@@ -11,7 +11,7 @@ import Error from "@components/form/Error";
 import { notifySuccess } from "@utils/toast";
 import useGetSetting from "@hooks/useGetSetting";
 import InputArea from "@components/form/InputArea";
-import PageHeader from "@components/header/PageHeader";
+import SimpleHeader from "@components/header/SimpleHeader";
 import CMSkeleton from "@components/preloader/CMSkeleton";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
@@ -35,15 +35,15 @@ const ContactUs = () => {
 
   return (
     <Layout title="Contact Us" description="This is contact us page">
-      <PageHeader
-        headerBg={storeCustomizationSetting?.contact_us?.header_bg}
-        title={showingTranslateValue(
-          storeCustomizationSetting?.contact_us?.title
-        )}
-      />
+      {/* <SimpleHeader
+        title={
+          showingTranslateValue(storeCustomizationSetting?.contact_us?.title) ||
+          "Contact Us"
+        }
+      /> */}
 
       <div className="bg-white">
-        <div className="max-w-screen-2xl mx-auto lg:py-20 py-10 px-4 sm:px-10">
+        <div className="max-w-screen-2xl mx-auto  0 py-10 px-4 sm:px-10">
           {/* contact promo */}
           <div className="grid md:grid-cols-2 gap-6 lg:grid-cols-3 xl:gap-8 font-serif">
             {loading ? (

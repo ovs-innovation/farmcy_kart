@@ -36,6 +36,7 @@
     "million": "^2.2.1",
     "multiselect-react-dropdown": "^2.0.25",
     "pica": "^9.0.1",
+    "qrcode": "^1.5.4",
     "rc-drawer": "^4.4.3",
     "rc-switch": "^4.1.0",
     "rc-tree": "^5.7.5",

@@ -911,33 +911,48 @@ const getCustomerById = async (req, res) => {
   }
 };
 
-// Shipping address create or update
+// Shipping address create or update - supports multiple addresses
 const addShippingAddress = async (req, res) => {
   try {
     const customerId = req.params.id;
     const newShippingAddress = req.body;
 
-    // Find the customer by ID and update the shippingAddress field
-    const result = await Customer.updateOne(
-      { _id: customerId },
-      {
-        $set: {
-          shippingAddress: newShippingAddress,
-        },
-      },
-      { upsert: true } // Create a new document if no document matches the filter
-    );
-
-    if (result.nModified > 0 || result.upserted) {
-      return res.send({
-        message: "Shipping address added or updated successfully.",
-      });
-    } else {
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
       return res.status(404).send({ message: "Customer not found." });
     }
+
+    // Ensure shippingAddress is an array (handle migration from Object to Array)
+    if (!Array.isArray(customer.shippingAddress)) {
+      // If it's an object, convert to array
+      if (customer.shippingAddress && typeof customer.shippingAddress === 'object' && Object.keys(customer.shippingAddress).length > 0) {
+        customer.shippingAddress = [customer.shippingAddress];
+      } else {
+        customer.shippingAddress = [];
+      }
+    }
+
+    // If this is set as default, unset all other defaults
+    if (newShippingAddress.isDefault) {
+      customer.shippingAddress.forEach(addr => {
+        addr.isDefault = false;
+      });
+    }
+
+    // Add new address to array
+    customer.shippingAddress.push(newShippingAddress);
+    await customer.save();
+
+    return res.send({
+      message: "Shipping address added successfully.",
+      success: true,
+      shippingAddress: customer.shippingAddress,
+    });
   } catch (err) {
+    console.error("addShippingAddress error:", err);
     res.status(500).send({
-      message: err.message,
+      message: err.message || "Failed to add shipping address",
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };
@@ -945,77 +960,144 @@ const addShippingAddress = async (req, res) => {
 const getShippingAddress = async (req, res) => {
   try {
     const customerId = req.params.id;
-    // const addressId = req.query.id;
-
-    // console.log("getShippingAddress", customerId);
-    // console.log("addressId", req.query);
+    const addressId = req.query.id;
 
     const customer = await Customer.findById(customerId);
-    res.send({ shippingAddress: customer?.shippingAddress });
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
 
-    // if (addressId) {
-    //   // Find the specific address by its ID
-    //   const address = customer.shippingAddress.find(
-    //     (addr) => addr._id.toString() === addressId.toString()
-    //   );
+    // Normalize shippingAddress to array
+    let addresses = [];
+    if (Array.isArray(customer.shippingAddress)) {
+      addresses = customer.shippingAddress;
+    } else if (customer.shippingAddress && typeof customer.shippingAddress === 'object' && Object.keys(customer.shippingAddress).length > 0) {
+      // Convert old object format to array
+      addresses = [customer.shippingAddress];
+    }
 
-    //   if (!address) {
-    //     return res.status(404).send({
-    //       message: "Shipping address not found!",
-    //     });
-    //   }
+    // If specific address ID requested
+    if (addressId) {
+      const address = addresses.find(
+        (addr) => addr._id && addr._id.toString() === addressId.toString()
+      );
 
-    //   return res.send({ shippingAddress: address });
-    // } else {
-    //   res.send({ shippingAddress: customer?.shippingAddress });
-    // }
+      if (!address) {
+        return res.status(404).send({
+          message: "Shipping address not found!",
+        });
+      }
+
+      return res.send({ shippingAddress: address });
+    }
+
+    // Return all addresses
+    res.send({ 
+      shippingAddress: addresses,
+      success: true 
+    });
   } catch (err) {
-    // console.error("Error adding shipping address:", err);
+    console.error("getShippingAddress error:", err);
     res.status(500).send({
-      message: err.message,
+      message: err.message || "Failed to get shipping address",
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };
 
 const updateShippingAddress = async (req, res) => {
   try {
-    const activeDB = req.activeDB;
+    const { userId, shippingId } = req.params;
+    const updatedAddress = req.body;
 
-    const Customer = activeDB.model("Customer", CustomerModel);
-    const customer = await Customer.findById(req.params.id);
-
-    if (customer) {
-      customer.shippingAddress.push(req.body);
-
-      await customer.save();
-      res.send({ message: "Success" });
+    const customer = await Customer.findById(userId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
     }
+
+    // Ensure shippingAddress is an array
+    if (!Array.isArray(customer.shippingAddress)) {
+      if (customer.shippingAddress && typeof customer.shippingAddress === 'object' && Object.keys(customer.shippingAddress).length > 0) {
+        customer.shippingAddress = [customer.shippingAddress];
+      } else {
+        customer.shippingAddress = [];
+      }
+    }
+
+    // Find the address index
+    const addressIndex = customer.shippingAddress.findIndex(
+      (addr) => addr._id && addr._id.toString() === shippingId.toString()
+    );
+
+    if (addressIndex === -1) {
+      return res.status(404).send({ message: "Shipping address not found." });
+    }
+
+    // If this is set as default, unset all other defaults
+    if (updatedAddress.isDefault) {
+      customer.shippingAddress.forEach((addr, index) => {
+        if (index !== addressIndex) {
+          addr.isDefault = false;
+        }
+      });
+    }
+
+    // Update the address
+    customer.shippingAddress[addressIndex] = {
+      ...customer.shippingAddress[addressIndex].toObject(),
+      ...updatedAddress,
+    };
+
+    await customer.save();
+
+    res.send({ 
+      message: "Shipping address updated successfully.",
+      success: true,
+      shippingAddress: customer.shippingAddress 
+    });
   } catch (err) {
+    console.error("updateShippingAddress error:", err);
     res.status(500).send({
-      message: err.message,
+      message: err.message || "Failed to update shipping address",
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };
 
 const deleteShippingAddress = async (req, res) => {
   try {
-    const activeDB = req.activeDB;
     const { userId, shippingId } = req.params;
 
-    const Customer = activeDB.model("Customer", CustomerModel);
-    await Customer.updateOne(
-      { _id: userId },
-      {
-        $pull: {
-          shippingAddress: { _id: shippingId },
-        },
+    const customer = await Customer.findById(userId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+
+    // Ensure shippingAddress is an array
+    if (!Array.isArray(customer.shippingAddress)) {
+      if (customer.shippingAddress && typeof customer.shippingAddress === 'object' && Object.keys(customer.shippingAddress).length > 0) {
+        customer.shippingAddress = [customer.shippingAddress];
+      } else {
+        customer.shippingAddress = [];
       }
+    }
+
+    // Remove the address
+    customer.shippingAddress = customer.shippingAddress.filter(
+      (addr) => addr._id && addr._id.toString() !== shippingId.toString()
     );
 
-    res.send({ message: "Shipping Address Deleted Successfully!" });
+    await customer.save();
+
+    res.send({ 
+      message: "Shipping Address Deleted Successfully!",
+      success: true 
+    });
   } catch (err) {
+    console.error("deleteShippingAddress error:", err);
     res.status(500).send({
-      message: err.message,
+      message: err.message || "Failed to delete shipping address",
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined
     });
   }
 };

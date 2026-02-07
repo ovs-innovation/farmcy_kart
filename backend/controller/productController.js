@@ -530,6 +530,16 @@ const updateProduct = async (req, res) => {
       product.productId = req.body.productId;
       product.sku = req.body.sku;
       product.barcode = req.body.barcode;
+      // Batch & manufacturing metadata
+      if (typeof req.body.batchNo === "string") {
+        product.batchNo = req.body.batchNo.trim();
+      }
+      if (req.body.expDate) {
+        product.expDate = new Date(req.body.expDate);
+      }
+      if (req.body.manufactureDate) {
+        product.manufactureDate = new Date(req.body.manufactureDate);
+      }
       product.slug = req.body.slug;
       product.categories = req.body.categories;
       product.category = req.body.category;

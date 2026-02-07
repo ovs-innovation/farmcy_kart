@@ -23,49 +23,41 @@ const customerSchema = new mongoose.Schema(
       required: false,
     },
 
-    shippingAddress: {
-      type: Object,
-      required: false,
-      // name: {
-      //   type: String,
-      //   required: true,
-      // },
-      // contact: {
-      //   type: String,
-      //   required: true,
-      // },
-      // email: {
-      //   type: String,
-      //   required: true,
-      //   unique: true,
-      //   lowercase: true,
-      // },
-
-      // address: {
-      //   type: String,
-      //   required: true,
-      // },
-      // country: {
-      //   type: String,
-      //   required: true,
-      // },
-      // city: {
-      //   type: String,
-      //   required: true,
-      // },
-      // area: {
-      //   type: String,
-      //   required: true,
-      // },
-      // zipCode: {
-      //   type: String,
-      //   required: true,
-      // },
-      // isDefault: {
-      //   type: Boolean,
-      //   required: true,
-      // },
-    },
+    shippingAddress: [{
+      name: {
+        type: String,
+        required: false,
+      },
+      address: {
+        type: String,
+        required: false,
+      },
+      city: {
+        type: String,
+        required: false,
+      },
+      country: {
+        type: String,
+        required: false,
+      },
+      zipCode: {
+        type: String,
+        required: false,
+      },
+      phone: {
+        type: String,
+        required: false,
+      },
+      isDefault: {
+        type: Boolean,
+        default: false,
+      },
+      addressType: {
+        type: String,
+        enum: ['Home', 'Work', 'Other'],
+        default: 'Home',
+      },
+    }],
     email: {
       type: String,
       required: true,

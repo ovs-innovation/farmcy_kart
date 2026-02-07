@@ -1,7 +1,51 @@
+const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Customer = require("../models/Customer");
 const Product = require("../models/Product");
 const Admin = require("../models/Admin");
+const Brand = require("../models/Brand");
+
+// Helper function to populate taxRate and HSN in cart items from Product collection
+const populateCartTaxFields = async (cart) => {
+  if (!cart || cart.length === 0) return cart;
+  
+  // Get all unique product IDs from cart items
+  const productIds = [...new Set(
+    cart
+      .filter(item => item.productId || item.id || item._id)
+      .map(item => item.productId || item.id || item._id)
+      .filter(id => mongoose.Types.ObjectId.isValid(id))
+  )];
+  
+  // Fetch product tax fields if there are product IDs
+  if (productIds.length > 0) {
+    const products = await Product.find({ _id: { $in: productIds } }).select('_id taxRate hsnCode mrp originalPrice');
+    const productMap = {};
+    products.forEach(product => {
+      productMap[product._id.toString()] = {
+        taxRate: product.taxRate || 0,
+        hsnCode: product.hsnCode || '',
+        mrp: product.mrp || product.originalPrice || 0
+      };
+    });
+    
+    // Add taxRate, hsnCode, and mrp to cart items
+    cart = cart.map(item => {
+      const productId = item.productId || item.id || item._id;
+      if (productId && productMap[productId]) {
+        return { 
+          ...item, 
+          taxRate: item.taxRate || productMap[productId].taxRate,
+          hsn: item.hsn || item.hsnCode || productMap[productId].hsnCode,
+          mrp: item.mrp || productMap[productId].mrp || productMap[productId].originalPrice
+        };
+      }
+      return item;
+    });
+  }
+  
+  return cart;
+};
 
 const getAllOrders = async (req, res) => {
   const {
@@ -15,6 +59,7 @@ const getAllOrders = async (req, res) => {
     // sellFrom,
     startDate,
     customerName,
+    userRole,
   } = req.query;
 
   //  day count
@@ -74,6 +119,26 @@ const getAllOrders = async (req, res) => {
   const skip = (pages - 1) * limits;
 
   try {
+    // If userRole is specified, get customer IDs with that role
+    let customerIds = [];
+    if (userRole && (userRole === "customer" || userRole === "wholesaler")) {
+      const customers = await Customer.find({ role: userRole }).select("_id");
+      customerIds = customers.map((c) => c._id.toString());
+      // Add user filter to query - match orders where user is in the customerIds list
+      if (customerIds.length > 0) {
+        queryObject.user = { $in: customerIds };
+      } else {
+        // If no customers found with this role, return empty result
+        return res.send({
+          orders: [],
+          limits,
+          pages,
+          totalDoc: 0,
+          methodTotals: [],
+        });
+      }
+    }
+
     // total orders count
     const totalDoc = await Order.countDocuments(queryObject);
     const orders = await Order.find(queryObject)
@@ -83,6 +148,39 @@ const getAllOrders = async (req, res) => {
       .sort({ updatedAt: -1 })
       .skip(skip)
       .limit(limits);
+
+    // Populate brand names in all orders
+    const ordersWithBrandNames = [];
+    for (const order of orders) {
+      const orderObj = order.toObject();
+      if (orderObj.cart && orderObj.cart.length > 0) {
+        // Get all unique brand IDs from cart items
+        const brandIds = [...new Set(
+          orderObj.cart
+            .filter(item => item.brand && mongoose.Types.ObjectId.isValid(item.brand))
+            .map(item => item.brand)
+        )];
+        
+        // Fetch brand names if there are brand IDs
+        if (brandIds.length > 0) {
+          const brands = await Brand.find({ _id: { $in: brandIds } }).select('_id name');
+          const brandMap = {};
+          brands.forEach(brand => {
+            const nameObj = brand.name || {};
+            brandMap[brand._id.toString()] = nameObj.en || nameObj[Object.keys(nameObj)[0]] || '-';
+          });
+          
+          // Replace brand IDs with brand names in cart items
+          orderObj.cart = orderObj.cart.map(item => {
+            if (item.brand && brandMap[item.brand]) {
+              return { ...item, brand: brandMap[item.brand] };
+            }
+            return item;
+          });
+        }
+      }
+      ordersWithBrandNames.push(orderObj);
+    }
 
     let methodTotals = [];
     if (startDate && endDate) {
@@ -114,7 +212,7 @@ const getAllOrders = async (req, res) => {
     }
 
     res.send({
-      orders,
+      orders: ordersWithBrandNames,
       limits,
       pages,
       totalDoc,
@@ -131,7 +229,41 @@ const getAllOrders = async (req, res) => {
 const getOrderCustomer = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.params.id }).sort({ _id: -1 });
-    res.send(orders);
+    
+    // Populate brand names in all orders
+    const ordersWithBrandNames = [];
+    for (const order of orders) {
+      const orderObj = order.toObject();
+      if (orderObj.cart && orderObj.cart.length > 0) {
+        // Get all unique brand IDs from cart items
+        const brandIds = [...new Set(
+          orderObj.cart
+            .filter(item => item.brand && mongoose.Types.ObjectId.isValid(item.brand))
+            .map(item => item.brand)
+        )];
+        
+        // Fetch brand names if there are brand IDs
+        if (brandIds.length > 0) {
+          const brands = await Brand.find({ _id: { $in: brandIds } }).select('_id name');
+          const brandMap = {};
+          brands.forEach(brand => {
+            const nameObj = brand.name || {};
+            brandMap[brand._id.toString()] = nameObj.en || nameObj[Object.keys(nameObj)[0]] || '-';
+          });
+          
+          // Replace brand IDs with brand names in cart items
+          orderObj.cart = orderObj.cart.map(item => {
+            if (item.brand && brandMap[item.brand]) {
+              return { ...item, brand: brandMap[item.brand] };
+            }
+            return item;
+          });
+        }
+      }
+      ordersWithBrandNames.push(orderObj);
+    }
+    
+    res.send(ordersWithBrandNames);
   } catch (err) {
     res.status(500).send({
       message: err.message,
@@ -144,6 +276,39 @@ const getOrderById = async (req, res) => {
     // console.log("getOrderById");
 
     const order = await Order.findById(req.params.id);
+    
+    // Populate brand names in cart items
+    if (order && order.cart && order.cart.length > 0) {
+      // Get all unique brand IDs from cart items
+      const brandIds = [...new Set(
+        order.cart
+          .filter(item => item.brand && mongoose.Types.ObjectId.isValid(item.brand))
+          .map(item => item.brand)
+      )];
+      
+      // Fetch brand names if there are brand IDs
+      if (brandIds.length > 0) {
+        const brands = await Brand.find({ _id: { $in: brandIds } }).select('_id name');
+        const brandMap = {};
+        brands.forEach(brand => {
+          // Handle multilingual name object - get English name or first available
+          const nameObj = brand.name || {};
+          brandMap[brand._id.toString()] = nameObj.en || nameObj[Object.keys(nameObj)[0]] || '-';
+        });
+        
+        // Replace brand IDs with brand names in cart items
+        order.cart = order.cart.map(item => {
+          if (item.brand && brandMap[item.brand]) {
+            return { ...item, brand: brandMap[item.brand] };
+          }
+          return item;
+        });
+      }
+    }
+    
+    // Populate taxRate and HSN from Product collection
+    order.cart = await populateCartTaxFields(order.cart);
+    
     res.send(order);
   } catch (err) {
     res.status(500).send({

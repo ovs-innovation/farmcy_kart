@@ -58,6 +58,13 @@ app.get("/", (req, res) => {
   res.send("App works properly!");
 });
 
+// Short redirect for QR codes (keeps QR content small)
+// Example: http://localhost:8090/o/69819e2bff190a2118afe968  ->  http://localhost:3000/order/69819e2bff190a2118afe968
+app.get("/o/:id", (req, res) => {
+  const frontendBaseUrl = (process.env.STORE_URL|| "http://localhost:3000").replace(/\/+$/, "");
+  return res.redirect(302, `${frontendBaseUrl}/order/${req.params.id}`);
+});
+
 //this for route will need for store front, also for admin dashboard
 app.use("/api/products", productRoutes);
 app.use("/api/category", categoryRoutes);

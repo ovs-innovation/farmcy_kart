@@ -65,20 +65,26 @@ const sidebar = [
   },
 
   {
-    path: "/customers",
-    icon: FiUsers,
-    name: "Customers",
-  },
-  {
-    path: "/wholesalers",
-    icon: FiUsers,
-    name: "Wholesalers",
-  },
-  {
     path: "/orders",
     icon: FiCompass,
     name: "Orders",
   },
+
+  {
+    icon: FiUsers,
+    name: "Users",
+    routes: [
+      {
+        path: "/customers",
+        name: "Customers",
+      },
+      {
+        path: "/wholesalers",
+        name: "Retailers",
+      },
+    ],
+  },
+
   {
     path: "/faqs",
     icon: FiHelpCircle,

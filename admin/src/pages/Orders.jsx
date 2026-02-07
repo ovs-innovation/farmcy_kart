@@ -47,6 +47,8 @@ const Orders = () => {
     searchRef,
     method,
     setMethod,
+    userRole,
+    setUserRole,
     setStartDate,
     setSearchText,
     handleChangePage,
@@ -107,6 +109,7 @@ const Orders = () => {
       startDate: startDate,
       limit: resultsPerPage,
       customerName: searchText,
+      userRole: userRole,
     })
   );
 
@@ -131,6 +134,7 @@ const Orders = () => {
         startDate: startDate,
         limit: data?.totalDoc,
         customerName: searchText,
+        userRole: userRole,
       });
 
       // console.log("handleDownloadOrders", res);
@@ -169,6 +173,7 @@ const Orders = () => {
     setTime("");
     setMethod("");
     setStatus("");
+    setUserRole("");
     setEndDate("");
     setStartDate("");
     setSearchText("");
@@ -223,7 +228,44 @@ const Orders = () => {
         <Card className="min-w-0 shadow-xs bg-white dark:bg-gray-800 mb-5 relative z-[60] !overflow-visible">
           <CardBody className="!overflow-visible">
             <form onSubmit={handleSubmitForAll}>
-              <div className="grid gap-4 lg:gap-4 xl:gap-6 md:gap-2 md:grid-cols-5 py-2">
+              <div className="grid gap-4 lg:gap-4 xl:gap-6 md:gap-2 md:grid-cols-6 py-2">
+                {/* User Role Toggle Buttons - Left Side */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setUserRole("")}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                      userRole === ""
+                        ? "bg-store-500 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUserRole("customer")}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                      userRole === "customer"
+                        ? "bg-store-500 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    Customer
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setUserRole("wholesaler")}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap ${
+                      userRole === "wholesaler"
+                        ? "bg-store-500 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    Retailer
+                  </button>
+                </div>
+                    <br />
                 <div>
                   <Input
                     ref={searchRef}

@@ -110,11 +110,11 @@ const Compare = ({ attributes }) => {
 
   return (
     <Layout title="Compare Products" description="Compare your selected products">
-      <PageHeader
+      {/* <PageHeader
         title="Compare Products"
         headerBg={storeCustomizationSetting?.offers?.header_bg}
-      />
-      <div className="mx-auto max-w-screen-2xl px-4 py-10 lg:py-20 sm:px-10">
+      /> */}
+      <div className="mx-auto max-w-screen-2xl px-4 py-10   sm:px-10">
         {compareItems?.length === 0 ? (
           <div className="mx-auto p-5 my-5 text-center">
             <Image

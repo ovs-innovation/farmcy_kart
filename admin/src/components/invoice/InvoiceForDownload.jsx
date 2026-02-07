@@ -2,14 +2,14 @@ import {
   Document,
   Font,
   Image,
-  // Image,
   Page,
   StyleSheet,
   Text,
   View,
 } from "@react-pdf/renderer";
-import { useTranslation } from "react-i18next";
-import logoDark from "@/assets/img/logo/logo-color.png";
+import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import QRCodeLib from "qrcode";
 
 Font.register({
   family: "Open Sans",
@@ -34,13 +34,12 @@ Font.register({
     },
   ],
 });
-
 const styles = StyleSheet.create({
   page: {
     marginRight: 10,
     marginBottom: 20,
     marginLeft: 10,
-    paddingTop: 30,
+    paddingTop: 10,
     paddingLeft: 10,
     paddingRight: 29,
     lineHeight: 1.5,
@@ -49,9 +48,9 @@ const styles = StyleSheet.create({
     display: "table",
     width: "auto",
     color: "#4b5563",
-    marginRight: 10,
-    marginBottom: 20,
-    marginLeft: 10,
+    marginRight: 0,
+    marginBottom: 10,
+    marginLeft: 0,
     marginTop: 0,
     borderRadius: "8px",
     borderColor: "#e9e9e9",
@@ -63,57 +62,73 @@ const styles = StyleSheet.create({
   tableRow: {
     // margin: 'auto',
     flexDirection: "row",
-    paddingBottom: 2,
-    paddingTop: 2,
+    paddingBottom: 1,
+    paddingTop: 1,
     textAlign: "left",
     borderWidth: 0.8,
     borderColor: "#E5E7EB",
     borderBottom: "0",
   },
   tableRowHeder: {
-    // margin: 'auto',
     flexDirection: "row",
-    backgroundColor: "#f9fafb",
-    paddingBottom: 4,
-    paddingTop: 4,
+    backgroundColor: "#006E44",
+    paddingBottom: 1,
+    paddingTop: 1,
     paddingLeft: 0,
     borderBottomWidth: 0.8,
-    borderColor: "#E5E7EB",
+    borderColor: "#006E44",
     borderStyle: "solid",
     textTransform: "uppercase",
     textAlign: "left",
   },
   tableCol: {
-    width: "25%",
+    width: "11%",
     textAlign: "left",
-
-    // borderStyle: 'solid',
-    // borderWidth: 1,
-    // borderLeftWidth: 0.5,
-    // borderTopWidth: 0.5,
-    // borderBottomWidth: 0.5,
-    // borderColor: '#d1d5db',
+  },
+  tableColProduct: {
+    width: "28%",
+    textAlign: "left",
+  },
+  tableColMfg: {
+    width: "15%",
+    textAlign: "left",
+  },
+  tableColHsn: {
+    width: "7%",
+    textAlign: "left",
+  },
+  tableColSmall: {
+    width: "8%",
+    textAlign: "left",
+  },
+  tableColQty: {
+    width: "5%",
+    textAlign: "left",
+  },
+  tableColSr: {
+    width: "5%",
+    textAlign: "left",
   },
   tableCell: {
     margin: "auto",
-    marginTop: 5,
-    fontSize: 10,
-    // textAlign:'center',
+    marginTop: 1,
+    fontSize: 6,
     paddingLeft: "0",
     paddingRight: "0",
-    marginLeft: "13",
-    marginRight: "13",
+    marginLeft: "8",
+    marginRight: "8",
   },
 
-  tableCellQuantity: {
+  tableCellNumeric: {
     margin: "auto",
-    marginTop: 5,
-    fontSize: 10,
-    textAlign: "center",
+    marginTop: 1,
+    fontSize: 6,
     paddingLeft: "0",
     paddingRight: "0",
-    marginLeft: "12",
-    marginRight: "12",
+    marginLeft: "8",
+    marginRight: "8",
+    fontFamily: "DejaVu Sans",
+    whiteSpace: "nowrap",
   },
 
   invoiceFirst: {
@@ -131,15 +146,26 @@ const styles = StyleSheet.create({
   invoiceSecond: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "baseline",
+    alignItems: "flex-start",
     justifyContent: "space-between",
     paddingTop: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
     paddingLeft: 10,
     paddingRight: 10,
-    borderRadius: 12,
-    marginLeft: "13",
-    marginRight: "13",
+  },
+  invoiceSecondLeft: {
+    flex: 1,
+  },
+  invoiceSecondRight: {
+    flex: 1,
+    alignItems: "flex-end",
+    textAlign: "right",
+  },
+  lightLine: {
+    borderBottomWidth: 0.7,
+    borderColor: "#e5e7eb",
+    marginVertical: 4,
+    width: "100%",
   },
   invoiceThird: {
     display: "flex",
@@ -202,24 +228,25 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: "#6b7280",
     width: "100%",
-    marginRight: "62%",
-    textAlign: "right",
-    whiteSapce: "nowrap",
+    marginLeft: "20%",
+
+    // textAlign: "right",
+    // whiteSapce: "nowrap",
   },
   amount: {
     fontSize: 10,
-    color: "#ef4444",
+    color: "#1f2937",
   },
   totalAmount: {
     fontSize: 10,
-    color: "#ef4444",
+    color: "#1f2937",
     fontFamily: "Open Sans",
     fontWeight: "bold",
     textTransform: "uppercase",
     textAlign: "right",
   },
   status: {
-    color: "#10b981",
+    color: "#006E44",
   },
   quantity: {
     color: "#1f2937",
@@ -231,15 +258,15 @@ const styles = StyleSheet.create({
   },
   header: {
     color: "#6b7280",
-    fontSize: 9,
-    fontFamily: "Open Sans",
+    fontSize: 4,
+    fontFamily: "DejaVu Sans",
     fontWeight: "bold",
     textTransform: "uppercase",
     textAlign: "left",
   },
 
   thanks: {
-    color: "#22c55e",
+    color: "#006E44",
   },
   infoRight: {
     textAlign: "right",
@@ -248,6 +275,7 @@ const styles = StyleSheet.create({
     width: "25%",
     marginRight: "39%",
     fontFamily: "Open Sans",
+    fontWeight: "bold",
   },
   titleRight: {
     textAlign: "right",
@@ -271,409 +299,533 @@ const InvoiceForDownload = ({
   data,
   currency,
   globalSetting,
-  showDateFormat,
   getNumberTwo,
+  logo,
+  isWholesaler,
 }) => {
-  const { t } = useTranslation();
+  const [qrDataUrl, setQrDataUrl] = useState("");
+
+  // Calculate discount same as Invoice.js
+  const mrpTotal = data?.cart?.reduce((sum, item) => {
+    const mrp = isWholesaler 
+      ? (item.wholePrice ?? item.price ?? 0)
+      : (item.mrp ?? item.originalPrice ?? item.price ?? 0);
+    const qty = item.quantity || 1;
+    return sum + (mrp * qty);
+  }, 0) || 0;
+  
+  // Calculate total discount like checkout page: sum of (MRP - Sale Price) * quantity
+  const totalDiscount = data?.cart?.reduce((sum, item) => {
+    const mrp = isWholesaler 
+      ? (item.wholePrice ?? item.price ?? 0)
+      : (item.mrp ?? item.originalPrice ?? item.price ?? 0);
+    const salePrice = item.price ?? 0;
+    const qty = item.quantity || 1;
+    return sum + ((mrp - salePrice) * qty);
+  }, 0) || 0;
+
+  // Calculate total GST - use taxSummary from order data (same as checkout), fallback to calculating from cart
+  const totalGstRaw = data?.taxSummary?.exclusiveTax > 0 
+    ? data.taxSummary.exclusiveTax 
+    : data?.cart?.reduce((sum, item) => {
+        // For wholesalers, selling price is just item.price
+        // For customers, selling price = MRP - discount
+        const sellingPrice = isWholesaler
+          ? (Number(item.price) || Number(item.wholePrice) || 0)
+          : (Number(item.price) || (item.mrp ?? item.originalPrice ?? item.price ?? 0));
+        const qty = item.quantity || 1;
+        const gstRate = parseFloat(item.taxRate || item.gstRate || item.gstPercentage || 12);
+        const gstAmount = (Math.abs(sellingPrice) * qty * gstRate) / 100;
+        return sum + gstAmount;
+      }, 0) || 0;
+  
+  // Ensure total GST is always positive
+  const totalGst = Math.abs(totalGstRaw);
+
+  const formatInvoiceNumber = (invoice, createdAt) => {
+    if (!invoice) return "-";
+    const invStr = String(invoice).trim();
+    if (invStr.startsWith("FK/")) return invStr;
+    const year = createdAt
+      ? dayjs(createdAt).format("YYYY")
+      : dayjs().format("YYYY");
+    return `FK/${year}/${invStr}`;
+  };
+
+  useEffect(() => {
+    if (!data) return;
+
+    const orderId = data?._id || data?.id || data?.orderId;
+    if (!orderId) return;
+
+    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const backendOrigin =
+      apiBase.replace(/\/api\/?$/i, "") || (typeof window !== "undefined" ? window.location.origin : "");
+
+    const qrLink = `${backendOrigin.replace(/\/+$/, "")}/o/${orderId}`;
+
+    QRCodeLib.toDataURL(
+      qrLink,
+      {
+        width: 180,
+        margin: 1,
+      },
+      (err, url) => {
+        if (err) {
+          console.error("QR code generation error:", err);
+          return;
+        }
+        setQrDataUrl(url);
+      }
+    );
+  }, [data, data?._id, data?.id, data?.orderId]);
 
   return (
     <>
       <Document>
         <Page size="A4" style={styles.page}>
-          <View style={styles.invoiceFirst}>
-            <View style={styles.invoiceDiv}>
-              <Text
-                style={{
-                  fontFamily: "Open Sans",
-                  fontWeight: "bold",
-                  textTransform: "uppercase",
-                  alignItems: "baseline",
-                }}
-              >
-                {t("invoice")}
+          {/* Top Section: Logo + Company (Left), Invoice Details + Bill To + QR (Right) */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", paddingBottom: 2, borderBottom: 1, borderColor: "#e5e7eb", marginBottom:0 }}>
+            {/* Left - Logo and Company Info */}
+            <View style={{ width: "34%", paddingRight: 10 }}>
+              {/* Original Logo */}
+              <Image
+                src={logo || globalSetting?.logo || "/favicon.png"}
+                style={{ width: 90, height: 35, marginBottom: 4, objectFit: "contain" }}
+              />
+
+              <Text style={{ fontSize: 9, fontWeight: "bold", color: "#006E44", marginBottom: 0 }}>
+                {globalSetting?.company_name || "Farmacykart Private Limited"}
               </Text>
-              <Text style={styles.info}>
-                Status :{" "}
-                {data?.status === "Merged" && (
-                  <Text style={{ color: "#eab308" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Pending" && (
-                  <Text style={{ color: "#eab308" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Processing" && (
-                  <Text style={{ color: "#14b8a6" }}>{data?.status}</Text>
-                )}
-                {data?.status === "POS-Completed" && (
-                  <Text style={{ color: "#14b8a6" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Fully Returned" && (
-                  <Text style={{ color: "#14b8a6" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Partial Returned" && (
-                  <Text style={{ color: "#14b8a6" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Delivered" && (
-                  <Text style={{ color: "#22c55e" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Cancel" && (
-                  <Text style={{ color: "#f43f5e" }}>{data?.status}</Text>
-                )}
-                {data?.status === "Deleted" && (
-                  <Text style={{ color: "#f43f5e" }}>{data?.status}</Text>
-                )}
+              <Text style={{ fontSize: 7, color: "#4b5563", lineHeight: 1.3, marginBottom: 0 }}>
+                {globalSetting?.address || "C-39, Basement, Block-5, Okhla Industrial Area-2, New Delhi, Delhi-110020"}
               </Text>
-              {globalSetting?.vat_number && (
-                <Text style={styles.info}>
-                  <Text className="font-semibold text-xs capitalize mt-2">
-                    VAT Number :{" "}
-                    <Text className="text-store-500">
-                      {globalSetting?.vat_number}
-                    </Text>
-                  </Text>
-                </Text>
+
+              {/* Email & Phone - Side by Side */}
+              {(globalSetting?.email || globalSetting?.contact) && (
+                <View style={{ flexDirection: "row", gap: 3, marginBottom: 0}}>
+                  {globalSetting?.email && (
+                    <View style={{ flexDirection: "row", gap: 2 }}>
+                      <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937" }}>Email:</Text>
+                      <Text style={{ fontSize: 7, color: "#4b5563" }}>{globalSetting.email}</Text>
+                    </View>
+                  )}
+                  {globalSetting?.contact && (
+                    <View style={{ flexDirection: "row", gap: 2 }}>
+                      <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937" }}>Phone No:</Text>
+                      <Text style={{ fontSize: 7, color: "#4b5563" }}>{globalSetting.contact}</Text>
+                    </View>
+                  )}
+                </View>
+              )}
+
+              {/* GST & CIN - Side by Side */}
+              {(globalSetting?.gstin || globalSetting?.cin) && (
+                <View style={{ flexDirection: "column", gap:0, marginTop: 0 }}>
+                  {globalSetting?.gstin && (
+                    <View style={{ flexDirection: "row", gap: 1 }}>
+                      <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937" }}>GST NO.:</Text>
+                      <Text style={{ fontSize: 7, color: "#374151" }}>{globalSetting.gstin}</Text>
+                    </View>
+                  )}
+                  {globalSetting?.cin && (
+                    <View style={{ flexDirection: "row", gap: 1 }}>
+                      <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937" }}>CIN:</Text>
+                      <Text style={{ fontSize: 7, color: "#374151" }}>{globalSetting.cin}</Text>
+                    </View>
+                  )}
+                </View>
+              )}
+              
+              {/* DL No - Separate line */}
+              {globalSetting?.dl_number && (
+                <View style={{ flexDirection: "row", gap: 1, marginTop: 0 }}>
+                  <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937" }}>DL No:</Text>
+                  <Text style={{ fontSize: 7, color: "#374151" }}>{globalSetting.dl_number}</Text>
+                </View>
               )}
             </View>
 
-            <View style={{ alignItems: "flex-end" }}>
-              <Text
-                style={{
-                  flexDirection: "row",
-                  marginLeft: 80,
-                  marginTop: 35,
-                  textAlign: "right",
-                }}
-              >
-                <Image
-                  src={globalSetting?.logo || logoDark}
-                  alt="Logo"
-                  style={{
-                    width: 90,
-                    alignItems: "right",
-                    textAlign: "right",
-                    float: "right",
-                  }}
-                />
-              </Text>
-              <Text
-                style={{
-                  fontSize: 9,
-                  color: "#888",
-                  marginTop: 2,
-                  textAlign: "right",
-                }}
-              >
-                {globalSetting?.address}
-                {"\n"}
-                {globalSetting?.contact}
-                {"\n"}
-                {globalSetting?.email}
-                {"\n"}
-                {globalSetting?.website}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.invoiceSecond}>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
-              <Text style={[styles.title, { fontSize: 10 }]}>{t("date")}</Text>
-              <Text
-                style={{
-                  fontSize: 9,
-                  color: "#6b7280",
-                  textAlign: "left",
-                }}
-              >
-                {data?.createdAt !== undefined && (
-                  <Text>{showDateFormat(data?.createdAt)}</Text>
-                )}
-              </Text>
-            </View>
-            <View style={{ width: "25%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text
-                  style={{ width: "25%", alignItems: "baseline", fontSize: 10 }}
-                >
-                  {t("InvoiceNo")}
-                </Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>
-                  <Text
-                    style={{
-                      fontSize: 9,
-                      color: "#6b7280",
-                      marginLeft: "4%",
-                      marginTop: "7px",
-                      textAlign: "left",
-                    }}
-                  >
-                    #{data?.invoice}
-                  </Text>
-                </Text>
-              </Text>
-            </View>
-
-            <View
-              style={{ width: "25%", alignItems: "baseline", float: "right" }}
-            >
-              <Text style={styles.title}>
-                <Text
-                  style={{
-                    fontSize: 10,
-                    float: "right",
-                    textAlign: "right",
-                    alignItems: "baseline",
-                  }}
-                >
-                  {t("InvoiceTo")}
-                </Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text
-                  style={{
-                    textAlign: "right",
-                    fontSize: 9,
-                    textTransform: "lowercase",
-                  }}
-                >
-                  <Text
-                    style={{
-                      fontSize: 9,
-                      color: "#6b7280",
-                      marginTop: "7px",
-                      textAlign: "right",
-                      textTransform: "lowercase",
-                    }}
-                  >
-                    {data?.user_info?.name}
-                    {"\n"}
-                    {data?.user_info?.contact}
-                    {"\n"}
-                    {data?.user_info?.email}
-                    {"\n"}
-                    {data?.user_info?.address?.substring(0, 30)}
-                    {"\n"}
-                    {data?.user_info?.city}, {data?.user_info?.country},{" "}
-                    {data?.user_info?.zipCode}
-                  </Text>
-                </Text>
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.table}>
-            <View style={styles.tableRowHeder}>
-              {/* <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
-                  <span style={styles.header}>{t('sr')}</span>
-                </Text>
-              </View> */}
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
-                  <Text
-                    style={{
-                      color: "#6b7280",
-                      fontSize: 9,
-                      fontFamily: "Open Sans",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      textAlign: "left",
-                    }}
-                  >
-                    Product Title
-                  </Text>
-                </Text>
-              </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
-                  <Text
-                    style={{
-                      color: "#6b7280",
-                      fontSize: 9,
-                      fontFamily: "Open Sans",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      textAlign: "center",
-                    }}
-                  >
-                    {t("Quantity")}
-                  </Text>
-                </Text>
-              </View>
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
-                  <Text
-                    style={{
-                      color: "#6b7280",
-                      fontSize: 9,
-                      fontFamily: "Open Sans",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      textAlign: "left",
-                    }}
-                  >
-                    {t("ItemPrice")}
-                  </Text>
-                </Text>
-              </View>
-
-              <View style={styles.tableCol}>
-                <Text style={styles.tableCell}>
-                  <Text
-                    style={{
-                      color: "#6b7280",
-                      fontSize: 9,
-                      fontFamily: "Open Sans",
-                      fontWeight: "bold",
-                      textTransform: "uppercase",
-                      textAlign: "right",
-                    }}
-                  >
-                    {t("Amount")}
-                  </Text>
-                </Text>
-              </View>
-            </View>
-            {data?.cart?.map((item, i) => (
-              <View key={i} style={styles.tableRow}>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    {item.title?.substring(0, 20)}
+            {/* Right - Invoice Details, Bill To, and QR Code */}
+            <View style={{ width: "62%", flexDirection: "column" }}>
+              {/* Top Row: Invoice Details */}
+              <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
+                {/* Invoice No - Smaller width */}
+                <View style={{ width: "25%", borderLeft: 1, borderColor: "#006E44", paddingLeft: 10, paddingRight: 5 }}>
+                  <Text style={{ fontSize: 9, fontWeight: "bold", color: "#111827", marginBottom: 0 }}>Invoice No :</Text>
+                  <Text style={{ fontSize: 9, color: "#4b5563" }}>
+                    {formatInvoiceNumber(data?.invoice, data?.createdAt)}
                   </Text>
                 </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCellQuantity}>
-                    <Text
-                      style={{
-                        fontSize: 10,
-                        fontWeight: "bold",
-                        textAlign: "center",
-                        alignItems: "center",
-                        fontFamily: "Open Sans",
-                      }}
-                    >
+
+                {/* Order ID - Larger width */}
+                <View style={{ width: "50%", borderLeft: 1, borderColor: "#006E44", paddingLeft: 10, paddingRight: 5 }}>
+                  <Text style={{ fontSize: 9, fontWeight: "bold", color: "#111827", marginBottom: 0 }}>Order ID :</Text>
+                  <Text style={{ fontSize: 9, color: "#4b5563" }}>
+                    {data?._id || data?.orderId || "-"}
+                  </Text>
+                </View>
+
+                {/* Date - Smaller width */}
+                <View style={{ width: "25%", borderLeft: 1, borderColor: "#006E44", paddingLeft: 10, paddingRight: 5 }}>
+                  <Text style={{ fontSize: 9, fontWeight: "bold", color: "#111827", marginBottom: 0 }}>Date:</Text>
+                  <Text style={{ fontSize: 9, color: "#4b5563" }}>
+                    {data?.createdAt ? dayjs(data.createdAt).format("DD MMM YYYY") : "-"}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Bottom Row: Bill To and QR Code */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between",borderTop: 1, borderLeft:1, borderColor: "#006E44" }}>
+                {/* Bill To */}
+                <View style={{ width: "75%", paddingRight: 10, paddingLeft: 10 , paddingTop:5 }}>
+                  <Text style={{ fontSize: 6, fontWeight: "bold", color: "#006E44", textTransform: "uppercase", marginBottom: 3 }}>
+                    BILL TO:
+                  </Text>
+                  <View style={{ fontSize: 8, color: "#374151" }}>
+                    <View style={{ flexDirection: "row", gap: 1, marginBottom: 2 }}>
+                      <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Order Placed By:</Text>
+                      <Text>{data?.user_info?.name || "-"}</Text>
+                    </View>
+                    <View style={{ flexDirection: "row", marginBottom: 2, gap: 3 }}>
+                      <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Email:</Text>
+                      <Text>{data?.user_info?.email || "-"}</Text>
+                      {data?.user_info?.contact && (
+                        <>
+                          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Phone:</Text>
+                          <Text>{data.user_info.contact}</Text>
+                        </>
+                      )}
+                    </View>
+                    {(data?.user_info?.address || data?.user_info?.city || data?.user_info?.country || data?.user_info?.zipCode) && (
+                      <View style={{ flexDirection: "row", marginBottom: 2, gap: 0 }}>
+                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Address:</Text>
+                        {data?.user_info?.address && (
+                          <Text style={{ whiteSpace: "nowrap" }}>
+                            {" "}{data?.user_info?.address}{data?.user_info?.city ? "," : ""}
+                          </Text>
+                        )}
+                        {data?.user_info?.city && (
+                          <Text style={{ whiteSpace: "nowrap" }}>
+                            {" "}{data?.user_info?.city}{data?.user_info?.country ? "," : ""}
+                          </Text>
+                        )}
+                        {data?.user_info?.country && (
+                          <Text style={{ whiteSpace: "nowrap" }}>
+                            {" "}{data?.user_info?.country}{data?.user_info?.zipCode ? "," : ""}
+                          </Text>
+                        )}
+                        {data?.user_info?.zipCode && (
+                          <Text style={{ whiteSpace: "nowrap" }}>
+                            {" "}{data?.user_info?.zipCode}
+                          </Text>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                </View>
+
+                {/* QR Code */}
+                {qrDataUrl && (
+                  <View style={{ width: "23%", alignItems: "start", justifyContent: "flex-center" , paddingTop:7}}>
+                    <View style={{ width: 60, height: 60, border: 1, borderColor: "#e5e7eb", borderRadius: 4, padding: 4, backgroundColor: "#ffffff" }}>
+                      <Image src={qrDataUrl} style={{ width: "100%", height: "100%" }} />
+                    </View>
+                  </View>
+                )}
+              </View>
+            </View>
+          </View>
+
+          {/* Product Table */}
+          <View style={{ marginTop: 0 }}>
+            <View style={styles.table}>
+              <View style={styles.tableRowHeder}>
+                <View style={{ width: "100%", paddingLeft: "3px", paddingRight: "3px", paddingTop:"2px" }}>
+                  <Text  >
+                    <Text style={[styles.header,{color:"#fff"}]}>product details:</Text>
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.tableRow}>
+                <View style={styles.tableColSr}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>Sr.</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColProduct}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>product name</Text>
+                  </Text>
+                </View>
+                {/* <View style={styles.tableColMfg}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>manufacturer name</Text>
+                  </Text>
+                </View> */}
+                <View style={styles.tableColHsn}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>hsn</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>batch</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>expiry</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColQty}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>qty</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>{isWholesaler ? "price" : "mrp"}</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>discount</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColHsn}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>gst %</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>gst amt</Text>
+                  </Text>
+                </View>
+                <View style={styles.tableColSmall}>
+                  <Text style={styles.tableCell}>
+                    <Text style={styles.header}>Pay. AMT</Text>
+                  </Text>
+                </View>
+              </View>
+            {data?.cart?.map((item, i) => {
+              // For wholesalers, use wholePrice instead of MRP
+              // Ensure we always get a positive number
+              let mrpValue = 0;
+              if (isWholesaler) {
+                // Ensure price is always positive
+                const rawPrice = Number(item.wholePrice) || Number(item.price) || 0;
+                mrpValue = Math.abs(rawPrice);
+              } else {
+                mrpValue = Number(item.mrp) || Number(item.originalPrice) || Number(item.price) || 0;
+              }
+              const mrp = Math.abs(mrpValue) || 0;
+              
+              const quantity = item.quantity || 1;
+              
+              // Calculate discount per item - match frontend OrderTable.js logic
+              const itemPrice = Number(item.price);
+              const hasValidPrice = !isNaN(itemPrice) && itemPrice > 0;
+              
+              let discountPerItem = 0;
+              if (!isWholesaler) {
+                if (hasValidPrice) {
+                  discountPerItem = mrp - itemPrice;
+                } else if (typeof item.discount === "number") {
+                  discountPerItem = (mrp * item.discount) / 100;
+                }
+              }
+              
+              // Calculate GST on selling price
+              const gstRate = parseFloat(item.taxRate || item.gstRate || item.gstPercentage || 12);
+              
+              // For wholesalers: selling price is just item.price or wholePrice (ensure positive)
+              // For customers: selling price = MRP - discount
+              const sellingPrice = isWholesaler
+                ? (Number(item.price) ? Math.abs(Number(item.price)) : Math.abs(Number(item.wholePrice) || 0))
+                : (Number(item.price) || (mrp - discountPerItem) || 0);
+              
+              // Ensure selling price is always positive
+              const positiveSellingPrice = Math.abs(sellingPrice);
+              const gstAmount = Math.abs(((positiveSellingPrice * quantity * gstRate) / 100) || 0);
+              
+              // Line total = (selling price × quantity) + GST
+              // For wholesalers, ignore item.itemTotal if it's negative, calculate fresh
+              let rawLineTotal;
+              if (isWholesaler) {
+                // Always calculate for wholesalers to avoid backend negative values
+                rawLineTotal = (positiveSellingPrice * quantity) + gstAmount;
+              } else {
+                rawLineTotal = Number(item.itemTotal) || ((positiveSellingPrice * quantity) + gstAmount);
+              }
+              const lineTotal = Math.abs(Number(rawLineTotal) || 0);
+
+              // Debug logging for wholesaler negative values
+              if (isWholesaler) {
+                console.log('Wholesaler item:', item.title, 'price:', item.price, 'wholePrice:', item.wholePrice, 'positiveSellingPrice:', positiveSellingPrice, 'gstAmount:', gstAmount, 'lineTotal:', lineTotal, 'item.itemTotal:', item.itemTotal);
+              }
+              
+              // Final safety: ensure all values are positive numbers
+              const finalGstAmount = Math.abs(Number(gstAmount) || 0);
+              const finalLineTotal = Math.abs(Number(lineTotal) || 0);
+
+              console.log('finalGstAmount:', finalGstAmount, 'finalLineTotal:', finalLineTotal);
+
+              return (
+                <View key={i} style={styles.tableRow}>
+                  <View style={styles.tableColSr}>
+                    <Text style={styles.tableCellNumeric}>{i + 1}</Text>
+                  </View>
+                  <View style={styles.tableColProduct}>
+                    <Text style={styles.tableCell}>{item.title}</Text>
+                  </View>
+                  {/* <View style={styles.tableColMfg}>
+                    <Text style={styles.tableCell}>
+                      {item.manufacturer && item.brand 
+                        ? `${item.manufacturer} (${item.brand})`
+                        : item.manufacturer || item.brand || "-"}
+                    </Text>
+                  </View> */}
+                  <View style={styles.tableColHsn}>
+                    <Text style={styles.tableCell}>
+                      {item.hsn || "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCell}>
+                      {item.batchNo || "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCell}>
+                      {item.expDate 
+                        ? (typeof item.expDate === "string"
+                            ? item.expDate.split("T")[0]
+                            : dayjs(item.expDate).format("YYYY-MM-DD"))
+                        : "-"}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColQty}>
+                    <Text style={styles.tableCellNumeric}>
                       {item.quantity}
                     </Text>
-                  </Text>
-                </View>
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    <Text
-                      style={{
-                        fontSize: 10,
-                        fontWeight: "bold",
-                        textAlign: "left",
-                        fontFamily: "Open Sans",
-                      }}
-                    >
-                      {currency}
-                      {getNumberTwo(item.price)}
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCellNumeric}>
+                      {`${currency}${getNumberTwo(Math.abs(isWholesaler ? (item.price || 0) : mrp))}`}
                     </Text>
-                  </Text>
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCellNumeric}>
+                      {isWholesaler ? `${currency}0.00` : `${currency}${getNumberTwo(Math.abs((discountPerItem || 0) * quantity))}`}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColHsn}>
+                    <Text style={styles.tableCellNumeric}>
+                      {`${gstRate}%`}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCellNumeric}>
+                      {`${currency}${getNumberTwo(Math.abs(finalGstAmount))}`}
+                    </Text>
+                  </View>
+                  <View style={styles.tableColSmall}>
+                    <Text style={styles.tableCellNumeric}>
+                      {isWholesaler 
+                        ? `${currency}${getNumberTwo(Math.abs(positiveSellingPrice * quantity))}`
+                        : `${currency}${getNumberTwo(Math.abs(finalLineTotal))}`}
+                    </Text>
+                  </View>
                 </View>
+              );
+            })}
+            </View>
+          </View>
 
-                <View style={styles.tableCol}>
-                  <Text style={styles.tableCell}>
-                    <Text
-                      style={{
-                        fontSize: 10,
-                        color: "#ef4444",
-                        fontWeight: "bold",
-                        textAlign: "right",
-                        fontFamily: "Open Sans",
-                      }}
-                    >
-                      {currency}
-                      {getNumberTwo(item.price * item.quantity)}
-                    </Text>
-                  </Text>
-                </View>
+          {/* Bottom Section: Terms & Conditions + Price Summary */}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 0, paddingHorizontal: 5 }}>
+            {/* Left: Terms and Conditions */}
+            <View style={{ width: "55%", paddingRight: 10 }}>
+              {/* <Text style={{ fontSize: 5, fontWeight: "bold", color: "#006E44", textTransform: "uppercase", marginBottom: 2, borderBottom: 2, borderColor: "#006E44", paddingBottom: 2 }}>
+                TERMS AND CONDITIONS
+              </Text>
+              <Text style={{ fontSize: 7, color: "#374151", lineHeight: 1.4, marginBottom: 3 }}>
+                This invoice is issued by a registered pharmacist. Medicines once dispensed will not be taken back or exchanged unless required by law. Please verify the medicine name, batch, expiry date and quantity before leaving the counter.
+              </Text> */}
+              <Text style={{ fontSize: 7, fontWeight: "bold", color: "#1f2937", marginBottom: 0 }}>
+                Registered Pharmacist
+              </Text>
+              <Text style={{ fontSize: 7, color: "#006E44", marginBottom: 0 }}>
+                {globalSetting?.company_name || "Farmacykart Private Limited"}
+              </Text>
+              <Text style={{ fontSize: 7, color: "#006E44" }}>
+                {globalSetting?.website || "www.farmacykart.com"}
+              </Text>
+            </View>
+
+            {/* Right: Price Summary */}
+            <View style={{ width: "40%", borderLeft: 1, borderColor: "#e5e7eb", paddingLeft: 10 }}>
+              {/* MRP Total */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 0 }}>
+                <Text style={{ fontSize: 7, color: "#374151" }}>{isWholesaler ? "Total Price" : "MRP Total"}</Text>
+                <Text style={{ fontSize: 7, color: "#374151", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                  {currency}{getNumberTwo(Math.abs(isWholesaler ? (data?.cart?.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0) || 0) : mrpTotal))}
+                </Text>
               </View>
-            ))}
-          </View>
-
-          <View style={styles.invoiceThird}>
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>{t("InvoicepaymentMethod")}</Text>
-              <Text style={{ fontSize: 10, color: "#0e9f6e" }}>
-                {data?.paymentMethod}
-              </Text>
-            </View>
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text style={{ width: "16%", alignItems: "baseline" }}>
-                  Sub Total
+              
+              {/* Total Discount */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 0 }}>
+                <Text style={{ fontSize: 7, color: "#374151" }}>Total Discount</Text>
+                <Text style={{ fontSize: 7, color: "#16a34a", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                  {isWholesaler 
+                    ? `${currency}${getNumberTwo(0)}`
+                    : `-${currency}${getNumberTwo(Math.abs(totalDiscount))}`
+                  }
                 </Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>
-                  <Text style={styles.infoCost}>
-                    {currency}
-
-                    {getNumberTwo(data?.subTotal)}
+              </View>
+              
+              {/* Coupon Applied */}
+              {data?.coupon?.couponCode && (
+                <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 0, backgroundColor: "#f0fdf4", padding: 2, borderRadius: 1 }}>
+                  <Text style={{ fontSize: 7, color: "#15803d" }}>
+                    Coupon: <Text style={{ fontWeight: "bold" }}>{data.coupon.couponCode}</Text>
                   </Text>
-                </Text>
-              </Text>
-            </View>
-
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>{t("ShippingCost")}</Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>
-                  <Text style={styles.infoCost}>
-                    {currency}
-                    {getNumberTwo(data?.shippingCost)}
+                  <Text style={{ fontSize: 7, color: "#16a34a", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                    -{currency}{getNumberTwo(Math.abs(data?.coupon?.discountAmount || data?.discount || 0))}
                   </Text>
+                </View>
+              )}
+              
+              {/* GST */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 0 }}>
+                <Text style={{ fontSize: 7, color: "#374151" }}>GST</Text>
+                <Text style={{ fontSize: 7, color: "#374151", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                  {currency}{getNumberTwo(Math.abs(totalGst))}
                 </Text>
-              </Text>
-            </View>
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>{t("discount")} </Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>
-                  <Text style={styles.infoCost}>
-                    {" "}
-                    {currency}
-                    {getNumberTwo(data?.discount)}
-                  </Text>
+              </View>
+              
+              {/* Shipping Cost */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: 0 }}>
+                <Text style={{ fontSize: 7, color: "#374151" }}>Shipping Cost</Text>
+                <Text style={{ fontSize: 7, color: (data?.shippingCost || 0) > 0 ? "#374151" : "#16a34a", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                  {(data?.shippingCost || 0) > 0 ? `${currency}${getNumberTwo(Math.abs(data.shippingCost))}` : "FREE"}
                 </Text>
-              </Text>
-            </View>
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>TAX/GST</Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={{ textAlign: "left" }}>
-                  <Text style={styles.infoCost}>
-                    {" "}
-                    {currency}
-                    {getNumberTwo(data?.taxSummary?.totalTax || 0)}
-                  </Text>
+              </View>
+              
+              {/* Estimated Payable */}
+              <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#f3f4f6", padding: 4, borderRadius: 2 }}>
+                <Text style={{ fontSize: 8, color: "#1f2937", fontWeight: "bold" }}>Estimated Payable</Text>
+                <Text style={{ fontSize: 8, color: "#1f2937", fontWeight: "bold", fontFamily: "DejaVu Sans" }}>
+                  {currency}{getNumberTwo(Math.abs(data.total || 0))}
                 </Text>
-              </Text>
-            </View>
-            <View style={{ width: "16%", alignItems: "baseline" }}>
-              <Text style={styles.title}>
-                <Text
-                  style={{ width: "45%", textAlign: "right", float: "left" }}
-                >
-                  Total
-                </Text>
-              </Text>
-              <Text style={styles.title}>
-                <Text style={styles.totalAmount}>
-                  {currency}
-
-                  {getNumberTwo(data?.total)}
-                </Text>
-              </Text>
+              </View>
             </View>
           </View>
+          <View style={styles.lightLine} />
+
+          
         </Page>
       </Document>
     </>

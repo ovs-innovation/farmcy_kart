@@ -278,6 +278,10 @@ const useProductSubmit = (id) => {
         productId: productId,
         sku: data.sku || "",
         barcode: data.barcode || "",
+        // Batch & manufacturing metadata
+        batchNo: data.batchNo?.trim() || "",
+        expDate: data.expDate || "",
+        manufactureDate: data.manufactureDate || "",
         hsnCode: data.hsnCode?.trim() || "",
         taxRate:
           typeof data.taxRate === "number"
@@ -550,6 +554,26 @@ const useProductSubmit = (id) => {
             setValue("sku", res.sku);
             setValue("barcode", res.barcode);
             setValue("stock", res.stock);
+            // Batch & manufacturing metadata (prefill for edit mode)
+            setValue("batchNo", res.batchNo || "");
+            if (res.expDate) {
+              const exp = new Date(res.expDate);
+              const expFormatted = !isNaN(exp)
+                ? `${exp.getFullYear()}-${String(exp.getMonth() + 1).padStart(2, "0")}-${String(exp.getDate()).padStart(2, "0")}`
+                : "";
+              setValue("expDate", expFormatted);
+            } else {
+              setValue("expDate", "");
+            }
+            if (res.manufactureDate) {
+              const mfg = new Date(res.manufactureDate);
+              const mfgFormatted = !isNaN(mfg)
+                ? `${mfg.getFullYear()}-${String(mfg.getMonth() + 1).padStart(2, "0")}-${String(mfg.getDate()).padStart(2, "0")}`
+                : "";
+              setValue("manufactureDate", mfgFormatted);
+            } else {
+              setValue("manufactureDate", "");
+            }
             setValue("productId", res.productId);
             setValue("discount", res?.prices?.discount);
             setValue("originalPrice", res?.prices?.originalPrice);

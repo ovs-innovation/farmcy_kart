@@ -44,7 +44,6 @@ const UpdateProfile = () => {
     const userData = {
       name: data.name,
       email: data.email,
-      address: data.address || "",
       phone: data.phone,
       image: imageUrl || userInfo?.image || "",
     };
@@ -61,7 +60,6 @@ const UpdateProfile = () => {
         ...userInfo,
         name: data.name,
         email: data.email,
-        address: data.address || "",
         phone: data.phone,
         image: userData.image,
       };
@@ -76,7 +74,6 @@ const UpdateProfile = () => {
             ...session.user,
             name: data.name,
             email: data.email,
-            address: data.address || "",
             phone: data.phone,
             image: userData.image,
           },
@@ -95,7 +92,6 @@ const UpdateProfile = () => {
     if (userInfo) {
       setValue("name", userInfo?.name);
       setValue("email", userInfo?.email);
-      setValue("address", userInfo?.address || "");
       setValue("phone", userInfo?.phone);
       setImageUrl(userInfo?.image || "");
     }
@@ -162,21 +158,6 @@ const UpdateProfile = () => {
                         <InputArea
                           register={register}
                           label={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.address
-                          )}
-                          name="address"
-                          type="text"
-                          placeholder={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.address
-                          )}
-                        />
-                        <Error errorName={errors.address} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputArea
-                          register={register}
-                          label={showingTranslateValue(
                             storeCustomizationSetting?.dashboard?.user_phone
                           )}
                           name="phone"
@@ -193,7 +174,7 @@ const UpdateProfile = () => {
                           register={register}
                           name="email"
                           type="email"
-                          readOnly={false}
+                          readOnly={true}
                           label={showingTranslateValue(
                             storeCustomizationSetting?.dashboard?.user_email
                           )}

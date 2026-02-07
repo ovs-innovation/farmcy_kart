@@ -160,7 +160,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
 
           {/* Wishlist and Compare buttons - Bottom Right */}
           {!hideWishlistCompare && (
-            <div className="absolute bottom-2 right-2 z-30 flex gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
+            <div className="absolute bottom-2 right-2 z-30 flex flex-col gap-2 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200">
               <button
                 onClick={handleAddToWishlist}
                 className={`p-1.5 sm:p-2 bg-white rounded-full shadow-md hover:bg-red-500 hover:text-white transition-colors`}

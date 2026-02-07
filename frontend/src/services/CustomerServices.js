@@ -59,14 +59,30 @@ const CustomerServices = {
     return requests.post(`/customer/cloudinary-delete`, body);
   },
 
-  getShippingAddress: async ({ userId = "" }) => {
-    return requests.get(`/customer/shipping/address/${userId}`);
+  getShippingAddress: async ({ userId = "", addressId = "" }) => {
+    const url = addressId 
+      ? `/customer/shipping/address/${userId}?id=${addressId}`
+      : `/customer/shipping/address/${userId}`;
+    return requests.get(url);
   },
 
   addShippingAddress: async ({ userId = "", shippingAddressData }) => {
     return requests.post(
       `/customer/shipping/address/${userId}`,
       shippingAddressData
+    );
+  },
+
+  updateShippingAddress: async ({ userId = "", shippingId = "", shippingAddressData }) => {
+    return requests.put(
+      `/customer/shipping/address/${userId}/${shippingId}`,
+      shippingAddressData
+    );
+  },
+
+  deleteShippingAddress: async ({ userId = "", shippingId = "" }) => {
+    return requests.delete(
+      `/customer/shipping/address/${userId}/${shippingId}`
     );
   },
 

@@ -7,14 +7,17 @@ import Image from "next/image";
 //internal import
 import useAddToCart from "@hooks/useAddToCart";
 import { SidebarContext } from "@context/SidebarContext";
+import { UserContext } from "@context/UserContext";
 import { notifyError } from "@utils/toast";
 
 const CartItem = ({ item, currency = "₹" }) => {
   const { updateItemQuantity, removeItem } = useCart();
   const { closeCartDrawer } = useContext(SidebarContext);
   const { handleIncreaseQuantity } = useAddToCart();
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   
-  // Calculate MRP and discount - Check multiple possible price fields
+  // Calculate MRP and discount - Check multiple possible price fields (only for non-wholesalers)
   const originalPrice = item.originalPrice || item.mrp || item.prices?.original || (item.price * 1.2); // Add 20% markup as fallback
   const currentPrice = item.price || item.prices?.sale || 0;
   const discount = originalPrice > currentPrice ? originalPrice - currentPrice : 0;
@@ -56,8 +59,8 @@ const CartItem = ({ item, currency = "₹" }) => {
           {item.title}
         </Link>
         
-        {/* Show MRP and Discount */}
-        {originalPrice > currentPrice && (
+        {/* Show MRP and Discount - Hidden for wholesalers */}
+        {!isWholesaler && originalPrice > currentPrice && (
           <div className="flex items-center gap-2 text-xs mb-1">
             <span className="text-gray-400 line-through">
               MRP: {currency}{originalPrice.toFixed(2)}
@@ -71,9 +74,12 @@ const CartItem = ({ item, currency = "₹" }) => {
         
          
         
-        <span className="text-xs text-gray-400 mb-1">
-          Item Price {currency}{item.price}
-        </span>
+        {/* Item Price - Hidden for wholesalers */}
+        {!isWholesaler && (
+          <span className="text-xs text-gray-400 mb-1">
+            Item Price {currency}{item.price}
+          </span>
+        )}
         <div className="flex items-center justify-between">
           <div className="font-bold text-sm md:text-base text-heading leading-5">
             <span>
