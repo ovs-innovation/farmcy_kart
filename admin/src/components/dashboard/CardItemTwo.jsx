@@ -7,7 +7,7 @@ const CardItemTwo = ({
   mode,
   title,
   Icon,
-  className,
+  className, // Pass gradients here: e.g., "from-blue-500 to-blue-600"
   price,
   cash,
   card,
@@ -17,86 +17,57 @@ const CardItemTwo = ({
 }) => {
   const { t } = useTranslation();
   const { currency, getNumberTwo } = useUtilsFunction();
+
   return (
-    <>
+    <div className="w-full p-1 md:p-2">
       {loading ? (
         <Skeleton
-          count={4}
-          height={40}
-          className="dark:bg-gray-800 bg-gray-200"
-          baseColor={`${mode === "dark" ? "#010101" : "#f9f9f9"}`}
-          highlightColor={`${mode === "dark" ? "#1a1c23" : "#f8f8f8"} `}
+          height={140}
+          borderRadius={16}
+          baseColor={mode === "dark" ? "#1a1c23" : "#e5e7eb"}
+          highlightColor={mode === "dark" ? "#24262d" : "#f3f4f6"}
         />
       ) : (
-        <>
-          {title === "Today Order" || title === "Yesterday Order" ? (
-            <Card className={`flex justify-center h-full`}>
-              <CardBody
-                className={`border border-gray-200 justify-between dark:border-gray-800 w-full p-6 rounded-lg ${className}`}
-              >
-                <div className="text-center xl:mb-0 mb-3">
-                  <div
-                    className={`text-center inline-block text-3xl ${className}`}
-                  >
-                    <Icon />
-                  </div>
-                  <div>
-                    <p className="mb-3 text-base font-medium text-gray-50 dark:text-gray-100">
-                      {title2 ? (
-                        t(`${title2}`)
-                      ) : (
-                        <Skeleton count={1} height={20} />
-                      )}
-                    </p>
-                    <p className="text-2xl font-bold leading-none text-gray-50 dark:text-gray-50">
-                      {/* ${Math.round(price)} */}
-                      {currency}
-                      {getNumberTwo(price)}
-                    </p>
-                  </div>
-                  <div className="flex text-center text-xs font-normal text-gray-50 dark:text-gray-100">
-                    <div className="px-1 mt-3">
-                      {t("Cash")} : {currency}
-                      {getNumberTwo(cash)}
-                    </div>
-                    <div className="px-1 mt-3">
-                      {t("Card")} : {currency}
-                      {getNumberTwo(card)}
-                    </div>
-                    <div className="px-1 mt-3">
-                      {t("Credit")} : {currency}
-                      {getNumberTwo(credit)}
-                    </div>
-                  </div>
+        <Card className={`relative overflow-hidden border-none shadow-md hover:shadow-xl transition-all duration-300 rounded-2xl bg-gradient-to-br ${className || 'from-gray-700 to-gray-800'}`}>
+          <CardBody className="p-4 flex flex-col justify-between min-h-[140px] md:min-h-[160px]">
+            
+            {/* Top: Icon and Label */}
+            <div className="flex justify-between items-start">
+              <div className="bg-white/20 backdrop-blur-md p-2 rounded-xl shadow-inner">
+                <Icon className="text-white text-xl md:text-2xl" />
+              </div>
+              <p className="text-[10px] md:text-xs font-bold text-white/80 uppercase tracking-wider text-right max-w-[60%]">
+                {title2 ? t(`${title2}`) : "Statistics"}
+              </p>
+            </div>
+
+            {/* Middle: Big Value */}
+            <div className="mt-2">
+              <h3 className="text-lg md:text-2xl font-black text-white leading-tight">
+                {currency}{getNumberTwo(price)}
+              </h3>
+            </div>
+
+            {/* Bottom: Breakdown (Only for Orders) */}
+            {(title === "Today Order" || title === "Yesterday Order") && (
+              <div className="mt-3 pt-2 border-t border-white/20 space-y-0.5">
+                <div className="flex justify-between items-center text-[10px] md:text-xs">
+                  <span className="text-white/70">{t("Cash")}</span>
+                  <span className="text-white font-bold">{currency}{getNumberTwo(cash)}</span>
                 </div>
-              </CardBody>
-            </Card>
-          ) : (
-            <Card className="flex justify-center text-center h-full">
-              <CardBody
-                className={`border border-gray-200 dark:border-gray-800 w-full p-6 rounded-lg ${className}`}
-              >
-                <div
-                  className={`text-center inline-block text-3xl ${className}`}
-                >
-                  <Icon />
+                <div className="flex justify-between items-center text-[10px] md:text-xs">
+                  <span className="text-white/70">{t("Card")}</span>
+                  <span className="text-white font-bold">{currency}{getNumberTwo(card)}</span>
                 </div>
-                <div>
-                  <p className="mb-3 text-base font-medium text-gray-50 dark:text-gray-100">
-                    {t(`${title2}`)}
-                  </p>
-                  <p className="text-2xl font-bold leading-none text-gray-50 dark:text-gray-50">
-                    {/* ${Math.round(price)} */}
-                    {currency}
-                    {getNumberTwo(price)}
-                  </p>
-                </div>
-              </CardBody>
-            </Card>
-          )}
-        </>
+              </div>
+            )}
+
+            {/* Decorative background shape to prevent "blank" look */}
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+          </CardBody>
+        </Card>
       )}
-    </>
+    </div>
   );
 };
 

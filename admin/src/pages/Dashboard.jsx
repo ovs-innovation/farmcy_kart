@@ -243,113 +243,113 @@ const Dashboard = () => {
         <div className="space-y-8">
           {/* Top summary with soft gradient background */}
           <section className="rounded-2xl bg-gradient-to-r from-teal-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 border border-gray-100/70 dark:border-gray-800 shadow-sm px-4 py-5 md:px-6 md:py-6">
-            <div className="grid gap-4 mb-6 xl:grid-cols-5 md:grid-cols-2">
-              <CardItemTwo
-                mode={mode}
-                title="Today Order"
-                title2="TodayOrder"
-                Icon={ImStack}
-                cash={todayCashPayment || 0}
-                card={todayCardPayment || 0}
-                credit={todayCreditPayment || 0}
-                price={todayOrderAmount || 0}
-                className="text-white dark:text-teal-100 bg-teal-600"
-                loading={loadingOrderAmount}
-              />
+           <div className="grid grid-cols-2 gap-3 mb-6 xl:grid-cols-5 md:grid-cols-3">
+    <CardItemTwo
+      mode={mode}
+      title="Today Order"
+      title2="TodayOrder"
+      Icon={ImStack}
+      cash={todayCashPayment || 0}
+      card={todayCardPayment || 0}
+      credit={todayCreditPayment || 0}
+      price={todayOrderAmount || 0}
+      className="from-teal-500 to-teal-700" 
+      loading={loadingOrderAmount}
+    />
 
-              <CardItemTwo
-                mode={mode}
-                title="Yesterday Order"
-                title2="YesterdayOrder"
-                Icon={ImStack}
-                cash={yesterdayCashPayment || 0}
-                card={yesterdayCardPayment || 0}
-                credit={yesterdayCreditPayment || 0}
-                price={yesterdayOrderAmount || 0}
-                className="text-white dark:text-orange-100 bg-orange-400"
-                loading={loadingOrderAmount}
-              />
+    <CardItemTwo
+      mode={mode}
+      title="Yesterday Order"
+      title2="YesterdayOrder"
+      Icon={ImStack}
+      cash={yesterdayCashPayment || 0}
+      card={yesterdayCardPayment || 0}
+      credit={yesterdayCreditPayment || 0}
+      price={yesterdayOrderAmount || 0}
+      className="from-orange-400 to-orange-600"
+      loading={loadingOrderAmount}
+    />
 
-              <CardItemTwo
-                mode={mode}
-                title2="ThisMonth"
-                Icon={FiShoppingCart}
-                price={dashboardOrderAmount?.thisMonthlyOrderAmount || 0}
-                className="text-white dark:text-blue-100 bg-blue-500"
-                loading={loadingOrderAmount}
-              />
+    <CardItemTwo
+      mode={mode}
+      title2="ThisMonth"
+      Icon={FiShoppingCart}
+      price={dashboardOrderAmount?.thisMonthlyOrderAmount || 0}
+      className="from-blue-500 to-blue-700"
+      loading={loadingOrderAmount}
+    />
 
-              <CardItemTwo
-                mode={mode}
-                title2="LastMonth"
-                Icon={ImCreditCard}
-                loading={loadingOrderAmount}
-                price={dashboardOrderAmount?.lastMonthOrderAmount || 0}
-                className="text-white dark:text-teal-100 bg-cyan-600"
-              />
+    <CardItemTwo
+      mode={mode}
+      title2="LastMonth"
+      Icon={ImCreditCard}
+      loading={loadingOrderAmount}
+      price={dashboardOrderAmount?.lastMonthOrderAmount || 0}
+      className="from-cyan-500 to-cyan-700"
+    />
 
-              <CardItemTwo
-                mode={mode}
-                title2="AllTimeSales"
-                Icon={ImCreditCard}
-                price={dashboardOrderAmount?.totalAmount || 0}
-                className="text-white dark:text-pink-100 bg-pink-500"
-                loading={loadingOrderAmount}
-              />
-            </div>
+    <CardItemTwo
+      mode={mode}
+      title2="AllTimeSales"
+      Icon={ImCreditCard}
+      price={dashboardOrderAmount?.totalAmount || 0}
+      className="from-pink-500 to-pink-700"
+      loading={loadingOrderAmount}
+    />
+  </div>
 
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-              <CardItem
-                title="Total Order"
-                Icon={FiShoppingCart}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalOrder || 0}
-                className="text-orange-600 dark:text-orange-100 bg-orange-100 dark:bg-orange-500"
-              />
-              <CardItem
-                title="Products"
-                Icon={FiLayers}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalProduct || 0}
-                className="text-purple-600 dark:text-purple-100 bg-purple-100 dark:bg-purple-500"
-              />
-              <CardItem
-                title="New Sign Up"
-                Icon={FiUserPlus}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalCustomer || 0}
-                className="text-indigo-600 dark:text-indigo-100 bg-indigo-100 dark:bg-indigo-500"
-              />
-              <CardItem
-                title={t("OrderPending")}
-                Icon={FiRefreshCw}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalPendingOrder?.count || 0}
-                amount={dashboardOrderCount?.totalPendingOrder?.total || 0}
-                className="text-blue-600 dark:text-blue-100 bg-blue-100 dark:bg-blue-500"
-              />
-              <CardItem
-                title={t("OrderProcessing")}
-                Icon={FiTruck}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalProcessingOrder || 0}
-                className="text-teal-600 dark:text-teal-100 bg-teal-100 dark:bg-teal-500"
-              />
-              <CardItem
-                title={t("OrderDelivered")}
-                Icon={FiCheck}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
-                className="text-green-600 dark:text-green-100 bg-green-100 dark:bg-green-500"
-              />
-              <CardItem
-                title={t("OrderCancel")}
-                Icon={FiXCircle}
-                loading={loadingOrderCount}
-                quantity={dashboardOrderCount?.totalCancelOrder || 0}
-                className="text-red-600 dark:text-red-100 bg-red-100 dark:bg-red-500"
-              />
-            </div>
+            <div className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+  <CardItem
+    title="Total Order"
+    Icon={FiShoppingCart}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalOrder || 0}
+    className="bg-orange-50 border-orange-100 dark:bg-orange-900/10 dark:border-orange-800/50 text-orange-600"
+  />
+  <CardItem
+    title="Products"
+    Icon={FiLayers}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalProduct || 0}
+    className="bg-purple-50 border-purple-100 dark:bg-purple-900/10 dark:border-purple-800/50 text-purple-600"
+  />
+  <CardItem
+    title="New Sign Up"
+    Icon={FiUserPlus}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalCustomer || 0}
+    className="bg-indigo-50 border-indigo-100 dark:bg-indigo-900/10 dark:border-indigo-800/50 text-indigo-600"
+  />
+  <CardItem
+    title={t("OrderPending")}
+    Icon={FiRefreshCw}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalPendingOrder?.count || 0}
+    amount={dashboardOrderCount?.totalPendingOrder?.total || 0}
+    className="bg-blue-50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-800/50 text-blue-600"
+  />
+  <CardItem
+    title={t("OrderProcessing")}
+    Icon={FiTruck}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalProcessingOrder || 0}
+    className="bg-teal-50 border-teal-100 dark:bg-teal-900/10 dark:border-teal-800/50 text-teal-600"
+  />
+  <CardItem
+    title={t("OrderDelivered")}
+    Icon={FiCheck}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
+    className="bg-green-50 border-green-100 dark:bg-green-900/10 dark:border-green-800/50 text-green-600"
+  />
+  <CardItem
+    title={t("OrderCancel")}
+    Icon={FiXCircle}
+    loading={loadingOrderCount}
+    quantity={dashboardOrderCount?.totalCancelOrder || 0}
+    className="bg-red-50 border-red-100 dark:bg-red-900/10 dark:border-red-800/50 text-red-600"
+  />
+</div>
           </section>
 
           {/* Charts area */}

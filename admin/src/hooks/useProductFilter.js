@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Ajv from "ajv";
 import csvToJson from "csvtojson";
+import * as XLSX from "xlsx";
 import { useContext, useState } from "react";
 
 //internal import
@@ -108,7 +109,7 @@ const useProductFilter = (data) => {
 
         setSelectedFile(productData);
       };
-    } else if (file && file.type === "text/csv") {
+    } else if (file && (file.type === "text/csv" || file.name.toLowerCase().endsWith(".csv"))) {
       setFileName(file?.name);
       setIsDisable(true);
 
@@ -117,22 +118,60 @@ const useProductFilter = (data) => {
         const json = await csvToJson().fromString(text);
         // console.log("json", json);
         const productData = json.map((value) => {
+          // Helper to parse comma-separated values
+          const parseCSVArray = (val) => {
+            if (!val) return [];
+            return val.split(",").map(v => v.trim()).filter(v => v);
+          };
+
+          // Helper to parse Yes/No to boolean
+          const parseYesNo = (val) => val === "Yes" || val === "true";
+
+          // Helper to parse JSON safely
+          const parseJSON = (val, defaultVal = {}) => {
+            try {
+              return val ? JSON.parse(val) : defaultVal;
+            } catch {
+              return defaultVal;
+            }
+          };
+
           return {
-            categories: JSON.parse(value.categories),
-            image: JSON.parse(value.image),
-            barcode: value.barcode,
-            tag: JSON.parse(value.tag),
-            variants: JSON.parse(value.variants),
-            status: value.status,
-            prices: JSON.parse(value.prices),
-            isCombination: JSON.parse(value.isCombination.toLowerCase()),
-            title: JSON.parse(value.title),
-            productId: value.productId,
-            slug: value.slug,
-            sku: value.sku,
-            category: JSON.parse(value.category),
-            stock: JSON.parse(value.stock),
-            description: JSON.parse(value.description),
+            productId: value.productId || "",
+            title: {
+              en: value.name || "",
+            },
+            description: {
+              en: value.description || "",
+            },
+            sku: value.sku || "",
+            barcode: value.barcode || "",
+            prices: {
+              price: Number(value.price) || 0,
+              originalPrice: Number(value.originalPrice) || 0,
+              discount: Number(value.discount) || 0,
+            },
+            stock: Number(value.stock) || 0,
+            sales: Number(value.sales) || 0,
+            image: parseCSVArray(value.images),
+            tag: parseCSVArray(value.tags),
+            status: value.status || "show",
+            taxRate: Number(value.taxRate) || 0,
+            isPriceInclusive: parseYesNo(value.isPriceInclusive),
+            hsnCode: value.hsnCode || "",
+            batchNo: value.batchNo || "",
+            expDate: value.expDate ? new Date(value.expDate).toISOString() : null,
+            manufactureDate: value.manufactureDate ? new Date(value.manufactureDate).toISOString() : null,
+            isWholesaler: parseYesNo(value.isWholesale),
+            wholePrice: Number(value.wholePrice) || 0,
+            minQuantity: Number(value.minQuantity) || 0,
+            isCombination: parseYesNo(value.isCombination),
+            slug: value.slug || "",
+            // These fields need to be provided separately or extracted from category/brand
+            category: value.category || null,
+            categories: parseCSVArray(value.category) || [],
+            variants: parseJSON(value.variants, []),
+            brand: value.brand || null,
           };
         });
 
@@ -140,6 +179,83 @@ const useProductFilter = (data) => {
       };
 
       fileReader.readAsText(file);
+    } else if (file && (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" || file.name.toLowerCase().endsWith(".xlsx"))) {
+      setFileName(file?.name);
+      setIsDisable(true);
+
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = event.target.result;
+          const workbook = XLSX.read(data, { type: "binary" });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+          // Helper to parse comma-separated values
+          const parseCSVArray = (val) => {
+            if (!val) return [];
+            return val.toString().split(",").map(v => v.trim()).filter(v => v);
+          };
+
+          // Helper to parse Yes/No to boolean
+          const parseYesNo = (val) => val === "Yes" || val === "true";
+
+          // Helper to parse JSON safely
+          const parseJSON = (val, defaultVal = {}) => {
+            try {
+              return val ? (typeof val === "string" ? JSON.parse(val) : val) : defaultVal;
+            } catch {
+              return defaultVal;
+            }
+          };
+
+          const productData = jsonData.map((value) => {
+            return {
+              productId: value.productId || "",
+              title: {
+                en: value.name || "",
+              },
+              description: {
+                en: value.description || "",
+              },
+              sku: value.sku || "",
+              barcode: value.barcode || "",
+              prices: {
+                price: Number(value.price) || 0,
+                originalPrice: Number(value.originalPrice) || 0,
+                discount: Number(value.discount) || 0,
+              },
+              stock: Number(value.stock) || 0,
+              sales: Number(value.sales) || 0,
+              image: parseCSVArray(value.images),
+              tag: parseCSVArray(value.tags),
+              status: value.status || "show",
+              taxRate: Number(value.taxRate) || 0,
+              isPriceInclusive: parseYesNo(value.isPriceInclusive),
+              hsnCode: value.hsnCode || "",
+              batchNo: value.batchNo || "",
+              expDate: value.expDate ? new Date(value.expDate).toISOString() : null,
+              manufactureDate: value.manufactureDate ? new Date(value.manufactureDate).toISOString() : null,
+              isWholesaler: parseYesNo(value.isWholesale),
+              wholePrice: Number(value.wholePrice) || 0,
+              minQuantity: Number(value.minQuantity) || 0,
+              isCombination: parseYesNo(value.isCombination),
+              slug: value.slug || "",
+              category: value.category || null,
+              categories: parseCSVArray(value.category) || [],
+              variants: parseJSON(value.variants, []),
+              brand: value.brand || null,
+            };
+          });
+
+          setSelectedFile(productData);
+        } catch (error) {
+          notifyError("Error reading Excel file: " + error.message);
+          setIsDisable(false);
+        }
+      };
+      reader.readAsBinaryString(file);
     } else {
       setFileName(file?.name);
       setIsDisable(true);
@@ -152,34 +268,23 @@ const useProductFilter = (data) => {
     if (handleDisableForDemo()) {
       return; // Exit the function if the feature is disabled
     }
-    if (selectedFile.length > 1) {
+    if (selectedFile.length > 0) {
       setLoading(true);
-      let productDataValidation = selectedFile.map((value) =>
-        ajv.validate(schema, value)
-      );
 
-      const isBelowThreshold = (currentValue) => currentValue === true;
-      const validationData = productDataValidation.every(isBelowThreshold);
-      // console.log('validationdata',validationData)
-
-      if (validationData) {
-        ProductServices.addAllProducts(selectedFile)
-          .then((res) => {
-            setIsUpdate(true);
-            setLoading(false);
-            notifySuccess(res.message);
-          })
-          .catch((err) => {
-            setLoading(false);
-            notifyError(err.message);
-          });
-      } else {
-        setLoading(false);
-        notifyError("Please enter valid data!");
-      }
+      // For CSV imports, we don't need strict validation since the formatter handles it
+      ProductServices.importProductsCSV(selectedFile)
+        .then((res) => {
+          setIsUpdate(true);
+          setLoading(false);
+          notifySuccess(res.message || "Products imported successfully!");
+        })
+        .catch((err) => {
+          setLoading(false);
+          notifyError(err.response?.data?.message || err.message || "Import failed!");
+        });
     } else {
       setLoading(false);
-      notifyError("Please select a valid json, csv & xls file first!");
+      notifyError("Please select a valid JSON or CSV file first!");
     }
   };
 
