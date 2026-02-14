@@ -59,7 +59,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
         <Layout>
           <div className="min-h-screen">
             <div className="bg-white">
-              <div className="mx-auto py-5 max-w-screen-2xl">
+              <div className="mx-auto py-3 max-w-screen-2xl">
                 <div className="flex w-full flex-col">
                   <div className="w-full">
                     <HeroBanner />

@@ -44,58 +44,27 @@ const UploadMany = ({
   const handleExportCSV = () => {
     if (location.pathname === "/products") {
       setLoadingExport({ name: "csv", status: true });
-      ProductServices.getAllProducts({
-        page: 1,
-        limit: totalDoc,
-        category: null,
-        title: null,
-        price: 0,
-      })
+
+      ProductServices.exportProductsCSV()
         .then((res) => {
           setDropDown(false);
           setLoadingExport({ name: "", status: false });
+
           exportFromJSON({
-            data: res.products,
+            data: res,
             fileName: "products",
             exportType: exportFromJSON.types.csv,
           });
         })
         .catch((err) => {
+          console.error("CSV Export Error:", err);
+
           setLoadingExport({ name: "", status: false });
           setDropDown(false);
-          // console.log(err);
         });
     }
-    if (location.pathname === "/categories") {
-      exportFromJSON({
-        data: exportData,
-        fileName: "categories",
-        exportType: exportFromJSON.types.csv,
-      });
-    }
-    if (location.pathname === "/attributes") {
-      exportFromJSON({
-        data: exportData,
-        fileName: "attributes",
-        exportType: exportFromJSON.types.csv,
-      });
-    }
-
-    if (location.pathname === "/coupons") {
-      exportFromJSON({
-        data: exportData,
-        fileName: "coupons",
-        exportType: exportFromJSON.types.csv,
-      });
-    }
-    if (location.pathname === "/customers") {
-      exportFromJSON({
-        data: exportData,
-        fileName: "customers",
-        exportType: exportFromJSON.types.csv,
-      });
-    }
   };
+
 
   const handleExportJSON = () => {
     if (location.pathname === "/products") {
@@ -172,17 +141,17 @@ const UploadMany = ({
             title === "Coupon" ||
             title === "Customers" ||
             title === "Categories") && (
-            <button
-              onClick={() => {
-                setDropDown(!dropDown);
-              }}
-              className="border flex justify-center items-center border-gray-300 hover:border-store-400 hover:text-store-400  dark:text-gray-300 cursor-pointer h-10 w-20 rounded-md focus:outline-none"
-            >
-              {/* <BsPlus className="text-4xl" /> */}
-              <FiUpload className="mr-2" />
-              <span className="text-xs">{t("Export")}</span>
-            </button>
-          )}
+              <button
+                onClick={() => {
+                  setDropDown(!dropDown);
+                }}
+                className="border flex justify-center items-center border-gray-300 hover:border-store-400 hover:text-store-400  dark:text-gray-300 cursor-pointer h-10 w-20 rounded-md focus:outline-none"
+              >
+                {/* <BsPlus className="text-4xl" /> */}
+                <FiUpload className="mr-2" />
+                <span className="text-xs">{t("Export")}</span>
+              </button>
+            )}
           {dropDown && (
             <ul
               className="origin-top-left absolute  w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 focus:outline-none z-40"
@@ -261,7 +230,7 @@ const UploadMany = ({
                 ) : (
                   <>
                     <FiUploadCloud className="mx-2 text-store-500 text-lg dark:text-gray-400" />{" "}
-                    {t("SelectYourJSON")} {title} {t("File")}
+                    {t("SelectYourCSV")} {title} {t("File")}
                   </>
                 )}
                 {filename && (

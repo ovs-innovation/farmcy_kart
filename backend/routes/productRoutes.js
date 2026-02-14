@@ -3,6 +3,8 @@ const router = express.Router();
 const rateLimit = require("express-rate-limit");
 const { isAuthOptional } = require("../config/auth");
 const {
+    exportProductsCSV,
+    importProductsCSV,
   addProductView,
   getRecommendations,
   addProduct,
@@ -17,6 +19,7 @@ const {
   deleteProduct,
   deleteManyProducts,
   getShowingStoreProducts,
+ 
 } = require("../controller/productController");
 
 // Rate limiters to prevent abuse
@@ -32,6 +35,12 @@ const recommendationLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// ================= EXPORT ROUTE FIRST =================
+router.get("/export/csv", exportProductsCSV);
+
+// ================= IMPORT ROUTE =================
+router.post("/import/csv", importProductsCSV);
 
 //add a product
 router.post("/add", addProduct);
@@ -77,5 +86,6 @@ router.delete("/:id", deleteProduct);
 
 //delete many product
 router.patch("/delete/many", deleteManyProducts);
+
 
 module.exports = router;

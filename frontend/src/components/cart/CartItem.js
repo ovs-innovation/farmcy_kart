@@ -32,11 +32,11 @@ const CartItem = ({ item, currency = "₹" }) => {
     discountPercentage,
     itemData: item
   });
-
-
+  
   return (
-    <div className="group w-full h-auto flex justify-start items-center bg-white py-3 px-4 border-b hover:bg-gray-50 transition-all border-gray-100 relative last:border-b-0">
-      <div className="relative flex rounded-full border border-gray-100 shadow-sm overflow-hidden flex-shrink-0 cursor-pointer mr-4">
+    <div className="group w-full h-auto flex justify-start items-start bg-white py-4 px-4 mb-3 rounded-xl border border-gray-200 hover:border-emerald-300 shadow-md hover:shadow-xl transition-all duration-300 relative">
+      {/* Enhanced Image Container */}
+      <div className="relative flex rounded-xl border-2 border-gray-100 shadow-sm hover:shadow-md overflow-hidden flex-shrink-0 cursor-pointer mr-4 transition-all duration-300 group-hover:border-emerald-200 bg-gray-50">
         <Image
           key={item.id}
           src={
@@ -44,79 +44,91 @@ const CartItem = ({ item, currency = "₹" }) => {
             (Array.isArray(item.images) ? item.images[0] : item.images) ||
             "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
           }
-          width={40}
-          height={40}
+          width={70}
+          height={70}
           alt={item.title}
-          style={{ objectFit: "cover" }}
+          className="object-cover"
         />
       </div>
-      <div className="flex flex-col w-full overflow-hidden">
+
+      {/* Content Section */}
+      <div className="flex flex-col w-full overflow-hidden flex-1">
+        {/* Product Title */}
         <Link
           href={`/product/${item.slug || item.id || item._id}`}
           onClick={closeCartDrawer}
-          className="truncate text-sm font-medium text-gray-700 text-heading line-clamp-1"
+          className="truncate text-sm md:text-base font-semibold text-gray-800 hover:text-emerald-600 transition-colors duration-200 line-clamp-2 mb-1.5"
         >
           {item.title}
         </Link>
         
-        {/* Show MRP and Discount - Hidden for wholesalers */}
+        {/* MRP and Discount Badge - Hidden for wholesalers */}
         {!isWholesaler && originalPrice > currentPrice && (
-          <div className="flex items-center gap-2 text-xs mb-1">
-            <span className="text-gray-400 line-through">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs text-gray-500 line-through font-medium">
               MRP: {currency}{originalPrice.toFixed(2)}
             </span>
-            <span className="text-green-600 rounded text-xs font-bold">
+            <span className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
               {discountPercentage}% OFF
             </span>
-             
           </div>
         )}
-        
-         
         
         {/* Item Price - Hidden for wholesalers */}
         {!isWholesaler && (
-          <span className="text-xs text-gray-400 mb-1">
-            Item Price {currency}{item.price}
+          <span className="text-xs text-gray-500 mb-2 font-medium">
+            Unit Price: <span className="text-emerald-600 font-semibold">{currency}{item.price.toFixed(2)}</span>
           </span>
         )}
-        <div className="flex items-center justify-between">
-          <div className="font-bold text-sm md:text-base text-heading leading-5">
-            <span>
-              {currency}
-              {(item.price * item.quantity).toFixed(2)}
+
+        {/* Bottom Section: Price, Quantity, Delete */}
+        <div className="flex items-center justify-between mt-auto pt-2">
+          {/* Total Price */}
+          <div className="flex flex-col">
+            <span className="text-xs text-gray-500 font-medium">Total</span>
+            <span className="font-bold text-base md:text-lg text-gray-900 leading-tight">
+              {currency}{(item.price * item.quantity).toFixed(2)}
             </span>
           </div>
-          <div className="h-8 w-22 md:w-24 lg:w-24 flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">
+
+          {/* Quantity Controls */}
+          <div className="flex items-center gap-2">
+            <div className="h-9 flex items-center justify-center p-1 border-2 border-emerald-300 bg-white hover:border-emerald-300 text-gray-700 rounded-lg transition-all duration-200 shadow-sm">
+              <button
+                onClick={() => {
+                  const minQty = item?.minQuantity ? Number(item.minQuantity) : 1;
+                  if (item.quantity - 1 < minQty) {
+                    notifyError(`Minimum quantity is ${minQty}`);
+                    return;
+                  }
+                  updateItemQuantity(item.id, item.quantity - 1);
+                }}
+                className="h-full px-2 hover:bg-gray-100 rounded-md transition-colors duration-150 active:scale-95"
+              >
+                <FiMinus className="text-gray-600" />
+              </button>
+              
+              <span className="text-sm font-bold text-gray-800 px-3 min-w-[2rem] text-center">
+                {item.quantity}
+              </span>
+              
+              <button 
+                onClick={() => handleIncreaseQuantity(item)}
+                className="h-full px-2 hover:bg-emerald-50 rounded-md transition-colors duration-150 active:scale-95"
+              >
+                <FiPlus className="text-emerald-600" />
+              </button>
+            </div>
+
+            {/* Delete Button */}
             <button
-              onClick={() => {
-                const minQty = item?.minQuantity ? Number(item.minQuantity) : 1;
-                if (item.quantity - 1 < minQty) {
-                  notifyError(`Minimum quantity is ${minQty}`);
-                  return;
-                }
-                updateItemQuantity(item.id, item.quantity - 1);
-              }}
+              onClick={() => removeItem(item.id)}
+              className="h-9 w-9 flex items-center justify-center hover:bg-red-50 text-red-400 hover:text-red-600 rounded-lg cursor-pointer transition-all duration-200 active:scale-95"
+              aria-label="Remove item"
             >
-              <span className="text-dark text-base">
-                <FiMinus />
-              </span>
-            </button>
-            <p className="text-sm font-semibold text-dark px-1">
-              {item.quantity}
-            </p>
-            <button onClick={() => handleIncreaseQuantity(item)}>
-              <span className="text-dark text-base">
-                <FiPlus />
-              </span>
+              <FiTrash2 className="text-lg" />
             </button>
           </div>
-          <button
-            onClick={() => removeItem(item.id)}
-            className="hover:text-red-600 text-red-400 text-lg cursor-pointer"
-          >
-            <FiTrash2 />
-          </button>
         </div>
       </div>
     </div>

@@ -46,6 +46,15 @@ const ProductServices = {
   deleteManyProducts: async (body) => {
     return requests.patch("/products/delete/many", body);
   },
+
+  exportProductsCSV: async () => {
+    return requests.get("/products/export/csv");
+  },
+
+  importProductsCSV: async (body) => {
+    return requests.post("/products/import/csv", body);
+  },
+
 };
 
 export default ProductServices;

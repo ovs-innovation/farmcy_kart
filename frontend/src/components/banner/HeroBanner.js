@@ -272,7 +272,7 @@ const HeroBanner = () => {
       </div>
           
       {/* Content Section */}
-      <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 py-6 md:py-10 min-h-[300px]">
+      <div className="hero-padding relative z-10 w-full flex flex-col items-center justify-center px-4  md:py-10 min-h-[300px]">
         {/* Hero Text Section */}
         <motion.div
           variants={contentVariants}
@@ -353,7 +353,22 @@ const HeroBanner = () => {
         
       </div>
       
-      
+      <style jsx>{`
+      /* Default (Laptop / Desktop) */
+.hero-padding {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Mobile Screens */
+@media (max-width: 768px) {
+  .hero-padding {
+    padding-top: 4.5rem;
+    padding-bottom: 1.5rem; /* keep bottom same */
+  }
+}
+
+        `}</style>
     </div>
   );
 };

@@ -4,6 +4,9 @@ const Category = require("../models/Category");
 const Brand = require("../models/Brand");
 const UserProductView = require("../models/UserProductView");
 const { languageCodes } = require("../utils/data");
+const { formatProductForCSV,
+  formatCSVToProduct,
+} = require("../utils/productCsvFormatter");
 
 const normalizeTaxPayload = (payload = {}) => {
   const parsedRate =
@@ -35,51 +38,50 @@ const sanitizeDynamicSections = (sections = []) => {
 
       const subsections = Array.isArray(section.subsections)
         ? section.subsections
-            .filter((subsection) => {
-              if (!subsection) return false;
-              if (subsection.type === "paragraph") {
-                return Boolean(
-                  (subsection.content && subsection.content.trim()) ||
-                    (subsection.paragraph && subsection.paragraph.trim()) ||
-                    (subsection.value && subsection.value.trim()) ||
-                    (subsection.description && subsection.description.trim())
-                );
-              }
-              // For keyValue type, check key, value, title, or content
+          .filter((subsection) => {
+            if (!subsection) return false;
+            if (subsection.type === "paragraph") {
               return Boolean(
-                (subsection.key && subsection.key.trim()) ||
+                (subsection.content && subsection.content.trim()) ||
+                (subsection.paragraph && subsection.paragraph.trim()) ||
                 (subsection.value && subsection.value.trim()) ||
-                (subsection.title && subsection.title.trim()) ||
-                (subsection.content && subsection.content.trim())
+                (subsection.description && subsection.description.trim())
               );
-            })
-            .map((subsection) => {
-              const type =
-                subsection.type === "paragraph" ? "paragraph" : "keyValue";
-              return {
-                title:
-                  typeof subsection.title === "string"
-                    ? subsection.title.trim()
-                    : "",
-                type,
-                key:
-                  type === "keyValue" && typeof subsection.key === "string"
-                    ? subsection.key.trim()
-                    : "",
-                value:
-                  type === "keyValue" && typeof subsection.value === "string"
-                    ? subsection.value.trim()
-                    : "",
-                content:
-                  type === "paragraph"
-                    ? (subsection.content || subsection.paragraph || "").trim()
-                    : (subsection.content || "").trim(),
-                description: typeof subsection.description === "string"
-                  ? subsection.description.trim()
+            }
+            // For keyValue type, check key, value, title, or content
+            return Boolean(
+              (subsection.key && subsection.key.trim()) ||
+              (subsection.value && subsection.value.trim()) ||
+              (subsection.title && subsection.title.trim()) ||
+              (subsection.content && subsection.content.trim()));
+          })
+          .map((subsection) => {
+            const type =
+              subsection.type === "paragraph" ? "paragraph" : "keyValue";
+            return {
+              title:
+                typeof subsection.title === "string"
+                  ? subsection.title.trim()
                   : "",
-                isVisible: subsection?.isVisible !== false,
-              };
-            })
+              type,
+              key:
+                type === "keyValue" && typeof subsection.key === "string"
+                  ? subsection.key.trim()
+                  : "",
+              value:
+                type === "keyValue" && typeof subsection.value === "string"
+                  ? subsection.value.trim()
+                  : "",
+              content:
+                type === "paragraph"
+                  ? (subsection.content || subsection.paragraph || "").trim()
+                  : (subsection.content || "").trim(),
+              description: typeof subsection.description === "string"
+                ? subsection.description.trim()
+                : "",
+              isVisible: subsection?.isVisible !== false,
+            };
+          })
         : [];
 
       return {
@@ -108,18 +110,18 @@ const sanitizeMediaSections = (sections = []) => {
 
       const items = Array.isArray(section.items)
         ? section.items
-            .filter(
-              (item) =>
-                item &&
-                typeof item.image === "string" &&
-                item.image.trim().length > 0 &&
-                typeof item.details === "string" &&
-                item.details.trim().length > 0
-            )
-            .map((item) => ({
-              image: item.image.trim(),
-              details: item.details.trim(),
-            }))
+          .filter(
+            (item) =>
+              item &&
+              typeof item.image === "string" &&
+              item.image.trim().length > 0 &&
+              typeof item.details === "string" &&
+              item.details.trim().length > 0
+          )
+          .map((item) => ({
+            image: item.image.trim(),
+            details: item.details.trim(),
+          }))
         : [];
 
       return {
@@ -145,7 +147,7 @@ const sanitizeFaqs = (faqs = []) => {
       const question = faq.question.trim();
       const answerType =
         typeof faq.answerType === "string" &&
-        ["yes", "no", "custom"].includes(faq.answerType.toLowerCase())
+          ["yes", "no", "custom"].includes(faq.answerType.toLowerCase())
           ? faq.answerType.toLowerCase()
           : "yes";
       const customAnswer =
@@ -154,15 +156,15 @@ const sanitizeFaqs = (faqs = []) => {
             faq.customAnswer.trim().length > 0
             ? faq.customAnswer.trim()
             : typeof faq.answer === "string"
-            ? faq.answer.trim()
-            : ""
+              ? faq.answer.trim()
+              : ""
           : "";
       const answer =
         answerType === "custom"
           ? customAnswer
           : answerType === "yes"
-          ? "Yes"
-          : "No";
+            ? "Yes"
+            : "No";
 
       if (!answer) {
         return null;
@@ -213,15 +215,15 @@ const sanitizeListSection = (section = {}, defaultTitle = "") => {
 
   const items = Array.isArray(section.items)
     ? section.items
-        .filter(
-          (item) =>
-            item &&
-            (typeof item.key === "string" || typeof item.value === "string")
-        )
-        .map((item) => ({
-          key: typeof item.key === "string" ? item.key.trim() : "",
-          value: typeof item.value === "string" ? item.value.trim() : "",
-        }))
+      .filter(
+        (item) =>
+          item &&
+          (typeof item.key === "string" || typeof item.value === "string")
+      )
+      .map((item) => ({
+        key: typeof item.key === "string" ? item.key.trim() : "",
+        value: typeof item.value === "string" ? item.value.trim() : "",
+      }))
     : [];
 
   return {
@@ -248,8 +250,8 @@ const sanitizeHighlightSection = (section = {}, defaultTitle = "") => {
 
   const items = Array.isArray(section.items)
     ? section.items
-        .filter((item) => typeof item === "string" && item.trim().length > 0)
-        .map((item) => item.trim())
+      .filter((item) => typeof item === "string" && item.trim().length > 0)
+      .map((item) => item.trim())
     : [];
 
   return {
@@ -276,19 +278,19 @@ const sanitizeAdditionalInformationSection = (section = {}, defaultTitle = "") =
 
   const subsections = Array.isArray(section.subsections)
     ? section.subsections
-        .filter((subsection) => subsection && typeof subsection.label === "string" && subsection.label.trim().length > 0)
-        .map((subsection) => {
-          const items = Array.isArray(subsection.items)
-            ? subsection.items
-                .filter((item) => typeof item === "string" && item.trim().length > 0)
-                .map((item) => item.trim())
-            : [];
-          
-          return {
-            label: subsection.label.trim(),
-            items,
-          };
-        })
+      .filter((subsection) => subsection && typeof subsection.label === "string" && subsection.label.trim().length > 0)
+      .map((subsection) => {
+        const items = Array.isArray(subsection.items)
+          ? subsection.items
+            .filter((item) => typeof item === "string" && item.trim().length > 0)
+            .map((item) => item.trim())
+          : [];
+
+        return {
+          label: subsection.label.trim(),
+          items,
+        };
+      })
     : [];
 
   return {
@@ -586,7 +588,7 @@ const updateProduct = async (req, res) => {
       if (Object.prototype.hasOwnProperty.call(req.body, "faqs")) {
         product.faqs = sanitizeFaqSection(req.body.faqs);
       }
-      
+
       // Update new sections if provided
       if (Object.prototype.hasOwnProperty.call(req.body, "productDescription")) {
         product.productDescription = sanitizeParagraphSection(req.body.productDescription, "Product Description");
@@ -984,10 +986,10 @@ const getRecommendations = async (req, res) => {
     const userId = req.user?._id;
     // Allow frontend to pass guest history via body (POST) or query (GET)
     let guestProductIds = req.body.guestProductIds;
-    
+
     // If using GET, parsing query params (expecting comma separated string)
     if (!guestProductIds && req.query.productIds) {
-       guestProductIds = req.query.productIds.split(',');
+      guestProductIds = req.query.productIds.split(',');
     }
 
     let seedProducts = [];
@@ -1005,17 +1007,17 @@ const getRecommendations = async (req, res) => {
       seedProducts = views
         .map((v) => v.productId)
         .filter((p) => p != null);
-        
+
       viewedIds = seedProducts.map((p) => p._id);
-    } 
-    
+    }
+
     // If guest or limited history, combine with guestProductIds provided by frontend
     if (guestProductIds && Array.isArray(guestProductIds) && guestProductIds.length > 0) {
       const guestProds = await Product.find({
         _id: { $in: guestProductIds },
         status: "show",
       }).select("category brand");
-      
+
       seedProducts = [...seedProducts, ...guestProds];
       viewedIds = [...viewedIds, ...guestProds.map(p => p._id)];
     }
@@ -1080,6 +1082,198 @@ const getRecommendations = async (req, res) => {
   }
 };
 
+// New controller to export products in CSV format for admin use
+const exportProductsCSV = async (req, res) => {
+  console.log("✅ CSV EXPORT API HIT");
+  try {
+    const products = await Product.find()
+      .populate("categories", "name")
+      .populate("brand", "name")
+      .lean();
+
+    if (!products || products.length === 0) {
+      return res.status(200).json([]);
+    }
+
+    const formatted = products.map((item) => formatProductForCSV(item));
+
+    res.status(200).json(formatted);
+  } catch (error) {
+    console.error("CSV Export Error:", error);
+
+    res.status(500).json({
+      message: "Failed to export CSV",
+    });
+  }
+};
+
+// Import products from CSV data (JSON format after CSV parsing)
+// Import products from CSV data (JSON format after CSV parsing)
+const importProductsCSV = async (req, res) => {
+  console.log("✅ CSV IMPORT API HIT");
+  try {
+    const productsData = req.body;
+
+    if (!Array.isArray(productsData) || productsData.length === 0) {
+      return res.status(400).json({
+        message: "Please provide valid product data",
+      });
+    }
+
+    // Fetch all categories and brands for lookup
+    const allCategories = await Category.find({});
+    const allBrands = await Brand.find({});
+
+    // Create lookup maps for faster lookup
+    // Create lookup maps for faster lookup
+    const categoryMap = {};
+    const categoryIdMap = {};
+    allCategories.forEach((cat) => {
+      if (cat.name) {
+        if (typeof cat.name === "string") {
+          categoryMap[cat.name] = cat._id;
+          categoryIdMap[cat.name.toLowerCase()] = cat._id;
+        } else if (typeof cat.name === "object") {
+          Object.values(cat.name).forEach((val) => {
+            if (typeof val === "string") {
+              categoryMap[val] = cat._id;
+              categoryIdMap[val.toLowerCase()] = cat._id;
+            }
+          });
+        }
+      }
+    });
+
+    const brandMap = {};
+    const brandIdMap = {};
+    allBrands.forEach((brand) => {
+      if (brand.name) {
+        if (typeof brand.name === "string") {
+          brandMap[brand.name] = brand._id;
+          brandIdMap[brand.name.toLowerCase()] = brand._id;
+        } else if (typeof brand.name === "object") {
+          Object.values(brand.name).forEach((val) => {
+            if (typeof val === "string") {
+              brandMap[val] = brand._id;
+              brandIdMap[val.toLowerCase()] = brand._id;
+            }
+          });
+        }
+      }
+    });
+
+    // Sanitize and normalize payload with category/brand conversion
+    const sanitizedDocs = await Promise.all(
+      productsData.map(async (doc) => {
+        const sanitized = {
+          ...doc,
+          ...normalizeTaxPayload(doc),
+        };
+
+        // Normalize Title
+        if (typeof doc.title === "string") {
+          sanitized.title = { en: doc.title };
+        }
+
+        // Normalize Description
+        if (typeof doc.description === "string") {
+          sanitized.description = { en: doc.description };
+        }
+
+        // Normalize Image (start)
+        if (typeof doc.image === "string") {
+          sanitized.image = [doc.image];
+        }
+        // Normalize Image (end)
+
+        // Normalize Prices (if flat fields provided)
+        if (!doc.prices && (doc.price || doc.originalPrice)) {
+          sanitized.prices = {
+            price: Number(doc.price) || 0,
+            originalPrice: Number(doc.originalPrice) || 0,
+            discount: Number(doc.discount) || 0,
+          };
+        }
+
+        // Convert category string to ObjectId
+        if (doc.category && typeof doc.category === "string") {
+          const categoryId =
+            categoryMap[doc.category] ||
+            categoryIdMap[doc.category.toLowerCase()];
+          if (categoryId) {
+            sanitized.category = categoryId;
+          }
+        }
+
+        // Convert categories array strings to ObjectIds
+        if (Array.isArray(doc.categories) && doc.categories.length > 0) {
+          sanitized.categories = doc.categories
+            .map((cat) => {
+              if (typeof cat === "string") {
+                return (
+                  categoryMap[cat] || categoryIdMap[cat.toLowerCase()]
+                );
+              }
+              return cat;
+            })
+            .filter((id) => id);
+        }
+
+        // If categories is empty or not provided, use category as fallback
+        if (!sanitized.categories || sanitized.categories.length === 0) {
+          if (doc.category && typeof doc.category === "string") {
+            const categoryId =
+              categoryMap[doc.category] ||
+              categoryIdMap[doc.category.toLowerCase()];
+            if (categoryId) {
+              sanitized.categories = [categoryId];
+            }
+          }
+        }
+
+        // Convert brand string to ObjectId
+        if (doc.brand && typeof doc.brand === "string") {
+          const brandId =
+            brandMap[doc.brand] || brandIdMap[doc.brand.toLowerCase()];
+          if (brandId) {
+            sanitized.brand = brandId;
+          }
+        }
+
+        return sanitized;
+      })
+    );
+
+    // Insert products
+    try {
+      const result = await Product.insertMany(sanitizedDocs, { ordered: false });
+      res.status(201).json({
+        message: `${result.length} products imported successfully!`,
+        count: result.length,
+      });
+    } catch (err) {
+      // Handle Mongoose insertMany error (which might contain partial successes)
+      if (err.name === 'ValidationError' || err.name === 'MongooseError') {
+        // If ordered: false, some might have succeeded, but usually this throws if it fails.
+        // We can check err.insertedDocs if available, but usually we just report failure here?
+        // Actually with ordered:false, if some fail, it throws, but we might have partial success?
+        console.error("Bulk Insert Validation Error:", err.message);
+        return res.status(400).json({
+          message: "Validation Error during imports. check your data (Categories must exist!). " + err.message,
+        });
+      }
+      throw err;
+    }
+
+  } catch (error) {
+    console.error("CSV Import Error:", error);
+
+    res.status(400).json({
+      message: error.message || "Failed to import products",
+    });
+  }
+};
+
 module.exports = {
   addProductView,
   getRecommendations,
@@ -1095,4 +1289,6 @@ module.exports = {
   deleteProduct,
   deleteManyProducts,
   getShowingStoreProducts,
+  exportProductsCSV,
+  importProductsCSV,
 };
