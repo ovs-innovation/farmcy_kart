@@ -68,8 +68,6 @@ exports.formatProductForCSV = (product) => {
 
     slug: product.slug || "",
 
-    variants: JSON.stringify(product.variants || []),
-
     createdAt: product.createdAt
       ? new Date(product.createdAt).toISOString()
       : "",
