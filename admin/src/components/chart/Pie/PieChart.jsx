@@ -16,7 +16,7 @@ const PieChart = ({ data }) => {
     "#EC4899",
     "#8B5CF6",
   ];
-
+  
   const chartData = {
     labels: products.map((s) => s._id),
     datasets: [
@@ -25,8 +25,7 @@ const PieChart = ({ data }) => {
         backgroundColor: products.map((_, i) =>
           activeIndex === null || activeIndex === i
             ? colors[i % colors.length]
-            : `${colors[i % colors.length]}33`
-        ),
+            : `${colors[i % colors.length]}33`),
         borderWidth: 0,
         borderRadius: 12,
         spacing: 6,
@@ -190,8 +189,7 @@ const PieChart = ({ data }) => {
             <div className="center">
               <span className="total">
                 {activeIndex !== null
-                  ? products[activeIndex]?.count
-                  : totalCount}
+                  ? products[activeIndex]?.count : totalCount}
               </span>
               <span className="label">
                 {activeIndex !== null ? "Units Sold" : "Total Sold"}

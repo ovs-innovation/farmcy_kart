@@ -64,27 +64,27 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                   <div className="w-full">
                     <HeroBanner />
                   </div>
-                    {/* Slider Carousel */}
-                 <div className="md:hidden">
-                  <SliderCarousel />
-                 </div>
+                  {/* Slider Carousel */}
+                  <div className="md:hidden">
+                    <SliderCarousel />
+                  </div>
                   <div className="w-full">
                     <OrderOptions />
                   </div>
-                     {/* Slider Carousel */}
-                 <div className="hidden md:block">
-                  <SliderCarousel />
-                 </div>
+                  {/* Slider Carousel */}
+                  <div className="hidden md:block">
+                    <SliderCarousel />
+                  </div>
                 </div>
-                 
+
               </div>
             </div>
 
             {/* feature category's */}
             {storeCustomizationSetting?.home?.featured_status && (
-              <div id="feature-category" className="bg-white lg:py-16 py-10">
+              <div id="feature-category" className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-emerald-100 py-12 lg:py-20">
                 <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                  <div className="flex items-center md:justify-between mb-2 justify-center  gap-2">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
                     <SectionHeader
                       title={storeCustomizationSetting?.home?.feature_title || "Featured Categories"}
                       subtitle={storeCustomizationSetting?.home?.feature_description || "Explore our handpicked selection of featured categories"}
@@ -92,24 +92,24 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                       error={error}
                       align="left"
                     />
-                    <Link
-                      href="/categories"
-                      className="border border-emerald-700 text-emerald-700 font-bold rounded-full px-6 py-2 flex items-center gap-2 hover:bg-emerald-50 transition text-sm  md:text-base whitespace-nowrap"
-                      style={{ minWidth: 80 }}
-                    >
-                      View All <span className="text-lg">&gt;</span>
-                    </Link>
+                   <Link
+  href="/categories"
+  className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-2 text-sm md:text-base font-semibold text-white hover:bg-emerald-800 transition shadow-sm"
+>
+  View All
+  <span className="text-lg">→</span>
+</Link>
                   </div>
                   <FeatureCategory attributes={attributes} />
                 </div>
               </div>
             )}
 
-           
+
             {/* Suggested For You Section */}
             <div className="bg-white  ">
               <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                
+
                 <div className="mt-4">
                   {/* Renders personalized suggestions for user/guest */}
                   {/* If you want to move this, just change the position */}
@@ -122,7 +122,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
             {/* Deals You'll Love Section */}
             {/* Do not render deals section for wholesalers */}
             {!isWholesaler && discountProducts?.length > 0 && (
-                <DealsYouLove products={discountProducts} />
+              <DealsYouLove products={discountProducts} />
             )}
 
             {/* popular products */}
@@ -188,7 +188,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                         <button className="next-popular absolute top-1/2 -right-2 md:-right-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
                           <IoChevronForward className="text-xl text-gray-600" />
                         </button>
-                        
+
                         <div className="flex justify-end mt-4 px-2">
                           <Link href="/search?sort=newest" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
                             View All <IoChevronForward />
@@ -201,9 +201,9 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
               </div>
             )}
 
-           
 
-                  {/* <div className="w-full px-3 sm:px-10">
+
+            {/* <div className="w-full px-3 sm:px-10">
                     <HealthCheckupBanner />
                   </div> */}
             {/* best selling products */}
@@ -275,62 +275,62 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                 </div>
               </div>
             )}
-          
-            {/* //  promotional banner card */}
-            {storeCustomizationSetting?.home?.delivery_status && 
-             (storeCustomizationSetting?.home?.promotional_banner_image1 || 
-              storeCustomizationSetting?.home?.promotional_banner_image2 || 
-              storeCustomizationSetting?.home?.promotional_banner_image3) && (
-              <div className="mx-auto max-w-screen-2xl px-4 sm:px-10">
-                <div className="shadow-sm border rounded-lg p-2">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {storeCustomizationSetting?.home?.promotional_banner_image1 && (
-                      <div className="md:col-span-2">
-                        <Link href={storeCustomizationSetting?.home?.promotional_banner_link1 || "#"}>
-                          <Image
-                            width={500}
-                            height={48}
-                            alt="Offer Banner 1"
-                            className="w-full h-[240px] sm:h-[320px] md:h-[550px] rounded object-cover"
-                            src={storeCustomizationSetting?.home?.promotional_banner_image1}
-                            priority={false}
-                          />
-                        </Link>
-                      </div>
-                    )}
 
-                    <div className="md:col-span-1 flex flex-col gap-2">
-                      {storeCustomizationSetting?.home?.promotional_banner_image2 && (
-                        <Link href={storeCustomizationSetting?.home?.promotional_banner_link2 || "#"}>
-                          <Image
-                            width={500}
-                            height={100}
-                            alt="Offer Banner 2"
-                            className="w-full h-[160px] sm:h-[200px] md:h-[271px] rounded object-cover"
-                            src={storeCustomizationSetting?.home?.promotional_banner_image2}
-                            priority={false}
-                          />
-                        </Link>
+            {/* //  promotional banner card */}
+            {storeCustomizationSetting?.home?.delivery_status &&
+              (storeCustomizationSetting?.home?.promotional_banner_image1 ||
+                storeCustomizationSetting?.home?.promotional_banner_image2 ||
+                storeCustomizationSetting?.home?.promotional_banner_image3) && (
+                <div className="mx-auto max-w-screen-2xl px-4 sm:px-10">
+                  <div className="shadow-sm border rounded-lg p-2">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                      {storeCustomizationSetting?.home?.promotional_banner_image1 && (
+                        <div className="md:col-span-2">
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link1 || "#"}>
+                            <Image
+                              width={500}
+                              height={48}
+                              alt="Offer Banner 1"
+                              className="w-full h-[240px] sm:h-[320px] md:h-[550px] rounded object-cover"
+                              src={storeCustomizationSetting?.home?.promotional_banner_image1}
+                              priority={false}
+                            />
+                          </Link>
+                        </div>
                       )}
-                      {storeCustomizationSetting?.home?.promotional_banner_image3 && (
-                        <Link href={storeCustomizationSetting?.home?.promotional_banner_link3 || "#"}>
-                          <Image
-                            width={600}
-                            height={600}
-                            alt="Offer Banner 3"
-                            className="w-full h-[160px] sm:h-[200px] md:h-[271px] rounded object-cover"
-                            src={storeCustomizationSetting?.home?.promotional_banner_image3}
-                            priority={false}
-                          />
-                        </Link>
-                      )}
+
+                      <div className="md:col-span-1 flex flex-col gap-2">
+                        {storeCustomizationSetting?.home?.promotional_banner_image2 && (
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link2 || "#"}>
+                            <Image
+                              width={500}
+                              height={100}
+                              alt="Offer Banner 2"
+                              className="w-full h-[160px] sm:h-[200px] md:h-[271px] rounded object-cover"
+                              src={storeCustomizationSetting?.home?.promotional_banner_image2}
+                              priority={false}
+                            />
+                          </Link>
+                        )}
+                        {storeCustomizationSetting?.home?.promotional_banner_image3 && (
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link3 || "#"}>
+                            <Image
+                              width={600}
+                              height={600}
+                              alt="Offer Banner 3"
+                              className="w-full h-[160px] sm:h-[200px] md:h-[271px] rounded object-cover"
+                              src={storeCustomizationSetting?.home?.promotional_banner_image3}
+                              priority={false}
+                            />
+                          </Link>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-             
+
 
             {/* discounted products */}
             {storeCustomizationSetting?.home?.discount_product_status &&
@@ -412,9 +412,9 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                 </div>
               )}
 
-              {/* Category Cards Section */}
+            {/* Category Cards Section */}
             <CategoryCards />
-             
+
             {/* Testimonials Section */}
             <TestimonialsSection />
 
