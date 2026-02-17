@@ -995,5 +995,7 @@
   "ShippingTwoDes": "Shipping Two Description",
   "ShippingTwoCost": "Shipping Two Cost",
   "TranslationSecretKey": "Translation Secret Key",
-  "AllowAutoTranslation": "Allow Auto Translation"
+  "AllowAutoTranslation": "Allow Auto Translation",
+  "ImportNow": "Import Now",
+  "Import": "Import"
 }
