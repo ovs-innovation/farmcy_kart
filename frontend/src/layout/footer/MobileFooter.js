@@ -16,11 +16,14 @@ import useGetSetting from "@hooks/useGetSetting";
 import useWishlist from "@hooks/useWishlist";
 import LocationButton from "@components/location/LocationButton";
 import SearchSuggestions from "@components/search/SearchSuggestions";
+import WholesalerModal from "@components/modal/WholesalerModal";
 
 const MobileFooter = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showSignDropdown, setShowSignDropdown] = useState(false);
+  const [wholesalerModalOpen, setWholesalerModalOpen] = useState(false);
   const searchInputRef = useRef(null);
   const { toggleCategoryDrawer, showSearch, setShowSearch } = useContext(SidebarContext);
   const userInfo = getUserSession();
@@ -37,11 +40,11 @@ const MobileFooter = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const trimmedSearchText = searchText.trim();
     setShowSuggestions(false);
     searchInputRef.current?.blur();
-    
+
     if (trimmedSearchText) {
       router.push(
         {
@@ -69,66 +72,86 @@ const MobileFooter = () => {
       {/* Drawer lives off-canvas; keep it mounted without forcing page layout/scroll */}
       <CategoryDrawer />
       <footer className="lg:hidden fixed z-30 top-0 bg-white flex items-center justify-between w-full h-16 px-3 sm:px-10 shadow-sm">
-       <div className="flex items-center gap-4">
-         <button
-          aria-label="Bar"
-          onClick={toggleCategoryDrawer}
-          className="flex items-center justify-center flex-shrink-0 h-auto relative focus:outline-none"
-        >
-          <span className={`text-xl text-store-500`}>
-            <FiAlignLeft className="w-6 h-6 drop-shadow-xl" />
-          </span>
-        </button>
-        <Link
-          href="/"
-          className="flex items-center justify-center"
-          rel="noreferrer"
-          aria-label="Home"
-        >
-          <div className="relative w-16 h-16">
-            <Image
-              src="/logo/logo.png"
-              alt="logo"
-              layout="fill"
-              objectFit="contain"
-              priority
-            />
-          </div>
-        </Link>
-       </div>
         <div className="flex items-center gap-4">
-        <button
-          aria-label="User"
-          type="button"
-          className={`text-xl text-store-500 indicator justify-center`}
-        >
-          {userInfo?.image ? (
-            <Link href="/user/dashboard" className="relative top-1 w-8 h-8 block">
+          <button
+            aria-label="Bar"
+            onClick={toggleCategoryDrawer}
+            className="flex items-center justify-center flex-shrink-0 h-auto relative focus:outline-none"
+          >
+            <span className={`text-xl text-store-500`}>
+              <FiAlignLeft className="w-6 h-6 drop-shadow-xl" />
+            </span>
+          </button>
+          <Link
+            href="/"
+            className="flex items-center justify-center"
+            rel="noreferrer"
+            aria-label="Home"
+          >
+            <div className="relative w-16 h-16">
               <Image
-                width={32}
-                height={32}
-                src={userInfo.image}
-                alt="user"
-                className="rounded-full object-cover w-8 h-8 border-2 border-gray-200"
+                src="/logo/logo.png"
+                alt="logo"
+                layout="fill"
+                objectFit="contain"
+                priority
               />
-            </Link>
-          ) : userInfo?.name ? (
-            <Link
-              href="/user/dashboard"
-              className={`leading-none font-bold font-serif block px-3 py-2 border rounded-full border-store-500 text-store-500`}
-            >
-              {userInfo?.name[0]}
-            </Link>
-          ) : (
-            <Link
-              href="/auth/login"
-              className="bg-store-500 text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:bg-store-600 transition-colors"
-            >
-              <IoLockClosedOutline className="text-lg" /> Sign In
-            </Link>
-          )}
-        </button>
-        
+            </div>
+          </Link>
+        </div>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center justify-center relative">
+            {userInfo?.image ? (
+              <Link href="/user/dashboard" className="relative top-1 w-8 h-8 block">
+                <Image
+                  width={32}
+                  height={32}
+                  src={userInfo.image}
+                  alt="user"
+                  className="rounded-full object-cover w-8 h-8 border-2 border-gray-200"
+                />
+              </Link>
+            ) : userInfo?.name ? (
+              <Link
+                href="/user/dashboard"
+                className={`leading-none font-bold font-serif block px-3 py-2 border rounded-full border-store-500 text-store-500`}
+              >
+                {userInfo?.name[0]}
+              </Link>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setShowSignDropdown((prev) => !prev)}
+                  onBlur={() => setTimeout(() => setShowSignDropdown(false), 200)}
+                  className="bg-store-500 text-white px-4 py-2 rounded-full flex items-center gap-2 font-bold text-sm hover:bg-store-600 transition-colors"
+                >
+                  <IoLockClosedOutline className="text-lg" /> Sign In
+                </button>
+
+                {showSignDropdown && (
+                  <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-100">
+                    <Link
+                      href="/auth/login"
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-store-500"
+                    >
+                      Customer
+                    </Link>
+                    <button
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-store-500"
+                      onMouseDown={(e) => {
+                        e.preventDefault(); // Prevent blur
+                        setShowSignDropdown(false);
+                        setWholesalerModalOpen(true);
+                      }}
+                    >
+                      Wholesaler
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
         </div>
       </footer>
       {showSearch && (
@@ -139,7 +162,7 @@ const MobileFooter = () => {
           >
             {/* Location Button */}
             <LocationButton className="h-10 flex-shrink-0" />
-            
+
             {/* Search Input */}
             <div className="flex-1 relative">
               <input
@@ -153,7 +176,7 @@ const MobileFooter = () => {
                 onBlur={(e) => {
                   const relatedTarget = e.relatedTarget;
                   const suggestionsContainer = document.querySelector('.search-suggestions-container');
-                  
+
                   if (!relatedTarget || (suggestionsContainer && !suggestionsContainer.contains(relatedTarget))) {
                     setTimeout(() => {
                       const activeElement = document.activeElement;
@@ -185,6 +208,7 @@ const MobileFooter = () => {
           </form>
         </div>
       )}
+      <WholesalerModal modalOpen={wholesalerModalOpen} setModalOpen={setWholesalerModalOpen} />
     </>
   );
 };

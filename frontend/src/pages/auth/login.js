@@ -82,7 +82,7 @@ const Login = () => {
     if (recaptchaVerifierRef.current) {
       try {
         recaptchaVerifierRef.current.clear();
-      } catch (err) {}
+      } catch (err) { }
       recaptchaVerifierRef.current = null;
     }
     setRecaptchaVerifier(null);
@@ -100,8 +100,8 @@ const Login = () => {
           if (!container || recaptchaVerifierRef.current) return;
           const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
             size: "normal",
-            callback: () => {},
-            "expired-callback": () => {},
+            callback: () => { },
+            "expired-callback": () => { },
           });
           recaptchaVerifierRef.current = verifier;
           setRecaptchaVerifier(verifier);
@@ -209,7 +209,7 @@ const Login = () => {
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
         <div className="py-4 flex flex-col lg:flex-row w-full">
           <div className="w-full sm:p-5 lg:p-8">
-            <div className="mx-auto text-left justify-center rounded-md w-full max-w-lg px-4 py-8 sm:p-10 overflow-hidden align-middle transition-all transform bg-white shadow-xl rounded-2x">
+            <div className="mx-auto text-left justify-center rounded-md w-full max-w-lg px-2 py-8 sm:p-10 overflow-hidden align-middle transition-all transform bg-white shadow-xl rounded-2x">
               <div className="overflow-hidden mx-auto">
                 <div className="text-center mb-6">
                   <h2 className="text-3xl font-bold font-serif">Login</h2>
@@ -227,11 +227,10 @@ const Login = () => {
                         setOtp(["", "", "", "", "", ""]);
                         setOtpError("");
                       }}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
-                        loginMethod === "email"
-                          ? "bg-store-500 text-white shadow-md"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${loginMethod === "email"
+                        ? "bg-store-500 text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
                     >
                       <FiMail className="w-4 h-4" />
                       Email
@@ -245,11 +244,10 @@ const Login = () => {
                         setOtpError("");
                         setPhoneNumber("");
                       }}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
-                        loginMethod === "otp"
-                          ? "bg-store-500 text-white shadow-md"
-                          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                      }`}
+                      className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${loginMethod === "otp"
+                        ? "bg-store-500 text-white shadow-md"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
                     >
                       <FiSmartphone className="w-4 h-4" />
                       Phone
@@ -260,65 +258,63 @@ const Login = () => {
                 {loginMethod === "email" && (
                   <div>
                     <form onSubmit={handleSubmit(submitHandler)} className="flex flex-col justify-center">
-                    <div className="grid grid-cols-1 gap-5">
-                      <div className="form-group">
-                        <InputArea
-                          register={register}
-                          label="Email"
-                          name="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          Icon={FiMail}
-                          autocomplete="email"
-                        />
-                        <Error errorName={errors.email} />
-                      </div>
-                      <div className="form-group">
-                        <InputArea
-                          register={register}
-                          label="Password"
-                          name="password"
-                          type="password"
-                          placeholder="Enter your password"
-                          Icon={FiLock}
-                          autocomplete="current-password"
-                        />
-                        <Error errorName={errors.password} />
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex ms-auto">
-                          <Link
-                            href="/auth/forget-password"
-                            className="text-end text-sm text-heading ps-3 underline hover:no-underline focus:outline-none"
-                          >
-                            Forgot password?
-                          </Link>
+                      <div className="grid grid-cols-1 gap-5">
+                        <div className="form-group">
+                          <InputArea
+                            register={register}
+                            label="Email"
+                            name="email"
+                            type="email"
+                            placeholder="Enter your email"
+                            Icon={FiMail}
+                            autocomplete="email"
+                          />
+                          <Error errorName={errors.email} />
                         </div>
+                        <div className="form-group">
+                          <InputArea
+                            register={register}
+                            label="Password"
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            Icon={FiLock}
+                            autocomplete="current-password" />
+                          <Error errorName={errors.password} /> </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex ms-auto">
+                            <Link
+                              href="/auth/forget-password"
+                              className="text-end text-sm text-heading ps-3 underline hover:no-underline focus:outline-none"
+                            >
+                              Forgot password?
+                            </Link>
+                          </div>
+                        </div>
+                        {loading ? (
+                          <button
+                            disabled={loading}
+                            type="submit"
+                            className="md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto"
+                          >
+                            <img src="/loader/spinner.gif" alt="Loading" width={20} height={10} />
+                            <span className="font-serif ml-2 font-light">Processing</span>
+                          </button>
+                        ) : (
+                          <button
+                            disabled={loading}
+                            type="submit"
+                            className="w-full text-center py-3 rounded bg-store-500 text-white hover:bg-store-600 transition-all focus:outline-none my-1"
+                          >
+                            Login
+                          </button>
+                        )}
                       </div>
-                      {loading ? (
-                        <button
-                          disabled={loading}
-                          type="submit"
-                          className="md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto"
-                        >
-                          <img src="/loader/spinner.gif" alt="Loading" width={20} height={10} />
-                          <span className="font-serif ml-2 font-light">Processing</span>
-                        </button>
-                      ) : (
-                        <button
-                          disabled={loading}
-                          type="submit"
-                          className="w-full text-center py-3 rounded bg-store-500 text-white hover:bg-store-600 transition-all focus:outline-none my-1"
-                        >
-                          Login
-                        </button>
-                      )}
-                    </div>
-                  </form>
+                    </form>
                   </div>
                 )}
-                
+
                 {/* OTP Login Form */}
                 {loginMethod === "otp" && (
                   <>
@@ -386,7 +382,7 @@ const Login = () => {
                           <label className="block text-gray-700 text-sm font-medium mb-3 text-center">
                             Enter 6-Digit OTP
                           </label>
-                          <div className="flex justify-center gap-3">
+                          <div className="flex justify-center gap-1 sm:gap-3">
                             {Array.from({ length: 6 }).map((_, index) => {
                               const currentOtp = ensureOtpArray(otp);
                               const digit = currentOtp[index] || "";
@@ -403,7 +399,7 @@ const Login = () => {
                                   onChange={(e) => handleOtpChange(index, e.target.value)}
                                   onKeyDown={(e) => handleOtpKeyDown(index, e)}
                                   onPaste={index === 0 ? handleOtpPaste : undefined}
-                                  className="w-12 h-12 sm:w-14 sm:h-14 text-center text-xl font-semibold border-2 rounded-lg focus:border-blue-500 focus:outline-none transition-all"
+                                  className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 text-center text-xl font-semibold border-2 rounded-lg focus:border-blue-500 focus:outline-none transition-all"
                                   style={{
                                     borderColor: digit ? "#3B82F6" : "#E5E7EB",
                                     backgroundColor: "#FFFFFF",
@@ -450,7 +446,7 @@ const Login = () => {
                   hideSignUp={loginMethod === "otp"}
                   hideSocial={loginMethod === "otp"}
                 />
-               
+
               </div>
             </div>
           </div>

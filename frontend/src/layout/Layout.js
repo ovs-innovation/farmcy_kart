@@ -70,7 +70,7 @@ const Layout = ({ title, description, children, hideMobileHeader }) => {
         {!hideMobileHeader && <MobileBottomNavigation />}
 
         {/* Add top padding on mobile so content doesn't sit behind fixed header */}
-        <div className={`${hideMobileHeader ? "pt-0" : "pt-0"} lg:pt-0 lg:mt-0 pb-16 lg:pb-0`}>{children}</div>
+        <div className={`${hideMobileHeader ? "pt-0" : "pt-16"} lg:pt-0 lg:mt-0 pb-16 lg:pb-0`}>{children}</div>
         <div className="  w-full">
           {/* <FooterTop  /> */}
           <div className="w-full">
