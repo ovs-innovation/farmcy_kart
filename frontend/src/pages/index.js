@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Autoplay } from "swiper/modules";
-import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { IoChevronBack, IoChevronForward, IoSparkles } from "react-icons/io5";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/autoplay";
@@ -82,9 +82,9 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
             {/* feature category's */}
             {storeCustomizationSetting?.home?.featured_status && (
-              <div id="feature-category" className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-emerald-100 py-12 lg:py-20">
+              <div id="feature-category" className="bg-white lg:py-16 py-10">
                 <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                  <div className="flex items-center md:justify-between mb-2 justify-center  gap-2">
                     <SectionHeader
                       title={storeCustomizationSetting?.home?.feature_title || "Featured Categories"}
                       subtitle={storeCustomizationSetting?.home?.feature_description || "Explore our handpicked selection of featured categories"}
@@ -92,13 +92,13 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                       error={error}
                       align="left"
                     />
-                   <Link
-  href="/categories"
-  className="inline-flex items-center gap-2 rounded-full bg-emerald-700 px-6 py-2 text-sm md:text-base font-semibold text-white hover:bg-emerald-800 transition shadow-sm"
->
-  View All
-  <span className="text-lg">→</span>
-</Link>
+                    <Link
+                      href="/categories"
+                      className="border border-emerald-700 text-emerald-700 font-bold rounded-full px-6 py-2 flex items-center gap-2 hover:bg-emerald-50 transition text-sm  md:text-base whitespace-nowrap"
+                      style={{ minWidth: 80 }}
+                    >
+                      View All <span className="text-lg">&gt;</span>
+                    </Link>
                   </div>
                   <FeatureCategory attributes={attributes} />
                 </div>
@@ -107,9 +107,8 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
 
             {/* Suggested For You Section */}
-            <div className="bg-white  ">
+            <div className="bg-white lg:py-16 py-10">
               <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
-
                 <div className="mt-4">
                   {/* Renders personalized suggestions for user/guest */}
                   {/* If you want to move this, just change the position */}
@@ -208,68 +207,95 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                   </div> */}
             {/* best selling products */}
             {bestSellingProducts?.length > 0 && (
-              <div className=" lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
-                <SectionHeader
-                  title="Best Selling Products"
-                  subtitle="We have compiled the best selling products for you"
-                  align="left"
-                />
-                <div className="flex w-full relative group">
-                  <div className="w-full">
-                    {loading ? (
-                      <CMSkeleton
-                        count={20}
-                        height={20}
-                        error={error}
-                        loading={loading}
+              <div className="relative lg:py-24 py-12 overflow-hidden bg-[#8fbdae33]">
+                {/* Background Decorative Blobs - Creates the "Mesh" look */}
+                <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+                  <div className="absolute -top-24 -left-24 w-[500px] h-[500px] bg-emerald-100/40 rounded-full blur-[120px]" />
+                  <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-blue-50/50 rounded-full blur-[100px]" />
+                </div>
+
+                <div className="mx-auto max-w-screen-2xl px-4 sm:px-12 relative z-10">
+                  {/* Header Section */}
+                  <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+                    <div className="space-y-3">
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-[11px] font-extrabold uppercase tracking-widest shadow-lg shadow-emerald-100">
+                        <IoSparkles className="animate-pulse text-yellow-300" />
+                        <span>Popular Choice</span>
+                      </div>
+                      <SectionHeader
+                        title="Best Selling Products"
+                        subtitle="Explore our top-rated essentials, loved by thousands of customers."
+                        align="left"
                       />
+                    </div>
+
+                    <Link
+                      href="/search?sort=best-selling"
+                      className="group flex items-center gap-2 text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-all"
+                    >
+                      Explore All
+                      <div className="p-2 rounded-full bg-white shadow-sm border border-gray-100 group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                        <IoChevronForward />
+                      </div>
+                    </Link>
+                  </div>
+
+                  {/* Slider Area */}
+                  <div className="relative group/slider">
+                    {loading ? (
+                      <CMSkeleton count={20} height={20} error={error} loading={loading} />
                     ) : (
-                      <>
-                        <Swiper
-                          modules={[Navigation, Autoplay]}
-                          spaceBetween={10}
-                          slidesPerView={2}
-                          navigation={{
-                            prevEl: ".prev-best-selling",
-                            nextEl: ".next-best-selling",
-                          }}
-                          autoplay={{
-                            delay: 2500,
-                            disableOnInteraction: false,
-                            pauseOnMouseEnter: true
-                          }}
-                          breakpoints={{
-                            640: { slidesPerView: 2, spaceBetween: 10 },
-                            768: { slidesPerView: 3, spaceBetween: 20 },
-                            1024: { slidesPerView: 4, spaceBetween: 20 },
-                            1280: { slidesPerView: 5, spaceBetween: 20 },
-                          }}
-                          className="mySwiper px-2 py-2"
-                        >
-                          {(isWholesaler ? bestSellingProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler) : bestSellingProducts)
-                            ?.slice(0, 10)
-                            .map((product) => (
-                              <SwiperSlide key={product._id}>
-                                <ProductCard
-                                  product={product}
-                                  attributes={attributes}
-                                />
-                              </SwiperSlide>
-                            ))}
-                        </Swiper>
-                        <button className="prev-best-selling absolute top-1/2 -left-2 md:-left-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
-                          <IoChevronBack className="text-xl text-gray-600" />
-                        </button>
-                        <button className="next-best-selling absolute top-1/2 -right-2 md:-right-4 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-y-1/2 disabled:opacity-50 disabled:cursor-not-allowed">
-                          <IoChevronForward className="text-xl text-gray-600" />
+                      <div className="relative px-2">
+                        {/* Custom Floating Navigation */}
+                        <button className="prev-best-selling absolute top-1/2 -left-4 lg:-left-12 z-30 bg-white/90 backdrop-blur-md shadow-xl border border-white rounded-2xl p-4 hover:bg-emerald-600 hover:text-white transition-all transform -translate-y-1/2 opacity-0 group-hover/slider:opacity-100 translate-x-4 group-hover/slider:translate-x-0 hidden md:flex items-center justify-center">
+                          <IoChevronBack className="text-xl" />
                         </button>
 
-                        <div className="flex justify-end mt-4 px-2">
-                          <Link href="/search?sort=best-selling" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
-                            View All <IoChevronForward />
-                          </Link>
+                        <button className="next-best-selling absolute top-1/2 -right-4 lg:-right-12 z-30 bg-white/90 backdrop-blur-md shadow-xl border border-white rounded-2xl p-4 hover:bg-emerald-600 hover:text-white transition-all transform -translate-y-1/2 opacity-0 group-hover/slider:opacity-100 -translate-x-4 group-hover/slider:translate-x-0 hidden md:flex items-center justify-center">
+                          <IoChevronForward className="text-xl" />
+                        </button>
+
+                        {/* Slider with subtle Glassmorphism container */}
+                        <div className="rounded-[2rem] p-2 bg-white/30 backdrop-blur-[2px] border border-white/50 shadow-sm">
+                          <Swiper
+                            modules={[Navigation, Autoplay]}
+                            spaceBetween={15}
+                            slidesPerView={2}
+                            navigation={{
+                              prevEl: ".prev-best-selling",
+                              nextEl: ".next-best-selling",
+                            }}
+                            autoplay={{
+                              delay: 4000,
+                              disableOnInteraction: false,
+                              pauseOnMouseEnter: true
+                            }}
+                            breakpoints={{
+                              640: { slidesPerView: 2, spaceBetween: 15 },
+                              768: { slidesPerView: 3, spaceBetween: 20 },
+                              1024: { slidesPerView: 4, spaceBetween: 25 },
+                              1280: { slidesPerView: 5, spaceBetween: 25 },
+                            }}
+                            className="mySwiper !pb-10 !pt-4"
+                          >
+                            {(isWholesaler
+                              ? bestSellingProducts.filter(p => (p.wholePrice && Number(p.wholePrice) > 0) || p.isWholesaler)
+                              : bestSellingProducts
+                            )
+                              ?.slice(0, 10)
+                              .map((product) => (
+                                <SwiperSlide key={product._id}>
+                                  <div className="h-full transform hover:-translate-y-2 transition-transform duration-500">
+                                    <ProductCard
+                                      product={product}
+                                      attributes={attributes}
+                                    />
+                                  </div>
+                                </SwiperSlide>
+                              ))}
+                          </Swiper>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
