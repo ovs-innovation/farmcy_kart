@@ -130,6 +130,17 @@ const customerSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Shop / Business fields (from updated wholesaler signup form)
+    hasShop: { type: Boolean, default: false },
+    shopName: { type: String, required: false },
+    gstNumber: { type: String, required: false },
+    drugLicenseNumber: { type: String, required: false },
+    shopImageUrl: { type: String, required: false },
+    shopImagePublicId: { type: String, required: false },
+    shopImageDeleteToken: { type: String, required: false },
+    businessDocUrl: { type: String, required: false },
+    businessDocPublicId: { type: String, required: false },
+    businessDocDeleteToken: { type: String, required: false },
     drugLicenseDeleteToken: {
       type: String,
       required: false,
@@ -142,6 +153,12 @@ const customerSchema = new mongoose.Schema(
       type: Boolean,
       required: false,
       default: false,
+    },
+    // Wholesaler approval status (only meaningful for role = 'wholesaler')
+    wholesalerStatus: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
     },
     // Credential email tracking
     credentialEmailCount: {

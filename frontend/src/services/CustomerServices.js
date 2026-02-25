@@ -19,6 +19,10 @@ const CustomerServices = {
     return requests.post(`/customer/register/${token}`, body);
   },
 
+  registerUser: async (body) => {
+    return requests.post("/customer/signup", body);
+  },
+
   createWholesaler: async (formData) => {
     // formData should be a FormData instance
     return requests.post(`/customer/wholesaler`, formData, {
@@ -60,7 +64,7 @@ const CustomerServices = {
   },
 
   getShippingAddress: async ({ userId = "", addressId = "" }) => {
-    const url = addressId 
+    const url = addressId
       ? `/customer/shipping/address/${userId}?id=${addressId}`
       : `/customer/shipping/address/${userId}`;
     return requests.get(url);
@@ -88,6 +92,41 @@ const CustomerServices = {
 
   getCustomerById: async (id) => {
     return requests.get(`/customer/${id}`);
+  },
+
+  // ─── Cart API ───────────────────────────────────────────────────────────────
+
+  /** Fetch the customer's cart (server-side, populated) */
+  getCart: async (customerId) => {
+    return requests.get(`/customer/cart/${customerId}`);
+  },
+
+  /** Add or increment a product in the DB cart */
+  addToCartDB: async (customerId, productId, quantity = 1) => {
+    return requests.post(`/customer/cart/${customerId}/add`, {
+      productId,
+      quantity,
+    });
+  },
+
+  /** Set exact quantity for a product in the DB cart (pass 0 to remove) */
+  updateCartItemDB: async (customerId, productId, quantity) => {
+    return requests.put(`/customer/cart/${customerId}/update`, {
+      productId,
+      quantity,
+    });
+  },
+
+  /** Remove a specific product from the DB cart */
+  removeFromCartDB: async (customerId, productId) => {
+    return requests.delete(
+      `/customer/cart/${customerId}/remove/${productId}`
+    );
+  },
+
+  /** Clear *all* items from the DB cart */
+  clearCartDB: async (customerId) => {
+    return requests.delete(`/customer/cart/${customerId}/clear`);
   },
 };
 

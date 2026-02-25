@@ -20,7 +20,7 @@ import CategoryServices from "@services/CategoryServices";
 // import LocationButton from "@components/location/LocationButton";
 import LocationPickerDropdown from "@components/location/LocationPickerDropdown";
 import SearchSuggestions from "@components/search/SearchSuggestions";
-import WholesalerModal from "@components/modal/WholesalerModal";
+
 
 const Navbar = () => {
   const { t, lang } = useTranslation("common");
@@ -56,8 +56,6 @@ const Navbar = () => {
   const searchInputRef = useRef(null);
 
   // Sign In dropdown & wholesaler modal
-  const [showSignDropdown, setShowSignDropdown] = useState(false);
-  const [wholesalerModalOpen, setWholesalerModalOpen] = useState(false);
 
   // Scroll listener to show/hide search bar in navbar
   useEffect(() => {
@@ -94,11 +92,11 @@ const Navbar = () => {
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const trimmedSearchText = searchText.trim();
     setShowSuggestions(false);
     searchInputRef.current?.blur();
-    
+
     if (trimmedSearchText) {
       router.push(
         {
@@ -124,7 +122,7 @@ const Navbar = () => {
       <div className="hidden lg:block sticky top-0 z-50 bg-white w-full shadow-sm">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-8">
           <div className="top-bar h-8 lg:h-auto flex items-center justify-between gap-3 mx-auto">
-              
+
             {/* Left Side: Logo + Nav Links */}
             <div className="flex items-center gap-8">
               <Link href="/" className="mr-3 lg:mr-0 block">
@@ -173,22 +171,21 @@ const Navbar = () => {
                                     {showingTranslateValue(subcategory1?.name)}
                                   </span>
                                 </div>
-                                
+
                                 {/* Subcategories Level 2 */}
                                 {subcategory1?.children?.length > 0 && (
                                   <div className="bg-gray-50">
                                     {subcategory1.children.map((subcategory2) => (
                                       <Link
                                         key={subcategory2._id}
-                                        href={`/search?category=${
-                                          subcategory2.slug ||
+                                        href={`/search?category=${subcategory2.slug ||
                                           (subcategory2?.name?.en || subcategory2?.name)
                                             .toLowerCase()
                                             .replace(/[^A-Z0-9]+/gi, "-")
-                                        }&_id=${subcategory2._id}`}
+                                          }&_id=${subcategory2._id}`}
                                         className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-store-500 transition-colors"
                                       >
-                                         
+
                                         {subcategory2?.icon ? (
                                           <Image
                                             src={subcategory2.icon}
@@ -224,7 +221,7 @@ const Navbar = () => {
                 <form onSubmit={handleSearchSubmit} className="relative flex items-center bg-white border-2 border-gray-200 rounded-full shadow-sm overflow-visible z-20 focus-within:ring-0 focus-within:shadow-none focus-within:border-gray-200 focus-within:outline-none">
                   {/* Location Button */}
                   <LocationPickerDropdown className="h-full z-30" />
-                  
+
                   {/* Search Input */}
                   <div className="flex-1 relative">
                     <input
@@ -238,7 +235,7 @@ const Navbar = () => {
                       onBlur={(e) => {
                         const relatedTarget = e.relatedTarget;
                         const suggestionsContainer = document.querySelector('.search-suggestions-container');
-                        
+
                         if (!relatedTarget || (suggestionsContainer && !suggestionsContainer.contains(relatedTarget))) {
                           setTimeout(() => {
                             const activeElement = document.activeElement;
@@ -249,8 +246,8 @@ const Navbar = () => {
                         }
                       }}
                     />
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-store-600 transition-colors"
                     >
                       <IoSearchOutline className="text-lg" />
@@ -328,31 +325,11 @@ const Navbar = () => {
                 ) : (
                   <div className="relative">
                     <button
-                      onClick={() => setShowSignDropdown((prev) => !prev)}
+                      onClick={() => router.push('/auth/signup')}
                       className="bg-store-500 text-white px-5 py-2 rounded-full flex items-center gap-2 font-bold hover:bg-store-600 transition-colors"
                     >
-                      <IoLockClosedOutline className="text-lg" /> Sign In
+                      <IoLockClosedOutline className="text-lg" /> Sign Up
                     </button>
-
-                    {showSignDropdown && (
-                      <div className="absolute right-0 mt-2 w-44 bg-white rounded-md shadow-lg py-1 z-50">
-                        <a
-                          href="/auth/login"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                        >
-                          Customer
-                        </a>
-                        <button
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => {
-                            setShowSignDropdown(false);
-                            setWholesalerModalOpen(true);
-                          }}
-                        >
-                          Wholesaler
-                        </button>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -365,7 +342,7 @@ const Navbar = () => {
       {/* <div className="hidden lg:block bg-white">
         <NavbarPromo />
       </div> */}
-      <WholesalerModal modalOpen={wholesalerModalOpen} setModalOpen={setWholesalerModalOpen} />
+
     </>
   );
 };

@@ -21,7 +21,7 @@ const Login = () => {
   const router = useRouter();
   const { dispatch } = useContext(UserContext);
   const [loginMethod, setLoginMethod] = useState("otp"); // "email" or "otp"
-  const { handleSubmit, submitHandler, register, errors, loading } = useLoginSubmit();
+  const { handleSubmit, submitHandler, register, errors, loading, wholesalerStatus } = useLoginSubmit();
 
   // OTP states
   const [step, setStep] = useState("phone");
@@ -99,7 +99,7 @@ const Login = () => {
           const container = document.getElementById("recaptcha-container");
           if (!container || recaptchaVerifierRef.current) return;
           const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-            size: "normal",
+            size: "invisible",  // hidden – no visible checkbox
             callback: () => { },
             "expired-callback": () => { },
           });
@@ -312,6 +312,39 @@ const Login = () => {
                         )}
                       </div>
                     </form>
+
+                    {/* ── Wholesaler verification notice banner ── */}
+                    {wholesalerStatus === 'pending' && (
+                      <div className="mt-4 p-4 bg-amber-50 border border-amber-300 rounded-xl flex gap-3 items-start">
+                        <span className="text-2xl mt-0.5">🕐</span>
+                        <div>
+                          <p className="font-semibold text-amber-800 text-sm">Account Under Verification</p>
+                          <p className="text-amber-700 text-xs mt-1 leading-relaxed">
+                            Your wholesaler application is currently being reviewed by our team.
+                            You will be notified via email once your account is approved.
+                          </p>
+                          <p className="text-amber-600 text-xs mt-1.5">
+                            Questions? Contact us at{" "}
+                            <a href="mailto:support@farmacykart.com" className="underline font-medium">support@farmacykart.com</a>
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    {wholesalerStatus === 'rejected' && (
+                      <div className="mt-4 p-4 bg-red-50 border border-red-300 rounded-xl flex gap-3 items-start">
+                        <span className="text-2xl mt-0.5">❌</span>
+                        <div>
+                          <p className="font-semibold text-red-800 text-sm">Application Rejected</p>
+                          <p className="text-red-700 text-xs mt-1 leading-relaxed">
+                            Unfortunately, your wholesaler application was not approved.
+                            Please contact support for further assistance.
+                          </p>
+                          <p className="text-red-600 text-xs mt-1.5">
+                            <a href="mailto:support@farmacykart.com" className="underline font-medium">support@farmacykart.com</a>
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -342,7 +375,8 @@ const Login = () => {
                             {otpError && <p className="text-red-500 text-sm mt-2">{otpError}</p>}
                           </div>
 
-                          <div id="recaptcha-container"></div>
+                          {/* reCAPTCHA runs invisibly – no visible widget */}
+                          <div id="recaptcha-container" style={{ position: "absolute", visibility: "hidden", height: 0, overflow: "hidden" }}></div>
 
                           {otpLoading ? (
                             <button

@@ -222,6 +222,42 @@ const registerCustomer = async (req, res) => {
   }
 };
 
+const registerCustomerDirect = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+    const isAdded = await Customer.findOne({ email });
+
+    if (isAdded) {
+      return res.status(403).send({
+        message: "This Email is already in use!",
+      });
+    }
+
+    const newUser = new Customer({
+      name,
+      email,
+      password: bcrypt.hashSync(password),
+      role: "customer",
+    });
+
+    await newUser.save();
+    const token = signInToken(newUser);
+
+    res.send({
+      token,
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role || "customer",
+      message: "Registration Successful!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 // Create wholesaler from frontend form - accepts URLs (preferred) or multipart files
 const createWholesaler = async (req, res) => {
   try {
@@ -279,13 +315,8 @@ const createWholesaler = async (req, res) => {
     const drugRes = resolveField('drugUrl', 'drugLicense');
     if (drugRes.error) return res.status(400).send({ message: drugRes.error });
 
-    // Required validations
-    if (!aadharRes.url) {
-      return res.status(400).send({ message: 'Aadhar upload is required.' });
-    }
-    if (!panRes.url) {
-      return res.status(400).send({ message: 'PAN upload is required.' });
-    }
+    // Required validations — only name and email are mandatory from frontend signup
+    // (Aadhar/PAN are optional per the updated form)
 
     const newWholesaler = new Customer({
       name,
@@ -307,6 +338,18 @@ const createWholesaler = async (req, res) => {
       drugLicenseDeleteToken: req.body.drugDeleteToken || null,
       gstNotRequired,
       drugLicenseNotRequired,
+      wholesalerStatus: 'pending',
+      // New shop fields from updated signup form
+      hasShop: req.body.hasShop === true || req.body.hasShop === 'true' || false,
+      shopName: req.body.shopName || null,
+      gstNumber: req.body.gstNumber || null,
+      drugLicenseNumber: req.body.drugLicenseNumber || null,
+      shopImageUrl: req.body.shopImageUrl || null,
+      shopImagePublicId: req.body.shopImagePublicId || null,
+      shopImageDeleteToken: req.body.shopImageDeleteToken || null,
+      businessDocUrl: req.body.businessDocUrl || null,
+      businessDocPublicId: req.body.businessDocPublicId || null,
+      businessDocDeleteToken: req.body.businessDocDeleteToken || null,
     });
 
     await newWholesaler.save();
@@ -412,7 +455,7 @@ const cloudinarySign = async (req, res) => {
       console.warn('Cloudinary credentials missing for signing');
       return res.send({ signingAvailable: false, message: 'Cloudinary not configured on server.' });
     }
-    
+
     const crypto = require('crypto');
     const { publicId, folder } = req.body || {};
     const timestamp = Math.floor(Date.now() / 1000);
@@ -478,6 +521,21 @@ const loginCustomer = async (req, res) => {
       customer.password &&
       bcrypt.compareSync(req.body.password, customer.password)
     ) {
+      // If the account is a wholesaler, check approval status
+      if (customer.role === 'wholesaler') {
+        if (customer.wholesalerStatus === 'pending') {
+          return res.status(403).send({
+            message: 'Your account is currently under verification. You will be notified once approved by our team.',
+            wholesalerStatus: 'pending',
+          });
+        }
+        if (customer.wholesalerStatus === 'rejected') {
+          return res.status(403).send({
+            message: 'Your wholesaler application has been rejected. Please contact support for more information.',
+            wholesalerStatus: 'rejected',
+          });
+        }
+      }
       // Update lastLogin timestamp
       customer.lastLogin = new Date();
       await customer.save();
@@ -992,9 +1050,9 @@ const getShippingAddress = async (req, res) => {
     }
 
     // Return all addresses
-    res.send({ 
+    res.send({
       shippingAddress: addresses,
-      success: true 
+      success: true
     });
   } catch (err) {
     console.error("getShippingAddress error:", err);
@@ -1050,10 +1108,10 @@ const updateShippingAddress = async (req, res) => {
 
     await customer.save();
 
-    res.send({ 
+    res.send({
       message: "Shipping address updated successfully.",
       success: true,
-      shippingAddress: customer.shippingAddress 
+      shippingAddress: customer.shippingAddress
     });
   } catch (err) {
     console.error("updateShippingAddress error:", err);
@@ -1089,9 +1147,9 @@ const deleteShippingAddress = async (req, res) => {
 
     await customer.save();
 
-    res.send({ 
+    res.send({
       message: "Shipping Address Deleted Successfully!",
-      success: true 
+      success: true
     });
   } catch (err) {
     console.error("deleteShippingAddress error:", err);
@@ -1156,6 +1214,14 @@ const updateCustomer = async (req, res) => {
     // Allow admin to set/update password for wholesaler
     if (req.body.password && typeof req.body.password === 'string' && req.body.password.trim().length > 0) {
       customer.password = bcrypt.hashSync(req.body.password);
+    }
+
+    // Allow admin to update wholesaler approval status
+    if (req.body.wholesalerStatus !== undefined) {
+      const validStatuses = ['pending', 'approved', 'rejected'];
+      if (validStatuses.includes(req.body.wholesalerStatus)) {
+        customer.wholesalerStatus = req.body.wholesalerStatus;
+      }
     }
 
     // Save the updated customer
@@ -1308,11 +1374,180 @@ const getCustomerStatistics = async (req, res) => {
   }
 };
 
+// ─── CART MANAGEMENT ──────────────────────────────────────────────────────────
+
+/**
+ * GET /customer/cart/:customerId
+ * Returns the customer's cart with populated product details.
+ */
+const getCart = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const customer = await Customer.findById(customerId).populate({
+      path: "cart.productId",
+      select: "title prices image slug wholePrice minQuantity stock variants",
+    });
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+    res.send({ cart: customer.cart });
+  } catch (err) {
+    console.error("getCart error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+/**
+ * POST /customer/cart/:customerId/add
+ * Body: { productId, quantity }
+ * Upserts a product into the customer's cart.
+ */
+const addToCart = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { productId, quantity = 1 } = req.body;
+
+    if (!productId) {
+      return res.status(400).send({ message: "productId is required." });
+    }
+
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+
+    const qty = Math.max(1, Number(quantity));
+    const existingItem = customer.cart.find(
+      (c) => c.productId && c.productId.toString() === productId.toString()
+    );
+
+    if (existingItem) {
+      existingItem.quantity = existingItem.quantity + qty;
+    } else {
+      customer.cart.push({ productId, quantity: qty });
+    }
+
+    await customer.save();
+
+    // Return populated cart
+    const updated = await Customer.findById(customerId).populate({
+      path: "cart.productId",
+      select: "title prices image slug wholePrice minQuantity stock variants",
+    });
+
+    res.send({ message: "Cart updated successfully.", cart: updated.cart });
+  } catch (err) {
+    console.error("addToCart error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+/**
+ * PUT /customer/cart/:customerId/update
+ * Body: { productId, quantity }
+ * Sets the quantity for an existing cart item. Removes it if quantity <= 0.
+ */
+const updateCartItem = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+    const { productId, quantity } = req.body;
+
+    if (!productId) {
+      return res.status(400).send({ message: "productId is required." });
+    }
+
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+
+    const qty = Number(quantity);
+
+    if (qty <= 0) {
+      // Remove item
+      customer.cart = customer.cart.filter(
+        (c) => c.productId && c.productId.toString() !== productId.toString()
+      );
+    } else {
+      const item = customer.cart.find(
+        (c) => c.productId && c.productId.toString() === productId.toString()
+      );
+      if (item) {
+        item.quantity = qty;
+      } else {
+        customer.cart.push({ productId, quantity: qty });
+      }
+    }
+
+    await customer.save();
+
+    const updated = await Customer.findById(customerId).populate({
+      path: "cart.productId",
+      select: "title prices image slug wholePrice minQuantity stock variants",
+    });
+
+    res.send({ message: "Cart item updated.", cart: updated.cart });
+  } catch (err) {
+    console.error("updateCartItem error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+/**
+ * DELETE /customer/cart/:customerId/remove/:productId
+ * Removes a specific product from the customer's cart.
+ */
+const removeFromCart = async (req, res) => {
+  try {
+    const { customerId, productId } = req.params;
+
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+
+    customer.cart = customer.cart.filter(
+      (c) => c.productId && c.productId.toString() !== productId.toString()
+    );
+
+    await customer.save();
+    res.send({ message: "Item removed from cart.", cart: customer.cart });
+  } catch (err) {
+    console.error("removeFromCart error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+/**
+ * DELETE /customer/cart/:customerId/clear
+ * Clears all items from the customer's cart.
+ */
+const clearCart = async (req, res) => {
+  try {
+    const { customerId } = req.params;
+
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+      return res.status(404).send({ message: "Customer not found." });
+    }
+
+    customer.cart = [];
+    await customer.save();
+    res.send({ message: "Cart cleared.", cart: [] });
+  } catch (err) {
+    console.error("clearCart error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 module.exports = {
   loginCustomer,
   loginWithPhone,
   verifyPhoneNumber,
   registerCustomer,
+  registerCustomerDirect,
   addAllCustomers,
   signUpWithProvider,
   signUpWithOauthProvider,
@@ -1336,4 +1571,10 @@ module.exports = {
   cloudinaryStatus,
   cloudinaryUpload,
   sendCredentials,
+  // Cart management
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+  clearCart,
 };
