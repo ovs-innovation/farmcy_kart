@@ -4,6 +4,7 @@ const {
   loginCustomer,
   loginWithPhone,
   registerCustomer,
+  registerCustomerDirect,
   verifyPhoneNumber,
   signUpWithProvider,
   signUpWithOauthProvider,
@@ -25,6 +26,12 @@ const {
   deleteCloudinaryAsset,
   cloudinarySign,
   getAllWholesalers,
+  // Cart management
+  getCart,
+  addToCart,
+  updateCartItem,
+  removeFromCart,
+  clearCart,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
@@ -55,6 +62,9 @@ router.delete("/shipping/address/:userId/:shippingId", deleteShippingAddress);
 
 //register a user
 router.post("/register/:token", registerCustomer);
+
+//register a user directly
+router.post("/signup", registerCustomerDirect);
 
 // Wholesaler registration - accepts JSON (with Cloudinary URLs) or multipart files (handled in controller)
 router.post("/wholesaler", createWholesaler);
@@ -128,6 +138,25 @@ router.get("/", getAllCustomers);
 
 //get customer statistics
 router.get("/statistics", getCustomerStatistics);
+
+// ─── CART ROUTES ──────────────────────────────────────────────────────────────
+
+// Get customer cart (populated) — must be BEFORE /:id wildcard
+router.get("/cart/:customerId", getCart);
+
+// Add item to cart
+router.post("/cart/:customerId/add", addToCart);
+
+// Update item quantity in cart
+router.put("/cart/:customerId/update", updateCartItem);
+
+// Remove a specific item from cart
+router.delete("/cart/:customerId/remove/:productId", removeFromCart);
+
+// Clear entire cart
+router.delete("/cart/:customerId/clear", clearCart);
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 //get a user
 router.get("/:id", getCustomerById);

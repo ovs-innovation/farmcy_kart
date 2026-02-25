@@ -14,6 +14,7 @@ import CustomerServices from "@services/CustomerServices";
 const useLoginSubmit = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [wholesalerStatus, setWholesalerStatus] = useState(null); // 'pending' | 'rejected' | null
   const redirectUrl = useSearchParams().get("redirectUrl");
   const { dispatch } = useContext(UserContext);
 
@@ -94,7 +95,16 @@ const useLoginSubmit = () => {
           }
         } catch (err) {
           console.error("Login error:", err);
-          notifyError(err.response?.data?.message || err.message || "Login failed");
+          // Check if it's a wholesaler verification error
+          const respData = err?.response?.data;
+          if (respData?.wholesalerStatus) {
+            setWholesalerStatus(respData.wholesalerStatus);
+            // Show toast too for quick feedback
+            notifyError(respData.message || "Account not yet approved.");
+          } else {
+            setWholesalerStatus(null);
+            notifyError(respData?.message || err.message || "Login failed");
+          }
           setLoading(false);
         }
       }
@@ -116,6 +126,7 @@ const useLoginSubmit = () => {
     control,
     handleSubmit,
     submitHandler,
+    wholesalerStatus,
   };
 };
 

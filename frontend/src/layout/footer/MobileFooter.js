@@ -190,8 +190,7 @@ const MobileFooter = () => {
               <button
                 aria-label="Search"
                 type="submit"
-                className={`outline-none text-xl text-gray-400 absolute top-0 right-0 end-0 w-12 h-full flex items-center justify-center transition duration-200 ease-in-out hover:text-heading focus:outline-none text-store-500 z-10`}
-              >
+                className={`outline-none text-xl text-gray-400 absolute top-0 right-0 end-0 w-12 h-full flex items-center justify-center transition duration-200 ease-in-out hover:text-heading focus:outline-none text-store-500 z-10`}>
                 <IoSearchOutline />
               </button>
               <SearchSuggestions

@@ -4,21 +4,32 @@ import { useContext } from "react";
 import { UserContext } from "@context/UserContext";
 import CustomerServices from "@services/CustomerServices";
 
+/**
+ * useCartSync
+ *
+ * Runs once when the logged-in user changes:
+ *  1. Fetches the customer's DB cart.
+ *  2. Merges DB items into the local cart (DB wins for quantity when higher).
+ *  3. Pushes any LOCAL-ONLY items (added as guest) up to the DB.
+ *
+ * This ensures:
+ *  - Items added before login are preserved and saved to DB after login.
+ *  - Items saved in DB from a previous session are restored into local cart.
+ */
 const useCartSync = () => {
-  const { addItem, items, updateItemQuantity, getItem } = useCart();
+  const { addItem, items, updateItemQuantity, getItem, emptyCart } = useCart();
   const {
     state: { userInfo },
   } = useContext(UserContext);
-  
+
   const isSyncedRef = useRef(false);
   const lastUserIdRef = useRef(null);
   const isSyncingRef = useRef(false);
 
-  // Sync from Customer.cart (Backend Cart)
   useEffect(() => {
     const syncBackendCart = async () => {
       const userId = userInfo?._id || userInfo?.id;
-      
+
       // Reset sync state if user changes or logs out
       if (!userId) {
         isSyncedRef.current = false;
@@ -41,87 +52,119 @@ const useCartSync = () => {
       isSyncingRef.current = true;
 
       try {
+        // ── Step 1: Fetch DB cart ───────────────────────────────────────────
         const res = await CustomerServices.getCustomerById(userId);
         const backendCart = res.cart || [];
 
-        if (backendCart.length > 0) {
-          // Collect all items to add/update first
-          const itemsToProcess = [];
-          
-          backendCart.forEach((cartItem) => {
-            const product = cartItem.productId;
-            // Ensure product is valid and populated
-            if (!product || !product._id) {
-              return;
+        const isWholesalerUser =
+          userInfo?.role &&
+          String(userInfo.role).toLowerCase() === "wholesaler";
+
+        // ── Step 2: Merge DB → Local ────────────────────────────────────────
+        const itemsToProcess = [];
+
+        backendCart.forEach((cartItem) => {
+          const product = cartItem.productId;
+          if (!product || !product._id) return;
+
+          const id = product._id;
+          const backendQty = cartItem.quantity || 1;
+
+          const localItem = getItem(id);
+          const hasVariantInCart = items.some((item) =>
+            String(item.id).startsWith(String(id) + "-")
+          );
+
+          if (localItem) {
+            // DB has higher quantity → update local
+            if (backendQty > localItem.quantity) {
+              itemsToProcess.push({ type: "update", id, quantity: backendQty });
             }
-
-            const id = product._id;
-            const backendQty = cartItem.quantity || 1;
-            
-            // Check if item exists in local cart with exact ID
-            const localItem = getItem(id);
-            
-            // Check if any variant of this product exists in local cart
-            // Variant IDs are constructed as "PRODUCT_ID-VARIANT_INFO"
-            const hasVariantInCart = items.some(item => String(item.id).startsWith(String(id) + '-'));
-
-            if (localItem) {
-              // Sync policy: only apply backend quantity updates if backend increased
-              if (localItem.quantity !== backendQty) {
-                if (backendQty > localItem.quantity) {
-                  // Backend has a higher quantity (e.g., admin increased) -> update local
-                  itemsToProcess.push({ type: 'update', id, quantity: backendQty });
-                } else {
-                  // Backend qty is lower than local (user may have increased locally). Preserve user's local choice and do not downgrade.
-                  // Add a console warning for visibility during debugging.
-                  console.warn(`[Cart Sync] Skipping downgrade for item ${id}: localQty=${localItem.quantity}, backendQty=${backendQty}`);
-                }
-              }
-            } else if (!hasVariantInCart) {
-              // Only add if no variant exists and no exact match exists
-              // Determine effective price based on customer role (wholesaler vs retail)
-              const isWholesalerUser = userInfo?.role && String(userInfo.role).toLowerCase() === 'wholesaler';
-              const effectivePrice = isWholesalerUser && product.wholePrice && Number(product.wholePrice) > 0
+          } else if (!hasVariantInCart) {
+            const effectivePrice =
+              isWholesalerUser &&
+                product.wholePrice &&
+                Number(product.wholePrice) > 0
                 ? Number(product.wholePrice)
-                : (product.prices?.price || product.prices?.originalPrice || 0);
+                : product.prices?.price || product.prices?.originalPrice || 0;
 
-              itemsToProcess.push({
-                type: 'add',
-                item: {
-                  id: id,
-                  price: effectivePrice,
-                  title: product.title?.en || product.title || "Product",
-                  image: Array.isArray(product.image) ? product.image[0] : (typeof product.image === 'string' ? product.image : ''),
-                  quantity: backendQty,
-                  slug: product.slug,
-                  // include stock/minQuantity so cart operations (increment/decrement) can work correctly
-                  stock: (product?.stock !== undefined ? product.stock : (product?.variants && product.variants[0] ? product.variants[0].quantity : undefined)),
-                  minQuantity: product?.minQuantity
-                },
-                quantity: backendQty
-              });
-            }
-          });
+            itemsToProcess.push({
+              type: "add",
+              item: {
+                id: id,
+                price: effectivePrice,
+                title: product.title?.en || product.title || "Product",
+                image: Array.isArray(product.image)
+                  ? product.image[0]
+                  : typeof product.image === "string"
+                    ? product.image
+                    : "",
+                quantity: backendQty,
+                slug: product.slug,
+                stock:
+                  product?.stock !== undefined
+                    ? product.stock
+                    : product?.variants && product.variants[0]
+                      ? product.variants[0].quantity
+                      : undefined,
+                minQuantity: product?.minQuantity,
+              },
+              quantity: backendQty,
+            });
+          }
+        });
 
-          // Process all updates/adds in batch
-          itemsToProcess.forEach((action) => {
-            if (action.type === 'update') {
-              updateItemQuantity(action.id, action.quantity);
-            } else if (action.type === 'add') {
-              // Double-check item doesn't exist before adding
-              if (!getItem(action.item.id)) {
-                addItem(action.item, action.quantity);
-              }
+        // Apply DB → local updates
+        itemsToProcess.forEach((action) => {
+          if (action.type === "update") {
+            updateItemQuantity(action.id, action.quantity);
+          } else if (action.type === "add") {
+            if (!getItem(action.item.id)) {
+              addItem(action.item, action.quantity);
             }
-          });
+          }
+        });
+
+        // ── Step 3: Merge Local → DB (push guest items into DB) ────────────
+        // After applying DB items to local, push any remaining local items
+        // that aren't in the DB cart back up.
+        const dbProductIds = new Set(
+          backendCart
+            .map((c) => c.productId?._id?.toString())
+            .filter(Boolean)
+        );
+
+        const localOnlyItems = items.filter((localItem) => {
+          // Resolve db-compatible id (strip variant suffix if any)
+          const rawId = String(localItem.id);
+          const baseId = rawId.includes("-")
+            ? rawId.slice(0, rawId.indexOf("-"))
+            : rawId;
+          return !dbProductIds.has(baseId);
+        });
+
+        // Push each local-only item up to DB in parallel
+        if (localOnlyItems.length > 0) {
+          await Promise.allSettled(
+            localOnlyItems.map((localItem) => {
+              const rawId = String(localItem.id);
+              const baseId = rawId.includes("-")
+                ? rawId.slice(0, rawId.indexOf("-"))
+                : rawId;
+              return CustomerServices.addToCartDB(
+                userId,
+                baseId,
+                localItem.quantity
+              );
+            })
+          );
         }
-        
-        // Mark as synced for this user
+
+        // ── Done ────────────────────────────────────────────────────────────
         isSyncedRef.current = true;
         lastUserIdRef.current = userId;
-
       } catch (err) {
-        console.error("Error syncing cart:", err);
+        console.error("[useCartSync] Error syncing cart:", err);
       } finally {
         isSyncingRef.current = false;
       }
@@ -129,7 +172,7 @@ const useCartSync = () => {
 
     syncBackendCart();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userInfo?._id, userInfo?.id]); // Only sync when user changes, not when cart items change
+  }, [userInfo?._id, userInfo?.id]);
 };
 
 export default useCartSync;

@@ -1,13 +1,4 @@
-import {
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Pagination,
-  Table,
-  TableCell,
-  TableContainer,
-  TableFooter,
+import { Button, Card, CardBody, Input, Pagination, Table, TableCell, TableContainer, TableFooter,
   TableHeader,
 } from "@windmill/react-ui";
 import { FiPlus } from "react-icons/fi";

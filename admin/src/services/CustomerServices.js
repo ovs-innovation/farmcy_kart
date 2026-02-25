@@ -44,6 +44,11 @@ const CustomerServices = {
     return requests.post(`/customer/wholesaler`, body);
   },
 
+  // Update wholesaler approval status (approve / reject)
+  updateWholesalerStatus: async (id, status) => {
+    return requests.put(`/customer/${id}`, { wholesalerStatus: status });
+  },
+
   // Delete cloudinary asset
   deleteCloudinaryAsset: async (publicId) => {
     return requests.post(`/customer/cloudinary-delete`, { publicId });

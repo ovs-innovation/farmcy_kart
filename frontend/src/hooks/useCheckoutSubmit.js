@@ -18,6 +18,7 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import CustomerServices from "@services/CustomerServices";
 import NotificationServices from "@services/NotificationServices";
 import ShiprocketServices from "@services/ShiprocketServices";
+import useCartDB from "@hooks/useCartDB";
 
 const useCheckoutSubmit = (storeSetting) => {
   const { dispatch } = useContext(UserContext);
@@ -48,6 +49,7 @@ const useCheckoutSubmit = (storeSetting) => {
   const isRemovingCouponRef = useRef(false);
   const [Razorpay] = useRazorpay();
   const { isEmpty, emptyCart, items, cartTotal, removeItem } = useCart();
+  const { clearCartWithDB } = useCartDB();
 
   const userInfo = getUserSession();
   const { showDateFormat, currency, globalSetting } = useUtilsFunction();
@@ -99,9 +101,9 @@ const useCheckoutSubmit = (storeSetting) => {
 
     // Check if coupon should be removed
     const shouldRemoveCoupon = minimumAmount > 0 && (minimumAmount - discountAmount > total || isEmpty);
-    const hasActiveCoupon = discountPercentage !== 0 && 
+    const hasActiveCoupon = discountPercentage !== 0 &&
       (typeof discountPercentage === 'object' ? Object.keys(discountPercentage).length > 0 : true);
-    
+
     if (shouldRemoveCoupon && hasActiveCoupon) {
       isRemovingCouponRef.current = true;
       setDiscountPercentage(0);
@@ -186,7 +188,7 @@ const useCheckoutSubmit = (storeSetting) => {
     const subTotal = parseFloat(
       cartTotal + Number(shippingCost) + nextTaxSummary.exclusiveTax
     ).toFixed(2);
-    
+
     let calculatedDiscountAmount = 0;
     if (discountPercentage && typeof discountPercentage === 'object' && discountPercentage.type) {
       calculatedDiscountAmount =
@@ -311,9 +313,8 @@ const useCheckoutSubmit = (storeSetting) => {
     try {
       const notificationInfo = {
         orderId: orderResponse?._id,
-        message: `${
-          orderResponse?.user_info?.name
-        } placed an order of ${parseFloat(orderResponse?.total).toFixed(2)}!`,
+        message: `${orderResponse?.user_info?.name
+          } placed an order of ${parseFloat(orderResponse?.total).toFixed(2)}!`,
         image:
           "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
       };
@@ -354,7 +355,8 @@ const useCheckoutSubmit = (storeSetting) => {
         "Your Order Confirmed! The invoice will be emailed to you shortly."
       );
       Cookies.remove("couponInfo");
-      emptyCart();
+      // Clear local cart AND DB cart
+      await clearCartWithDB();
       setIsCheckoutSubmit(false);
     } catch (err) {
       console.error("Order success handling error:", err.message);
@@ -558,7 +560,7 @@ const useCheckoutSubmit = (storeSetting) => {
             }
             notifyError(
               errorData?.message ||
-                "Failed to save order. Please contact support."
+              "Failed to save order. Please contact support."
             );
             setIsCheckoutSubmit(false);
           }
@@ -600,7 +602,7 @@ const useCheckoutSubmit = (storeSetting) => {
         toggleCartDrawer();
         return;
       }
-      
+
       const errorMessage = errorData?.message || err?.message || "Failed to process payment. Please try again.";
       notifyError(errorMessage);
       setIsCheckoutSubmit(false);
