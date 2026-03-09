@@ -111,7 +111,7 @@ const ProductStrip = ({ cart = [] }) => {
 const MyOrders = () => {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { currentPage, handleChangePage, isLoading, setIsLoading } =
+  const { currentPage, handleChangePage, isLoading, setIsLoading, setCartDrawerOpen } =
     useContext(SidebarContext);
   const { state: userState } = useContext(UserContext);
 
@@ -200,9 +200,10 @@ const MyOrders = () => {
 
       if (addedCount > 0) {
         notifySuccess(
-          `${addedCount} item${addedCount > 1 ? "s" : ""} added to cart! Redirecting to checkout…`
+          `${addedCount} item${addedCount > 1 ? "s" : ""} added to your cart! You can now adjust quantities or add/remove items.`
         );
-        setTimeout(() => router.push("/checkout"), 1200);
+        // Open the cart drawer instead of redirecting to checkout
+        setCartDrawerOpen(true);
       } else {
         notifyError("Could not add items — product data may be unavailable.");
       }
@@ -361,7 +362,7 @@ const MyOrders = () => {
                                 className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-store-500 hover:text-white transition-all"
                               >
                                 <FiEye size={11} />
-                                Details
+                                View Invoice
                               </Link>
 
                               {/* Re-order */}

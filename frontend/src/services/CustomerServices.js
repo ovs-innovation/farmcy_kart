@@ -1,6 +1,9 @@
 import requests from "./httpServices";
 
 const CustomerServices = {
+  checkCustomerExistance: async (body) => {
+    return requests.post("/customer/check-user", body);
+  },
   loginCustomer: async (body) => {
     return requests.post("/customer/login", body);
   },

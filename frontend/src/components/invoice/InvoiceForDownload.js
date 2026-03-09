@@ -485,43 +485,33 @@ const InvoiceForDownload = ({
                     BILL TO:
                   </Text>
                   <View style={{ fontSize: 8, color: "#374151" }}>
-                    <View style={{ flexDirection: "row", gap: 1, marginBottom: 2 }}>
-                      <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Order Placed By:</Text>
-                      <Text>{data?.user_info?.name || "-"}</Text>
+                    <View style={{ marginBottom: 2 }}>
+                      <Text>
+                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Order Placed By: </Text>
+                        <Text>{data?.user_info?.name || "-"}</Text>
+                      </Text>
                     </View>
-                    <View style={{ flexDirection: "row", marginBottom: 2, gap: 3 }}>
-                      <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Email:</Text>
-                      <Text>{data?.user_info?.email || "-"}</Text>
-                      {data?.user_info?.contact && (
-                        <>
-                          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Phone:</Text>
-                          <Text>{data.user_info.contact}</Text>
-                        </>
-                      )}
+                    <View style={{ marginBottom: 2 }}>
+                      <Text>
+                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Email: </Text>
+                        <Text>{data?.user_info?.email || "-"}</Text>
+                        {data?.user_info?.contact && (
+                          <>
+                            <Text style={{ fontWeight: "bold", color: "#1f2937" }}>  Phone: </Text>
+                            <Text>{data.user_info.contact}</Text>
+                          </>
+                        )}
+                      </Text>
                     </View>
                     {(data?.user_info?.address || data?.user_info?.city || data?.user_info?.country || data?.user_info?.zipCode) && (
-                      <View style={{ flexDirection: "row", marginBottom: 2, gap: 0 }}>
-                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Address:</Text>
-                        {data?.user_info?.address && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.address}{data?.user_info?.city ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.city && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.city}{data?.user_info?.country ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.country && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.country}{data?.user_info?.zipCode ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.zipCode && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.zipCode}
-                          </Text>
-                        )}
+                      <View style={{ marginBottom: 2 }}>
+                        <Text>
+                          <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Address: </Text>
+                          {data?.user_info?.address && `${data.user_info.address}${data?.user_info?.city ? ", " : ""}`}
+                          {data?.user_info?.city && `${data.user_info.city}${data?.user_info?.country ? ", " : ""}`}
+                          {data?.user_info?.country && `${data.user_info.country}${data?.user_info?.zipCode ? ", " : ""}`}
+                          {data?.user_info?.zipCode && data.user_info.zipCode}
+                        </Text>
                       </View>
                     )}
                   </View>

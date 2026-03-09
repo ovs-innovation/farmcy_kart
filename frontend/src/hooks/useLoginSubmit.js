@@ -66,6 +66,17 @@ const useLoginSubmit = () => {
       } else {
         // Login via backend directly so we can get role and set a readable cookie
         try {
+          // PRE-CHECK: Is the email registered?
+          const checkRes = await CustomerServices.checkCustomerExistance({ email });
+          if (!checkRes.exists) {
+            notifyError("Account not found. Please register first.");
+            setLoading(false);
+            setTimeout(() => {
+              router.push("/auth/signup");
+            }, 1000);
+            return;
+          }
+
           const res = await CustomerServices.loginCustomer({ email, password });
 
           if (res && res.token) {
@@ -95,11 +106,21 @@ const useLoginSubmit = () => {
           }
         } catch (err) {
           console.error("Login error:", err);
-          // Check if it's a wholesaler verification error
           const respData = err?.response?.data;
+          
+          if (err?.response?.status === 404 || respData?.error === "USER_NOT_FOUND") {
+            const msg = respData?.message || "Account not found. Please register first.";
+            notifyError(msg);
+            setLoading(false);
+            setTimeout(() => {
+              router.push("/auth/signup");
+            }, 1500);
+            return;
+          }
+
+          // Check if it's a wholesaler verification error
           if (respData?.wholesalerStatus) {
             setWholesalerStatus(respData.wholesalerStatus);
-            // Show toast too for quick feedback
             notifyError(respData.message || "Account not yet approved.");
           } else {
             setWholesalerStatus(null);

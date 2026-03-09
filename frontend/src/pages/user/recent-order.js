@@ -62,7 +62,7 @@ const ProductStrip = ({ cart = [] }) => {
 /* ─── Main Component ─── */
 const RecentOrder = ({ data, loading, error }) => {
   const router = useRouter();
-  const { handleChangePage, currentPage } = useContext(SidebarContext);
+  const { handleChangePage, currentPage, setCartDrawerOpen } = useContext(SidebarContext);
   const { storeCustomizationSetting } = useGetSetting();
   const { showingTranslateValue, currency } = useUtilsFunction();
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -101,8 +101,8 @@ const RecentOrder = ({ data, loading, error }) => {
         addedCount++;
       }
       if (addedCount > 0) {
-        notifySuccess(`${addedCount} item${addedCount > 1 ? "s" : ""} added! Heading to checkout…`);
-        setTimeout(() => router.push("/checkout"), 1200);
+        notifySuccess(`${addedCount} item${addedCount > 1 ? "s" : ""} added! You can now adjust your cart.`);
+        setCartDrawerOpen(true);
       } else {
         notifyError("Could not add items — product data may be unavailable.");
       }
