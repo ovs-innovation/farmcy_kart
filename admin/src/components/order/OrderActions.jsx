@@ -114,13 +114,6 @@ const OrderActions = ({ order }) => {
           ref={menuRef}
           className="absolute z-40 right-0 mt-2 w-44 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-md shadow-lg text-sm"
         >
-          <Link
-            to={`/order/${order._id}`}
-            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 block text-gray-700 dark:text-gray-300"
-            onClick={() => setOpen(false)}
-          >
-            View Invoice
-          </Link>
           <PDFDownloadLink
             document={
               <InvoiceForDownload
@@ -156,6 +149,13 @@ const OrderActions = ({ order }) => {
               )
             }
           </PDFDownloadLink>
+          <Link
+            to={`/order/${order._id}`}
+            className="w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 block text-gray-700 dark:text-gray-300"
+            onClick={() => setOpen(false)}
+          >
+            View Invoice
+          </Link>
           <div className="border-t border-gray-100 dark:border-gray-700 my-1" />
           <button
             type="button"

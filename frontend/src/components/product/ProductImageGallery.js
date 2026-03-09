@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 
 const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
   const [activeIndex, setActiveIndex] = useState(0);
-  
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+
   // Only treat direct video files as video; YouTube URLs will be shown as images (thumbnail)
   const isVideoUrl = (url = "") => {
     if (!url || typeof url !== "string") return false;
@@ -49,10 +51,10 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
     : [];
 
   // If no media, show placeholder
-  const displayImages = validMedia.length > 0 
-    ? validMedia 
+  const displayImages = validMedia.length > 0
+    ? validMedia
     : ["https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"];
-  
+
   const activeImage = displayImages[activeIndex] || displayImages[0];
   const placeholder = "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
 
@@ -75,6 +77,23 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
     }
   };
 
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.pageX - left) / width) * 100;
+    const y = ((e.pageY - top) / height) * 100;
+
+    setZoomPosition({ x, y });
+  };
+
+  const handleMouseEnter = () => {
+    setIsZooming(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsZooming(false);
+  };
+
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:items-start bg-white rounded-2xl ">
       {/* Vertical Thumbnail Gallery - Left Side (Flipkart Style) */}
@@ -84,11 +103,10 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
             <button
               key={`thumb-${index}-${mediaUrl}`}
               onClick={() => handleThumbnailClick(index)}
-              className={`flex-shrink-0 relative w-16 h-16 lg:w-20 lg:h-20 rounded border-2 overflow-hidden transition-all duration-200 cursor-pointer ${
-                index === activeIndex
-                  ? "border-store-500 ring-2 ring-store-200 shadow-md"
-                  : "border-gray-300 hover:border-gray-400 hover:shadow-sm"
-              }`}
+              className={`flex-shrink-0 relative w-16 h-16 lg:w-20 lg:h-20 rounded-xl border-2 overflow-hidden transition-all duration-300 transform ${index === activeIndex
+                ? "border-store-500 ring-2 ring-store-100 shadow-md scale-105"
+                : "border-gray-100 hover:border-gray-300 hover:shadow-sm grayscale-[0.5] hover:grayscale-0"
+                }`}
               type="button"
             >
               {isVideoUrl(mediaUrl) ? (
@@ -117,8 +135,7 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
                         <span className="ml-0.5 border-l-8 border-y-4 border-l-red-600 border-y-transparent" />
                       </span>
                     </div>
-                  )}
-                </>
+                  )} </>
               )}
               {index === activeIndex && (
                 <div className="absolute inset-0 border-2 border-store-500" />
@@ -129,10 +146,13 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
       )}
 
       {/* Main Preview Image / Video - Right Side (Flipkart Style) */}
+      {/* Main Preview Image / Video - Right Side (Flipkart Style) */}
       <div className="flex-1 order-1 lg:order-2 w-full">
-        <div className="relative w-full aspect-square bg-white border border-gray-200 rounded-2xl overflow-hidden">
-          {/* Buttons overlay - positioned inside main image container */}
+        <div className="relative w-full aspect-square bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+
+          {/* Buttons overlay */}
           {buttons}
+
           {activeImage ? (
             isVideoUrl(activeImage) ? (
               <video
@@ -156,9 +176,18 @@ const ProductImageGallery = ({ images, productTitle = "Product", buttons }) => {
                 key={`main-img-${activeIndex}-${activeImage}`}
                 src={activeImage}
                 alt={productTitle}
-                className="w-full h-full max-h-[400px] object-contain transition-opacity duration-300"
                 onError={handleImageError}
                 loading="eager"
+                onMouseMove={handleMouseMove}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="w-full h-full max-h-[400px] object-contain transition-opacity duration-300"
+                style={{
+                  transform: isZooming ? "scale(2)" : "scale(1)",
+                  transformOrigin: `${zoomPosition.x}% ${zoomPosition.y}%`,
+                  cursor: "zoom-in",
+                  transition: "transform 0.1s ease-out"
+                }}
               />
             )
           ) : (

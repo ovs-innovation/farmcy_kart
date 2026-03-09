@@ -124,15 +124,10 @@ const loginWithPhone = async (req, res) => {
     let user = await Customer.findOne({ phone: phoneNumber });
 
     if (!user) {
-      const phoneDigits = phoneNumber.replace(/\D/g, "").slice(-10);
-      user = new Customer({
-        phone: phoneNumber,
-        name: `Customer ${phoneDigits.slice(-4)}`,
-        email: `user${phoneDigits}@farmcykart.com`,
-        password: bcrypt.hashSync(Math.random().toString(36).slice(-8)),
-        verified: true,
+      return res.status(404).send({
+        message: "Account with this phone number does not exist. Please register first.",
+        error: "USER_NOT_FOUND",
       });
-      await user.save();
     }
 
     const token = signInToken(user);
@@ -516,8 +511,14 @@ const loginCustomer = async (req, res) => {
   try {
     const customer = await Customer.findOne({ email: req.body.email });
 
+    if (!customer) {
+      return res.status(404).send({
+        message: "Account with this email does not exist. Please register first.",
+        error: "USER_NOT_FOUND",
+      });
+    }
+
     if (
-      customer &&
       customer.password &&
       bcrypt.compareSync(req.body.password, customer.password)
     ) {
@@ -1542,8 +1543,32 @@ const clearCart = async (req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+const checkCustomerExistance = async (req, res) => {
+  try {
+    const { email, phone } = req.body;
+    let query = {};
+    if (email) query.email = email;
+    if (phone) query.phone = phone;
+
+    if (Object.keys(query).length === 0) {
+      return res.status(400).send({ message: "Email or Phone is required" });
+    }
+
+    const customer = await Customer.findOne(query);
+    if (customer) {
+      return res.send({ exists: true, name: customer.name });
+    } else {
+      return res.send({ exists: false });
+    }
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
 module.exports = {
+  checkCustomerExistance,
   loginCustomer,
+  // ... rest of exports
   loginWithPhone,
   verifyPhoneNumber,
   registerCustomer,

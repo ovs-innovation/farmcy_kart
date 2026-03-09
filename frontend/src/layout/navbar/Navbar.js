@@ -4,7 +4,9 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCart } from "react-use-cart";
-import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline, IoChevronForward, IoChevronDown } from "react-icons/io5";
+import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline,
+  IoChevronForward, IoChevronDown
+} from "react-icons/io5";
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import useTranslation from "next-translate/useTranslation";
 import { useQuery } from "@tanstack/react-query";
@@ -20,6 +22,7 @@ import CategoryServices from "@services/CategoryServices";
 // import LocationButton from "@components/location/LocationButton";
 import LocationPickerDropdown from "@components/location/LocationPickerDropdown";
 import SearchSuggestions from "@components/search/SearchSuggestions";
+import LowerCategoryNavbar from "./LowerCategoryNavbar"
 
 
 const Navbar = () => {
@@ -40,6 +43,7 @@ const Navbar = () => {
       console.error('Categories API Error:', error);
     }
   });
+
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { totalItems, totalUniqueItems } = useCart();
   const { count: wishlistCount } = useWishlist();
@@ -71,7 +75,6 @@ const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll(); // Check initial scroll position
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
@@ -114,8 +117,6 @@ const Navbar = () => {
     }
   };
 
-
-
   return (
     <>
       <CartDrawer />
@@ -144,73 +145,7 @@ const Navbar = () => {
                   Home
                 </Link>
                 <div className="relative group">
-                  <button className="flex items-center gap-1 hover:text-store-500 transition-colors py-2">
-                    Categories <IoChevronDownOutline />
-                  </button>
-                  <div className="absolute top-full left-0 w-80 bg-white shadow-lg rounded-md py-2 hidden group-hover:block z-50 border border-gray-100 max-h-96 overflow-y-auto">
-                    {categoriesData?.map((mainCategory) => (
-                      <div key={mainCategory._id}>
-                        {/* Subcategories Level 1 - Direct display without parent */}
-                        {mainCategory?.children?.length > 0 && (
-                          <div className="border-b border-gray-100 last:border-b-0">
-                            {mainCategory.children.map((subcategory1) => (
-                              <div key={subcategory1._id}>
-                                <div className="flex items-center gap-3 px-4 py-2.5 text-sm font-semibold text-gray-800 hover:bg-gray-50 hover:text-store-500 transition-colors cursor-default">
-                                  {subcategory1?.icon ? (
-                                    <Image
-                                      src={subcategory1.icon}
-                                      alt={showingTranslateValue(subcategory1?.name)}
-                                      width={20}
-                                      height={20}
-                                      className="object-contain flex-shrink-0"
-                                    />
-                                  ) : (
-                                    <div className="w-5 h-5 flex-shrink-0"></div>
-                                  )}
-                                  <span className="uppercase">
-                                    {showingTranslateValue(subcategory1?.name)}
-                                  </span>
-                                </div>
 
-                                {/* Subcategories Level 2 */}
-                                {subcategory1?.children?.length > 0 && (
-                                  <div className="bg-gray-50">
-                                    {subcategory1.children.map((subcategory2) => (
-                                      <Link
-                                        key={subcategory2._id}
-                                        href={`/search?category=${subcategory2.slug ||
-                                          (subcategory2?.name?.en || subcategory2?.name)
-                                            .toLowerCase()
-                                            .replace(/[^A-Z0-9]+/gi, "-")
-                                          }&_id=${subcategory2._id}`}
-                                        className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-store-500 transition-colors"
-                                      >
-
-                                        {subcategory2?.icon ? (
-                                          <Image
-                                            src={subcategory2.icon}
-                                            alt={showingTranslateValue(subcategory2?.name)}
-                                            width={16}
-                                            height={16}
-                                            className="object-contain flex-shrink-0"
-                                          />
-                                        ) : (
-                                          <div className="w-4 h-4 flex-shrink-0"></div>
-                                        )}
-                                        <span>
-                                          {showingTranslateValue(subcategory2?.name)}
-                                        </span>
-                                      </Link>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
@@ -274,11 +209,9 @@ const Navbar = () => {
               {/* <Link
                 href="/user/my-orders"
                 className="text-2xl text-gray-600 hover:text-store-500 transition-colors"
-                aria-label="Orders"
-              >
+                aria-label="Orders">
                 <IoBagHandleOutline />
               </Link> */}
-
               {/* Wishlist Icon */}
               <Link
                 href="/wishlist"
@@ -318,32 +251,31 @@ const Navbar = () => {
                 ) : userInfo?.name ? (
                   <Link
                     href="/user/dashboard"
-                    className="leading-none font-bold font-serif block border-2 px-3 py-2 border-store-500 text-store-500 rounded-full"
-                  >
+                    className="leading-none font-bold font-serif block border-2 px-3 py-2 border-store-500 text-store-500 rounded-full">
                     {userInfo?.name[0]}
                   </Link>
                 ) : (
-                  <div className="relative">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => router.push('/auth/login')}
+                      className="text-gray-700 font-bold hover:text-store-500 transition-colors px-3 py-2"
+                    >
+                      Login
+                    </button>
                     <button
                       onClick={() => router.push('/auth/signup')}
-                      className="bg-store-500 text-white px-5 py-2 rounded-full flex items-center gap-2 font-bold hover:bg-store-600 transition-colors"
+                      className="bg-store-500 text-white px-6 py-2.5 rounded-full flex items-center gap-2 font-bold hover:bg-store-600 transition-all shadow-sm hover:shadow-md"
                     >
-                      <IoLockClosedOutline className="text-lg" /> Sign Up
+                      Sign Up
                     </button>
-                  </div>
-                )}
+                  </div> )}
               </div>
             </div>
           </div>
         </div>
       </div>
+      <LowerCategoryNavbar
+        categories={categoriesData?.[0]?.children || categoriesData || []}
+        showingTranslateValue={showingTranslateValue} /> </>);};
 
-      {/* second header - hiding it as per design request to simplify */}
-      {/* <div className="hidden lg:block bg-white">
-        <NavbarPromo />
-      </div> */}
-
-    </>
-  );
-};
 export default dynamic(() => Promise.resolve(Navbar), { ssr: false });

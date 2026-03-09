@@ -83,10 +83,8 @@ app.use("/api/brand", brandRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/faqs", faqRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
-
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/location", locationRoutes);
-
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);

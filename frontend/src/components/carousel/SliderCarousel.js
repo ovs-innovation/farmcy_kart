@@ -16,8 +16,8 @@ const SliderCarousel = () => {
 
   // Get all slider images from CMS
   const sliderImages = [
-    "/slider/dss11.webp"|| storeCustomizationSetting?.slider?.first_img ,
-     "/slider/dss22.webp"|| storeCustomizationSetting?.slider?.second_img,
+    "/slider/dss11.webp" || storeCustomizationSetting?.slider?.first_img,
+    "/slider/dss22.webp" || storeCustomizationSetting?.slider?.second_img,
     storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
     storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
     storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
@@ -74,15 +74,15 @@ const SliderCarousel = () => {
               </SwiperSlide>
             ))}
           </Swiper>
-          
+
           {/* Navigation Buttons */}
-          <button 
+          <button
             ref={prevRef}
             className="prev-slider absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-x-4"
           >
             <IoChevronBack className="text-xl text-gray-600" />
           </button>
-          <button 
+          <button
             ref={nextRef}
             className="next-slider absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform translate-x-4"
           >

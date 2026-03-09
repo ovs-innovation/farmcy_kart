@@ -32,6 +32,7 @@ const {
   updateCartItem,
   removeFromCart,
   clearCart,
+  checkCustomerExistance,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
@@ -138,6 +139,10 @@ router.get("/", getAllCustomers);
 
 //get customer statistics
 router.get("/statistics", getCustomerStatistics);
+
+//check customer existence
+router.post("/check-user", checkCustomerExistance);
+
 
 // ─── CART ROUTES ──────────────────────────────────────────────────────────────
 

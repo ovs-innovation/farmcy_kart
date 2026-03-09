@@ -92,6 +92,79 @@ const OrderInvoice = () => {
         ref={printRef}
         className="bg-white dark:bg-gray-800 mb-4 p-6 lg:p-8 rounded-xl shadow-sm overflow-hidden"
       >
+        {!loading && !error && (
+          <div className="mb-8 flex md:flex-row flex-col items-center justify-between border-b pb-4 border-gray-100">
+            <PDFDownloadLink
+              document={
+                <InvoiceForDownload
+                  data={data}
+                  currency={currency}
+                  globalSetting={globalSetting}
+                  getNumberTwo={getNumberTwo}
+                  logo={globalSetting?.logo}
+                  isWholesaler={
+                    data?.user_info?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                    data?.user?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                    data?.role?.toString().toLowerCase().trim() === "wholesaler" ||
+                    data?.user_info?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
+                    data?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
+                    data?.cart?.[0]?.wholePrice > 0
+                  }
+                />
+              }
+              fileName="Invoice"
+            >
+              {({ blob, url, loading, error }) =>
+                loading ? (
+                  "Loading..."
+                ) : (
+                  <button className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-store-500 border border-transparent active:bg-store-600 hover:bg-store-600  w-auto cursor-pointer">
+                    Download Invoice
+                    <span className="ml-2 text-base">
+                      <IoCloudDownloadOutline />
+                    </span>
+                  </button>
+                )
+              }
+            </PDFDownloadLink>
+
+            <div className="flex md:mt-0 mt-3 gap-4 md:w-auto w-full">
+              {globalSetting?.email_to_customer && (
+                <div className="flex justify-end md:w-auto w-full">
+                  {isSubmitting ? (
+                    <Button
+                      disabled={true}
+                      type="button"
+                      className="text-sm h-10 leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold font-serif text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none text-white px-2 ml-4 md:px-4 lg:px-6 py-4 md:py-3.5 lg:py-4 hover:text-white bg-store-400 hover:bg-store-500"
+                    >
+                      <img
+                        src={spinnerLoadingImage}
+                        alt="Loading"
+                        width={20}
+                        height={10}
+                      />{" "}
+                      <span className="font-serif ml-2 font-light">
+                        {" "}
+                        Processing
+                      </span>
+                    </Button>
+                  ) : (
+                    <button
+                      onClick={() => handleEmailInvoice(data)}
+                      className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-teal-500 border border-transparent active:bg-teal-600 hover:bg-teal-600  md:w-auto w-full h-10 justify-center"
+                    >
+                      Email Invoice
+                      <span className="ml-2">
+                        <FiMail />
+                      </span>
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {loading ? (
           <Loading loading={loading} />
         ) : error ? (
@@ -102,97 +175,9 @@ const OrderInvoice = () => {
             currency={currency}
             globalSetting={globalSetting}
             getNumberTwo={getNumberTwo}
-            printRef={printRef}
-          />
+            printRef={printRef} />
         )}
       </div>
-      {!loading && !error && (
-        <div className="mb-4 mt-3 flex md:flex-row flex-col items-center justify-between">
-          <PDFDownloadLink
-            document={
-              <InvoiceForDownload
-                data={data}
-                currency={currency}
-                globalSetting={globalSetting}
-                getNumberTwo={getNumberTwo}
-                logo={globalSetting?.logo}
-                isWholesaler={
-                  data?.user_info?.role?.toString().toLowerCase().trim() === "wholesaler" ||
-                  data?.user?.role?.toString().toLowerCase().trim() === "wholesaler" ||
-                  data?.role?.toString().toLowerCase().trim() === "wholesaler" ||
-                  data?.user_info?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
-                  data?.userType?.toString().toLowerCase().trim() === "wholesaler" ||
-                  data?.cart?.[0]?.wholePrice > 0
-                }
-              />
-            }
-            fileName="Invoice"
-          >
-            {({ blob, url, loading, error }) =>
-              loading ? (
-                "Loading..."
-              ) : (
-                <button className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-store-500 border border-transparent active:bg-store-600 hover:bg-store-600  w-auto cursor-pointer">
-                  Download Invoice
-                  <span className="ml-2 text-base">
-                    <IoCloudDownloadOutline />
-                  </span>
-                </button>
-              )
-            }
-          </PDFDownloadLink>
-
-          <div className="flex md:mt-0 mt-3 gap-4 md:w-auto w-full">
-            {globalSetting?.email_to_customer && (
-              <div className="flex justify-end md:w-auto w-full">
-                {isSubmitting ? (
-                  <Button
-                    disabled={true}
-                    type="button"
-                    className="text-sm h-10 leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold font-serif text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none text-white px-2 ml-4 md:px-4 lg:px-6 py-4 md:py-3.5 lg:py-4 hover:text-white bg-store-400 hover:bg-store-500"
-                  >
-                    <img
-                      src={spinnerLoadingImage}
-                      alt="Loading"
-                      width={20}
-                      height={10}
-                    />{" "}
-                    <span className="font-serif ml-2 font-light">
-                      {" "}
-                      Processing
-                    </span>
-                  </Button>
-                ) : (
-                  <button
-                    onClick={() => handleEmailInvoice(data)}
-                    className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-teal-500 border border-transparent active:bg-teal-600 hover:bg-teal-600  md:w-auto w-full h-10 justify-center"
-                  >
-                    Email Invoice
-                    <span className="ml-2">
-                      <FiMail />
-                    </span>
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* <div className="md:w-auto w-full">
-              <ReactToPrint
-                trigger={() => (
-                  <button className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-store-500 border border-transparent active:bg-store-600 hover:bg-store-600  md:w-auto w-full h-10 justify-center">
-                    {t("PrintInvoice")}{" "}
-                    <span className="ml-2">
-                      <FiPrinter />
-                    </span>
-                  </button>
-                )}
-                content={() => printRef.current}
-                documentTitle={data?.invoice}
-              />
-            </div> */}
-          </div>
-        </div>
-      )}
     </>
   );
 };

@@ -39,8 +39,7 @@ const uploadPrescription = async (req, res) => {
     if (uploadedFiles.length === 0) {
       return res.status(400).json({
         message: "No valid files provided",
-      });
-    }
+      });}
 
     // Create prescription record
     const prescription = new Prescription({

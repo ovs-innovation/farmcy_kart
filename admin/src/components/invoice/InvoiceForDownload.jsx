@@ -498,28 +498,30 @@ const InvoiceForDownload = ({
                       )}
                     </View>
                     {(data?.user_info?.address || data?.user_info?.city || data?.user_info?.country || data?.user_info?.zipCode) && (
-                      <View style={{ flexDirection: "row", marginBottom: 2, gap: 0 }}>
-                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Address:</Text>
-                        {data?.user_info?.address && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.address}{data?.user_info?.city ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.city && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.city}{data?.user_info?.country ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.country && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.country}{data?.user_info?.zipCode ? "," : ""}
-                          </Text>
-                        )}
-                        {data?.user_info?.zipCode && (
-                          <Text style={{ whiteSpace: "nowrap" }}>
-                            {" "}{data?.user_info?.zipCode}
-                          </Text>
-                        )}
+                      <View style={{ flexDirection: "row", marginBottom: 2, gap: 0, flexWrap: "wrap" }}>
+                        <Text style={{ fontWeight: "bold", color: "#1f2937" }}>Address: </Text>
+                        <Text>
+                          {data?.user_info?.address && (
+                            <Text>
+                              {data?.user_info?.address}{data?.user_info?.city ? ", " : ""}
+                            </Text>
+                          )}
+                          {data?.user_info?.city && (
+                            <Text>
+                              {data?.user_info?.city}{data?.user_info?.country ? ", " : ""}
+                            </Text>
+                          )}
+                          {data?.user_info?.country && (
+                            <Text>
+                              {data?.user_info?.country}{data?.user_info?.zipCode ? ", " : ""}
+                            </Text>
+                          )}
+                          {data?.user_info?.zipCode && (
+                            <Text>
+                              {data?.user_info?.zipCode}
+                            </Text>
+                          )}
+                        </Text>
                       </View>
                     )}
                   </View>

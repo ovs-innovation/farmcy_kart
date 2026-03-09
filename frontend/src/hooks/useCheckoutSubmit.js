@@ -279,7 +279,8 @@ const useCheckoutSubmit = (storeSetting) => {
       // Handle payment based on method
       switch (data.paymentMethod) {
         case "RazorPay":
-          await handlePaymentWithRazorpay(orderInfo);
+          // User requested to hide the Razorpay gateway and directly place the order successfully
+          await handleCashPayment(orderInfo);
           break;
         case "Cash":
           await handleCashPayment(orderInfo);

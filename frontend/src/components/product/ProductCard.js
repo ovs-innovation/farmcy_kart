@@ -24,8 +24,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
   const [modalOpen, setModalOpen] = useState(false);
 
   const { items, addItem, updateItemQuantity, inCart, getItem } = useCart();
-  const { state } = useContext(UserContext) || {}; 
-  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler"; 
+  const { state } = useContext(UserContext) || {};
+  const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   const { handleIncreaseQuantity } = useAddToCart();
   const { globalSetting } = useGetSetting();
   const { storeCustomizationSetting } = useGetSetting();
@@ -36,7 +36,6 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
   const currency = globalSetting?.default_currency || "₹";
 
 
-
   const handleAddItem = (p) => {
     if (p.stock < 1) return notifyError("Insufficient stock!");
 
@@ -44,8 +43,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
       setModalOpen(!modalOpen);
       return;
     }
-    const { slug, variants, categories, description, ...updatedProduct } =
-      product;
+    const { slug, variants, categories, description, ...updatedProduct } = 
+    product;
 
     // Determine price to use for cart: wholesaler price if user is wholesaler and product has wholesale price
     const wholesalePriceValue = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
@@ -69,7 +68,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
   const handleAddToWishlist = (e) => {
     e.stopPropagation();
     if (typeof window === "undefined") return;
-    
+
     try {
       const result = addToWishlist(product);
 
@@ -93,23 +92,23 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
   const handleAddToCompare = (e) => {
     e.stopPropagation();
     if (typeof window === "undefined") return;
-    
+
     try {
       const storedCompare = localStorage.getItem("compare");
       let compare = storedCompare ? JSON.parse(storedCompare) : [];
-      
+
       const exists = compare.some((item) => item._id === product._id);
-      
+
       if (exists) {
         notifyError("Product already in compare list");
         return;
       }
-      
+
       if (compare.length >= 4) {
         notifyError("You can compare maximum 4 products");
         return;
       }
-      
+
       compare.push(product);
       localStorage.setItem("compare", JSON.stringify(compare));
       notifySuccess("Product added to compare list");
@@ -127,11 +126,10 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
           setModalOpen={setModalOpen}
           product={product}
           currency={currency}
-          attributes={attributes}
-        />
-      )}
+          attributes={attributes} />
+          )}
 
-  <div className="group box-border w-full h-full max-w-full overflow-hidden flex rounded-lg border border-gray-200 flex-col items-center bg-white relative transition-shadow duration-300">
+      <div className="group box-border w-full h-full max-w-full overflow-hidden flex rounded-lg border border-gray-200 flex-col items-center bg-white relative transition-shadow duration-300">
 
         {/* Product Image - Full display, no cover */}
         <div
@@ -149,8 +147,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
             <div className="absolute top-2 left-0 z-10">
               <Discount product={product} />
             </div>
-          )} 
-          
+          )}
+
           {/* Stock Badge - Top Right (only show if out of stock) */}
           {product.stock < 1 && (
             <div className="absolute top-2 right-2 z-10">
@@ -207,8 +205,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
 
         {/* Product Name - Moved below image */}
         <div className="w-full px-2 sm:px-3 md:px-4 pt-1.5 sm:pt-2 md:pt-2.5 pb-0.5 flex-shrink-0">
-          <h2 
-            className="text-heading mb-0 block text-xs sm:text-sm font-normal text-gray-600 leading-tight truncate overflow-hidden text-ellipsis whitespace-nowrap z-20" 
+          <h2
+            className="text-heading mb-0 block text-xs sm:text-sm font-normal text-gray-600 leading-tight truncate overflow-hidden text-ellipsis whitespace-nowrap z-20"
             title={showingTranslateValue(product?.title)}
           >
             {showingTranslateValue(product?.title)}
@@ -220,108 +218,108 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
           <hr />
           {/* Price and Add Button */}
           {!hidePriceAndAdd && (
-          <div className="flex justify-between items-end mt-2 sm:mt-3">
-            {/* Price Section */}
-            <div className="flex flex-col">
-              {(() => {
-                const basePrice = product?.isCombination
-                  ? product?.variants[0]?.price
-                  : product?.prices?.price;
-
-                const wholesalePrice = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
-                const currentPrice = isWholesaler && wholesalePrice ? wholesalePrice : basePrice;
-
-                const discount = product?.isCombination
-                  ? product?.variants[0]?.discount
-                  : product?.prices?.discount;
-
-                let originalPriceValue = product?.isCombination
-                  ? product?.variants[0]?.originalPrice
-                  : product?.prices?.originalPrice;
-
-                if (!originalPriceValue && discount) {
-                  originalPriceValue = (basePrice || 0) + (discount || 0);
-                }
-                
-                return (
-                  <>
-                    {!isWholesaler && originalPriceValue > currentPrice && (
-                      <p className="text-xs text-gray-500 mb-1 font-normal">
-                        MRP <span className="line-through">{currency}{getNumberTwo(originalPriceValue)}</span>
-                      </p>
-                    )} 
-                    <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
-                      {currency}{getNumberTwo(currentPrice)}
-                    </p>
-                    {isWholesaler && wholesalePrice && (
-                      <p className="text-xs text-gray-500 mt-1">Wholesale: <span className="font-semibold">{currency}{getNumberTwo(wholesalePrice)}</span>{product.minQuantity ? ` (Min ${product.minQuantity})` : ""}</p>
-                    )}
-                  </>
-                );
-              })()}
-            </div>
-
-            {/* Add Button */}
-            {inCart(product._id) ? (
-              <div>
+            <div className="flex justify-between items-end mt-2 sm:mt-3">
+              {/* Price Section */}
+              <div className="flex flex-col">
                 {(() => {
-                  const item = getItem(product._id);
+                  const basePrice = product?.isCombination
+                    ? product?.variants[0]?.price
+                    : product?.prices?.price;
+
+                  const wholesalePrice = product?.wholePrice && Number(product.wholePrice) > 0 ? Number(product.wholePrice) : null;
+                  const currentPrice = isWholesaler && wholesalePrice ? wholesalePrice : basePrice;
+
+                  const discount = product?.isCombination
+                    ? product?.variants[0]?.discount
+                    : product?.prices?.discount;
+
+                  let originalPriceValue = product?.isCombination
+                    ? product?.variants[0]?.originalPrice
+                    : product?.prices?.originalPrice;
+
+                  if (!originalPriceValue && discount) {
+                    originalPriceValue = (basePrice || 0) + (discount || 0);
+                  }
+
                   return (
-                    item && (
-                      <div
-                        key={item.id}
-                        className={`h-8 w-auto flex items-center justify-evenly py-1 px-2 bg-store-500 text-white rounded-md`}
-                      >
-                        <button
-                          onClick={() => {
-                            const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
-                            if (isWholesaler && product?.minQuantity && item.quantity <= minQty) {
-                              notifyError(`Minimum quantity is ${minQty}`);
-                              return;
-                            }
-                            updateItemQuantity(item.id, item.quantity - 1);
-                          }}
-                          disabled={isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity)}
-                          className={`${isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity) ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                          <span className="text-white text-sm">
-                            <IoRemove />
-                          </span>
-                        </button>
-                        <p className="text-sm text-white px-1 font-serif font-semibold">
-                          {item.quantity}
+                    <>
+                      {!isWholesaler && originalPriceValue > currentPrice && (
+                        <p className="text-xs text-gray-500 mb-1 font-normal">
+                          MRP <span className="line-through">{currency}{getNumberTwo(originalPriceValue)}</span>
                         </p>
-                        <button
-                          onClick={() =>
-                            item?.variants?.length > 0
-                              ? handleAddItem(item)
-                              : handleIncreaseQuantity({ ...item, stock: product.stock })
-                          }
-                        >
-                          <span className="text-white text-sm">
-                            <IoAdd />
-                          </span>
-                        </button>
-                      </div>
-                    )
+                      )}
+                      <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+                        {currency}{getNumberTwo(currentPrice)}
+                      </p>
+                      {isWholesaler && wholesalePrice && (
+                        <p className="text-xs text-gray-500 mt-1">Wholesale: <span className="font-semibold">{currency}{getNumberTwo(wholesalePrice)}</span>{product.minQuantity ? ` (Min ${product.minQuantity})` : ""}</p>
+                      )}
+                    </>
                   );
                 })()}
               </div>
-            ) : (
-              <button
-                onClick={() => handleAddItem(product)}
-                aria-label="Add to cart"
-                className={`h-7 sm:h-8 px-3 sm:px-6 min-w-[60px] sm:min-w-[80px] flex items-center justify-center bg-blue-100 text-blue-700 border border-blue-300 rounded-md font-medium text-xs sm:text-sm hover:bg-blue-200 transition-colors`}
-                style={{
-                  backgroundColor: `var(--store-color-50)`,
-                  color: `var(--store-color-700)`,
-                  borderColor: `var(--store-color-300)`
-                }}
-              >
-                Add
-              </button>
-            )}
-          </div>
+
+              {/* Add Button */}
+              {inCart(product._id) ? (
+                <div>
+                  {(() => {
+                    const item = getItem(product._id);
+                    return (
+                      item && (
+                        <div
+                          key={item.id}
+                          className={`h-8 w-auto flex items-center justify-evenly py-1 px-2 bg-store-500 text-white rounded-md`}
+                        >
+                          <button
+                            onClick={() => {
+                              const minQty = isWholesaler && product?.minQuantity ? Number(product.minQuantity) : 1;
+                              if (isWholesaler && product?.minQuantity && item.quantity <= minQty) {
+                                notifyError(`Minimum quantity is ${minQty}`);
+                                return;
+                              }
+                              updateItemQuantity(item.id, item.quantity - 1);
+                            }}
+                            disabled={isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity)}
+                            className={`${isWholesaler && product?.minQuantity && item.quantity <= Number(product.minQuantity) ? 'opacity-50 cursor-not-allowed' : ''}`}
+                          >
+                            <span className="text-white text-sm">
+                              <IoRemove />
+                            </span>
+                          </button>
+                          <p className="text-sm text-white px-1 font-serif font-semibold">
+                            {item.quantity}
+                          </p>
+                          <button
+                            onClick={() =>
+                              item?.variants?.length > 0
+                                ? handleAddItem(item)
+                                : handleIncreaseQuantity({ ...item, stock: product.stock })
+                            }
+                          >
+                            <span className="text-white text-sm">
+                              <IoAdd />
+                            </span>
+                          </button>
+                        </div>
+                      )
+                    );
+                  })()}
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleAddItem(product)}
+                  aria-label="Add to cart"
+                  className={`h-7 sm:h-8 px-3 sm:px-6 min-w-[60px] sm:min-w-[80px] flex items-center justify-center bg-blue-100 text-blue-700 border border-blue-300 rounded-md font-medium text-xs sm:text-sm hover:bg-blue-200 transition-colors`}
+                  style={{
+                    backgroundColor: `var(--store-color-50)`,
+                    color: `var(--store-color-700)`,
+                    borderColor: `var(--store-color-300)`
+                  }}
+                >
+                  Add
+                </button>
+              )}
+            </div>
           )}
         </div>
       </div>
