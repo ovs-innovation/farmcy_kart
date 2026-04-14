@@ -1,7 +1,7 @@
-import { useParams } from "react-router";
+import { useParams, useHistory } from "react-router-dom";
 import ReactToPrint from "react-to-print";
 import React, { useContext, useRef, useState } from "react";
-import { FiPrinter, FiMail } from "react-icons/fi";
+import { FiPrinter, FiMail, FiArrowLeft } from "react-icons/fi";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { Button } from "@windmill/react-ui";
 import { WindmillContext } from "@windmill/react-ui";
@@ -24,6 +24,7 @@ import spinnerLoadingImage from "@/assets/img/spinner.gif";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 import useDisableForDemo from "@/hooks/useDisableForDemo";
 import InvoiceForDownload from "@/components/invoice/InvoiceForDownload";
+import SelectStatus from "@/components/form/selectOption/SelectStatus";
 
 const OrderInvoice = () => {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ const OrderInvoice = () => {
   const { state } = useContext(AdminContext);
   const { adminInfo } = state;
   const { id } = useParams();
+  const history = useHistory();
   const printRef = useRef();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -86,6 +88,17 @@ const OrderInvoice = () => {
 
   return (
     <>
+      <div className="flex items-center gap-2 mb-4 mt-2">
+        <Button
+          layout="link"
+          onClick={() => history.goBack()}
+          className="p-0 text-store-500 hover:text-store-600 h-auto"
+        >
+          <FiArrowLeft className="w-5 h-5 mr-1" />
+          <span className="text-sm font-bold uppercase tracking-wider">{t("Back")}</span>
+        </Button>
+      </div>
+
       <PageTitle> {t("InvoicePageTittle")} </PageTitle>
 
       <div
@@ -161,6 +174,27 @@ const OrderInvoice = () => {
                   )}
                 </div>
               )}
+
+              <div className="flex justify-end md:w-auto w-full h-10">
+                <ReactToPrint
+                  trigger={() => (
+                    <button className="flex items-center text-sm leading-5 transition-colors duration-150 font-medium focus:outline-none px-5 py-2 rounded-md text-white bg-indigo-500 border border-transparent active:bg-indigo-600 hover:bg-indigo-600  md:w-auto w-full h-10 justify-center">
+                      Print Invoice
+                      <span className="ml-2">
+                        <FiPrinter />
+                      </span>
+                    </button>
+                  )}
+                  content={() => printRef.current}
+                />
+              </div>
+
+              <div className="flex items-center gap-4">
+                 <div className="text-xs font-extrabold text-gray-400 uppercase tracking-[0.1em] mr-1 text-gray-500">Status:</div>
+                 <div className="w-48">
+                    <SelectStatus id={id} order={data} />
+                 </div>
+              </div>
             </div>
           </div>
         )}

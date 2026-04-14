@@ -11,7 +11,8 @@ const {
   updateStatus,
   deleteCategory,
   deleteManyCategory,
-  updateManyCategory
+  updateManyCategory,
+  updateFeatured
 
 } = require('../controller/categoryController');
 
@@ -37,6 +38,9 @@ router.put('/:id', updateCategory);
 
 //show/hide a category
 router.put('/status/:id', updateStatus);
+
+//featured status a category
+router.put('/featured/:id', updateFeatured);
 
 //delete a category
 router.delete('/:id', deleteCategory);

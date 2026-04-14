@@ -1,31 +1,44 @@
+import React, { useContext, useState, useEffect } from "react";
 import {
-  Card,
-  Button,
-  CardBody,
-  Input,
-  Pagination,
-  Select,
-  Table,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHeader,
+  Input, Button, Table, TableHeader, TableCell, TableContainer,
+  Pagination, TableFooter, TableBody, TableRow,
 } from "@windmill/react-ui";
-import { FiTrash2 } from "react-icons/fi";
-import { useContext, useState } from "react";
-import { useTranslation } from "react-i18next";
-
-//internal import
-import { notifyError, notifySuccess } from "@/utils/toast";
+import { FiSearch, FiDownload, FiChevronDown, FiStar, FiCheck, FiMessageSquare, FiAlertCircle, FiTrash2 } from "react-icons/fi";
+import { HiOutlineShoppingBag, HiSelector } from "react-icons/hi";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { SidebarContext } from "@/context/SidebarContext";
 import useAsync from "@/hooks/useAsync";
 import ReviewServices from "@/services/ReviewServices";
-import NotFound from "@/components/table/NotFound";
-import PageTitle from "@/components/Typography/PageTitle";
-import { SidebarContext } from "@/context/SidebarContext";
-import ReviewTable from "@/components/review/ReviewTable";
 import TableLoading from "@/components/preloader/TableLoading";
+import NotFound from "@/components/table/NotFound";
 import AnimatedContent from "@/components/common/AnimatedContent";
-import { Modal, ModalBody, ModalFooter } from "@windmill/react-ui";
+
+dayjs.extend(relativeTime);
+
+const StarRating = ({ rating }) => (
+  <div className="flex items-center gap-0.5">
+    {[1, 2, 3, 4, 5].map((s) => (
+      <FiStar
+        key={s}
+        size={12}
+        className={s <= rating ? "text-amber-400 fill-amber-400" : "text-gray-200 fill-gray-200"}
+      />
+    ))}
+    <span className="ml-1 text-[12px] font-bold text-gray-600">{rating}/5</span>
+  </div>
+);
+
+const formatText = (value, fallback = "N/A") => {
+  if (!value) return fallback;
+  if (typeof value === "string") return value;
+  if (typeof value === "object") {
+    if (value.en) return value.en;
+    const firstValue = Object.values(value)[0];
+    return typeof firstValue === "string" ? firstValue : fallback;
+  }
+  return String(value);
+};
 
 const Reviews = () => {
   const {
@@ -35,224 +48,260 @@ const Reviews = () => {
     searchText,
     searchRef,
     setSearchText,
-    invoice,
-    setInvoice,
+    showAlert,
   } = useContext(SidebarContext);
 
-  const { t } = useTranslation();
-
-  const [ratingFilter, setRatingFilter] = useState("");
-  const [verifiedFilter, setVerifiedFilter] = useState("");
-  const [sortFilter, setSortFilter] = useState("newest");
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [reviewToDelete, setReviewToDelete] = useState(null);
-
-  const { data, loading, error } = useAsync(() => {
-    const trimmedSearch = (searchText || "").trim();
-    const searchIsInvoice =
-      trimmedSearch && !Number.isNaN(Number(trimmedSearch));
-
-    const effectiveInvoice =
-      invoice || (searchIsInvoice ? trimmedSearch : undefined);
-
-    return ReviewServices.getAllReviews({
+  const { data, loading, error } = useAsync(() =>
+    ReviewServices.getAllReviews({
       page: currentPage,
       limit: resultsPerPage,
-      rating: ratingFilter || undefined,
-      verified: verifiedFilter || undefined,
-      sort: sortFilter,
-      // Ab search hamesha review text ke liye enabled rahega
-      search: trimmedSearch || undefined,
-      // Invoice filter alag se, ya numeric searchText se
-      invoice: effectiveInvoice || undefined,
-    });
-  });
+      search: searchText || undefined,
+    })
+  );
 
-  const handleDeleteReview = (reviewId) => {
-    setReviewToDelete(reviewId);
-    setDeleteModalOpen(true);
-  };
+  const dummyReviews = [
+    {
+      _id: "65f1a2b3c4d5e6f7a8b9c0d1",
+      product: {
+        title: { en: "Ayurvedic Herbal Cough Syrup" },
+        image: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+      },
+      user: {
+        name: "Rahul Sharma",
+        phone: "919876543210"
+      },
+      rating: 5,
+      reviewText: "The herbal syrup is incredibly effective. I started feeling better within just two days of use. Highly recommended for chronic cough!",
+      orderInvoice: 10452,
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+    },
+    {
+      _id: "65f1a2b3c4d5e6f7a8b9c0d2",
+      product: {
+        title: { en: "Premium Multivitamin Tablets" },
+        image: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+      },
+      user: {
+        name: "Priya Patel",
+        phone: "919012345678"
+      },
+      rating: 4,
+      reviewText: "Great vitamins, definitely feeling more energetic. The packaging was top notch, though shipping took a little longer than expected.",
+      orderInvoice: 10458,
+      createdAt: new Date(Date.now() - 172800000).toISOString(),
+    },
+    {
+      _id: "65f1a2b3c4d5e6f7a8b9c0d3",
+      product: {
+        title: { en: "Digital Blood Pressure Monitor" },
+        image: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+      },
+      user: {
+        name: "Vikram Singh",
+        phone: "918887776665"
+      },
+      rating: 3,
+      reviewText: "The monitor is accurate but the interface is a bit clunky to use for elderly people. Works well once you get the hang of it.",
+      orderInvoice: 10462,
+      createdAt: new Date(Date.now() - 259200000).toISOString(),
+    }
+  ];
 
-  const handleConfirmDelete = async () => {
+  const reviews = data?.reviews?.length > 0 ? data.reviews : dummyReviews;
+  const totalResults = data?.pagination?.total || (data?.reviews?.length > 0 ? 0 : dummyReviews.length);
+
+  const handleDeleteReview = async (reviewId) => {
     try {
-      await ReviewServices.deleteReview(reviewToDelete);
-      notifySuccess("Review deleted successfully");
-      setDeleteModalOpen(false);
-      setReviewToDelete(null);
-      refetch();
+      if (!window.confirm("Are you sure you want to delete this review?")) return;
+      await ReviewServices.deleteReview(reviewId);
+      showAlert("Review deleted successfully!", "success");
     } catch (err) {
-      notifyError(err?.response?.data?.message || "Failed to delete review");
-      console.error("Error deleting review:", err);
+      showAlert(err?.response?.data?.message || "Failed to delete review", "error");
     }
-  };
-
-  const handleResetFilters = () => {
-    setRatingFilter("");
-    setVerifiedFilter("");
-    setSortFilter("newest");
-    setSearchText("");
-    setInvoice(null);
-    if (searchRef?.current) {
-      searchRef.current.value = "";
-    }
-  };
-
-  const handleSubmitFilters = (e) => {
-    e.preventDefault();
   };
 
   return (
-    <>
-      <PageTitle>Reviews & Ratings</PageTitle>
+    <AnimatedContent>
+      <div className="bg-[#f0f2f5] min-h-screen pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
-      <AnimatedContent>
-        <Card className="min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5">
-          <CardBody>
-            <form onSubmit={handleSubmitFilters} className="py-3">
-              <div className="grid gap-4 lg:gap-6 xl:gap-6 md:grid-cols-2 lg:grid-cols-5">
-                <div>
+          {/* Header */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-9 h-9 bg-amber-500 rounded-xl flex items-center justify-center shadow-md">
+              <FiStar className="w-5 h-5 text-white fill-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-gray-800 leading-tight">Item Reviews</h1>
+              <p className="text-xs text-gray-500">Manage and monitor product reviews</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            {/* Toolbar */}
+            <div className="p-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <h2 className="text-[17px] font-bold text-gray-700">Review List</h2>
+                <span className="bg-gray-100 border border-gray-200 text-gray-700 text-sm font-bold px-3 py-1 rounded-lg">
+                  {totalResults}
+                </span>
+              </div>
+              <div className="flex w-full xl:w-auto flex-col sm:flex-row gap-3 items-center">
+                <div className="flex w-full sm:w-auto relative">
                   <Input
                     ref={searchRef}
-                    type="search"
-                    name="search"
-                    placeholder="Search reviews..."
+                    className="w-full sm:w-[300px] border-gray-200 rounded-r-none focus:border-teal-500 text-sm h-10"
+                    placeholder="Search by item name, customer..."
                     onChange={(e) => setSearchText(e.target.value)}
                   />
+                  <button className="bg-slate-400 text-white px-4 rounded-r-xl hover:bg-slate-500 transition-colors">
+                    <FiSearch className="w-4 h-4" />
+                  </button>
                 </div>
+                <button className="flex items-center gap-2 px-4 h-10 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 font-medium text-sm transition-all whitespace-nowrap bg-white">
+                  <FiDownload className="w-4 h-4 text-gray-500" />
+                  Export
+                  <FiChevronDown className="w-4 h-4 text-gray-400" />
+                </button>
+              </div>
+            </div>
 
-                <div>
-                  <Input
-                    type="number"
-                    name="invoice"
-                    placeholder="Invoice no."
-                    value={invoice || ""}
-                    onChange={(e) => setInvoice(e.target.value)}
+            {/* Table */}
+            {loading ? (
+              <TableLoading row={8} col={7} width={140} height={20} />
+            ) : error ? (
+              <div className="text-center text-red-500 py-16">{error}</div>
+            ) : reviews.length === 0 ? (
+              <NotFound title="No reviews found" />
+            ) : (
+              <TableContainer className="rounded-none border-none overflow-x-auto">
+                <Table className="w-full text-sm">
+                  <TableHeader>
+                    <tr className="bg-gray-50/80 border-b border-gray-100">
+                      {["Sl", "Review Id", "Item", "Customer", "Review", "Date", "Store Reply", "Action"].map((h, idx) => (
+                        <TableCell key={idx} className="py-4 font-extrabold text-gray-600 text-[12px] uppercase tracking-wide">
+                          <div className={`flex items-center gap-1 ${idx <= 1 ? "justify-center" : idx >= 6 ? "justify-center" : "justify-start"}`}>
+                            {h}
+                            {h !== "Action" && <HiSelector className="text-gray-300 w-3.5 h-3.5 shrink-0" />}
+                          </div>
+                        </TableCell>
+                      ))}
+                    </tr>
+                  </TableHeader>
+                  <TableBody>
+                    {reviews.map((review, i) => (
+                      <TableRow
+                        key={review._id || i}
+                        className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
+                      >
+                        {/* Sl */}
+                        <TableCell className="text-center font-medium text-gray-400 text-[13px] w-12">
+                          {(currentPage - 1) * resultsPerPage + i + 1}
+                        </TableCell>
+
+                        {/* Review ID */}
+                        <TableCell className="text-center w-28">
+                          <span className="text-[12px] font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">
+                            #{review._id?.substring(18, 24) || `${100137 + i}`}
+                          </span>
+                        </TableCell>
+
+                        {/* Item */}
+                        <TableCell className="min-w-[180px]">
+                          <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+                              {review.product?.image ? (
+                                <img
+                                  src={Array.isArray(review.product.image) ? review.product.image[0] : review.product.image}
+                                  alt="Product"
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-gray-300 text-[10px]">
+                                  IMG
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-bold text-gray-800 leading-tight line-clamp-1 max-w-[160px]">
+                                {formatText(review.product?.title, "Unknown Product")}
+                              </p>
+                              <p className="text-[11px] text-gray-400 mt-0.5">
+                                Order: #{review.orderInvoice || "—"}
+                              </p>
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        {/* Customer */}
+                        <TableCell className="min-w-[130px]">
+                          <p className="text-[13px] font-bold text-teal-600">
+                            {formatText(review.user?.name, "Anonymous")}
+                          </p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">
+                            {review.user?.phone ? `+${review.user.phone.toString().slice(0, 2)}*****${review.user.phone.toString().slice(-2)}` : "—"}
+                          </p>
+                        </TableCell>
+
+                        {/* Review */}
+                        <TableCell className="min-w-[200px]">
+                          <StarRating rating={review.rating || 5} />
+                          <p className="text-[12px] text-gray-500 mt-1.5 leading-relaxed line-clamp-2 max-w-[180px]">
+                            {review.reviewText || "No comment provided."}
+                          </p>
+                        </TableCell>
+
+                        {/* Date */}
+                        <TableCell className="text-center w-28">
+                          <p className="text-[12px] font-medium text-gray-700">
+                            {dayjs(review.createdAt).format("DD MMM YYYY")}
+                          </p>
+                          <p className="text-[11px] text-gray-400 mt-0.5">
+                            {dayjs(review.createdAt).format("hh:mm A")}
+                          </p>
+                        </TableCell>
+
+                        {/* Store Reply */}
+                        <TableCell className="text-center w-28">
+                          {review.reply ? (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-full">
+                              <FiCheck size={10} /> Replied
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-full">
+                              <FiMessageSquare size={10} /> Not replied
+                            </span>
+                          )}
+                        </TableCell>
+
+                        {/* Action */}
+                        <TableCell className="text-center w-20">
+                          <button
+                            onClick={() => handleDeleteReview(review._id)}
+                            className="p-2 rounded-lg text-red-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                            title="Delete review"
+                          >
+                            <FiAlertCircle size={15} />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <TableFooter className="bg-white border-t border-gray-100 p-4">
+                  <Pagination
+                    totalResults={totalResults}
+                    resultsPerPage={resultsPerPage}
+                    onChange={handleChangePage}
+                    label="Review pagination"
                   />
-                </div>
-
-                <div>
-                  <Select
-                    value={ratingFilter}
-                    onChange={(e) => setRatingFilter(e.target.value)}
-                  >
-                    <option value="">All Ratings</option>
-                    <option value="5">5 Stars</option>
-                    <option value="4">4 Stars</option>
-                    <option value="3">3 Stars</option>
-                    <option value="2">2 Stars</option>
-                    <option value="1">1 Star</option>
-                  </Select>
-                </div>
-
-                <div>
-                  <Select
-                    value={verifiedFilter}
-                    onChange={(e) => setVerifiedFilter(e.target.value)}
-                  >
-                    <option value="">All Reviews</option>
-                    <option value="true">Verified Only</option>
-                    <option value="false">Not Verified</option>
-                  </Select>
-                </div>
-
-                <div>
-                  <Select
-                    value={sortFilter}
-                    onChange={(e) => setSortFilter(e.target.value)}
-                  >
-                    <option value="newest">Most Recent</option>
-                    <option value="rating_high">Highest Rating</option>
-                    <option value="rating_low">Lowest Rating</option>
-                    <option value="helpful">Most Helpful</option>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 mt-4">
-                <Button type="submit" className="bg-store-700">
-                  Filter
-                </Button>
-                <Button
-                  layout="outline"
-                  onClick={handleResetFilters}
-                  type="button"
-                  className="px-4 md:py-1 py-2 text-sm dark:bg-gray-700"
-                >
-                  <span className="text-black dark:text-gray-200">Reset</span>
-                </Button>
-              </div>
-            </form>
-          </CardBody>
-        </Card>
-      </AnimatedContent>
-
-      {loading ? (
-        <TableLoading row={12} col={8} width={190} height={20} />
-      ) : error ? (
-        <span className="text-center mx-auto text-red-500">{error}</span>
-      ) : data?.reviews?.length !== 0 ? (
-        <TableContainer className="mb-8">
-          <Table>
-            <TableHeader>
-              <tr>
-                <TableCell>Product</TableCell>
-                <TableCell>Invoice</TableCell>
-                <TableCell>User</TableCell>
-                <TableCell>Rating</TableCell>
-                <TableCell>Review</TableCell>
-                <TableCell>Verified</TableCell>
-                <TableCell>Helpful</TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell className="text-right">Actions</TableCell>
-              </tr>
-            </TableHeader>
-            <ReviewTable
-              reviews={data?.reviews}
-              handleDeleteReview={handleDeleteReview}
-            />
-          </Table>
-          <TableFooter>
-            <Pagination
-              totalResults={data?.pagination?.total || 0}
-              resultsPerPage={resultsPerPage}
-              onChange={handleChangePage}
-              label="Table navigation"
-            />
-          </TableFooter>
-        </TableContainer>
-      ) : (
-        <NotFound title="No reviews found" />
-      )}
-
-      <Modal isOpen={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
-        <ModalBody className="text-center custom-modal px-8 pt-6 pb-4">
-          <span className="flex justify-center text-3xl mb-6 text-red-500">
-            <FiTrash2 />
-          </span>
-          <h2 className="text-xl font-medium mb-2">
-            Delete Review?
-          </h2>
-          <p>Are you sure you want to delete this review? This action cannot be undone.</p>
-        </ModalBody>
-        <ModalFooter className="justify-center">
-          <Button
-            className="w-full sm:w-auto hover:bg-white hover:border-gray-50"
-            layout="outline"
-            onClick={() => setDeleteModalOpen(false)}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirmDelete}
-            className="w-full h-12 sm:w-auto bg-red-600 hover:bg-red-700"
-          >
-            Delete
-          </Button>
-        </ModalFooter>
-      </Modal>
-    </>
+                </TableFooter>
+              </TableContainer>
+            )}
+          </div>
+        </div>
+      </div>
+    </AnimatedContent>
   );
 };
 
 export default Reviews;
-

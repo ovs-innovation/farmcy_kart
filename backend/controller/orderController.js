@@ -479,12 +479,21 @@ const getDashboardCount = async (req, res) => {
     const totalProduct = await Product.countDocuments();
     const totalDeliveryBoy = await Admin.countDocuments({ role: "Driver" });
 
+    const totalAcceptedOrder = await Order.countDocuments({ status: "Accepted" });
+    const totalOutForDeliveryOrder = await Order.countDocuments({ status: "OutForDelivery" });
+    const totalRefundedOrder = await Order.countDocuments({ status: "Refunded" });
+    const totalFailedOrder = await Order.countDocuments({ status: "Failed" });
+
     res.send({
       totalOrder: totalDoc,
       totalPendingOrder: totalPendingOrder[0] || 0,
       totalProcessingOrder: totalProcessingOrder[0]?.count || 0,
       totalDeliveredOrder: totalDeliveredOrder[0]?.count || 0,
       totalCancelOrder: totalCancelOrder[0]?.count || 0,
+      totalAcceptedOrder,
+      totalOutForDeliveryOrder,
+      totalRefundedOrder,
+      totalFailedOrder,
       totalCustomer,
       totalProduct,
       totalDeliveryBoy,

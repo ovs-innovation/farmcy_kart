@@ -32,17 +32,38 @@ const Navbar = () => {
   const { data: categoriesData } = useQuery({
     queryKey: ["category"],
     queryFn: async () => await CategoryServices.getShowingCategory(),
-    onSuccess: (data) => {
-      console.log('Categories API Success:', data);
-      console.log('Categories length:', data?.length);
-      data?.forEach((cat, index) => {
-        console.log(`Category ${index + 1}:`, cat.name, 'Children:', cat.children?.length || 0);
-      });
-    },
-    onError: (error) => {
-      console.error('Categories API Error:', error);
-    }
   });
+
+  const getLevel1Categories = (categories) => {
+    if (!categories || !Array.isArray(categories) || categories.length === 0) return [];
+
+    // Check if we have a single "Home" or "Root" category that acts as a container
+    const homeRoot = categories.find(cat =>
+      cat.id === "Root" ||
+      showingTranslateValue(cat?.name)?.toLowerCase() === "home"
+    );
+
+    let topLevel = [];
+    if (homeRoot && homeRoot.children && homeRoot.children.length > 0) {
+      topLevel = homeRoot.children;
+    } else {
+      topLevel = categories;
+    }
+
+    // Flattening logic: If category is 'Medicine', we show its children as top level
+    let finalCategories = [];
+    topLevel.forEach(cat => {
+      const name = showingTranslateValue(cat?.name)?.toLowerCase();
+      // Only flatten if name is medicine/medicines and has children
+      if ((name === 'medicine' || name === 'medicines') && cat.children?.length > 0) {
+        finalCategories = [...finalCategories, ...cat.children];
+      } else {
+        finalCategories.push(cat);
+      }
+    });
+
+    return finalCategories;
+  };
 
   const { toggleCartDrawer } = useContext(SidebarContext);
   const { totalItems, totalUniqueItems } = useCart();
@@ -65,11 +86,18 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY || window.pageYOffset;
-      // Show search bar when scrolled down more than 100px
-      if (scrollY > 50) {
-        setShowSearchInNavbar(true);
+      const isHome = router.pathname === "/";
+      
+      if (isHome) {
+        // Higher threshold for home page to avoid double search bars (past hero banner)
+        if (scrollY > 200) {
+          setShowSearchInNavbar(true);
+        } else {
+          setShowSearchInNavbar(false);
+        }
       } else {
-        setShowSearchInNavbar(false);
+        // On other pages, show the search bar always for better accessibility
+        setShowSearchInNavbar(true);
       }
     };
 
@@ -78,7 +106,7 @@ const Navbar = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [router.pathname]);
 
   // Sync searchText with URL query on search page
   useEffect(() => {
@@ -275,7 +303,11 @@ const Navbar = () => {
         </div>
       </div>
       <LowerCategoryNavbar
-        categories={categoriesData?.[0]?.children || categoriesData || []}
-        showingTranslateValue={showingTranslateValue} /> </>);};
+        categories={getLevel1Categories(categoriesData)}
+        showingTranslateValue={showingTranslateValue} />
+    </>
+  );
+};
+
 
 export default dynamic(() => Promise.resolve(Navbar), { ssr: false });

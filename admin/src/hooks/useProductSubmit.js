@@ -44,6 +44,7 @@ const useProductSubmit = (id) => {
 
   // react hook
   const [imageUrl, setImageUrl] = useState([]);
+  const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [tag, setTag] = useState([]);
   const [values, setValues] = useState({});
   let [variants, setVariants] = useState([]);
@@ -120,6 +121,7 @@ const useProductSubmit = (id) => {
       hsnCode: "",
       taxRate: 0,
       isPriceInclusive: false,
+      discountType: "flat",
     },
   });
 
@@ -131,11 +133,18 @@ const useProductSubmit = (id) => {
       setIsSubmitting(true);
       if (!imageUrl) return notifyError("Image is required!");
 
-      if (Number(data.discount) > Number(data.originalPrice)) {
-        setIsSubmitting(false);
-        return notifyError(
-          "Discount must be less then or equal of product price!"
-        );
+      if (data.discountType === "percentage") {
+        if (Number(data.discount) > 100) {
+          setIsSubmitting(false);
+          return notifyError("Discount percentage cannot exceed 100%!");
+        }
+      } else {
+        if (Number(data.discount) > Number(data.originalPrice)) {
+          setIsSubmitting(false);
+          return notifyError(
+            "Discount must be less than or equal to product price!"
+          );
+        }
       }
       if (!defaultCategory[0]) {
         setIsSubmitting(false);
@@ -146,18 +155,27 @@ const useProductSubmit = (id) => {
       const variantsWithSku = ensureVariantsHaveSku(variants, baseSkuValue);
 
       const updatedVariants = variantsWithSku.map((v, i) => {
+        const variantPrice = data.discountType === "percentage" 
+          ? getNumberTwo(v?.originalPrice) - (getNumberTwo(v?.originalPrice) * getNumberTwo(v?.discount) / 100)
+          : getNumberTwo(v?.originalPrice) - getNumberTwo(v?.discount);
+
         const newObj = {
           ...v,
-          price: getNumberTwo(v?.originalPrice) - getNumberTwo(v?.discount),
+          price: variantPrice,
           originalPrice: getNumberTwo(v?.originalPrice),
           discount: getNumberTwo(v?.discount),
+          discountType: data.discountType || "flat",
           quantity: Number(v?.quantity || 0),
         };
         return newObj;
       });
 
       setIsBasicComplete(true);
-      setPrice(getNumberTwo(data.originalPrice) - getNumber(data.discount));
+      const calculatedPrice = data.discountType === "percentage" 
+        ? getNumberTwo(data.originalPrice) - (getNumberTwo(data.originalPrice) * getNumber(data.discount) / 100)
+        : getNumberTwo(data.originalPrice) - getNumber(data.discount);
+
+      setPrice(calculatedPrice);
       setQuantity(data.stock);
       setBarcode(data.barcode);
       setSku(data.sku);
@@ -308,6 +326,7 @@ const useProductSubmit = (id) => {
         category: defaultCategory[0]._id,
 
         image: imageUrl,
+        thumbnail: thumbnailUrl,
         stock: variants?.length < 1 ? data.stock : Number(totalStock),
         tag: JSON.stringify(tag),
 
@@ -315,11 +334,16 @@ const useProductSubmit = (id) => {
         isWholesaler: Boolean(data.isWholesaler),
         wholePrice: Number(data.wholePrice ?? data.wholesalerPrice) || 0,
         minQuantity: Number(data.minQuantity ?? data.wholesalerMinQuantity) || 0,
+        
+        suitableFor: data.suitableFor ? (Array.isArray(data.suitableFor) ? data.suitableFor : [data.suitableFor]) : [],
 
         prices: {
-          price: getNumberTwo(data.originalPrice) - getNumber(data.discount),
+          price: data.discountType === "percentage" 
+            ? getNumberTwo(data.originalPrice) - (getNumberTwo(data.originalPrice) * getNumber(data.discount) / 100)
+            : getNumberTwo(data.originalPrice) - getNumber(data.discount),
           originalPrice: getNumberTwo(data.originalPrice),
           discount: getNumber(data.discount),
+          discountType: data.discountType || "flat",
         },
         isCombination: updatedVariants?.length > 0 ? isCombination : false,
         variants: isCombination ? updatedVariants : [],
@@ -477,10 +501,12 @@ const useProductSubmit = (id) => {
       setValue("hsnCode", "");
       setValue("taxRate", 0);
       setValue("isPriceInclusive", false);
+      setValue("discountType", "flat");
 
       setProductId("");
       // setValue('show');
       setImageUrl([]);
+      setThumbnailUrl("");
       setTag([]);
       setVariants([]);
       setVariant([]);
@@ -586,6 +612,7 @@ const useProductSubmit = (id) => {
                 : Number(res?.taxRate || 0)
             );
             setValue("isPriceInclusive", Boolean(res?.isPriceInclusive));
+            setValue("discountType", res?.prices?.discountType || "flat");
 
             // Wholesaler fields
             setValue("isWholesaler", Boolean(res?.isWholesaler));
@@ -611,6 +638,7 @@ const useProductSubmit = (id) => {
             setDefaultCategory([res?.category]);
             setTag(JSON.parse(res.tag));
             setImageUrl(res.image);
+            setThumbnailUrl(res.thumbnail || "");
             const normalizedVariants = ensureVariantsHaveSku(
               res.variants || [],
               res.sku || res.productId || res._id || "SKU"
@@ -1542,6 +1570,8 @@ const useProductSubmit = (id) => {
     variants,
     imageUrl,
     setImageUrl,
+    thumbnailUrl,
+    setThumbnailUrl,
     handleSubmit,
     isCombination,
     variantTitle,

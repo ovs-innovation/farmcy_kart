@@ -73,9 +73,10 @@ const addStoreSetting = async (req, res) => {
 
 const getStoreSetting = async (req, res) => {
   try {
-    // console.log("getStoreSetting");
-
     const storeSetting = await Setting.findOne({ name: "storeSetting" });
+    if (!storeSetting) {
+      return res.send({});
+    }
     res.send(storeSetting.setting);
   } catch (err) {
     res.status(500).send({
@@ -103,6 +104,58 @@ const updateStoreSetting = async (req, res) => {
     res.send({
       data: storeSetting,
       message: "Store Setting Update Successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+//vendor setting controller
+const addVendorSetting = async (req, res) => {
+  try {
+    const newVendorSetting = new Setting(req.body);
+    await newVendorSetting.save();
+    res.send({
+      message: "Vendor Setting Added Successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const getVendorSetting = async (req, res) => {
+  try {
+    const vendorSetting = await Setting.findOne({ name: "vendorSetting" });
+    if (!vendorSetting) {
+      return res.send({});
+    }
+    res.send(vendorSetting.setting);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const updateVendorSetting = async (req, res) => {
+  try {
+    const { setting } = req.body;
+    const updateFields = Object.keys(setting).reduce((acc, key) => {
+      acc[`setting.${key}`] = setting[key];
+      return acc;
+    }, {});
+    const vendorSetting = await Setting.findOneAndUpdate(
+      { name: "vendorSetting" },
+      { $set: updateFields },
+      { new: true, upsert: true }
+    );
+    res.send({
+      data: vendorSetting,
+      message: "Vendor Setting Update Successfully!",
     });
   } catch (err) {
     res.status(500).send({
@@ -208,6 +261,56 @@ const updateStoreCustomizationSetting = async (req, res) => {
   }
 };
 
+// deliveryman setting
+const addDeliverymanSetting = async (req, res) => {
+  try {
+    const newSetting = new Setting(req.body);
+    await newSetting.save();
+    res.status(200).send({
+      message: "Deliveryman setting added successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const getDeliverymanSetting = async (req, res) => {
+  try {
+    const setting = await Setting.findOne({ name: "deliverymanSetting" });
+    res.send(setting?.setting || {});
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
+const updateDeliverymanSetting = async (req, res) => {
+  try {
+    const setting = await Setting.findOneAndUpdate(
+      { name: "deliverymanSetting" },
+      {
+        $set: {
+          setting: req.body,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+    res.send({
+      message: "Deliveryman setting updated successfully!",
+      setting: setting.setting,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   addGlobalSetting,
   getGlobalSetting,
@@ -219,4 +322,10 @@ module.exports = {
   addStoreCustomizationSetting,
   getStoreCustomizationSetting,
   updateStoreCustomizationSetting,
+  addVendorSetting,
+  getVendorSetting,
+  updateVendorSetting,
+  addDeliverymanSetting,
+  getDeliverymanSetting,
+  updateDeliverymanSetting,
 };

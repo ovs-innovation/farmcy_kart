@@ -43,7 +43,7 @@ const Categories = () => {
       return cat.name[keys[0]] || "";
     }
     return (cat.name && String(cat.name)) || cat.title || "";
-  }; 
+  };
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["category"],
@@ -52,10 +52,29 @@ const Categories = () => {
 
   const router = useRouter();
 
+  const getLevel1Categories = (categories) => {
+    if (!categories || !Array.isArray(categories) || categories.length === 0) return [];
+    
+    // Check if we have a single "Home" or "Root" category that acts as a container
+    const homeRoot = categories.find(cat => 
+      cat.id === "" || 
+      getCategoryName(cat).toLowerCase() === "home"
+    );
+
+    if (homeRoot && homeRoot.children && homeRoot.children.length > 0) {
+      return homeRoot.children;
+    }
+    
+    // Otherwise, all top-level categories are Level 1
+    return categories;
+  };
+
   useEffect(() => {
-    if (data && Array.isArray(data) && data[0]?.children) {
-      const children = data[0].children;
-      const parentsWithChildren = children.filter((cat) => Array.isArray(cat.children) && cat.children.length > 0);
+    if (data && Array.isArray(data)) {
+      const level1Categories = getLevel1Categories(data);
+      const parentsWithChildren = level1Categories.filter(
+        (cat) => Array.isArray(cat.children) && cat.children.length > 0
+      );
       setParentCategories(parentsWithChildren);
     }
   }, [data]);
@@ -91,9 +110,9 @@ const Categories = () => {
   return (
     <Layout title="Categories" description="All Categories">
       <div className="bg-gray-50">
-         <div className="max-w-7xl mx-auto mb-8">
-            <SliderCarousel />
-         </div>
+        <div className="max-w-7xl mx-auto mb-8">
+          <SliderCarousel />
+        </div>
         <div className="mx-auto max-w-screen-2xl px-4 sm:px-6 lg:px-10 pb-10">
           {parentCategories.length === 0 ? (
             <p>Loading categories...</p>

@@ -18,12 +18,11 @@ import useToggleDrawer from "@/hooks/useToggleDrawer";
 import AttributeServices from "@/services/AttributeServices";
 import CurrencyServices from "@/services/CurrencyServices";
 import BrandServices from "@/services/BrandServices";
-
-import { notifyError, notifySuccess } from "@/utils/toast";
+import PushNotificationServices from "@/services/PushNotificationServices";
 import useDisableForDemo from "@/hooks/useDisableForDemo";
 
 const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
-  const { isModalOpen, closeModal, setIsUpdate } = useContext(SidebarContext);
+  const { isModalOpen, closeModal, setIsUpdate, showAlert } = useContext(SidebarContext);
   const { setServiceId } = useToggleDrawer();
   const location = useLocation();
 
@@ -43,7 +42,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
@@ -51,7 +50,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
         } else {
           const res = await ProductServices.deleteProduct(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -64,7 +63,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
@@ -72,7 +71,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
         } else {
           const res = await CouponServices.deleteCoupon(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -89,7 +88,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
           });
           //  console.log('delete many category res',res)
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
@@ -142,7 +141,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
@@ -150,7 +149,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
         } else {
           const res = await AttributeServices.deleteAttribute(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -166,7 +165,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           setIsCheck([]);
           closeModal();
@@ -179,7 +178,7 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: location.pathname.split("/")[2],
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -201,14 +200,14 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
           setIsSubmitting(false);
         } else {
           const res = await LanguageServices.deleteLanguage(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -221,14 +220,14 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
           setIsSubmitting(false);
         } else {
           const res = await CurrencyServices.deleteCurrency(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
@@ -241,21 +240,41 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
             ids: ids,
           });
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
           setIsSubmitting(false);
         } else {
           const res = await BrandServices.deleteBrand(id);
           setIsUpdate(true);
-          notifySuccess(res.message);
+          showAlert(res.message, "success");
+          setServiceId();
+          closeModal();
+          setIsSubmitting(false);
+        }
+      }
+
+      if (location.pathname === "/push-notification") {
+        if (ids) {
+          const res = await PushNotificationServices.deleteManyPushNotifications({
+            ids: ids,
+          });
+          setIsUpdate(true);
+          showAlert(res.message, "success");
+          setIsCheck([]);
+          closeModal();
+          setIsSubmitting(false);
+        } else {
+          const res = await PushNotificationServices.deletePushNotification(id);
+          setIsUpdate(true);
+          showAlert(res.message, "success");
           setServiceId();
           closeModal();
           setIsSubmitting(false);
         }
       }
     } catch (err) {
-      notifyError(err ? err?.response?.data?.message : err?.message);
+      showAlert(err ? err?.response?.data?.message : err?.message, "error");
       setServiceId();
       setIsCheck([]);
       closeModal();

@@ -1,3 +1,8 @@
+// Override DNS to use Google DNS (8.8.8.8) — fixes ECONNREFUSED on SRV lookups
+// when the system DNS blocks mongodb+srv:// connections to MongoDB Atlas
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 require("dotenv").config();
 const mongoose = require("mongoose");
 

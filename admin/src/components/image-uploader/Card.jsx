@@ -79,7 +79,7 @@ const Card = ({ id, image, index, moveCard, handleRemoveImage }) => {
         <button
           type="button"
           className="absolute top-0 right-0 text-red-500 focus:outline-none"
-          onClick={() => handleRemoveImage(image)}
+          onClick={() => handleRemoveImage(image, index)}
         >
           <FiXCircle />
         </button>

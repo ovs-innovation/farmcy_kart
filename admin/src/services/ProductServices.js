@@ -47,8 +47,10 @@ const ProductServices = {
     return requests.patch("/products/delete/many", body);
   },
 
-  exportProductsCSV: async () => {
-    return requests.get("/products/export/csv");
+  exportProductsCSV: async ({ type, startDate, endDate, startId, endId }) => {
+    return requests.get(
+      `/products/export/csv?type=${type}&startDate=${startDate}&endDate=${endDate}&startId=${startId}&endId=${endId}`
+    );
   },
 
   importProductsCSV: async (body) => {

@@ -12,7 +12,7 @@ const useCategorySubmit = (id, data) => {
     useContext(SidebarContext);
   const [resData, setResData] = useState({});
   const [checked, setChecked] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState([]);
   const [children, setChildren] = useState([]);
   const [language, setLanguage] = useState("en");
   const [published, setPublished] = useState(true);
@@ -62,7 +62,8 @@ const useCategorySubmit = (id, data) => {
         parentId: checked ? checked : undefined,
         parentName: selectCategoryName ? selectCategoryName : "Home",
 
-        icon: imageUrl,
+        icon: imageUrl?.length > 0 ? imageUrl[0] : "",
+        images: imageUrl || [],
         status: published ? "show" : "hide",
         lang: language,
       };
@@ -108,7 +109,7 @@ const useCategorySubmit = (id, data) => {
       setValue("parentName");
       setValue("description");
       setValue("icon");
-      setImageUrl("");
+      setImageUrl([]);
       setPublished(true);
       clearErrors("name");
       clearErrors("parentId");
@@ -118,9 +119,6 @@ const useCategorySubmit = (id, data) => {
       setLanguage(lang);
       setValue("language", language);
 
-      if (data !== undefined && data[0]?._id !== undefined) {
-        setChecked(data[0]._id);
-      }
       return;
     }
     if (id) {
@@ -141,7 +139,7 @@ const useCategorySubmit = (id, data) => {
             setValue("parentName", res.parentName);
             setSelectCategoryName(res.parentName);
             setChecked(res.parentId);
-            setImageUrl(res.icon);
+            setImageUrl(res.images?.length > 0 ? res.images : (res.icon ? [res.icon] : []));
             setPublished(res.status === "show" ? true : false);
           }
         } catch (err) {

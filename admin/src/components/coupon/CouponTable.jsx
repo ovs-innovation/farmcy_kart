@@ -81,76 +81,64 @@ const CouponTable = ({ isCheck, coupons, setIsCheck }) => {
             </TableCell>
 
             <TableCell>
-              <div className="flex items-center">
-                {coupon?.logo ? (
-                  <Avatar
-                    className="hidden p-1 mr-2 md:block bg-gray-50 shadow-none"
-                    src={coupon?.logo}
-                    alt="product"
-                  />
-                ) : (
-                  <Avatar
-                    src={`https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png`}
-                    alt="product"
-                  />
-                )}
-                <div>
-                  <span className="text-sm">
-                    {showingTranslateValue(coupon?.title)}
-                  </span>{" "}
-                </div>
-              </div>{" "}
+              <span className="text-sm">{i + 1}</span>
             </TableCell>
 
             <TableCell>
-              {" "}
-              <span className="text-sm"> {coupon.couponCode}</span>{" "}
+              <span className="text-sm font-medium">
+                {showingTranslateValue(coupon?.title)}
+              </span>
             </TableCell>
 
-            {coupon?.discountType?.type ? (
-              <TableCell>
-                {" "}
-                <span className="text-sm font-semibold">
-                  {" "}
-                  {coupon?.discountType?.type === "percentage"
-                    ? `${coupon?.discountType?.value}%`
-                    : `${currency}${coupon?.discountType?.value}`}
-                </span>{" "}
-              </TableCell>
-            ) : (
-              <TableCell>
-                {" "}
-                <span className="text-sm font-semibold"> </span>{" "}
-              </TableCell>
-            )}
+            <TableCell>
+              <span className="text-sm font-semibold">{coupon.couponCode}</span>
+            </TableCell>
 
-            <TableCell className="text-center">
+            <TableCell>
+              <span className="text-sm">{coupon.couponType || "Store wise"}</span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm">{coupon.totalUses || 0}</span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm">
+                {currency} {coupon.minimumAmount || 0}
+              </span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm">
+                {currency} {coupon.maxDiscount || 0}
+              </span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm font-bold">
+                {coupon.discountType?.value || 0}
+              </span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm text-gray-500">
+                {coupon.discountType?.type === "percentage" ? "Percent %" : `Amount ${currency}`}
+              </span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm">{showDateFormat(coupon.startTime)}</span>
+            </TableCell>
+
+            <TableCell>
+              <span className="text-sm">{showDateFormat(coupon.endTime)}</span>
+            </TableCell>
+
+            <TableCell>
               <ShowHideButton id={coupon._id} status={coupon.status} />
             </TableCell>
 
-            <TableCell>
-              <span className="text-sm">
-                {/* {dayjs(coupon.startTime).format("MMM D, YYYY")} */}
-                {showDateFormat(coupon.startTime)}
-              </span>
-            </TableCell>
-
-            <TableCell>
-              <span className="text-sm">
-                {/* {dayjs(coupon.endTime).format("MMM D, YYYY")} */}
-                {showDateFormat(coupon.endTime)}
-              </span>
-            </TableCell>
-
-            <TableCell className="align-middle ">
-              {dayjs().isAfter(dayjs(coupon.endTime)) ? (
-                <Badge type="danger">Expired</Badge>
-              ) : (
-                <Badge type="success">Active</Badge>
-              )}
-            </TableCell>
-
-            <TableCell>
+            <TableCell className="text-right">
               <EditDeleteButton
                 id={coupon?._id}
                 isCheck={isCheck}

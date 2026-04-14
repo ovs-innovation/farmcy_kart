@@ -39,6 +39,27 @@ const SettingServices = {
   updateStoreCustomizationSetting: async (body) => {
     return requests.put(`/setting/store/customization/update`, body);
   },
+
+  // vendor setting all function
+  addVendorSetting: async (body) => {
+    return requests.post("/setting/vendor-setting/add", body);
+  },
+
+  getVendorSetting: async () => {
+    return requests.get("/setting/vendor-setting/all");
+  },
+
+  updateVendorSetting: async (body) => {
+    return requests.put("/setting/vendor-setting/update", body);
+  },
+
+  getDeliverymanSetting: async () => {
+    return requests.get("/setting/deliveryman-setting/all");
+  },
+
+  updateDeliverymanSetting: async (body) => {
+    return requests.put("/setting/deliveryman-setting/update", body);
+  },
 };
 
 export default SettingServices;

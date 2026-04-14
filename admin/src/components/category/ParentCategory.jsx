@@ -50,25 +50,21 @@ const ParentCategory = ({
     return myCategories;
   };
 
-  const findObject = (obj, target) => {
-    return obj._id === target
-      ? obj
-      : obj?.children?.reduce(
-          (acc, obj) => acc ?? findObject(obj, target),
-          undefined
-        );
-    // if (obj._id === target) return obj;
-
-    // for (let c of obj.children) {
-    //   let x = findObject(target, c);
-    //   console.log('c', c);
-    //   if (x) return x;
-    // }
+  const findObject = (categories, target) => {
+    if (!categories || !Array.isArray(categories)) return undefined;
+    
+    for (const category of categories) {
+      if (category._id === target) return category;
+      if (category.children && category.children.length > 0) {
+        const found = findObject(category.children, target);
+        if (found) return found;
+      }
+    }
+    return undefined;
   };
 
   const handleSelect = (key) => {
-    const obj = data[0];
-    const result = findObject(obj, key);
+    const result = findObject(data, key);
 
     if (result !== undefined) {
       const getCategory = selectedCategory.filter(

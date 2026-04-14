@@ -28,6 +28,7 @@ const useCouponSubmit = (id) => {
     handleSubmit,
     setValue,
     clearErrors,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -47,8 +48,13 @@ const useCouponSubmit = (id) => {
           [language]: title,
         },
         couponCode: data?.couponCode,
+        couponType: data?.couponType,
+        customer: data?.customer,
+        limitSameUser: data?.limitSameUser,
+        startTime: data?.startTime,
         endTime: data?.endTime,
         minimumAmount: data?.minimumAmount,
+        maxDiscount: data?.maxDiscount,
         logo: imageUrl,
         lang: language,
         status: published ? "show" : "hide",
@@ -96,15 +102,27 @@ const useCouponSubmit = (id) => {
       setValue("productType");
       setValue("couponCode");
       setValue("endTime");
+      setValue("startTime");
       setValue("discountPercentage");
       setValue("minimumAmount");
+      setValue("couponType");
+      setValue("customer");
+      setValue("limitSameUser");
+      setValue("maxDiscount");
       setImageUrl("");
+      setPublished(true);
+      setDiscountType(false);
       clearErrors("title");
       clearErrors("productType");
       clearErrors("couponCode");
       clearErrors("endTime");
+      clearErrors("startTime");
       clearErrors("discountPercentage");
       clearErrors("minimumAmount");
+      clearErrors("couponType");
+      clearErrors("customer");
+      clearErrors("limitSameUser");
+      clearErrors("maxDiscount");
       setLanguage(lang);
       setValue("language", language);
       return;
@@ -120,9 +138,14 @@ const useCouponSubmit = (id) => {
             setValue("productType", res.productType);
             setValue("couponCode", res.couponCode);
 
-            setValue("endTime", dayjs(res.endTime).format("YYYY-MM-DD HH:mm"));
+            setValue("endTime", dayjs(res.endTime).format("YYYY-MM-DD"));
+            setValue("startTime", dayjs(res.startTime).format("YYYY-MM-DD"));
             setValue("discountPercentage", res.discountType?.value);
             setValue("minimumAmount", res.minimumAmount);
+            setValue("couponType", res.couponType);
+            setValue("customer", res.customer);
+            setValue("limitSameUser", res.limitSameUser);
+            setValue("maxDiscount", res.maxDiscount);
             setPublished(res.status === "show" ? true : false);
             setDiscountType(
               res.discountType?.type === "percentage" ? true : false
@@ -150,6 +173,7 @@ const useCouponSubmit = (id) => {
     isSubmitting,
     setDiscountType,
     handleSelectLanguage,
+    reset,
   };
 };
 

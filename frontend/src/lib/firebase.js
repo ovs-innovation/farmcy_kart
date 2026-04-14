@@ -14,14 +14,27 @@ const firebaseConfig = {
 
 // Initialize Firebase only if it hasn't been initialized already
 let app;
-if (typeof window !== "undefined" && !getApps().length) {
-  app = initializeApp(firebaseConfig);
-} else if (typeof window !== "undefined") {
-  app = getApps()[0];
+let auth = null;
+
+if (typeof window !== "undefined") {
+  // Only initialize if we have a valid API key to avoid "auth/invalid-api-key" error
+  if (firebaseConfig.apiKey) {
+    try {
+      if (!getApps().length) {
+        app = initializeApp(firebaseConfig);
+      } else {
+        app = getApps()[0];
+      }
+      auth = getAuth(app);
+    } catch (error) {
+      console.error("Firebase initialization failed:", error);
+    }
+  } else {
+    console.warn("Firebase API key is missing. Firebase features like OTP login will be disabled.");
+  }
 }
 
-// Initialize Firebase Auth
-export const auth = typeof window !== "undefined" ? getAuth(app) : null;
-
+export { auth };
 export default app;
+
 

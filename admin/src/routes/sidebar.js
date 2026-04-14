@@ -1,4 +1,4 @@
- import {
+import {
   FiGrid,
   FiUsers,
   FiUser,
@@ -12,6 +12,12 @@
   FiFileText,
   FiMail,
   FiMessageCircle,
+  FiList,
+  FiLayers,
+  FiBox,
+  FiShoppingCart,
+  FiRotateCcw,
+  FiGift,
 } from "react-icons/fi";
 
 /**
@@ -32,30 +38,146 @@ const sidebar = [
     icon: FiFileText,
     name: "Prescriptions",
   },
+  {
+    type: "title",
+    name: "POS SECTION"
+  },
+  {
+    path: "/new-sale",
+    icon: FiShoppingCart,
+    name: "New Sale",
+  },
+
+  {
+    type: "title",
+    name: "Order Management",
+  },
+  {
+    heading: "ORDER MANAGEMENT",
+  },
+  {
+    icon: FiCompass,
+    name: "Orders",
+    routes: [
+      {
+        path: "/orders",
+        name: "All",
+      },
+      {
+        path: "/orders/scheduled",
+        name: "Scheduled",
+      },
+      {
+        path: "/orders/pending",
+        name: "Pending",
+      },
+      {
+        path: "/orders/accepted",
+        name: "Accepted",
+      },
+      {
+        path: "/orders/processing",
+        name: "Processing",
+      },
+      {
+        path: "/orders/on-the-way",
+        name: "Order On The Way",
+      },
+      {
+        path: "/orders/delivered",
+        name: "Delivered",
+      },
+      {
+        path: "/orders/canceled",
+        name: "Canceled",
+      },
+      {
+        path: "/orders/payment-failed",
+        name: "Payment Failed",
+      },
+      {
+        path: "/orders/refunded",
+        name: "Refunded",
+      },
+      {
+        path: "/orders/offline-payments",
+        name: "Offline Payments",
+      },
+    ],
+  },
+
+  {
+    icon: FiLayers,
+    name: "Categories",
+    routes: [
+      {
+        path: "/categories",
+        name: "Category",
+      },
+      {
+        path: "/sub-categories",
+        name: "SubCategory",
+      },
+    ],
+  },
+  {
+    path: "/attributes",
+    icon: FiGrid,
+    name: "Attributes",
+  },
+  // {
+  //   path: "/units",
+  //   icon: FiList,
+  //   name: "Units",
+  // },
+  // {
+  //   path: "/common-conditions",
+  //   icon: FiList,
+  //   name: "CommonConditions",
+  // },
+  {
+    icon: FiBox,
+    name: "ProductSetup",
+    routes: [
+      {
+        path: "/products/add",
+        name: "AddNew",
+      },
+      {
+        path: "/products",
+        name: "List",
+      },
+      {
+        path: "/products/low-stock",
+        name: "LowStockList",
+      },
+      {
+        path: "/products/gallery",
+        name: "ProductGallery",
+      },
+      {
+        path: "/products/new-request",
+        name: "NewItemRequest",
+      },
+
+      {
+        path: "/products/bulk-import",
+        name: "BulkImport",
+      },
+      {
+        path: "/products/bulk-export",
+        name: "BulkExport",
+      },
+    ],
+  },
 
   {
     icon: FiSlack,
     name: "Catalog",
     routes: [
       {
-        path: "/products",
-        name: "Products",
-      },
-      {
         path: "/brands",
         name: "Brands",
-      },
-      {
-        path: "/categories",
-        name: "Categories",
-      },
-      {
-        path: "/attributes",
-        name: "Attributes",
-      },
-      {
-        path: "/coupons",
-        name: "Coupons",
       },
       {
         path: "/taxes",
@@ -64,11 +186,11 @@ const sidebar = [
     ],
   },
 
-  {
-    path: "/orders",
-    icon: FiCompass,
-    name: "Orders",
-  },
+  // {
+  //   path: "/orders",
+  //   icon: FiCompass,
+  //   name: "Orders",
+  // },
 
   {
     icon: FiUsers,
@@ -91,6 +213,16 @@ const sidebar = [
     name: "FAQs",
   },
   {
+    path: "/coupons",
+    icon: FiGift,
+    name: "Coupons",
+  },
+  {
+    path: "/push-notification",
+    icon: FiMessageCircle,
+    name: "Push Notification",
+  },
+  {
     path: "/reviews",
     icon: FiStar,
     name: "Reviews",
@@ -109,9 +241,42 @@ const sidebar = [
   },
 
   {
-    path: "/settings?settingTab=common-settings",
     icon: FiSettings,
     name: "Settings",
+    routes: [
+      {
+        path: "/settings/general",
+        name: "GeneralSettings",
+      },
+      {
+        path: "/settings/business",
+        name: "BusinessSettings",
+      },
+      // {
+      //   path: "/settings/business-information",
+      //   name: "BusinessInformation",
+      // },
+      {
+        path: "/settings/payment",
+        name: "Payment",
+      },
+      {
+        path: "/settings/Retailer",
+        name: "Retailer",
+      },
+      {
+        path: "/settings/order",
+        name: "Order",
+      },
+      {
+        path: "/settings/refund",
+        name: "Refund",
+      },
+      // {
+      //   path: "/settings/delivery-man",
+      //   name: "DeliveryMan",
+      // },
+    ],
   },
   {
     icon: FiGlobe,
@@ -131,11 +296,11 @@ const sidebar = [
     icon: FiTarget,
     name: "OnlineStore",
     routes: [
-      {
-        name: "ViewStore",
-        path: "/store",
-        outside: "store",
-      },
+      // {
+      //   name: "ViewStore",
+      //   path: "/store",
+      //   outside: "store",
+      // },
 
       {
         path: "/store/customization",
@@ -148,22 +313,22 @@ const sidebar = [
     ],
   },
 
-  {
-    icon: FiSlack,
-    name: "Pages",
-    routes: [
-      // submenu
+  // {
+  //   icon: FiSlack,
+  //   name: "Pages",
+  //   routes: [
+  //     // submenu
 
-      {
-        path: "/404",
-        name: "404",
-      },
-      {
-        path: "/coming-soon",
-        name: "Coming Soon",
-      },
-    ],
-  },
+  //     {
+  //       path: "/404",
+  //       name: "404",
+  //     },
+  //     {
+  //       path: "/coming-soon",
+  //       name: "Coming Soon",
+  //     },
+  //   ],
+  // },
 ];
 
 export default sidebar;

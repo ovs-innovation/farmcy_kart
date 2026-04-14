@@ -34,8 +34,8 @@ const SidebarContent = () => {
     Array.isArray(accessList) && accessList.length > 0
       ? accessList.filter(Boolean) // Remove undefined or falsy values
       : sidebar
-          .map((route) => route.path?.split("?")[0].split("/")[1])
-          .filter(Boolean);
+        .map((route) => route.path?.split("?")[0].split("/")[1])
+        .filter(Boolean);
 
   console.log("Effective Access List (Filtered):", effectiveAccessList);
 
@@ -57,6 +57,7 @@ const SidebarContent = () => {
       }
 
       // Handle top-level routes
+      if (route.type === "title") return route;
       const routeKey = route.path?.split("?")[0].split("/")[1];
       return routeKey && effectiveAccessList.includes(routeKey) ? route : null;
     })
@@ -65,8 +66,8 @@ const SidebarContent = () => {
   console.log("Filtered Sidebar Data (Updated Sidebar):", updatedSidebar);
 
   return (
-    <div className="py-4 text-gray-500 dark:text-gray-400">
-      <a className=" text-gray-900 dark:text-gray-200" href="/dashboard">
+    <div className="py-4 text-gray-500 dark:text-[#9fb1b1]">
+      <a className="text-gray-900 dark:text-gray-200" href="/dashboard">
         {globalSetting?.logo ? (
           <img
             src={globalSetting?.logo}
@@ -92,7 +93,13 @@ const SidebarContent = () => {
       </a>
       <ul className="mt-8">
         {updatedSidebar?.map((route) =>
-          route.routes ? (
+          route.type === "title" ? (
+            <li className="px-6 py-3 mt-4" key={route.name}>
+              <span className="text-[11px] font-bold tracking-[0.05em] text-gray-500 dark:text-gray-400 uppercase">
+                {t(route.name)}
+              </span>
+            </li>
+          ) : route.routes ? (
             <SidebarSubMenu route={route} key={route.name} />
           ) : (
             <li className="relative" key={route.name}>
@@ -100,8 +107,8 @@ const SidebarContent = () => {
                 exact
                 to={route.path}
                 target={`${route?.outside ? "_blank" : "_self"}`}
-                className="px-6 py-4 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-store-700 dark:hover:text-gray-200"
-                activeClassName="text-store-700"
+                className="px-6 py-4 inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-emerald-500 dark:hover:text-white"
+                activeClassName="text-emerald-500 dark:text-white"
                 rel="noreferrer"
               >
                 <route.icon className="w-5 h-5" aria-hidden="true" />
@@ -111,7 +118,7 @@ const SidebarContent = () => {
           )
         )}
       </ul>
-      <span className="lg:fixed bottom-0 px-6 py-6 w-64 mx-auto relative mt-3 block">
+      <span className="px-4 py-4 block mt-4">
         <Button onClick={handleLogOut} size="large" className="w-full">
           <span className="flex items-center">
             <IoLogOutOutline className="mr-3 text-lg" />

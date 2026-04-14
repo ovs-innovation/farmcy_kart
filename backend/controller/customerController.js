@@ -936,8 +936,12 @@ const getAllCustomers = async (req, res) => {
 // Get only wholesalers
 const getAllWholesalers = async (req, res) => {
   try {
-    const { searchText = "" } = req.query;
+    const { searchText = "", wholesalerStatus = "" } = req.query;
     let query = { role: "wholesaler" };
+
+    if (wholesalerStatus) {
+      query.wholesalerStatus = wholesalerStatus;
+    }
 
     if (searchText) {
       query.$or = [

@@ -10,7 +10,8 @@ const SelectLanguage = ({ handleLanguageChange }) => {
     <ul className="dropdown-content w-full">
       {!langError &&
         !langLoading &&
-        languages?.map((lang) => (
+        Array.isArray(languages) &&
+        languages.map((lang) => (
           <li
             className="cursor-pointer flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-md"
             onClick={() => handleLanguageChange(lang)}

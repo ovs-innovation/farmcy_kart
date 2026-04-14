@@ -67,6 +67,8 @@ const ProductDrawer = ({ id }) => {
     variants,
     imageUrl,
     setImageUrl,
+    thumbnailUrl,
+    setThumbnailUrl,
     handleSubmit,
     isCombination,
     variantTitle,
@@ -1113,7 +1115,7 @@ const ProductDrawer = ({ id }) => {
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
               <div>
                 <label className="text-sm font-medium mb-1 block">
                   Original Price
@@ -1129,7 +1131,22 @@ const ProductDrawer = ({ id }) => {
               </div>
               <div>
                 <label className="text-sm font-medium mb-1 block">
-                  Discount
+                  Discount Type
+                </label>
+                <select
+                  className="block w-full rounded-md border border-gray-200 focus:border-store-500 focus:ring-0 text-sm h-10"
+                  value={variantEditForm.discountType || "flat"}
+                  onChange={(e) =>
+                    handleVariantFormChange("discountType", e.target.value)
+                  }
+                >
+                  <option value="flat">Flat (₹)</option>
+                  <option value="percentage">Percentage (%)</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1 block">
+                  Discount {variantEditForm.discountType === "percentage" ? "(%)" : "(₹)"}
                 </label>
                 <Input
                   type="number"
@@ -1146,20 +1163,22 @@ const ProductDrawer = ({ id }) => {
                 </label>
                 <div className="block w-full rounded-md border border-gray-200 bg-gray-100 px-3 py-2 text-sm text-gray-600 h-10 flex items-center">
                   {currency}
-                  {Math.max(0, (Number(variantEditForm.originalPrice || 0) - (Number(variantEditForm.originalPrice || 0) * Number(variantEditForm.discount || 0) / 100))).toFixed(2)}
+                  {variantEditForm.discountType === "percentage"
+                    ? (Math.max(0, (Number(variantEditForm.originalPrice || 0) - (Number(variantEditForm.originalPrice || 0) * Number(variantEditForm.discount || 0) / 100)))).toFixed(2)
+                    : (Math.max(0, (Number(variantEditForm.originalPrice || 0) - Number(variantEditForm.discount || 0)))).toFixed(2)}
                 </div>
               </div>
               <div>
-              <label className="text-sm font-medium mb-1 block">Quantity</label>
-              <Input
-                type="number"
-                value={variantEditForm.quantity}
-                onChange={(e) =>
-                  handleVariantFormChange("quantity", e.target.value)
-                }
-                placeholder="0"
-              />
-            </div>
+                <label className="text-sm font-medium mb-1 block">Quantity</label>
+                <Input
+                  type="number"
+                  value={variantEditForm.quantity}
+                  onChange={(e) =>
+                    handleVariantFormChange("quantity", e.target.value)
+                  }
+                  placeholder="0"
+                />
+              </div>
             </div>
             
           </div>
@@ -1909,6 +1928,19 @@ const ProductDrawer = ({ id }) => {
                 </div>
               </div>
 
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label="Thumbnail Image" />
+                <div className="col-span-8 sm:col-span-4">
+                  <Uploader
+                    product={false}
+                    folder="product"
+                    imageUrl={thumbnailUrl}
+                    setImageUrl={setThumbnailUrl}
+                    useOriginalSize={true} 
+                  />
+                </div>
+              </div>
+
               {/* Product video URL (stored inside images array) */}
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
                 <LabelArea label="Product Video URL" />
@@ -2110,7 +2142,20 @@ const ProductDrawer = ({ id }) => {
               </div>
 
               <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                <LabelArea label="Discount" />
+                <LabelArea label="Discount Type" />
+                <div className="col-span-8 sm:col-span-4">
+                  <select
+                    {...register("discountType")}
+                    className="block w-full rounded-md border border-gray-200 focus:border-store-500 focus:ring-0 text-sm h-12"
+                  >
+                    <option value="flat">Flat (₹)</option>
+                    <option value="percentage">Percentage (%)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+                <LabelArea label={`Discount ${watch("discountType") === "percentage" ? "(%)" : "(₹)"}`} />
                 <div className="col-span-8 sm:col-span-4">
                   <InputValue
                     disabled={isCombination}
@@ -2133,7 +2178,9 @@ const ProductDrawer = ({ id }) => {
                 <div className="col-span-8 sm:col-span-4">
                    <div className="block w-full rounded-md border border-gray-200 bg-gray-50 px-3 py-3 text-sm text-gray-600 font-semibold">
                       {currency}
-                      {Math.max(0, (Number(watch("originalPrice") || 0) - (Number(watch("originalPrice") || 0) * Number(watch("discount") || 0) / 100))).toFixed(2)}
+                      {watch("discountType") === "percentage"
+                        ? (Math.max(0, (Number(watch("originalPrice") || 0) - (Number(watch("originalPrice") || 0) * Number(watch("discount") || 0) / 100)))).toFixed(2)
+                        : (Math.max(0, (Number(watch("originalPrice") || 0) - Number(watch("discount") || 0)))).toFixed(2)}
                    </div>
                 </div>
               </div>

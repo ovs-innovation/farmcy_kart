@@ -1,8 +1,12 @@
 import React from "react";
 import { TableCell, TableBody, TableRow } from "@windmill/react-ui";
 
+import { FiZoomIn } from "react-icons/fi";
+import { Link } from "react-router-dom";
+
 //internal import
 import Status from "@/components/table/Status";
+import Tooltip from "@/components/tooltip/Tooltip";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 import SelectStatus from "@/components/form/selectOption/SelectStatus";
 
@@ -50,8 +54,13 @@ const CustomerOrderTable = ({ orders }) => {
             <TableCell className="text-center">
               <Status status={order.status} />
             </TableCell>
-            <TableCell className="text-right">
+            <TableCell className="text-right flex justify-end items-center gap-4">
               <SelectStatus id={order._id} order={order} />
+              <Link to={`/order/${order._id}`} className="text-teal-600 hover:text-teal-800 transition-colors p-2 bg-teal-50 dark:bg-teal-900/10 rounded-lg shadow-sm">
+                <Tooltip id="view" title="View Invoice">
+                  <FiZoomIn size={18} />
+                </Tooltip>
+              </Link>
             </TableCell>
           </TableRow>
         ))}

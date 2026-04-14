@@ -248,6 +248,11 @@ const productSchema = new mongoose.Schema(
       default: "show",
       enum: ["show", "hide"],
     },
+    
+    suitableFor: {
+      type: [String],
+      default: [],
+    },
 
     // New structured sections
     productDescription: { type: paragraphSectionSchema, default: {} },

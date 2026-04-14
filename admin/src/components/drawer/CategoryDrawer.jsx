@@ -76,13 +76,17 @@ const CategoryDrawer = ({ id, data }) => {
     return myCategories;
   };
 
-  const findObject = (obj, target) => {
-    return obj._id === target
-      ? obj
-      : obj?.children?.reduce(
-          (acc, obj) => acc ?? findObject(obj, target),
-          undefined
-        );
+  const findObject = (categories, target) => {
+    if (!categories || !Array.isArray(categories)) return undefined;
+
+    for (const category of categories) {
+      if (category._id === target) return category;
+      if (category.children && category.children.length > 0) {
+        const found = findObject(category.children, target);
+        if (found) return found;
+      }
+    }
+    return undefined;
   };
 
   const handleSelect = async (key) => {
@@ -99,8 +103,7 @@ const CategoryDrawer = ({ id, data }) => {
         if (key === undefined) return;
         setChecked(key);
 
-        const obj = data[0];
-        const result = findObject(obj, key);
+        const result = findObject(data, key);
 
         setSelectCategoryName(showingTranslateValue(result?.name));
       }
@@ -108,8 +111,7 @@ const CategoryDrawer = ({ id, data }) => {
       if (key === undefined) return;
       setChecked(key);
 
-      const obj = data[0];
-      const result = findObject(obj, key);
+      const result = findObject(data, key);
 
       setSelectCategoryName(showingTranslateValue(result?.name));
     }
@@ -203,6 +205,7 @@ const CategoryDrawer = ({ id, data }) => {
                   setImageUrl={setImageUrl}
                   folder="category"
                   useOriginalSize={true}
+                  product={true}
                 />
               </div>
             </div>

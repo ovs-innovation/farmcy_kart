@@ -75,18 +75,36 @@ const Prescriptions = () => {
             className="py-3 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex"
           >
             <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
-              <Input
-                ref={userRef}
-                type="search"
-                name="search"
-                placeholder="Search by Customer Name/Email/Phone"
-              />
-              <button
-                type="submit"
-                className="absolute right-0 top-0 mt-5 mr-1"
-              ></button>
+              <div className="relative">
+                <input
+                  ref={userRef}
+                  type="search"
+                  name="search"
+                  placeholder="Search anything..."
+                  className="w-full h-14 pl-6 pr-12 rounded-3xl bg-[#f8fafc] dark:bg-gray-800 border border-[#d9e3ea] dark:border-gray-700 text-lg text-gray-500 dark:text-gray-200 placeholder:text-[#94a3b8] outline-none focus:ring-2 focus:ring-cyan-400/20 focus:border-cyan-400 transition-all"
+                />
+                <button
+                  type="submit"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-cyan-500"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-7 h-7"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
-            <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
+            <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow ">
               <Select
                 onChange={(e) => setStatus(e.target.value)}
                 className="h-12"

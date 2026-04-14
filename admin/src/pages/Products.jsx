@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { FiPlus } from "react-icons/fi";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { useHistory } from "react-router-dom";
 
 //internal import
 
@@ -42,6 +43,7 @@ const Products = () => {
     useToggleDrawer();
 
   const { t } = useTranslation();
+  const history = useHistory();
   const {
     toggleDrawer,
     lang,
@@ -161,7 +163,7 @@ const Products = () => {
                 </div>
                 <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
                   <Button
-                    onClick={toggleDrawer}
+                    onClick={() => history.push('/products/add')}
                     className="w-full rounded-md h-12"
                   >
                     <span className="mr-2">

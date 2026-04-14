@@ -11,7 +11,7 @@ import {
   TableHeader,
 } from "@windmill/react-ui";
 import { useContext, useState } from "react";
-import { FiEdit, FiPlus, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiPlus, FiSearch, FiTrash2 } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 
 //internal import
@@ -31,17 +31,37 @@ import CouponTable from "@/components/coupon/CouponTable";
 import NotFound from "@/components/table/NotFound";
 import UploadMany from "@/components/common/UploadMany";
 import AnimatedContent from "@/components/common/AnimatedContent";
+import AddCouponForm from "@/components/coupon/AddCouponForm";
+import useCouponSubmit from "@/hooks/useCouponSubmit";
+import { FiDownload } from "react-icons/fi";
 
 const Coupons = () => {
   const { t } = useTranslation();
   const { toggleDrawer, lang } = useContext(SidebarContext);
   const { data, loading, error } = useAsync(CouponServices.getAllCoupons);
-  // console.log('data',data)
   const [isCheckAll, setIsCheckAll] = useState(false);
   const [isCheck, setIsCheck] = useState([]);
 
   const { allId, serviceId, handleDeleteMany, handleUpdateMany } =
     useToggleDrawer();
+
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
+    setImageUrl,
+    imageUrl,
+    published,
+    setPublished,
+    currency,
+    discountType,
+    setDiscountType,
+    isSubmitting,
+    handleSelectLanguage,
+    setValue,
+    reset,
+  } = useCouponSubmit(serviceId);
 
   const {
     filename,
@@ -88,13 +108,62 @@ const Coupons = () => {
       </MainDrawer>
 
       <AnimatedContent>
-        <Card className="min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5">
-          <CardBody>
-            <form
-              onSubmit={handleSubmitCoupon}
-              className="py-3 grid gap-4 lg:gap-6 xl:gap-6  xl:flex"
-            >
-              <div className="flex justify-start xl:w-1/2  md:w-full">
+        {/* Add Coupon Form Section */}
+        <AddCouponForm
+          register={register}
+          handleSubmit={handleSubmit}
+          onSubmit={onSubmit}
+          errors={errors}
+          setImageUrl={setImageUrl}
+          imageUrl={imageUrl}
+          published={published}
+          setPublished={setPublished}
+          currency={currency}
+          discountType={discountType}
+          setDiscountType={setDiscountType}
+          isSubmitting={isSubmitting}
+          handleSelectLanguage={handleSelectLanguage}
+          setValue={setValue}
+          reset={reset}
+          id={serviceId}
+        />
+
+        {/* Search and Export Section */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold">Coupon List</h3>
+              <span className="bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded text-sm text-gray-500 font-medium">
+                {totalResults}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+              <div className="relative w-full max-w-md">
+                <Input
+                  type="text"
+                  placeholder="Search by invoice or name..."
+                  className="w-full h-12 pl-5 pr-14 rounded-full border border-gray-300 bg-white text-sm placeholder-gray-400 focus:border-teal-400 focus:ring-0"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-1 flex items-center text-[#8fc3c9] hover:text-teal-600"
+                >
+                  <FiSearch className="text-2xl" />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={() => handleUpdateMany(isCheck)}
+                  disabled={isCheck.length < 1}
+                  layout="outline"
+                  className="h-10 px-4 border-gray-200 text-gray-600 flex items-center gap-2"
+                >
+                  <FiDownload className="text-sm" />
+                  Bulk Action
+                </Button>
+
                 <UploadMany
                   title="Coupon"
                   exportData={data}
@@ -105,96 +174,19 @@ const Coupons = () => {
                   handleRemoveSelectFile={handleRemoveSelectFile}
                 />
               </div>
-
-              <div className="lg:flex  md:flex xl:justify-end xl:w-1/2  md:w-full md:justify-start flex-grow-0">
-                <div className="w-full md:w-40 lg:w-40 xl:w-40 mr-3 mb-3 lg:mb-0">
-                  <Button
-                    disabled={isCheck.length < 1}
-                    onClick={() => handleUpdateMany(isCheck)}
-                    className="w-full rounded-md h-12 btn-gray text-gray-600"
-                  >
-                    <span className="mr-2">
-                      <FiEdit />
-                    </span>
-                    {t("BulkAction")}
-                  </Button>
-                </div>
-
-                <div className="w-full md:w-32 lg:w-32 xl:w-32 mr-3 mb-3 lg:mb-0">
-                  <Button
-                    disabled={isCheck.length < 1}
-                    onClick={() => handleDeleteMany(isCheck)}
-                    className="w-full rounded-md h-12 bg-red-500 btn-red"
-                  >
-                    <span className="mr-2">
-                      <FiTrash2 />
-                    </span>
-
-                    {t("Delete")}
-                  </Button>
-                </div>
-
-                <div className="w-full md:w-48 lg:w-48 xl:w-48">
-                  <Button
-                    onClick={toggleDrawer}
-                    className="w-full rounded-md h-12"
-                  >
-                    <span className="mr-2">
-                      <FiPlus />
-                    </span>
-                    {t("AddCouponsBtn")}
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </CardBody>
-        </Card>
-
-        <Card className="min-w-0 shadow-xs overflow-hidden bg-white dark:bg-gray-800 mb-5">
-          <CardBody>
-            <form
-              onSubmit={handleSubmitCoupon}
-              className="py-3 grid gap-4 lg:gap-6 xl:gap-6 md:flex xl:flex"
-            >
-              <div className="flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
-                <Input
-                  ref={couponRef}
-                  type="search"
-                  placeholder={t("SearchCoupon")}
-                />
-              </div>
-              <div className="flex items-center gap-2 flex-grow-0 md:flex-grow lg:flex-grow xl:flex-grow">
-                <div className="w-full mx-1">
-                  <Button type="submit" className="h-12 w-full bg-store-700">
-                    Filter
-                  </Button>
-                </div>
-
-                <div className="w-full mx-1">
-                  <Button
-                    layout="outline"
-                    onClick={handleResetField}
-                    type="reset"
-                    className="px-4 md:py-1 py-2 h-12 text-sm dark:bg-gray-700"
-                  >
-                    <span className="text-black dark:text-gray-200">Reset</span>
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </CardBody>
-        </Card>
+            </div>
+          </div>
+        </div>
       </AnimatedContent>
 
       {loading ? (
-        // <Loading loading={loading} />
         <TableLoading row={12} col={8} width={140} height={20} />
       ) : error ? (
         <span className="text-center mx-auto text-red-500">{error}</span>
       ) : serviceData?.length !== 0 ? (
-        <TableContainer className="mb-8">
+        <TableContainer className="mb-8 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <TableCell>
                   <CheckBox
@@ -205,19 +197,19 @@ const Coupons = () => {
                     isChecked={isCheckAll}
                   />
                 </TableCell>
-                <TableCell>{t("CoupTblCampaignsName")}</TableCell>
-                <TableCell>{t("CoupTblCode")}</TableCell>
-                <TableCell>{t("Discount")}</TableCell>
-
-                <TableCell className="text-center">
-                  {t("catPublishedTbl")}
-                </TableCell>
-                <TableCell>{t("CoupTblStartDate")}</TableCell>
-                <TableCell>{t("CoupTblEndDate")}</TableCell>
-                <TableCell>{t("CoupTblStatus")}</TableCell>
-                <TableCell className="text-right">
-                  {t("CoupTblActions")}
-                </TableCell>
+                <TableCell>SI</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Code</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Total Uses</TableCell>
+                <TableCell>Min Purchase</TableCell>
+                <TableCell>Max Discount</TableCell>
+                <TableCell>Discount</TableCell>
+                <TableCell>Discount Type</TableCell>
+                <TableCell>Start Date</TableCell>
+                <TableCell>Expire Date</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell className="text-right">Action</TableCell>
               </tr>
             </TableHeader>
             <CouponTable

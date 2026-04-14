@@ -29,6 +29,10 @@ const CategoryServices = {
     return requests.put(`/category/status/${id}`, body);
   },
 
+  updateFeatured: async (id, body) => {
+    return requests.put(`/category/featured/${id}`, body);
+  },
+
   deleteCategory: async (id, body) => {
     return requests.delete(`/category/${id}`, body);
   },

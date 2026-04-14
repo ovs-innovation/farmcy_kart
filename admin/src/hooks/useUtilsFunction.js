@@ -90,7 +90,7 @@ const useUtilsFunction = () => {
     showDateFormat,
     showingImage,
     showingUrl,
-    languages,
+    languages: Array.isArray(languages) ? languages : [],
     globalSetting,
     showDateTimeFormat,
     showingTranslateValue,

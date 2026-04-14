@@ -1,5 +1,6 @@
 import React, { useContext, Suspense, useEffect, lazy } from "react";
 import { Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { FiCheck, FiAlertCircle, FiMessageSquare } from "react-icons/fi";
 
 //internal import
 import Main from "@/layout/Main";
@@ -13,7 +14,7 @@ import { getPalette } from "@/utils/themeColors";
 const Page404 = lazy(() => import("@/pages/404"));
 
 const Layout = () => {
-  const { isSidebarOpen, closeSidebar, navBar } = useContext(SidebarContext);
+  const { isSidebarOpen, closeSidebar, navBar, alert, showAlert } = useContext(SidebarContext);
   let location = useLocation();
 
   const isOnline = navigator.onLine;
@@ -49,9 +50,8 @@ const Layout = () => {
         </div>
       )}
       <div
-        className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${
-          isSidebarOpen && "overflow-hidden"
-        }`}
+        className={`flex h-screen bg-gray-50 dark:bg-gray-900 ${isSidebarOpen && "overflow-hidden"
+          }`}
       >
         {navBar && <Sidebar />}
 
@@ -77,7 +77,25 @@ const Layout = () => {
           </Main>
         </div>
       </div>
+      <GlobalAlert />
     </>
+  );
+};
+
+const GlobalAlert = () => {
+  const { alert } = useContext(SidebarContext);
+  if (!alert.show) return null;
+
+  return (
+    <div className={`fixed top-6 left-1/2 -translate-x-1/2 z-[9999] max-w-md w-[calc(100%-2rem)] sm:w-max px-6 py-4 rounded-2xl shadow-[0_25px_50px_-12px_rgba(0,0,0,0.3)] flex items-center gap-4 border backdrop-blur-2xl animate-in fade-in slide-in-from-top-full duration-700 ${alert.type === 'success' ? 'bg-emerald-600/90 border-emerald-400/30 text-white' : 'bg-red-600/90 border-red-400/30 text-white'}`}>
+      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg ${alert.type === 'success' ? 'bg-emerald-400/30' : 'bg-red-400/30'}`}>
+         {alert.type === 'success' ? <FiCheck size={20} className="text-white" /> : <FiAlertCircle size={20} className="text-white" />}
+      </div>
+      <div className="flex flex-col pr-4">
+         <span className="text-[10px] font-black uppercase tracking-[0.2em] opacity-60 mb-0.5">{alert.type === 'success' ? 'System Confirmed' : 'System Alert'}</span>
+         <p className="text-[14px] font-bold leading-tight">{alert.message}</p>
+      </div>
+    </div>
   );
 };
 

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { t } from "i18next";
 import axios from "axios";
 import { useDropzone } from "react-dropzone";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { FiUploadCloud, FiXCircle } from "react-icons/fi";
+import { FiUploadCloud, FiXCircle, FiSearch, FiAlertCircle } from "react-icons/fi";
 import Pica from "pica";
 
 // Internal imports
 import useUtilsFunction from "@/hooks/useUtilsFunction";
-import { notifyError, notifySuccess } from "@/utils/toast";
 import Container from "@/components/image-uploader/Container";
+import { FiCheck } from "react-icons/fi";
 
 const Uploader = ({
   setImageUrl,
@@ -21,7 +22,7 @@ const Uploader = ({
   targetHeight = 800, // Set default fixed height
   useOriginalSize = false,
   accept,
-  maxSize = 5242880,
+  maxSize = 20971520,
   uniquePublicId = false,
   onUploadComplete,
   onRemove,
@@ -31,6 +32,14 @@ const Uploader = ({
   const [err, setError] = useState("");
   const pica = Pica(); // Initialize Pica instance
   const { globalSetting } = useUtilsFunction();
+
+  // Notification State
+  const [alert, setAlert] = useState({ show: false, message: "", type: "success" });
+
+  const showAlert = (msg, type = "success") => {
+    setAlert({ show: true, message: msg, type: type });
+    setTimeout(() => setAlert({ show: false, message: "", type: "success" }), 3500);
+  };
 
   const { getRootProps, getInputProps, fileRejections } = useDropzone({
     accept:
@@ -98,10 +107,10 @@ const Uploader = ({
             {errors.map((e) => (
               <li key={e.code}>
                 {e.code === "too-many-files"
-                  ? notifyError(
-                      `Maximum ${globalSetting?.number_of_image_per_product} Image Can be Upload!`
+                  ? showAlert(
+                      `Maximum ${globalSetting?.number_of_image_per_product} Image Can be Upload!`, "error"
                     )
-                  : notifyError(e.message)}
+                  : showAlert(e.message, "error")}
               </li>
             ))}
           </ul>
@@ -116,8 +125,8 @@ const Uploader = ({
           imageUrl?.length + files?.length >
             globalSetting?.number_of_image_per_product
         ) {
-          return notifyError(
-            `Maximum ${globalSetting?.number_of_image_per_product} Image Can be Upload!`
+          return showAlert(
+            `Maximum ${globalSetting?.number_of_image_per_product} Image Can be Upload!`, "error"
           );
         }
 
@@ -150,7 +159,7 @@ const Uploader = ({
           data: formData,
         })
           .then((res) => {
-            notifySuccess("Image Uploaded successfully!");
+            showAlert("Image Uploaded successfully!", "success");
             setLoading(false);
             if (typeof onUploadComplete === "function") {
               onUploadComplete(res.data);
@@ -163,7 +172,7 @@ const Uploader = ({
           })
           .catch((err) => {
             console.error("err", err);
-            notifyError(err.Message);
+            showAlert(err.Message || "Error uploading image", "error");
             setLoading(false);
           });
       });
@@ -189,22 +198,26 @@ const Uploader = ({
     [files]
   );
 
-  const handleRemoveImage = async (img) => {
+  const handleRemoveImage = async (img, idx) => {
     try {
       setLoading(false);
-      notifyError("Image delete successfully!");
+      showAlert("Image deleted successfully!", "success");
       if (typeof onRemove === "function") {
         await onRemove(img);
       }
       if (product) {
-        const result = imageUrl?.filter((i) => i !== img);
-        setImageUrl(result);
+        setImageUrl((prev) => {
+          if (idx !== undefined && typeof idx === 'number') {
+            return prev.filter((_, i) => i !== idx);
+          }
+          return prev?.filter((i) => i !== img) || [];
+        });
       } else {
         setImageUrl("");
       }
     } catch (err) {
       console.error("err", err);
-      notifyError(err.Message);
+      showAlert(err.Message || "Error deleting image", "error");
       setLoading(false);
     }
   };
@@ -266,6 +279,20 @@ const Uploader = ({
           thumbs
         )}
       </aside>
+
+      {/* Custom Professional Notification Banner */}
+      {alert.show && createPortal(
+        <div className={`fixed top-12 left-1/2 -translate-x-1/2 z-[9999] max-w-sm w-full px-6 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center gap-4 border backdrop-blur-md animate-in slide-in-from-top-10 duration-500 ${alert.type === 'success' ? 'bg-teal-600/95 border-teal-500 text-white' : 'bg-red-600/95 border-red-500 text-white'}`}>
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+             {alert.type === 'success' ? <FiCheck size={20} /> : <FiAlertCircle size={20} />}
+          </div>
+          <div className="flex-1 text-left">
+             <p className="font-extrabold text-[15px]">{alert.type === 'success' ? 'Success ✓' : 'Action Required'}</p>
+             <p className="text-[13px] opacity-90 font-medium">{alert.message}</p>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 };

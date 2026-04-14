@@ -24,8 +24,12 @@ const AdminServices = {
   addStaff: async (body) => {
     return requests.post("/admin/add", body);
   },
-  getAllStaff: async (body) => {
-    return requests.get("/admin", body);
+  getAllStaff: async (params = {}) => {
+    const { searchText, role } = params;
+    const query = new URLSearchParams();
+    if (searchText) query.append("searchText", searchText);
+    if (role) query.append("role", role);
+    return requests.get(`/admin?${query.toString()}`);
   },
   getStaffById: async (id, body) => {
     return requests.post(`/admin/${id}`, body);

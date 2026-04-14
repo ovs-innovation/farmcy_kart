@@ -30,11 +30,24 @@ const categorySchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    images: {
+      type: [String],
+      required: false,
+    },
     status: {
       type: String,
       lowercase: true,
       enum: ['show', 'hide'],
       default: 'show',
+    },
+    featured: {
+      type: Boolean,
+      default: false,
+    },
+    priority: {
+      type: String,
+      enum: ['Normal', 'Medium', 'High', 'Low'],
+      default: 'Normal',
     },
   },
   {

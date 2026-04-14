@@ -9,7 +9,7 @@ import {
 } from "@windmill/react-ui";
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router";
+import { useParams, useHistory } from "react-router-dom";
 //internal import
 
 import useAsync from "@/hooks/useAsync";
@@ -24,9 +24,12 @@ import ProductDrawer from "@/components/drawer/ProductDrawer";
 import Loading from "@/components/preloader/Loading";
 import PageTitle from "@/components/Typography/PageTitle";
 import { SidebarContext } from "@/context/SidebarContext";
+import { FiArrowLeft } from "react-icons/fi";
+import { Button } from "@windmill/react-ui";
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const history = useHistory();
   const { t } = useTranslation();
   const { handleUpdate } = useToggleDrawer();
   const { attribue } = useProductSubmit(id);
@@ -83,6 +86,17 @@ const ProductDetails = () => {
       <MainDrawer product>
         <ProductDrawer id={id} />
       </MainDrawer>
+
+      <div className="flex items-center gap-2 mb-4 mt-2">
+        <Button
+          layout="link"
+          onClick={() => history.goBack()}
+          className="p-0 text-store-500 hover:text-store-600 h-auto"
+        >
+          <FiArrowLeft className="w-5 h-5 mr-1" />
+          <span className="text-sm font-bold uppercase tracking-wider">{t("Back")}</span>
+        </Button>
+      </div>
 
       <PageTitle>{t("ProductDetails")}</PageTitle>
       {loading ? (

@@ -1,6 +1,16 @@
 import { useTranslation } from "react-i18next";
+import { 
+  FiSettings, 
+  FiCreditCard, 
+  FiLogIn, 
+  FiActivity, 
+  FiMessageSquare,
+  FiSave,
+  FiInfo,
+  FiCheck
+} from "react-icons/fi";
 
-//internal import
+// internal import
 import Label from "@/components/form/label/Label";
 import Error from "@/components/form/others/Error";
 import PageTitle from "@/components/Typography/PageTitle";
@@ -8,7 +18,7 @@ import InputAreaTwo from "@/components/form/input/InputAreaTwo";
 import SwitchToggle from "@/components/form/switch/SwitchToggle";
 import useStoreSettingSubmit from "@/hooks/useStoreSettingSubmit";
 import AnimatedContent from "@/components/common/AnimatedContent";
-import SettingContainer from "@/components/settings/SettingContainer";
+import spinnerLoadingImage from "@/assets/img/spinner.gif";
 
 const StoreSetting = () => {
   const { t } = useTranslation();
@@ -51,476 +61,353 @@ const StoreSetting = () => {
     } else {
       setEnabledCOD(!enabledCOD);
     }
-    // console.log("value", checked, "event", event.target.value, "id", id);
   };
 
   return (
     <>
-      <PageTitle>{t("StoreSetting")}</PageTitle>
+      <div className="flex justify-between items-center mb-6">
+        <PageTitle>{t("StoreSetting")}</PageTitle>
+        <button
+          onClick={handleSubmit(onSubmit)}
+          disabled={isSubmitting}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-emerald-200 transition-all flex items-center gap-2 group disabled:opacity-50"
+        >
+          {isSubmitting ? (
+            <img src={spinnerLoadingImage} alt="Loading" className="w-5 h-5 animate-spin" />
+          ) : (
+            <FiSave className="group-hover:scale-110 transition-transform" />
+          )}
+          {isSave ? t("SaveBtn") : t("UpdateBtn")}
+        </button>
+      </div>
+
       <AnimatedContent>
-        <div className="sm:container w-full md:p-6 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <SettingContainer
-              isSave={isSave}
-              title={t("StoreDetails")}
-              isSubmitting={isSubmitting}
-            >
-              <div className="flex-grow scrollbar-hide w-full max-h-full">
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("EnableCOD")} <br />
-                    <span className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                      (This is enabled by default)
-                    </span>
-                  </label>
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="cod"
-                      processOption={enabledCOD}
-                      handleProcess={handleEnableDisableMethod}
-                    />
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label={t("EnableStripe")} />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="stripe"
-                      processOption={enabledStripe}
-                      handleProcess={handleEnableDisableMethod}
-                    />
-                  </div>
-                </div>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-12">
+          
+          {/* Payment Configuration */}
+          <SectionCard 
+            icon={<FiCreditCard className="text-emerald-500" />}
+            title="Payment Configuration"
+            description="Manage your store's payment gateways and transaction methods."
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+              <ToggleCard 
+                label={t("EnableCOD")}
+                info="(This is enabled by default)"
+                checked={enabledCOD}
+                onChange={(checked) => handleEnableDisableMethod(checked, null, "cod")}
+              />
+              <ToggleCard 
+                label={t("EnableStripe")}
+                checked={enabledStripe}
+                onChange={(checked) => handleEnableDisableMethod(checked, null, "stripe")}
+              />
+              <ToggleCard 
+                label="Enable RazorPay"
+                checked={enabledRazorPay}
+                onChange={setEnabledRazorPay}
+              />
+            </div>
 
-                <div
-                  style={{
-                    height: enabledStripe ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledStripe ? "hidden" : "visible",
-                    opacity: !enabledStripe ? "0" : "1",
-                  }}
-                  className={`${enabledStripe ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
+            {/* Stripe Credentials */}
+            {enabledStripe && (
+              <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4 mb-6 animate-fadeIn">
+                <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  <FiCheck className="text-emerald-500" /> Stripe API Credentials
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
                     <Label label={t("StripeKey")} />
-                    <div className="sm:col-span-4">
-                      <InputAreaTwo
-                        required={enabledStripe}
-                        register={register}
-                        label={t("StripeKey")}
-                        name="stripe_key"
-                        type="password"
-                        placeholder={t("StripeKey")}
-                      />
-                      <Error errorName={errors.stripe_key} />
-                    </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label={t("StripeSecret")} />
-                    <div className="sm:col-span-4">
-                      <InputAreaTwo
-                        required={enabledStripe}
-                        register={register}
-                        label={t("StripeSecret")}
-                        name="stripe_secret"
-                        type="password"
-                        placeholder={t("StripeSecret")}
-                      />
-                      <Error errorName={errors.stripe_secret} />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label="Enable RazorPay" />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="razorpay"
-                      processOption={enabledRazorPay}
-                      handleProcess={setEnabledRazorPay}
-                    />
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    height: enabledRazorPay ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledRazorPay ? "hidden" : "visible",
-                    opacity: !enabledRazorPay ? "0" : "1",
-                  }}
-                  className={`${enabledRazorPay ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <Label label="RazorPay ID" />
-                    <div className="sm:col-span-4">
-                      <InputAreaTwo
-                        required={enabledRazorPay}
-                        register={register}
-                        label="RazorPay ID"
-                        name="razorpay_id"
-                        type="password"
-                        placeholder="RazorPay ID"
-                      />
-                      <Error errorName={errors.razorpay_id} />
-                    </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label="RazorPay Secret" />
-                    <div className="sm:col-span-4">
-                      <InputAreaTwo
-                        required={enabledRazorPay}
-                        register={register}
-                        label="RazorPay Secret"
-                        name="razorpay_secret"
-                        type="password"
-                        placeholder="RazorPay Secret"
-                      />
-                      <Error errorName={errors.razorpay_secret} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Next api base Url/backend url */}
-
-                {/* <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    Next Api Base URL <br />
-                    <span className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                      (This is required for access to db)
-                    </span>
-                  </label>
-                  <div className="sm:col-span-4">
                     <InputAreaTwo
-                      pattern={{
-                        value: "/^(https?|chrome)://[^s$.?#].[^s]*$/gm",
-                        message: "Invalid url format",
-                      }}
-                      required={true}
+                      required={enabledStripe}
                       register={register}
-                      label="Next Api Base URL"
-                      name="next_api_base_url"
-                      type="text"
-                      placeholder="Next Api Base URL(You backend live url)"
-                    />
-                    <Error errorName={errors.next_api_base_url} />
-                  </div>
-                </div> */}
-
-                {/* next auth secret */}
-                {/* <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    Next Auth Secret <br />
-                    <span className="text-xs font-normal text-gray-600 dark:text-gray-400">
-                      (This is required for login or sign up)
-                    </span>
-                  </label>
-                  <div className="sm:col-span-4">
-                    <InputAreaTwo
-                      required={true}
-                      register={register}
-                      label="Next Auth Secret"
-                      name="nextauth_secret"
+                      name="stripe_key"
                       type="password"
-                      placeholder="Next Auth Secret(Just add a random value with -base64 32)"
+                      placeholder="Enter your Stripe Publishable Key"
                     />
-                    <Error errorName={errors.nextauth_secret} />
+                    <Error errorName={errors.stripe_key} />
                   </div>
-                </div> */}
-
-                {/* Google key section */}
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label={t("EnableGoogleLogin")} />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="google_login"
-                      processOption={enabledGoogleLogin}
-                      handleProcess={setEnabledGoogleLogin}
+                  <div>
+                    <Label label={t("StripeSecret")} />
+                    <InputAreaTwo
+                      required={enabledStripe}
+                      register={register}
+                      name="stripe_secret"
+                      type="password"
+                      placeholder="Enter your Stripe Secret Key"
                     />
+                    <Error errorName={errors.stripe_secret} />
                   </div>
                 </div>
-                <div
-                  style={{
-                    height: enabledGoogleLogin ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledGoogleLogin ? "hidden" : "visible",
-                    opacity: !enabledGoogleLogin ? "0" : "1",
-                  }}
-                  className={`${enabledGoogleLogin ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <Label label={t("GoogleClientId")} />
-                    <div className="sm:col-span-4">
+              </div>
+            )}
+
+            {/* RazorPay Credentials */}
+            {enabledRazorPay && (
+              <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4 animate-fadeIn">
+                <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                  <FiCheck className="text-emerald-500" /> RazorPay API Credentials
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label label="RazorPay ID" />
+                    <InputAreaTwo
+                      required={enabledRazorPay}
+                      register={register}
+                      name="razorpay_id"
+                      type="password"
+                      placeholder="Enter your RazorPay Key ID"
+                    />
+                    <Error errorName={errors.razorpay_id} />
+                  </div>
+                  <div>
+                    <Label label="RazorPay Secret" />
+                    <InputAreaTwo
+                      required={enabledRazorPay}
+                      register={register}
+                      name="razorpay_secret"
+                      type="password"
+                      placeholder="Enter your RazorPay Key Secret"
+                    />
+                    <Error errorName={errors.razorpay_secret} />
+                  </div>
+                </div>
+              </div>
+            )}
+          </SectionCard>
+
+          {/* Authentication Setup */}
+          <SectionCard 
+            icon={<FiLogIn className="text-blue-500" />}
+            title="Authentication & Social Login"
+            description="Enable social login providers to simplify customer sign-in."
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <ToggleCard 
+                label={t("EnableGoogleLogin")}
+                checked={enabledGoogleLogin}
+                onChange={setEnabledGoogleLogin}
+              />
+              <ToggleCard 
+                label="Enable Github Login"
+                checked={enabledGithubLogin}
+                onChange={setEnabledGithubLogin}
+              />
+              <ToggleCard 
+                label="Enable Facebook Login"
+                checked={enabledFacebookLogin}
+                onChange={setEnabledFacebookLogin}
+              />
+            </div>
+
+            <div className="space-y-6">
+              {enabledGoogleLogin && (
+                <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4 animate-fadeIn">
+                  <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Google OAuth Credentials</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label label={t("GoogleClientId")} />
                       <InputAreaTwo
                         required={enabledGoogleLogin}
                         register={register}
-                        label={t("GoogleClientId")}
                         name="google_id"
                         type="password"
-                        placeholder={t("GoogleClientId")}
+                        placeholder="Google Client ID"
                       />
                       <Error errorName={errors.google_id} />
                     </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label={t("GoogleSecret")} />
-                    <div className="sm:col-span-4">
+                    <div>
+                      <Label label={t("GoogleSecret")} />
                       <InputAreaTwo
                         required={enabledGoogleLogin}
                         register={register}
-                        label={t("GoogleSecret")}
                         name="google_secret"
                         type="password"
-                        placeholder={t("GoogleSecret")}
+                        placeholder="Google Client Secret"
                       />
                       <Error errorName={errors.google_secret} />
                     </div>
                   </div>
                 </div>
+              )}
 
-                {/* Github key section start*/}
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label="Enable Github Login" />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="github_login"
-                      processOption={enabledGithubLogin}
-                      handleProcess={setEnabledGithubLogin}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    height: enabledGithubLogin ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledGithubLogin ? "hidden" : "visible",
-                    opacity: !enabledGithubLogin ? "0" : "1",
-                  }}
-                  className={`${enabledGithubLogin ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <Label label={"Github ID"} />
-                    <div className="sm:col-span-4">
+              {enabledGithubLogin && (
+                <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4 animate-fadeIn">
+                  <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Github OAuth Credentials</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label label="Github ID" />
                       <InputAreaTwo
                         required={enabledGithubLogin}
                         register={register}
-                        label="Github ID"
                         name="github_id"
                         type="password"
-                        placeholder="Github ID"
+                        placeholder="Github Client ID"
                       />
                       <Error errorName={errors.github_id} />
                     </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label="Github Secret" />
-                    <div className="sm:col-span-4">
+                    <div>
+                      <Label label="Github Secret" />
                       <InputAreaTwo
                         required={enabledGithubLogin}
                         register={register}
-                        label="Github Secret"
                         name="github_secret"
                         type="password"
-                        placeholder="Github Secret"
+                        placeholder="Github Client Secret"
                       />
                       <Error errorName={errors.github_secret} />
                     </div>
                   </div>
                 </div>
-                {/* Github key section end*/}
+              )}
 
-                {/* Facebook key section start*/}
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label="Enable Facebook Login" />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="facebook_login"
-                      processOption={enabledFacebookLogin}
-                      handleProcess={setEnabledFacebookLogin}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    height: enabledFacebookLogin ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledFacebookLogin ? "hidden" : "visible",
-                    opacity: !enabledFacebookLogin ? "0" : "1",
-                  }}
-                  className={`${enabledFacebookLogin ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <Label label="Facebook ID" />
-                    <div className="sm:col-span-4">
+              {enabledFacebookLogin && (
+                <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4 animate-fadeIn">
+                  <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">Facebook OAuth Credentials</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label label="Facebook ID" />
                       <InputAreaTwo
                         required={enabledFacebookLogin}
                         register={register}
-                        label="Facebook ID"
                         name="facebook_id"
                         type="password"
-                        placeholder="Facebook ID"
+                        placeholder="Facebook App ID"
                       />
                       <Error errorName={errors.facebook_id} />
                     </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label="Facebook Secret" />
-                    <div className="sm:col-span-4">
+                    <div>
+                      <Label label="Facebook Secret" />
                       <InputAreaTwo
                         required={enabledFacebookLogin}
                         register={register}
-                        label="Facebook Secret"
                         name="facebook_secret"
                         type="password"
-                        placeholder="Facebook Secret"
+                        placeholder="Facebook App Secret"
                       />
                       <Error errorName={errors.facebook_secret} />
                     </div>
                   </div>
                 </div>
+              )}
+            </div>
+          </SectionCard>
 
-                {/* Facebook key section end*/}
-
-                {/* Google Analytics section start */}
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label={t("EnableGoggleAnalytics")} />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="google_analytics"
-                      processOption={enabledGoogleAnalytics}
-                      handleProcess={setEnabledGoogleAnalytics}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    height: enabledGoogleAnalytics ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledGoogleAnalytics ? "hidden" : "visible",
-                    opacity: !enabledGoogleAnalytics ? "0" : "1",
-                  }}
-                  className={`${
-                    enabledGoogleAnalytics
-                      ? "grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6"
-                      : "mb-2"
-                  }`}
-                >
-                  <Label label={t("GoogleAnalyticKey")} />
-                  <div className="sm:col-span-4">
+          {/* Analytics & Chat */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <SectionCard 
+              icon={<FiActivity className="text-purple-500" />}
+              title="Analytics"
+              description="Track store performance and visitor behavior."
+            >
+              <div className="space-y-6">
+                <ToggleCard 
+                  label={t("EnableGoggleAnalytics")}
+                  checked={enabledGoogleAnalytics}
+                  onChange={setEnabledGoogleAnalytics}
+                />
+                {enabledGoogleAnalytics && (
+                  <div className="animate-fadeIn">
+                    <Label label={t("GoogleAnalyticKey")} />
                     <InputAreaTwo
                       required={enabledGoogleAnalytics}
                       register={register}
-                      label={t("GoogleAnalyticKey")}
                       name="google_analytic_key"
                       type="password"
-                      placeholder={t("GoogleAnalyticKey")}
+                      placeholder="Measurement ID (G-XXXXXXX)"
                     />
                     <Error errorName={errors.google_analytic_key} />
                   </div>
-                </div>
-                {/* Google Analytics section end */}
+                )}
+              </div>
+            </SectionCard>
 
-                {/* FB Pixel  section start */}
-                {/* <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-            <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-              {t("EnableFacebookPixel")}
-            </label>
-            <div className="sm:col-span-4">
-              <SwitchToggle
-                id="facebook_pixel"
-                processOption={enabledFbPixel}
-                handleProcess={setEnableFbPixel}
-              />
-            </div>
-          </div>
-          <div
-            style={{
-              height: enabledFbPixel ? "auto" : 0,
-              transition: "all .6s",
-              visibility: !enabledFbPixel ? "hidden" : "visible",
-              opacity: !enabledFbPixel ? "0" : "1",
-            }}
-            className={`${
-              enabledFbPixel
-                ? "grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6"
-                : "mb-2"
-            }`}
-          >
-            <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-              {t("FacebookPixelKey")}
-            </label>
-            <div className="sm:col-span-4">
-              <InputAreaTwo
-                required
-                register={register}
-                label={t("FacebookPixelKey")}
-                name="fb_pixel_key"
-                type="password"
-                placeholder={t("FacebookPixelKey")}
-              />
-              <Error errorName={errors.fb_pixel_key} />
-            </div>
-          </div> */}
-                {/* FB Pixel  section end */}
-
-                {/* EnableTawkChat  section start */}
-                <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                  <Label label={t("EnableTawkChat")} />
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      id="tawk_chat"
-                      processOption={enabledTawkChat}
-                      handleProcess={setEnabledTawkChat}
-                    />
-                  </div>
-                </div>
-                <div
-                  style={{
-                    height: enabledTawkChat ? "auto" : 0,
-                    transition: "all .6s",
-                    visibility: !enabledTawkChat ? "hidden" : "visible",
-                    opacity: !enabledTawkChat ? "0" : "1",
-                  }}
-                  className={`${enabledTawkChat ? "mb-8" : "mb-2"}`}
-                >
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6">
-                    <Label label={t("TawkChatPropertyID")} />
-                    <div className="sm:col-span-4">
+            <SectionCard 
+              icon={<FiMessageSquare className="text-orange-500" />}
+              title="Customer Support"
+              description="Connect with your customers via live chat."
+            >
+              <div className="space-y-6">
+                <ToggleCard 
+                  label={t("EnableTawkChat")}
+                  checked={enabledTawkChat}
+                  onChange={setEnabledTawkChat}
+                />
+                {enabledTawkChat && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
+                    <div>
+                      <Label label={t("TawkChatPropertyID")} />
                       <InputAreaTwo
                         required={enabledTawkChat}
                         register={register}
-                        label={t("TawkChatPropertyID")}
                         name="tawk_chat_property_id"
                         type="password"
-                        placeholder={t("TawkChatPropertyID")}
+                        placeholder="Property ID"
                       />
                       <Error errorName={errors.tawk_chat_property_id} />
                     </div>
-                  </div>
-                  <div className="grid md:grid-cols-5 items-center sm:grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6">
-                    <Label label={t("TawkChatWidgetID")} />
-                    <div className="sm:col-span-4">
+                    <div>
+                      <Label label={t("TawkChatWidgetID")} />
                       <InputAreaTwo
                         required={enabledTawkChat}
                         register={register}
-                        label={t("TawkChatWidgetID")}
                         name="tawk_chat_widget_id"
                         type="password"
-                        placeholder={t("TawkChatWidgetID")}
+                        placeholder="Widget ID"
                       />
                       <Error errorName={errors.tawk_chat_widget_id} />
                     </div>
                   </div>
-                </div>
-
-                {/* EnableTawkChat  section end */}
+                )}
               </div>
-            </SettingContainer>
-          </form>
-        </div>
+            </SectionCard>
+          </div>
+
+        </form>
       </AnimatedContent>
+
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.4s ease-out forwards;
+        }
+      `}} />
     </>
   );
 };
+
+const SectionCard = ({ icon, title, description, children }) => (
+  <section className="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-[28px] p-8 shadow-sm hover:shadow-md transition-shadow">
+    <div className="flex items-start gap-5 mb-8">
+      <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl">
+        {icon}
+      </div>
+      <div>
+        <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-1">{title}</h3>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+      </div>
+    </div>
+    {children}
+  </section>
+);
+
+const ToggleCard = ({ label, info, checked, onChange }) => (
+  <div className="bg-gray-50 dark:bg-gray-900/40 border border-gray-100 dark:border-gray-700 rounded-2xl p-5 group flex items-center justify-between transition-all hover:bg-white dark:hover:bg-gray-800 hover:border-emerald-100">
+    <div>
+      <h4 className="text-sm font-bold text-gray-700 dark:text-gray-200 group-hover:text-emerald-600 transition-colors uppercase tracking-wider text-[11px] mb-1">{label}</h4>
+      {info && <p className="text-[10px] text-gray-400 font-medium italic">{info}</p>}
+    </div>
+    <div className="flex-shrink-0 ml-4 scale-90 origin-right">
+      <SwitchToggle
+        processOption={checked}
+        handleProcess={(val) => onChange(val)}
+      />
+    </div>
+  </div>
+);
 
 export default StoreSetting;

@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 
 import { SidebarContext } from "@/context/SidebarContext";
 import BrandServices from "@/services/BrandServices";
-import { notifyError, notifySuccess } from "@/utils/toast";
 import useTranslationValue from "./useTranslationValue";
 
 const toSlug = (text = "") =>
@@ -17,7 +16,7 @@ const toSlug = (text = "") =>
     .replace(/--+/g, "-");
 
 const useBrandSubmit = (id) => {
-  const { isDrawerOpen, closeDrawer, setIsUpdate, lang } =
+  const { isDrawerOpen, closeDrawer, setIsUpdate, lang, showAlert } =
     useContext(SidebarContext);
   const [resData, setResData] = useState({});
   const [logoUrl, setLogoUrl] = useState("");
@@ -96,10 +95,10 @@ const useBrandSubmit = (id) => {
 
       if (id) {
         const res = await BrandServices.updateBrand(id, payload);
-        notifySuccess(res.message);
+        showAlert(res.message, "success");
       } else {
         const res = await BrandServices.addBrand(payload);
-        notifySuccess(res.message);
+        showAlert(res.message, "success");
       }
 
       setIsSubmitting(false);
@@ -107,7 +106,7 @@ const useBrandSubmit = (id) => {
       closeDrawer();
       reset();
     } catch (err) {
-      notifyError(err?.response?.data?.message || err?.message);
+      showAlert(err?.response?.data?.message || err?.message, "error");
       setIsSubmitting(false);
     }
   };
@@ -145,7 +144,7 @@ const useBrandSubmit = (id) => {
           setPublished(res?.status !== "hide");
           setFeatured(!!res?.isFeatured);
         } catch (err) {
-          notifyError(err?.response?.data?.message || err?.message);
+          showAlert(err?.response?.data?.message || err?.message, "error");
         }
       })();
     }

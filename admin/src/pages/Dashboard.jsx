@@ -13,7 +13,7 @@ import isToday from "dayjs/plugin/isToday";
 import isYesterday from "dayjs/plugin/isYesterday";
 import { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FiCheck, FiRefreshCw, FiShoppingCart, FiTruck, FiXCircle, FiUserPlus, FiLayers } from "react-icons/fi";
+import { FiCheck, FiRefreshCw, FiShoppingCart, FiTruck, FiXCircle, FiUserPlus, FiLayers, FiSearch } from "react-icons/fi";
 import { ImCreditCard, ImStack } from "react-icons/im";
 
 //internal import
@@ -21,9 +21,16 @@ import useAsync from "@/hooks/useAsync";
 import useFilter from "@/hooks/useFilter";
 import LineChart from "@/components/chart/LineChart/LineChart";
 import PieChart from "@/components/chart/Pie/PieChart";
-import CardItem from "@/components/dashboard/CardItem";
-import CardItemTwo from "@/components/dashboard/CardItemTwo";
+// import CardItem from "@/components/dashboard/CardItem";
+// import CardItemTwo from "@/components/dashboard/CardItemTwo";
+import ModernStats from "@/components/dashboard/ModernStats";
+import DetailedOrderStatus from "@/components/dashboard/DetailedOrderStatus";
+import GrossSaleChart from "@/components/dashboard/GrossSaleChart";
+import UserStatisticsChart from "@/components/dashboard/UserStatisticsChart";
+import TopPopularSelling from "@/components/dashboard/TopPopularSelling";
+// import BottomPopularSelling from "@/components/dashboard/BottomPopularSelling";
 import ChartCard from "@/components/chart/ChartCard";
+
 import OrderTable from "@/components/order/OrderTable";
 import TableLoading from "@/components/preloader/TableLoading";
 import NotFound from "@/components/table/NotFound";
@@ -52,6 +59,7 @@ const Dashboard = () => {
   const [yesterdayCashPayment, setYesterdayCashPayment] = useState(0);
   const [yesterdayCardPayment, setYesterdayCardPayment] = useState(0);
   const [yesterdayCreditPayment, setYesterdayCreditPayment] = useState(0);
+  const [timeFilter, setTimeFilter] = useState("year"); // Added for period filtering
 
   const {
     data: bestSellerProductChart,
@@ -73,7 +81,14 @@ const Dashboard = () => {
 
   // console.log("dashboardOrderCount", dashboardOrderCount);
 
+  const [searchTerm, setSearchTerm] = useState("");
   const { dataTable, serviceData } = useFilter(dashboardRecentOrder?.orders);
+
+  // Filter data based on search term (Search within invoice No, Customer Name)
+  const filteredData = dataTable?.filter(order =>
+    String(order.invoice || "")?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.user_info?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   useEffect(() => {
     // today orders show
@@ -241,190 +256,160 @@ const Dashboard = () => {
 
       <AnimatedContent>
         <div className="space-y-8">
-          {/* Top summary with soft gradient background */}
-          <section className="rounded-2xl bg-gradient-to-r from-teal-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-900 border border-gray-100/70 dark:border-gray-800 shadow-sm px-4 py-5 md:px-6 md:py-6">
-           <div className="grid grid-cols-2 gap-3 mb-6 xl:grid-cols-5 md:grid-cols-3">
-    <CardItemTwo
-      mode={mode}
-      title="Today Order"
-      title2="TodayOrder"
-      Icon={ImStack}
-      cash={todayCashPayment || 0}
-      card={todayCardPayment || 0}
-      credit={todayCreditPayment || 0}
-      price={todayOrderAmount || 0}
-      className="from-teal-500 to-teal-700" 
-      loading={loadingOrderAmount}
-    />
+          {/* Modern Main Stats UI - Based on exact image request */}
+          <ModernStats 
+            dashboardOrderCount={dashboardOrderCount} 
+            timeFilter={timeFilter}
+            setTimeFilter={setTimeFilter}
+            dashboardOrderAmount={dashboardOrderAmount}
+          />
 
-    <CardItemTwo
-      mode={mode}
-      title="Yesterday Order"
-      title2="YesterdayOrder"
-      Icon={ImStack}
-      cash={yesterdayCashPayment || 0}
-      card={yesterdayCardPayment || 0}
-      credit={yesterdayCreditPayment || 0}
-      price={yesterdayOrderAmount || 0}
-      className="from-orange-400 to-orange-600"
-      loading={loadingOrderAmount}
-    />
-
-    <CardItemTwo
-      mode={mode}
-      title2="ThisMonth"
-      Icon={FiShoppingCart}
-      price={dashboardOrderAmount?.thisMonthlyOrderAmount || 0}
-      className="from-blue-500 to-blue-700"
-      loading={loadingOrderAmount}
-    />
-
-    <CardItemTwo
-      mode={mode}
-      title2="LastMonth"
-      Icon={ImCreditCard}
-      loading={loadingOrderAmount}
-      price={dashboardOrderAmount?.lastMonthOrderAmount || 0}
-      className="from-cyan-500 to-cyan-700"
-    />
-
-    <CardItemTwo
-      mode={mode}
-      title2="AllTimeSales"
-      Icon={ImCreditCard}
-      price={dashboardOrderAmount?.totalAmount || 0}
-      className="from-pink-500 to-pink-700"
-      loading={loadingOrderAmount}
-    />
-  </div>
-
-            <div className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-  <CardItem
-    title="Total Order"
-    Icon={FiShoppingCart}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalOrder || 0}
-    className="bg-orange-50 border-orange-100 dark:bg-orange-900/10 dark:border-orange-800/50 text-orange-600"
-  />
-  <CardItem
-    title="Products"
-    Icon={FiLayers}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalProduct || 0}
-    className="bg-purple-50 border-purple-100 dark:bg-purple-900/10 dark:border-purple-800/50 text-purple-600"
-  />
-  <CardItem
-    title="New Sign Up"
-    Icon={FiUserPlus}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalCustomer || 0}
-    className="bg-indigo-50 border-indigo-100 dark:bg-indigo-900/10 dark:border-indigo-800/50 text-indigo-600"
-  />
-  <CardItem
-    title={t("OrderPending")}
-    Icon={FiRefreshCw}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalPendingOrder?.count || 0}
-    amount={dashboardOrderCount?.totalPendingOrder?.total || 0}
-    className="bg-blue-50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-800/50 text-blue-600"
-  />
-  <CardItem
-    title={t("OrderProcessing")}
-    Icon={FiTruck}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalProcessingOrder || 0}
-    className="bg-teal-50 border-teal-100 dark:bg-teal-900/10 dark:border-teal-800/50 text-teal-600"
-  />
-  <CardItem
-    title={t("OrderDelivered")}
-    Icon={FiCheck}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalDeliveredOrder || 0}
-    className="bg-green-50 border-green-100 dark:bg-green-900/10 dark:border-green-800/50 text-green-600"
-  />
-  <CardItem
-    title={t("OrderCancel")}
-    Icon={FiXCircle}
-    loading={loadingOrderCount}
-    quantity={dashboardOrderCount?.totalCancelOrder || 0}
-    className="bg-red-50 border-red-100 dark:bg-red-900/10 dark:border-red-800/50 text-red-600"
-  />
-</div>
-          </section>
+          {/* Detailed Status Cards beneath Main Stats */}
+          <DetailedOrderStatus dashboardOrderCount={dashboardOrderCount} />
 
           {/* Charts area */}
-          <section className="rounded-2xl bg-white dark:bg-gray-900 border border-gray-100/70 dark:border-gray-800 shadow-sm px-4 py-5 md:px-6 md:py-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <ChartCard
-                mode={mode}
-                loading={loadingOrderAmount}
-                title={t("WeeklySales")}
-              >
-                <LineChart salesReport={salesReport} />
-              </ChartCard>
-
-              <ChartCard
-                mode={mode}
-                loading={loadingBestSellerProduct}
-                title={t("BestSellingProducts")}
-              >
-                <PieChart data={bestSellerProductChart} />
-              </ChartCard>
+          <section className="mt-8 space-y-8">
+            {/* Row 1: Gross Sale & User Statistics - 2:1 Ratio */}
+            <div className="grid gap-8 grid-cols-1 lg:grid-cols-3">
+              <div className="lg:col-span-2">
+                <GrossSaleChart 
+                  data={dashboardOrderAmount} 
+                  loading={loadingOrderAmount} 
+                />
+              </div>
+              <div className="lg:col-span-1">
+                <UserStatisticsChart 
+                   data={dashboardOrderCount}
+                   loading={loadingOrderCount}
+                />
+              </div>
             </div>
+
+            {/* Top Selling & Popular Section - New Image UI */}
+            <TopPopularSelling 
+               bestSeller={bestSellerProductChart?.bestSellingProduct} 
+               topBrands={dashboardOrderCount?.topBrands}
+            />
+            {/* <BottomPopularSelling 
+               goldCustomers={dashboardOrderCount?.goldCustomers}
+            /> */}
           </section>
         </div>
       </AnimatedContent>
 
-      <PageTitle>{t("RecentOrder")}</PageTitle>
 
-      {/* <Loading loading={loading} /> */}
+      {/* Recent Order Section */}
+      <section className="mt-10 bg-white dark:bg-gray-800 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.03)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.15)] border border-gray-100/80 dark:border-gray-700 overflow-hidden transition-all duration-500">
+        {/* Header inside same white container */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 md:px-6 py-5 border-b border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+            {t("RecentOrder")}
+          </h2>
 
-      {loadingRecentOrder ? (
-        <TableLoading row={5} col={4} />
-      ) : error ? (
-        <span className="text-center mx-auto text-red-500">{error}</span>
-      ) : serviceData?.length !== 0 ? (
-        <TableContainer className="mb-8 overflow-x-scroll w-full custom-scrollbar">
-          <Table className="w-full">
-            <TableHeader>
-              <tr>
-                <TableCell>{t("InvoiceNo")}</TableCell>
-                <TableCell>{t("TimeTbl")}</TableCell>
-                <TableCell>{t("CustomerName")} </TableCell>
-                <TableCell> {t("MethodTbl")} </TableCell>
-                <TableCell> {t("AmountTbl")} </TableCell>
-                <TableCell>{t("OderStatusTbl")}</TableCell>
-                <TableCell>{t("ActionTbl")}</TableCell>
-                <TableCell className="text-right">{t("InvoiceTbl")}</TableCell>
-              </tr>
-            </TableHeader>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            <div className="relative group">
+              <input
+                type="text"
+                placeholder="Search by invoice or name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full sm:w-[260px] h-10 pl-5 pr-11 bg-[#f8fafb] dark:bg-gray-700/50 border border-[#e5e9eb] dark:border-gray-600 rounded-2xl text-xs font-medium text-gray-700 dark:text-gray-200 placeholder:text-gray-400 outline-none focus:border-gray-300 focus:ring-4 focus:ring-cyan-500/5 transition-all duration-200"
+              />
+              <div className="absolute right-1 top-1/2 -translate-y-1/2 text-[#9fc9d3] group-focus-within:text-cyan-500 transition-colors pointer-events-none">
+                <FiSearch className="w-5 h-5" style={{ strokeWidth: '3px' }} />
+              </div>
+            </div>
 
-            <OrderTable
-              orders={dataTable}
-              visibleColumns={{
-                invoice: true,
-                time: true,
-                customerName: true,
-                method: true,
-                amount: true,
-                status: true,
-                action: true,
-                actions: true,
-              }}
-            />
-          </Table>
-          <TableFooter>
-            <Pagination
-              totalResults={dashboardRecentOrder?.totalOrder}
-              resultsPerPage={8}
-              onChange={handleChangePage}
-              label="Table navigation"
-            />
-          </TableFooter>
-        </TableContainer>
-      ) : (
-        <NotFound title="Sorry, There are no orders right now." />
-      )}
+            <button className="flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-gray-800 border-2 border-[#e5e9eb] dark:border-gray-700 rounded-2xl text-xs font-black uppercase tracking-widest text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all shadow-sm active:scale-95">
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2.5"
+                  d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                />
+              </svg>
+              Filter
+            </button>
+          </div>
+        </div>
+
+        {/* Table / content */}
+        {loadingRecentOrder ? (
+          <div className="p-5 md:p-6 text-center">
+            <TableLoading row={5} col={4} />
+          </div>
+        ) : error ? (
+          <div className="p-10 text-center">
+            <span className="text-rose-500 font-bold tracking-tight">{error}</span>
+          </div>
+        ) : serviceData?.length !== 0 ? (
+          <TableContainer className="mb-0 custom-scrollbar border-none shadow-none">
+            <Table className="w-full">
+              <TableHeader className="bg-[#f8fafb] dark:bg-gray-800/80">
+                <tr>
+                  <TableCell className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("InvoiceNo")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("TimeTbl")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("CustomerName")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("MethodTbl")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("AmountTbl")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("OderStatusTbl")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("ActionTbl")}
+                  </TableCell>
+                  <TableCell className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.15em] text-gray-500 dark:text-gray-400">
+                    {t("InvoiceTbl")}
+                  </TableCell>
+                </tr>
+              </TableHeader>
+
+              <OrderTable
+                orders={filteredData}
+                visibleColumns={{
+                  invoice: true,
+                  time: true,
+                  customerName: true,
+                  method: true,
+                  amount: true,
+                  status: true,
+                  action: true,
+                  actions: true,
+                }}
+              />
+            </Table>
+
+            <TableFooter className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+              <Pagination
+                totalResults={dashboardRecentOrder?.totalOrder}
+                resultsPerPage={8}
+                onChange={handleChangePage}
+                label="Table navigation"
+              />
+            </TableFooter>
+          </TableContainer>
+        ) : (
+          <div className="p-5 md:p-6">
+            <NotFound title="Sorry, There are no orders right now." />
+          </div>
+        )}
+      </section>
     </>
   );
 };

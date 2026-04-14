@@ -723,6 +723,8 @@ const useFilter = (data) => {
     languageRef,
     currencyRef,
     shippingRef,
+    searchUser,
+    searchOrder,
     setSearchUser,
     setDataTable,
     setCategoryType,

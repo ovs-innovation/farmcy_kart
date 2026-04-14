@@ -145,2186 +145,1638 @@ const HomePage = ({
         )}
       </div>
       <div className="grid grid-cols-12 font-sans pr-4">
-        {/*  ====================================================== Header ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" />
-            {t("Header")}
+        {/*  ====================================================== Header Section ====================================================== */}
+        <div className="col-span-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("Header")}</h2>
           </div>
 
-          <hr className="md:mb-6 mb-3" />
-
-          <div className="flex-grow scrollbar-hide w-full max-h-full xl:px-10">
-            <div className="inline-flex md:text-base text-sm my-3 text-gray-500 dark:text-gray-400">
-              <strong>{t("HeaderContacts")}</strong>
+          <div className="bg-[#f9fafb] rounded-2xl p-8 border border-gray-100">
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-gray-800 mb-2">{t("HeaderContacts")}</h3>
+              <p className="text-sm text-gray-500">Configure your store's top header contact details and promotional text.</p>
             </div>
-            <hr className="md:mb-12 mb-3" />
 
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("HeaderText")}
-              </label>
-              <div className="sm:col-span-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    {t("HeaderText")}
+                  </label>
+                  <InputAreaTwo
+                    register={register}
+                    label={t("HeaderText")}
+                    name="help_text"
+                    type="text"
+                    placeholder={t("weAreAvailable")}
+                  />
+                  <Error errorName={errors.help_text} />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2">
+                    {t("PhoneNumber")}
+                  </label>
+                  <InputAreaTwo
+                    register={register}
+                    label={t("PhoneNumber")}
+                    name="phone_number"
+                    type="text"
+                    placeholder="+01234560352"
+                  />
+                  <Error errorName={errors.phone_number} />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  {t("HeaderLogo")}
+                </label>
+                <div className="bg-white p-4 rounded-xl border-2 border-dashed border-gray-200 hover:border-[#004f56] transition-colors text-center">
+                  <Uploader
+                    imageUrl={headerLogo}
+                    setImageUrl={setHeaderLogo}
+                    useOriginalSize={true}
+                  />
+                  <p className="text-[10px] text-center text-gray-400 mt-2 italic">Recommended size: 150x50px</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/*  ================= Menu Editor ======================== */}
+        <div className="col-span-12 mt-10">
+          <div className="bg-[#f9fafb] rounded-2xl p-8 border border-gray-100">
+            <div className="mb-8">
+              <h3 className="text-lg font-bold text-gray-800 mb-2">{t("MenuEditor")}</h3>
+              <p className="text-sm text-gray-500">Customize the navigation links in your store's header and footer menus.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("Categories")}
+                </label>
                 <InputAreaTwo
                   register={register}
-                  label={t("HeaderText")}
-                  name="help_text"
+                  label={t("Categories")}
+                  name="categories"
                   type="text"
-                  placeholder={t("weAreAvailable")}
+                  placeholder={t("Categories")}
                 />
-                <Error errorName={errors.help_text} />
+                <Error errorName={errors.categories} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setCategoriesMenuLink} processOption={categoriesMenuLink} />
+                </div>
               </div>
-            </div>
 
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("PhoneNumber")}
-              </label>
-              <div className="sm:col-span-4">
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("AboutUs")}
+                </label>
                 <InputAreaTwo
                   register={register}
-                  label={t("PhoneNumber")}
-                  name="phone_number"
+                  label={t("AboutUs")}
+                  name="about_us"
                   type="text"
-                  placeholder="+01234560352"
+                  placeholder={t("AboutUs")}
                 />
-                <Error errorName={errors.phone_number} />
+                <Error errorName={errors.about_us} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setAboutUsMenuLink} processOption={aboutUsMenuLink} />
+                </div>
               </div>
-            </div>
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm  md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("HeaderLogo")}
-              </label>
-              <div className="sm:col-span-4">
-                <Uploader
-                  imageUrl={headerLogo}
-                  setImageUrl={setHeaderLogo}
-                  useOriginalSize={true}
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("ContactUs")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("ContactUs")}
+                  name="contact_us"
+                  type="text"
+                  placeholder={t("ContactUs")}
                 />
+                <Error errorName={errors.contact_us} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setContactUsMenuLink} processOption={contactUsMenuLink} />
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("Offers")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("Offers")}
+                  name="offers"
+                  type="text"
+                  placeholder={t("Offers")}
+                />
+                <Error errorName={errors.offers} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setOffersMenuLink} processOption={offersMenuLink} />
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("FAQ")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("FAQ")}
+                  name="faq"
+                  type="text"
+                  placeholder={t("FAQ")}
+                />
+                <Error errorName={errors.faq} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setFaqMenuLink} processOption={faqMenuLink} />
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("PrivacyPolicy")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("PrivacyPolicy")}
+                  name="privacy_policy"
+                  type="text"
+                  placeholder={t("PrivacyPolicy")}
+                />
+                <Error errorName={errors.privacy_policy} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setPrivacyPolicyMenuLink} processOption={privacyPolicyMenuLink} />
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("TermsConditions")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("TermsConditions")}
+                  name="term_and_condition"
+                  type="text"
+                  placeholder={t("TermsConditions")}
+                />
+                <Error errorName={errors.term_and_condition} />
+                <div className="mt-3 flex items-center justify-between border-t pt-3">
+                  <span className="text-xs text-gray-500 font-medium">Show in Menu</span>
+                  <SwitchToggle handleProcess={setTermsConditionsMenuLink} processOption={termsConditionsMenuLink} />
+                </div>
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("Pages")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("Pages")}
+                  name="pages"
+                  type="text"
+                  placeholder={t("Pages")}
+                />
+                <Error errorName={errors.pages} />
+              </div>
+
+              <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <label className="block text-xs font-bold text-gray-500 uppercase mb-2">
+                  {t("MyAccount")}
+                </label>
+                <InputAreaTwo
+                  register={register}
+                  label={t("MyAccount")}
+                  name="my_account"
+                  type="text"
+                  placeholder={t("MyAccount")}
+                />
+                <Error errorName={errors.my_account} />
               </div>
             </div>
           </div>
-
-          {/*  ================= Menu Editor ======================== */}
-          <div className="grid md:grid-cols-5 sm:grid-cols-6 scrollbar-hide w-full max-h-full pb-0">
-            <div className="md:col-span-1 sm:col-span-2"></div>
-            <div className="sm:col-span-4 md:pl-3 sm:pl-2">
-              <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative">
-                <strong>{t("MenuEditor")}</strong>
-              </div>
-
-              <hr className="md:mb-12 mb-3" />
-
-              <div className="grid grid-cols-12 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("Categories")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("Categories")}
-                    name="categories"
-                    type="text"
-                    placeholder={t("Categories")}
-                  />
-                  <Error errorName={errors.categories} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("AboutUs")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("AboutUs")}
-                    name="about_us"
-                    type="text"
-                    placeholder={t("AboutUs")}
-                  />
-                  <Error errorName={errors.about_us} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("ContactUs")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("ContactUs")}
-                    name="contact_us"
-                    type="text"
-                    placeholder={t("ContactUs")}
-                  />
-                  <Error errorName={errors.contact_us} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("Offers")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("Offers")}
-                    name="offers"
-                    type="text"
-                    placeholder={t("Offers")}
-                  />
-                  <Error errorName={errors.offers} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("FAQ")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("FAQ")}
-                    name="faq"
-                    type="text"
-                    placeholder={t("FAQ")}
-                  />
-                  <Error errorName={errors.faq} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("PrivacyPolicy")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("PrivacyPolicy")}
-                    name="privacy_policy"
-                    type="text"
-                    placeholder={t("PrivacyPolicy")}
-                  />
-                  <Error errorName={errors.privacy_policy} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("TermsConditions")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("TermsConditions")}
-                    name="term_and_condition"
-                    type="text"
-                    placeholder={t("TermsConditions")}
-                  />
-                  <Error errorName={errors.term_and_condition} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("Pages")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("Pages")}
-                    name="pages"
-                    type="text"
-                    placeholder={t("Pages")}
-                  />
-                  <Error errorName={errors.pages} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("MyAccount")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("MyAccount")}
-                    name="my_account"
-                    type="text"
-                    placeholder={t("MyAccount")}
-                  />
-                  <Error errorName={errors.my_account} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("Login")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("Login")}
-                    name="login"
-                    type="text"
-                    placeholder={t("Login")}
-                  />
-                  <Error errorName={errors.login} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("Logout")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("Logout")}
-                    name="logout"
-                    type="text"
-                    placeholder={t("Logout")}
-                  />
-                  <Error errorName={errors.logout} />
-                </div>
-                <div className="col-span-4">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("CheckOut")}
-                  </label>
-                  <InputAreaTwo
-                    register={register}
-                    label={t("CheckOut")}
-                    name="checkout"
-                    type="text"
-                    placeholder={t("CheckOut")}
-                  />
-                  <Error errorName={errors.checkout} />
-                </div>
-              </div>
-
-              <div className="grid xl:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("Categories")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setCategoriesMenuLink}
-                    processOption={categoriesMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("AboutUs")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setAboutUsMenuLink}
-                    processOption={aboutUsMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("ContactUs")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setContactUsMenuLink}
-                    processOption={contactUsMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("Offers")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setOffersMenuLink}
-                    processOption={offersMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("FAQ")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setFaqMenuLink}
-                    processOption={faqMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("PrivacyPolicy")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setPrivacyPolicyMenuLink}
-                    processOption={privacyPolicyMenuLink}
-                  />
-                </div>
-                <div>
-                  <h4 className="font-medium font-serif md:text-base text-sm mb-2 dark:text-gray-300">
-                    {t("TermsConditions")}
-                  </h4>
-
-                  <SwitchToggle
-                    title={""}
-                    handleProcess={setTermsConditionsMenuLink}
-                    processOption={termsConditionsMenuLink}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/*  ================== Menu Editor ======================== */}
         </div>
 
         {/*  ====================================================== Main Slider ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 mt-5">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" /> {t("MainSlider")}
+        {/*  ====================================================== Main Slider Section ====================================================== */}
+        <div className="col-span-12 mt-10 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("MainSlider")}</h2>
           </div>
 
-          <hr className="mb-3" />
+          <div className="bg-[#f9fafb] rounded-2xl p-8 border border-gray-100">
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-2">Slider Management</h3>
+              <p className="text-sm text-gray-500">Upload up to 5 slider images and configure slider behavior options.</p>
+            </div>
 
-          <div className="flex-grow scrollbar-hide w-full max-h-full xl:px-10">
             <TabsComponent>
-              <Tabs>
-                <TabList>
-                  <Tab>{t("Slider")} 1</Tab>
-                  <Tab>{t("Slider")} 2</Tab>
-                  <Tab>{t("Slider")} 3</Tab>
-                  <Tab>{t("Slider")} 4</Tab>
-                  <Tab>{t("Slider")} 5</Tab>
-                  <Tab>{t("Options")}</Tab>
+              <div className="bg-white p-2 rounded-2xl border border-gray-100 shadow-sm inline-block mb-8">
+                <TabList className="flex flex-wrap gap-2 outline-none">
+                  {[1, 2, 3, 4, 5].map((num) => (
+                    <Tab
+                      key={num}
+                      className="px-6 py-2.5 text-sm font-bold rounded-xl cursor-pointer transition-all duration-200 text-gray-500 hover:bg-gray-50 outline-none select-none"
+                      selectedClassName="!bg-[#004f56] !text-white shadow-md scale-105"
+                    >
+                      {t("Slider")} {num}
+                    </Tab>
+                  ))}
+                  <Tab
+                    className="px-6 py-2.5 text-sm font-bold rounded-xl cursor-pointer transition-all duration-200 text-gray-500 hover:bg-gray-50 outline-none select-none"
+                    selectedClassName="!bg-[#004f56] !text-white shadow-md scale-105"
+                  >
+                    {t("Options")}
+                  </Tab>
                 </TabList>
+              </div>
 
-                <TabPanel className="md:mt-10 mt-3">
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                    <label className="block md:text-sm  md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("SliderImages")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={sliderImage}
-                        setImageUrl={setSliderImage}
-                        useOriginalSize={true}
-                      />
-                    </div>
+              <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm min-h-[300px]">
+                <TabPanel>
+                  <div className="max-w-3xl mx-auto">
+                    <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 1</label>
+                    <Uploader imageUrl={sliderImage} setImageUrl={setSliderImage} useOriginalSize={true} />
                   </div>
                 </TabPanel>
 
                 <TabPanel>
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                    <label className="block md:text-sm  md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("SliderImages")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={sliderImageTwo}
-                        setImageUrl={setSliderImageTwo}
-                        useOriginalSize={true}
-                      />
-                    </div>
+                  <div className="max-w-3xl mx-auto">
+                    <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 2</label>
+                    <Uploader imageUrl={sliderImageTwo} setImageUrl={setSliderImageTwo} useOriginalSize={true} />
                   </div>
                 </TabPanel>
 
                 <TabPanel>
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                    <label className="block md:text-sm  md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("SliderImages")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={sliderImageThree}
-                        setImageUrl={setSliderImageThree}
-                        useOriginalSize={true}
-                      />
-                    </div>
+                  <div className="max-w-3xl mx-auto">
+                    <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 3</label>
+                    <Uploader imageUrl={sliderImageThree} setImageUrl={setSliderImageThree} useOriginalSize={true} />
                   </div>
                 </TabPanel>
 
                 <TabPanel>
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                    <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("SliderImages")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={sliderImageFour}
-                        setImageUrl={setSliderImageFour}
-                        useOriginalSize={true}
-                      />
-                    </div>
+                  <div className="max-w-3xl mx-auto">
+                    <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 4</label>
+                    <Uploader imageUrl={sliderImageFour} setImageUrl={setSliderImageFour} useOriginalSize={true} />
                   </div>
                 </TabPanel>
 
                 <TabPanel>
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                    <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("SliderImages")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={sliderImageFive}
-                        setImageUrl={setSliderImageFive}
-                        useOriginalSize={true}
-                      />
-                    </div>
+                  <div className="max-w-3xl mx-auto">
+                    <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 5</label>
+                    <Uploader imageUrl={sliderImageFive} setImageUrl={setSliderImageFive} useOriginalSize={true} />
                   </div>
                 </TabPanel>
 
                 <TabPanel>
-                  <div className="grid md:grid-cols-3 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                    <div>
-                      <div className="relative">
-                        <h4 className="font-medium md:text-base text-sm mb-2 dark:text-gray-400">
-                          {" "}
-                          {t("LeftRighArrows")}
-                        </h4>
-                      </div>
-                      <SwitchToggle
-                        title={""}
-                        handleProcess={setLeftRightArrow}
-                        processOption={leftRightArrow}
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-4">
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <h4 className="font-bold text-gray-700 mb-4">{t("LeftRighArrows")}</h4>
+                      <SwitchToggle handleProcess={setLeftRightArrow} processOption={leftRightArrow} />
                     </div>
-                    <div>
-                      <div className="relative">
-                        <h4 className="font-medium md:text-base text-sm mb-2 dark:text-gray-400">
-                          {t("BottomDots")}
-                        </h4>
-                      </div>
-                      <SwitchToggle
-                        title={""}
-                        handleProcess={setBottomDots}
-                        processOption={bottomDots}
-                      />
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <h4 className="font-bold text-gray-700 mb-4">{t("BottomDots")}</h4>
+                      <SwitchToggle handleProcess={setBottomDots} processOption={bottomDots} />
                     </div>
-                    <div>
-                      <div className="relative">
-                        <h4 className="font-medium md:text-base text-sm mb-2 dark:text-gray-400">
-                          {t("Both")}
-                        </h4>
-                      </div>
-                      <SwitchToggle
-                        title={""}
-                        handleProcess={setBothSliderOption}
-                        processOption={bothSliderOption}
-                      />
+                    <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                      <h4 className="font-bold text-gray-700 mb-4">{t("Both")}</h4>
+                      <SwitchToggle handleProcess={setBothSliderOption} processOption={bothSliderOption} />
                     </div>
                   </div>
                 </TabPanel>
-              </Tabs>
+              </div>
             </TabsComponent>
           </div>
         </div>
 
-        {/*  ======================================================Discount Coupon Code Box ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 mt-5">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" />
-            {t("DiscountCouponTitle1")}
+        {/*  ====================================================== Discount Coupon Section ====================================================== */}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("DiscountCouponTitle1")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("ShowHide")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setIsCoupon}
-                  processOption={isCoupon}
-                  name="isCoupon"
-                />
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-[#feedd7] shadow-sm">
+            {/* Main Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#feedd7] flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#fff4e6] p-3 rounded-xl border border-[#feedd7]">
+                  <FiSettings className="text-[#d97706] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("ShowHide")} Section</h3>
+                  <p className="text-xs text-gray-400 font-medium">Toggle the visibility of the discount area on your homepage.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${isCoupon ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {isCoupon ? 'Enabled' : 'Disabled'}
+                </span>
+                <SwitchToggle handleProcess={setIsCoupon} processOption={isCoupon} name="isCoupon" />
               </div>
             </div>
 
-            <div
-              className={`grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 relative transition-2`}
-              style={{
-                height: isCoupon ? "auto" : 0,
-                transition: "ease-out 0.4s",
-
-                visibility: !isCoupon ? "hidden" : "visible",
-                opacity: !isCoupon ? "0" : "1",
-              }}
-            >
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("HomePageDiscountTitle")}
-              </label>
-              <div className="sm:col-span-4">
-                <InputAreaTwo
-                  register={register}
-                  label={t("HomePageDiscountTitle")}
-                  name="discount_title"
-                  type="text"
-                  placeholder={t("HomePageDiscountTitle")}
-                />
-                <Error errorName={errors.phone_number} />
-              </div>
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("SuperDiscountActiveCouponCode")}
-              </label>
-              <div className="sm:col-span-4">
-                <MultiSelect
-                  options={coupons}
-                  value={couponList}
-                  className={mode}
-                  onChange={(v) => setCouponList(v)}
-                  labelledBy="Select Coupon"
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: isCoupon
-                  ? "auto"
-                  : isSliderFullWidth
-                  ? "auto"
-                  : isSliderFullWidth
-                  ? "auto"
-                  : "auto",
-                transition: "all 0.5s",
-                visibility: isCoupon ? "hidden" : "visible",
-                opacity: isCoupon ? "0" : "1",
-              }}
-            >
-              <div>
-                <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400">
-                  <div className="relative">
-                    <strong>{t("SliderFullWidth")}</strong>
+            {isCoupon ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#feedd7] space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      {t("HomePageDiscountTitle")}
+                    </label>
+                    <InputAreaTwo
+                      register={register}
+                      label={t("HomePageDiscountTitle")}
+                      name="discount_title"
+                      type="text"
+                      placeholder={t("HomePageDiscountTitle")}
+                    />
+                    <Error errorName={errors.discount_title} />
                   </div>
                 </div>
 
-                <hr className="mb-4 mt-2" />
-
-                <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 ">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    {t("SliderFullWidth")}
-                  </label>
-                  <div className="sm:col-span-4 ">
-                    <SwitchToggle
-                      title=""
-                      handleProcess={setIsSliderFullWidth}
-                      processOption={isSliderFullWidth}
-                      name={isSliderFullWidth}
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#feedd7] space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                      {t("SuperDiscountActiveCouponCode")}
+                    </label>
+                    <MultiSelect
+                      options={coupons}
+                      value={couponList}
+                      className="rounded-xl border-gray-200"
+                      onChange={(v) => setCouponList(v)}
+                      labelledBy="Select Coupon"
                     />
                   </div>
                 </div>
               </div>
-
-              {!isSliderFullWidth && !isCoupon && (
-                <div>
-                  <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 mt-5 ">
-                    <div className="relative">
-                      <strong> {t("PlaceHolderImage")} </strong>
+            ) : (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#feedd7] flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                      <FiSettings className="text-[#004f56] text-xl" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800">{t("SliderFullWidth")}</h3>
+                      <p className="text-xs text-gray-400 font-medium">Expand the slider to fill the entire container width.</p>
                     </div>
                   </div>
-                  <hr className="mb-4 mt-2" />
-
-                  <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mt-4 md:mb-6 mb-3 pb-2">
-                    <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                      {t("PlaceHolderImage")}
-                    </label>
-                    <div className="sm:col-span-4">
-                      <Uploader
-                        imageUrl={placeholderImage}
-                        setImageUrl={setPlaceHolderImage}
-                      />
-                      <div className="text-xs text-center text-gray-400">
-                        <em>( {t("ImagesResolution")} )</em>
-                      </div>
-                    </div>
-                  </div>
+                  <SwitchToggle handleProcess={setIsSliderFullWidth} processOption={isSliderFullWidth} name="isSliderFullWidth" />
                 </div>
-              )}
-            </div>
+
+                {!isSliderFullWidth && (
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-[#feedd7] text-center">
+                    <div className="mb-6">
+                      <h3 className="text-lg font-bold text-gray-800">{t("PlaceHolderImage")}</h3>
+                      <p className="text-xs text-gray-400 font-medium">This image will appear when the slider is not full-width.</p>
+                    </div>
+                    <div className="max-w-2xl mx-auto p-4 border-2 border-dashed border-[#feedd7] rounded-3xl bg-gray-50/50">
+                      <Uploader imageUrl={placeholderImage} setImageUrl={setPlaceHolderImage} />
+                      <p className="text-[10px] text-gray-400 mt-4 italic font-medium uppercase tracking-widest">
+                        Resolution: 500x400px • Max Size: 2MB
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
+
         {/*  ====================================================== Promotion Banner ===================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3 md:mt-0 mt-10">
-            <FiSettings className="mt-1 mr-2" /> {t("PromotionBanner")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("PromotionBanner")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Enable or disable the promotion banner on the storefront.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${allowPromotionBanner ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {allowPromotionBanner ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title=""
                   handleProcess={setAllowPromotionBanner}
                   processOption={allowPromotionBanner}
-                  name={allowPromotionBanner}
+                  name="allowPromotionBanner"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: allowPromotionBanner ? "auto" : 0,
-                transition: "all 0.4s",
-                visibility: !allowPromotionBanner ? "hidden" : "visible",
-                opacity: !allowPromotionBanner ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="promotion_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.promotion_title} />
+            {allowPromotionBanner && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="promotion_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.promotion_title} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Description")}
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Promotion Description"
+                        name="promotion_description"
+                        type="text"
+                        placeholder={t("PromotionDescription")}
+                      />
+                      <Error errorName={errors.promotion_description} />
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("ButtonName")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label="Button Name"
+                        name="promotion_button_name"
+                        type="text"
+                        placeholder={t("ButtonName")}
+                      />
+                      <Error errorName={errors.promotion_button_name} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("ButtonLink")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label="Button Link"
+                        name="promotion_button_link"
+                        type="text"
+                        placeholder="https://..."
+                      />
+                      <Error errorName={errors.promotion_button_link} />
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Description")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Promotion Description"
-                    name="promotion_description"
-                    type="text"
-                    placeholder={t("PromotionDescription")}
-                  />
-
-                  <Error errorName={errors.promotion_description} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ButtonName")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Name"
-                    name="promotion_button_name"
-                    type="text"
-                    placeholder={t("ButtonName")}
-                  />
-                  <Error errorName={errors.promotion_button_name} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ButtonLink")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Link "
-                    name="promotion_button_link"
-                    type="text"
-                    placeholder="https://Farmacykart-store.vercel.app/search?category=fruits-vegetable&_id=632aca2b4d87ff2494210be8"
-                  />
-                  <Error errorName={errors.promotion_button_link} />
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Featured Categories ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 md:mt-0 mt-15">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3 relative">
-            <FiSettings className="mt-1 mr-2" /> {t("FeaturedCategories")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("FeaturedCategories")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Control the visibility of categories on your homepage.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${featuredCategories ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {featuredCategories ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title=""
                   handleProcess={setFeaturedCategories}
                   processOption={featuredCategories}
-                  name={featuredCategories}
+                  name="featuredCategories"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: featuredCategories ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !featuredCategories ? "hidden" : "visible",
-                opacity: !featuredCategories ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="feature_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.feature_title} />
+            {featuredCategories && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="feature_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.feature_title} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("FeaturedCategories")} Description
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Feature Description"
+                        name="feature_description"
+                        type="text"
+                        placeholder={t("FeaturedCategories")}
+                      />
+                      <Error errorName={errors.feature_description} />
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">
+                    <div className="mb-6">
+                      <h4 className="text-sm font-bold text-gray-700 uppercase tracking-widest">{t("ProductsLimit")}</h4>
+                      <p className="text-xs text-gray-400 mt-1">Select how many items to display in this section.</p>
+                    </div>
+                    <div className="max-w-xs mx-auto w-full">
+                      <SelectProductLimit
+                        register={register}
+                        required={true}
+                        label="Feature Products Limit"
+                        name="feature_product_limit"
+                      />
+                      <Error errorName={errors.feature_product_limit} />
+                    </div>
+                    <div className="mt-8 p-4 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                      <p className="text-[10px] text-gray-400 font-medium uppercase tracking-widest leading-relaxed">
+                        Recommended: 12 items for optimal grid display
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FeaturedCategories")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Feature Description"
-                    name="feature_description"
-                    type="text"
-                    placeholder={t("FeaturedCategories")}
-                  />
-
-                  <Error errorName={errors.feature_description} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ProductsLimit")}
-                </label>
-                <div className="sm:col-span-4">
-                  <SelectProductLimit
-                    register={register}
-                    required={true}
-                    label="Feature Products Limit"
-                    name="feature_product_limit"
-                  />
-                  <Error errorName={errors.feature_product_limit} />
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="flex flex-row-reverse pb-6">
-                  <Button type="submit" className="h-10 px-6">
-                    Save
-                  </Button>
-                </div> */}
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Popular Products ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 md:mt-0 mt-15">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3 relative">
-            <FiSettings className="mt-1 mr-2" />
-            {t("PopularProductsTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("PopularProductsTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Showcase your best-selling items on the homepage.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${popularProducts ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {popularProducts ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title=""
                   handleProcess={setPopularProducts}
                   processOption={popularProducts}
-                  name={popularProducts}
+                  name="popularProducts"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: popularProducts ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !popularProducts ? "hidden" : "visible",
-                opacity: !popularProducts ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="popular_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.popular_title} />
+            {popularProducts && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="popular_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.popular_title} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("PopularProductsTitle")} Description
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Popular Description"
+                        name="popular_description"
+                        type="text"
+                        placeholder={t("PopularDescription")}
+                      />
+                      <Error errorName={errors.popular_description} />
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">
+                    <div className="mb-6">
+                      <h4 className="text-sm font-bold text-gray-700 uppercase tracking-widest">{t("ProductsLimit")}</h4>
+                      <p className="text-xs text-gray-400 mt-1">Number of popular products to display in the section.</p>
+                    </div>
+                    <div className="max-w-xs mx-auto w-full">
+                      <SelectProductLimit
+                        register={register}
+                        required={true}
+                        label="Popular Products Limit"
+                        name="popular_product_limit"
+                      />
+                      <Error errorName={errors.popular_product_limit} />
+                    </div>
+                    <div className="mt-8 p-4 bg-[#e6f2f3]/30 rounded-xl border border-dashed border-[#d0eaec]">
+                      <p className="text-[10px] text-[#004f56] font-bold uppercase tracking-widest leading-relaxed">
+                        Top Tip: A limit of 8 or 12 works best for engagement
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Description")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Popular Description"
-                    name="popular_description"
-                    type="text"
-                    placeholder={t("PopularDescription")}
-                  />
-                  <Error errorName={errors.popular_description} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ProductsLimit")}
-                </label>
-                <div className="sm:col-span-4">
-                  <SelectProductLimit
-                    register={register}
-                    required={true}
-                    label="Popular Products Limit"
-                    name="popular_product_limit"
-                  />
-                  <Error errorName={errors.popular_product_limit} />
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="flex flex-row-reverse pb-6">
-                  <Button type="submit" className="h-10 px-6">
-                    Save
-                  </Button>
-                </div> */}
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Quick Delivery Section ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 mt-15">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" />{" "}
-            {t("QuickDeliverySectionTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("QuickDeliverySectionTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Highlight fast shipping or doorstep delivery services.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${quickDelivery ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {quickDelivery ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title={""}
                   handleProcess={setQuickDelivery}
                   processOption={quickDelivery}
-                  name={quickDelivery}
+                  name="quickDelivery"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: quickDelivery ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !quickDelivery ? "hidden" : "visible",
-                opacity: !quickDelivery ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("SubTitle")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="quick_delivery_subtitle"
-                    type="text"
-                    placeholder={t("SubTitle")}
-                  />
-                  <Error errorName={errors.quick_delivery_subtitle} />
-                </div>
-              </div>
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="quick_delivery_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.quick_delivery_title} />
-                </div>
-              </div>
+            {quickDelivery && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("SubTitle")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("SubTitle")}
+                        name="quick_delivery_subtitle"
+                        type="text"
+                        placeholder={t("SubTitle")}
+                      />
+                      <Error errorName={errors.quick_delivery_subtitle} />
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Description")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Quick Delivery Description"
-                    name="quick_delivery_description"
-                    type="text"
-                    placeholder={t("QuickDeliverySectionTitle")}
-                  />
-                  <Error errorName={errors.quick_delivery_description} />
-                </div>
-              </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="quick_delivery_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.quick_delivery_title} />
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ButtonName")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Name "
-                    name="quick_delivery_button"
-                    type="text"
-                    placeholder={t("ButtonName")}
-                  />
-                  <Error errorName={errors.quick_delivery_button} />
-                </div>
-              </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Description")}
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Quick Delivery Description"
+                        name="quick_delivery_description"
+                        type="text"
+                        placeholder={t("QuickDeliverySectionTitle")}
+                      />
+                      <Error errorName={errors.quick_delivery_description} />
+                    </div>
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ButtonLink")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Link"
-                    name="quick_delivery_link"
-                    type="text"
-                    placeholder="https://Farmacykart-store.vercel.app/search?category=fruits-vegetable&_id=632aca2b4d87ff2494210be8"
-                  />
-                  <Error errorName={errors.quick_delivery_link} />
-                </div>
-              </div>
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("ButtonName")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label="Button Name"
+                        name="quick_delivery_button"
+                        type="text"
+                        placeholder={t("ButtonName")}
+                      />
+                      <Error errorName={errors.quick_delivery_button} />
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Image")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={quickSectionImage}
-                    setImageUrl={setQuickSectionImage}
-                  />
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("ButtonLink")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label="Button Link"
+                        name="quick_delivery_link"
+                        type="text"
+                        placeholder="https://..."
+                      />
+                      <Error errorName={errors.quick_delivery_link} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        Graphic {t("Image")}
+                      </label>
+                      <Uploader
+                        imageUrl={quickSectionImage}
+                        setImageUrl={setQuickSectionImage}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Promotional Banner Section ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 mt-15">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" />{" "}
-            {t("PromotionalBannerSection")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("PromotionalBannerSection")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            {/* Banner 1 - Large */}
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner1Image")} (Large)
-              </label>
-              <div className="sm:col-span-4">
-                <Uploader
-                  imageUrl={promotionalBannerImage1}
-                  setImageUrl={setPromotionalBannerImage1}
-                />
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm space-y-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Banner 1 - Large */}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Banner 1 (Large)</span>
+                  <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                    <FiSettings className="text-[#004f56] text-xs" />
+                  </div>
+                </div>
+                <div className="min-h-[200px] flex flex-col justify-center">
+                  <Uploader
+                    imageUrl={promotionalBannerImage1}
+                    setImageUrl={setPromotionalBannerImage1}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("Banner1Link")}</label>
+                  <InputAreaTwo
+                    register={register}
+                    label="Banner 1 Link"
+                    name="promotional_banner_link1"
+                    type="text"
+                    placeholder="/search?..."
+                  />
+                  <Error errorName={errors.promotional_banner_link1} />
+                </div>
               </div>
-            </div>
 
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner1Link")}
-              </label>
-              <div className="sm:col-span-4">
-                <InputAreaTwo
-                  register={register}
-                  label="Banner 1 Link"
-                  name="promotional_banner_link1"
-                  type="text"
-                  placeholder="/search?category=natural-remedies&_id=690c39276ffb233838439a02"
-                />
-                <Error errorName={errors.promotional_banner_link1} />
+              {/* Banner 2 - Small Top */}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Banner 2 (Small Top)</span>
+                  <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                    <FiSettings className="text-[#004f56] text-xs" />
+                  </div>
+                </div>
+                <div className="min-h-[200px] flex flex-col justify-center">
+                  <Uploader
+                    imageUrl={promotionalBannerImage2}
+                    setImageUrl={setPromotionalBannerImage2}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("Banner2Link")}</label>
+                  <InputAreaTwo
+                    register={register}
+                    label="Banner 2 Link"
+                    name="promotional_banner_link2"
+                    type="text"
+                    placeholder="/search?..."
+                  />
+                  <Error errorName={errors.promotional_banner_link2} />
+                </div>
               </div>
-            </div>
 
-            {/* Banner 2 - Small Top */}
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner2Image")} (Small Top)
-              </label>
-              <div className="sm:col-span-4">
-                <Uploader
-                  imageUrl={promotionalBannerImage2}
-                  setImageUrl={setPromotionalBannerImage2}
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner2Link")}
-              </label>
-              <div className="sm:col-span-4">
-                <InputAreaTwo
-                  register={register}
-                  label="Banner 2 Link"
-                  name="promotional_banner_link2"
-                  type="text"
-                  placeholder="/search?category=herbal-beauty&_id=690c38906ffb2338384399ea"
-                />
-                <Error errorName={errors.promotional_banner_link2} />
-              </div>
-            </div>
-
-            {/* Banner 3 - Small Bottom */}
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner3Image")} (Small Bottom)
-              </label>
-              <div className="sm:col-span-4">
-                <Uploader
-                  imageUrl={promotionalBannerImage3}
-                  setImageUrl={setPromotionalBannerImage3}
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("Banner3Link")}
-              </label>
-              <div className="sm:col-span-4">
-                <InputAreaTwo
-                  register={register}
-                  label="Banner 3 Link"
-                  name="promotional_banner_link3"
-                  type="text"
-                  placeholder="/search?category=ayurvedic-products&_id=690c37236ffb2338384399c2"
-                />
-                <Error errorName={errors.promotional_banner_link3} />
+              {/* Banner 3 - Small Bottom */}
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Banner 3 (Small Bottom)</span>
+                  <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                    <FiSettings className="text-[#004f56] text-xs" />
+                  </div>
+                </div>
+                <div className="min-h-[200px] flex flex-col justify-center">
+                  <Uploader
+                    imageUrl={promotionalBannerImage3}
+                    setImageUrl={setPromotionalBannerImage3}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("Banner3Link")}</label>
+                  <InputAreaTwo
+                    register={register}
+                    label="Banner 3 Link"
+                    name="promotional_banner_link3"
+                    type="text"
+                    placeholder="/search?..."
+                  />
+                  <Error errorName={errors.promotional_banner_link3} />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/*  ====================================================== Latest Discounted Products ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 md:mt-0 mt-10">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" />{" "}
-            {t("LatestDiscountedProductsTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("LatestDiscountedProductsTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Display your latest deals and discounted products.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${latestDiscounted ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {latestDiscounted ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title=""
                   handleProcess={setLatestDiscounted}
                   processOption={latestDiscounted}
-                  name={latestDiscounted}
+                  name="latestDiscounted"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: latestDiscounted ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !latestDiscounted ? "hidden" : "visible",
-                opacity: !latestDiscounted ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="latest_discount_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.latest_discount_title} />
+            {latestDiscounted && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="latest_discount_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.latest_discount_title} />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Description")}
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Latest Discount Description"
+                        name="latest_discount_description"
+                        type="text"
+                        placeholder={t("LatestDiscountDescription")}
+                      />
+                      <Error errorName={errors.latest_discount_description} />
+                    </div>
+                  </div>
+
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center text-center">
+                    <div className="mb-6">
+                      <h4 className="text-sm font-bold text-gray-700 uppercase tracking-widest">{t("ProductsLimit")}</h4>
+                      <p className="text-xs text-gray-400 mt-1">Number of discounted products to show.</p>
+                    </div>
+                    <div className="max-w-xs mx-auto w-full">
+                      <SelectProductLimit
+                        register={register}
+                        required={true}
+                        label="Latest Discount Products Limit"
+                        name="latest_discount_product_limit"
+                      />
+                      <Error errorName={errors.latest_discount_product_limit} />
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Description")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Latest Discount Description"
-                    name="latest_discount_description"
-                    type="text"
-                    placeholder={t("LatestDiscountDescription")}
-                  />
-                  <Error errorName={errors.latest_discount_description} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ProductsLimit")}
-                </label>
-                <div className="sm:col-span-4">
-                  <SelectProductLimit
-                    register={register}
-                    required={true}
-                    label="Latest Discount Products Limit"
-                    name="latest_discount_product_limit"
-                  />
-                  <Error errorName={errors.latest_discount_product_limit} />
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="flex flex-row-reverse pb-6">
-                  <Button type="submit" className="h-10 px-6">
-                    Save
-                  </Button>
-                </div> */}
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Get Your Daily Needs Banner Section ====================================================== */}
-        <div
-          className={`col-span-12 md:col-span-12 lg:col-span-12 ${
-            window.innerWidth < 400 ? "md:my-0 my-24" : "md:my-0 my-24"
-          }`}
-        >
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" /> {t("GetYourDailyNeedsTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("GetYourDailyNeedsTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Daily essentials promotion section with custom banners.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${dailyNeeds ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {dailyNeeds ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title={""}
                   handleProcess={setDailyNeeds}
                   processOption={dailyNeeds}
-                  name={dailyNeeds}
+                  name="dailyNeeds"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: dailyNeeds ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !dailyNeeds ? "hidden" : "visible",
-                opacity: !dailyNeeds ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="daily_need_title"
-                    type="text"
-                    placeholder={t("Title")}
-                  />
-                  <Error errorName={errors.daily_need_title} />
-                </div>
-              </div>
+            {dailyNeeds && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-6">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Title")}
+                      </label>
+                      <InputAreaTwo
+                        register={register}
+                        label={t("Title")}
+                        name="daily_need_title"
+                        type="text"
+                        placeholder={t("Title")}
+                      />
+                      <Error errorName={errors.daily_need_title} />
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Description")}
-                </label>
-                <div className="sm:col-span-4">
-                  <TextAreaCom
-                    register={register}
-                    label="Daily Need Description"
-                    name="daily_need_description"
-                    type="text"
-                    placeholder={t("DailyNeedDescription")}
-                  />
-                  <Error errorName={errors.daily_need_description} />
-                </div>
-              </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                        {t("Description")}
+                      </label>
+                      <TextAreaCom
+                        register={register}
+                        label="Daily Need Description"
+                        name="daily_need_description"
+                        type="text"
+                        placeholder={t("DailyNeedDescription")}
+                      />
+                      <Error errorName={errors.daily_need_description} />
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ImageLeft")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={getYourDailyNeedImageLeft}
-                    setImageUrl={setGetYourDailyNeedImageLeft}
-                  />
-                </div>
-              </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("ImageLeft")}</label>
+                        <Uploader
+                          imageUrl={getYourDailyNeedImageLeft}
+                          setImageUrl={setGetYourDailyNeedImageLeft}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("ImageRight")}</label>
+                        <Uploader
+                          imageUrl={getYourDailyNeedImageRight}
+                          setImageUrl={setGetYourDailyNeedImageRight}
+                        />
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("ImageRight")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={getYourDailyNeedImageRight}
-                    setImageUrl={setGetYourDailyNeedImageRight}
-                  />
-                </div>
-              </div>
+                  <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">App Store Icon</label>
+                          <Uploader
+                            imageUrl={getButton1image}
+                            setImageUrl={setGetButton1image}
+                          />
+                        </div>
+                        <div className="flex flex-col justify-end pb-1">
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("Button1Link")}</label>
+                          <InputAreaTwo
+                            register={register}
+                            label="Button Link "
+                            name="daily_need_app_link"
+                            type="text"
+                            placeholder="https://..."
+                          />
+                          <Error errorName={errors.daily_need_app_link} />
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Button1image")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={getButton1image}
-                    setImageUrl={setGetButton1image}
-                  />
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">Google Play Icon</label>
+                          <Uploader
+                            imageUrl={getButton2image}
+                            setImageUrl={setGetButton2image}
+                          />
+                        </div>
+                        <div className="flex flex-col justify-end pb-1">
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase mb-2">{t("Button2Link")}</label>
+                          <InputAreaTwo
+                            register={register}
+                            label="Button Link "
+                            name="daily_need_google_link"
+                            type="text"
+                            placeholder="https://..."
+                          />
+                          <Error errorName={errors.daily_need_google_link} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Button1Link")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Link "
-                    name="daily_need_app_link"
-                    type="text"
-                    placeholder="https://Farmacykart-store.vercel.app/search?category=fruits-vegetable&_id=632aca2b4d87ff2494210be8"
-                  />
-                  <Error errorName={errors.daily_need_app_link} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Button2image")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={getButton2image}
-                    setImageUrl={setGetButton2image}
-                  />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Button2Link")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Button Link "
-                    name="daily_need_google_link"
-                    type="text"
-                    placeholder="https://Farmacykart-store.vercel.app/search?category=fruits-vegetable&_id=632aca2b4d87ff2494210be8"
-                  />
-                  <Error errorName={errors.daily_need_google_link} />
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Feature Promo Section ====================================================== */}
-        <div
-          className={`col-span-12 md:col-span-12 lg:col-span-12 ${
-            window.innerWidth < 400 ? "md:mt-0 mt-40" : "md:mt-0 mt-10"
-          }`}
-        >
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" /> {t("FeaturePromoSectionTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("FeaturePromoSectionTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm">
+            {/* Enable Toggle Card */}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between mb-8">
+              <div className="flex items-center gap-4">
+                <div className="bg-[#e6f2f3] p-3 rounded-xl border border-[#d0eaec]">
+                  <FiSettings className="text-[#004f56] text-xl" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">{t("EnableThisBlock")}</h3>
+                  <p className="text-xs text-gray-400 font-medium">Display trust badges or feature highlights at the bottom.</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className={`text-xs font-bold uppercase transition-colors ${featurePromo ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                  {featurePromo ? 'Enabled' : 'Disabled'}
+                </span>
                 <SwitchToggle
-                  title=""
                   handleProcess={setFeaturePromo}
                   processOption={featurePromo}
-                  name={featurePromo}
+                  name="featurePromo"
                 />
               </div>
             </div>
 
-            <div
-              style={{
-                height: featurePromo ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !featurePromo ? "hidden" : "visible",
-                opacity: !featurePromo ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FreeShipping")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="promo_free_shipping"
-                    type="text"
-                    placeholder="From $500.00"
-                  />
-                  <Error errorName={errors.promo_free_shipping} />
-                </div>
-              </div>
+            {featurePromo && (
+              <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t("FreeShipping")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="promo_free_shipping"
+                      type="text"
+                      placeholder="From $500.00"
+                    />
+                    <Error errorName={errors.promo_free_shipping} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Support")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="promo_support"
-                    type="text"
-                    placeholder="24/7 At Anytime"
-                  />
-                  <Error errorName={errors.promo_support} />
-                </div>
-              </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t("Support")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="promo_support"
+                      type="text"
+                      placeholder="24/7 At Anytime"
+                    />
+                    <Error errorName={errors.promo_support} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("SecurePayment")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="promo_payment"
-                    type="text"
-                    placeholder={t("SecurePayment")}
-                  />
-                  <Error errorName={errors.promo_payment} />
-                </div>
-              </div>
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t("SecurePayment")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="promo_payment"
+                      type="text"
+                      placeholder={t("SecurePayment")}
+                    />
+                    <Error errorName={errors.promo_payment} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3 relative">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("LatestOffer")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="promo_offer"
-                    type="text"
-                    placeholder="Upto 20% Off"
-                  />
-                  <Error errorName={errors.promo_offer} />
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{t("LatestOffer")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="promo_offer"
+                      type="text"
+                      placeholder="Upto 20% Off"
+                    />
+                    <Error errorName={errors.promo_offer} />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
         {/*  ====================================================== Footer Section ====================================================== */}
-        <div className="col-span-12 md:col-span-12 lg:col-span-12 md:mt-0 mt-10">
-          <div className="inline-flex md:text-lg text-base text-gray-800 font-semibold dark:text-gray-400 mb-3">
-            <FiSettings className="mt-1 mr-2" /> {t("FooterTitle")}
+        <div className="col-span-12 mt-12 mb-10">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="bg-[#e6f2f3] p-2 rounded-lg">
+              <FiSettings className="text-[#004f56] text-xl" />
+            </div>
+            <h2 className="text-xl font-bold text-[#004f56]">{t("FooterTitle")}</h2>
           </div>
 
-          <hr className="md:mb-12 mb-3" />
-
-          <div className="xl:px-10 flex-grow scrollbar-hide w-full max-h-full pb-0">
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative">
-              <strong>{t("Block")} 1</strong>
-            </div>
-            <hr className="md:mb-12 mb-3" />
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterBlock1}
-                  processOption={footerBlock1}
-                  name={footerBlock1}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: footerBlock1 ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerBlock1 ? "hidden" : "visible",
-                opacity: !footerBlock1 ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-4">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_title"
-                    type="text"
-                    placeholder="Company"
+          <div className="bg-[#f9fafb] rounded-3xl p-8 border border-gray-100 shadow-sm space-y-12">
+            {/* Block 1 */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#004f56] text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">1</div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("Block")} 1 Settings</h3>
+                    <p className="text-xs text-gray-400 font-medium">Configure primary navigation links for the first footer column.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold uppercase transition-colors ${footerBlock1 ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                    {footerBlock1 ? 'Active' : 'Hidden'}
+                  </span>
+                  <SwitchToggle
+                    handleProcess={setFooterBlock1}
+                    processOption={footerBlock1}
+                    name="footerBlock1"
                   />
-                  <Error errorName={errors.footer_block_one_title} />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 1
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_one_title"
-                    type="text"
-                    placeholder={t("AboutUs")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_one_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4 mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_one"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_one} />
-                </div>
-              </div>
+              {footerBlock1 && (
+                <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                  <div className="max-w-md">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("Title")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="footer_block_one_title"
+                      type="text"
+                      placeholder="Company"
+                    />
+                    <Error errorName={errors.footer_block_one_title} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 2
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_two_title"
-                    type="text"
-                    placeholder={t("ContactUs")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_two_title} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    {[1, 2, 3, 4].map((num) => {
+                      const linkNames = ["one", "two", "three", "four"];
+                      const suffix = linkNames[num - 1];
+                      const titleName = `footer_block_one_link_${suffix}_title`;
+                      const urlName = `footer_block_one_link_${suffix}`;
+                      
+                      return (
+                        <div key={num} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">{t("Link")} {num}</label>
+                          <InputAreaTwo
+                            register={register}
+                            label="Title"
+                            name={titleName}
+                            type="text"
+                            placeholder="Link Title"
+                          />
+                          <InputAreaTwo
+                            register={register}
+                            label="URL"
+                            name={urlName}
+                            type="text"
+                            placeholder="/link-url"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_two"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_two} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 3
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_three_title"
-                    type="text"
-                    placeholder={t("Careers")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_three_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_three"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_three} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 4
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_four_title"
-                    type="text"
-                    placeholder={t("LatestNews")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_four_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4 mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_one_link_four"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_one_link_four} />
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative md:mt-0 mt-24">
-              <strong>{t("Block")} 2</strong>
-            </div>
-            <hr className="md:mb-12 mb-3" />
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterBlock2}
-                  processOption={footerBlock2}
-                  name={footerBlock2}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: footerBlock2 ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerBlock2 ? "hidden" : "visible",
-                opacity: !footerBlock2 ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_title"
-                    type="text"
-                    placeholder={t("TopCategory")}
+            {/* Block 2 */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#004f56] text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">2</div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("Block")} 2 Settings</h3>
+                    <p className="text-xs text-gray-400 font-medium">Configure category links for the second footer column.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold uppercase transition-colors ${footerBlock2 ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                    {footerBlock2 ? 'Active' : 'Hidden'}
+                  </span>
+                  <SwitchToggle
+                    handleProcess={setFooterBlock2}
+                    processOption={footerBlock2}
+                    name="footerBlock2"
                   />
-                  <Error errorName={errors.footer_block_two_title} />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 1
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_one_title"
-                    type="text"
-                    placeholder={t("FishAndMeat")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_one_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_one"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_one} />
-                </div>
-              </div>
+              {footerBlock2 && (
+                <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                  <div className="max-w-md">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("Title")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="footer_block_two_title"
+                      type="text"
+                      placeholder={t("TopCategory")}
+                    />
+                    <Error errorName={errors.footer_block_two_title} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 2
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_two_title"
-                    type="text"
-                    placeholder={t("SoftDrinks")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_two_title} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    {[1, 2, 3, 4].map((num) => {
+                      const linkNames = ["one", "two", "three", "four"];
+                      const suffix = linkNames[num - 1];
+                      const titleName = `footer_block_two_link_${suffix}_title`;
+                      const urlName = `footer_block_two_link_${suffix}`;
+                      
+                      return (
+                        <div key={num} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">{t("Link")} {num}</label>
+                          <InputAreaTwo
+                            register={register}
+                            label="Title"
+                            name={titleName}
+                            type="text"
+                            placeholder="Link Title"
+                          />
+                          <InputAreaTwo
+                            register={register}
+                            label="URL"
+                            name={urlName}
+                            type="text"
+                            placeholder="/link-url"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_two"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_two} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 3
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_three_title"
-                    type="text"
-                    placeholder={t("BabyCare")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_three_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_three"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_three} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 4
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_four_title"
-                    type="text"
-                    placeholder={t("BeautyAndHealth")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_four_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_two_link_four"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_two_link_four} />
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative md:mt-0 mt-24">
-              <strong>{t("Block")} 3</strong>
-            </div>
-            <hr className="md:mb-12 mb-3" />
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterBlock3}
-                  processOption={footerBlock3}
-                  name={footerBlock3}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: footerBlock3 ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerBlock3 ? "hidden" : "visible",
-                opacity: !footerBlock3 ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Title")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_title"
-                    type="text"
-                    placeholder="My Account"
+            {/* Block 3 */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#004f56] text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">3</div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("Block")} 3 Settings</h3>
+                    <p className="text-xs text-gray-400 font-medium">Configure user account links for the third footer column.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold uppercase transition-colors ${footerBlock3 ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                    {footerBlock3 ? 'Active' : 'Hidden'}
+                  </span>
+                  <SwitchToggle
+                    handleProcess={setFooterBlock3}
+                    processOption={footerBlock3}
+                    name="footerBlock3"
                   />
-                  <Error errorName={errors.footer_block_three_title} />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 1
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_one_title"
-                    type="text"
-                    placeholder={t("Dashboard")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_one_title} />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_one"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_one} />
-                </div>
-              </div>
+              {footerBlock3 && (
+                <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                  <div className="max-w-md">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("Title")}</label>
+                    <InputAreaTwo
+                      register={register}
+                      label="Title"
+                      name="footer_block_three_title"
+                      type="text"
+                      placeholder="My Account"
+                    />
+                    <Error errorName={errors.footer_block_three_title} />
+                  </div>
 
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 2
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_two_title"
-                    type="text"
-                    placeholder={t("MyOrders")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_two_title} />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                    {[1, 2, 3, 4].map((num) => {
+                      const linkNames = ["one", "two", "three", "four"];
+                      const suffix = linkNames[num - 1];
+                      const titleName = `footer_block_three_link_${suffix}_title`;
+                      const urlName = `footer_block_three_link_${suffix}`;
+                      
+                      return (
+                        <div key={num} className="bg-gray-50/50 p-4 rounded-xl border border-gray-100 space-y-3">
+                          <label className="block text-[10px] font-bold text-gray-500 uppercase">{t("Link")} {num}</label>
+                          <InputAreaTwo
+                            register={register}
+                            label="Title"
+                            name={titleName}
+                            type="text"
+                            placeholder="Link Title"
+                          />
+                          <InputAreaTwo
+                            register={register}
+                            label="URL"
+                            name={urlName}
+                            type="text"
+                            placeholder="/link-url"
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_two"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_two} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 3
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_three_title"
-                    type="text"
-                    placeholder="Recent Orders"
-                  />
-                  <Error
-                    errorName={errors.footer_block_three_link_three_title}
-                  />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_three"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_three} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-1">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("Link")} 4
-                </label>
-
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_four_title"
-                    type="text"
-                    placeholder="Updated Profile"
-                  />
-                  <Error
-                    errorName={errors.footer_block_three_link_four_title}
-                  />
-                </div>
-                <label className="md:col-span-1 sm:col-span-2"></label>
-                <div className="sm:col-span-4  mb-5">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_three_link_four"
-                    type="text"
-                    placeholder={t("Link")}
-                  />
-                  <Error errorName={errors.footer_block_three_link_four} />
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative md:mt-0 mt-24">
-              <strong>{t("Block")} 4</strong>
+            {/* Block 4 */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#004f56] text-white w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">4</div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("Block")} 4 Settings</h3>
+                    <p className="text-xs text-gray-400 font-medium">Configure primary contact details and store positioning.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold uppercase transition-colors ${footerBlock4 ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                    {footerBlock4 ? 'Active' : 'Hidden'}
+                  </span>
+                  <SwitchToggle
+                    handleProcess={setFooterBlock4}
+                    processOption={footerBlock4}
+                    name="footerBlock4"
+                  />
+                </div>
+              </div>
+
+              {footerBlock4 && (
+                <div className="space-y-8 animate-[fadeIn_0.5s_ease-in-out]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("FooterLogo")}</label>
+                        <Uploader
+                          imageUrl={footerLogo}
+                          setImageUrl={setFooterLogo}
+                          useOriginalSize={true}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("FooterAddress")}</label>
+                        <InputAreaTwo
+                          register={register}
+                          label="Address"
+                          name="footer_block_four_address"
+                          type="text"
+                          placeholder="Store Address"
+                        />
+                        <Error errorName={errors.footer_block_four_address} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-6">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("FooterPhone")}</label>
+                        <InputAreaTwo
+                          register={register}
+                          label="Phone"
+                          name="footer_block_four_phone"
+                          type="text"
+                          placeholder="+1 234 567 890"
+                        />
+                        <Error errorName={errors.footer_block_four_phone} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">{t("FooterEmail")}</label>
+                        <InputAreaTwo
+                          register={register}
+                          label="Email"
+                          name="footer_block_four_email"
+                          type="text"
+                          placeholder="contact@store.com"
+                        />
+                        <Error errorName={errors.footer_block_four_email} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <hr className="md:mb-12 mb-3" />
-
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterBlock4}
-                  processOption={footerBlock4}
-                  name={footerBlock4}
-                />
+            {/* Social Links */}
+            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
+              <div className="flex items-center justify-between mb-8 border-b border-gray-50 pb-6">
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                    <FiSettings className="text-[#004f56] text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("SocialLinks")}</h3>
+                    <p className="text-xs text-gray-400 font-medium">Connect your store with social media platforms.</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`text-[10px] font-bold uppercase transition-colors ${footerSocialLinks ? 'text-[#004f56]' : 'text-gray-400'}`}>
+                    {footerSocialLinks ? 'Active' : 'Hidden'}
+                  </span>
+                  <SwitchToggle
+                    handleProcess={setFooterSocialLinks}
+                    processOption={footerSocialLinks}
+                    name="footerSocialLinks"
+                  />
+                </div>
               </div>
+
+              {footerSocialLinks && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-[fadeIn_0.5s_ease-in-out]">
+                  {[
+                    { name: 'facebook', label: 'Facebook', placeholder: 'https://facebook.com/...' },
+                    { name: 'twitter', label: 'Twitter', placeholder: 'https://twitter.com/...' },
+                    { name: 'instagram', label: 'Instagram', placeholder: 'https://instagram.com/...' },
+                    { name: 'linkedin', label: 'LinkedIn', placeholder: 'https://linkedin.com/...' },
+                    { name: 'whatsapp', label: 'WhatsApp', placeholder: 'https://wa.me/...' }
+                  ].map((social) => (
+                    <div key={social.name} className="space-y-2">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">{social.label}</label>
+                      <InputAreaTwo
+                        register={register}
+                        label={social.label}
+                        name={`social_` + social.name}
+                        type="text"
+                        placeholder={social.placeholder}
+                      />
+                      <Error errorName={errors[`social_` + social.name]} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div
-              style={{
-                height: footerBlock4 ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerBlock4 ? "hidden" : "visible",
-                opacity: !footerBlock4 ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FooterLogo")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={footerLogo}
-                    setImageUrl={setFooterLogo}
-                    useOriginalSize={true}
+            {/* Payment & Bottom Contact */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Payment Method */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                      <FiSettings className="text-[#004f56] text-lg" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("PaymentMethod")}</h3>
+                  </div>
+                  <SwitchToggle
+                    handleProcess={setFooterPaymentMethod}
+                    processOption={footerPaymentMethod}
+                    name="footerPaymentMethod"
                   />
                 </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FooterAddress")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_four_address"
-                    type="text"
-                    placeholder="Address"
-                  />
-                  <Error errorName={errors.footer_block_four_address} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FooterPhone")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_four_phone"
-                    type="text"
-                    placeholder={t("Phone")}
-                  />
-                  <Error errorName={errors.footer_block_four_phone} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("FooterEmail")}
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="footer_block_four_email"
-                    type="text"
-                    placeholder="Email"
-                  />
-                  <Error errorName={errors.footer_block_four_email} />
-                </div>
-              </div>
-            </div>
-
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative mt-24 md:mt-0">
-              <strong>{t("SocialLinks")}</strong>
-            </div>
-            <hr className="md:mb-12 mb-3" />
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterSocialLinks}
-                  processOption={footerSocialLinks}
-                  name={footerSocialLinks}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: footerSocialLinks ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerSocialLinks ? "hidden" : "visible",
-                opacity: !footerSocialLinks ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Facebook
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="social_facebook"
-                    type="text"
-                    placeholder="Facebook link"
-                  />
-                  <Error errorName={errors.social_facebook} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Twitter
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="social_twitter"
-                    type="text"
-                    placeholder="Twitter Link"
-                  />
-                  <Error errorName={errors.social_twitter} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Instagram
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="social_instagram"
-                    type="text"
-                    placeholder="Instagram Link"
-                  />
-                  <Error errorName={errors.social_instagram} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  Linkedin
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="social_linkedin"
-                    type="text"
-                    placeholder="Linkedin Link"
-                  />
-                  <Error errorName={errors.social_linkedin} />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  WhatsApp
-                </label>
-                <div className="sm:col-span-4">
-                  <InputAreaTwo
-                    register={register}
-                    label="Title"
-                    name="social_whatsapp"
-                    type="text"
-                    placeholder="whatsApp Link"
-                  />
-                  <Error errorName={errors.social_whatsapp} />
-                </div>
-              </div>
-            </div>
-
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative mt-24 md:mt-0">
-              <strong>{t("PaymentMethod")}</strong>
-            </div>
-            <hr className="md:mb-12 mb-3" />
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterPaymentMethod}
-                  processOption={footerPaymentMethod}
-                  name={footerPaymentMethod}
-                />
-              </div>
-            </div>
-
-            <div
-              style={{
-                height: footerPaymentMethod ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerPaymentMethod ? "hidden" : "visible",
-                opacity: !footerPaymentMethod ? "0" : "1",
-              }}
-            >
-              <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                  {t("PaymentMethod")}
-                </label>
-                <div className="sm:col-span-4">
-                  <Uploader
-                    imageUrl={paymentImage}
-                    setImageUrl={setPaymentImage}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-                  <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                    Visibility
-                  </label>
-                  <div className="sm:col-span-4">
-                    <SwitchToggle
-                      title={""}
-                      // handleProcess={setSliderFullWidth}
-                      // processOption={}
+                
+                {footerPaymentMethod && (
+                  <div className="animate-[fadeIn_0.5s_ease-in-out]">
+                    <Uploader
+                      imageUrl={paymentImage}
+                      setImageUrl={setPaymentImage}
                     />
                   </div>
-                </div> */}
-
-            <div className="inline-flex md:text-base text-sm mb-3 text-gray-500 dark:text-gray-400 relative mt-16 md:mt-0">
-              <strong>{t("FooterBottomContact")}</strong>
-            </div>
-
-            <hr className="md:mb-12 mb-3" />
-
-            <div className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3">
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("EnableThisBlock")}
-              </label>
-              <div className="sm:col-span-4">
-                <SwitchToggle
-                  title=""
-                  handleProcess={setFooterBottomContact}
-                  processOption={footerBottomContact}
-                  name={footerBottomContact}
-                />
+                )}
               </div>
-            </div>
 
-            <div
-              style={{
-                height: footerBottomContact ? "auto" : 0,
-                transition: "all 0.5s",
-                visibility: !footerBottomContact ? "hidden" : "visible",
-                opacity: !footerBottomContact ? "0" : "1",
-              }}
-              className="grid md:grid-cols-5 sm:grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 md:mb-6 mb-3"
-            >
-              <label className="block md:text-sm md:col-span-1 sm:col-span-2 text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-                {t("FooterBottomContact")}
-              </label>
-              <div className="sm:col-span-4 mb-20 md:mb-0">
-                <InputAreaTwo
-                  register={register}
-                  label="Title"
-                  name="footer_Bottom_Contact"
-                  type="text"
-                  placeholder={t("FooterBottomContact")}
-                />
-                <Error errorName={errors.footer_Bottom_Contact} />
+              {/* Bottom Contact */}
+              <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 h-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-[#e6f2f3] p-1.5 rounded-lg">
+                      <FiSettings className="text-[#004f56] text-lg" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-800">{t("FooterBottomContact")}</h3>
+                  </div>
+                  <SwitchToggle
+                    handleProcess={setFooterBottomContact}
+                    processOption={footerBottomContact}
+                    name="footerBottomContact"
+                  />
+                </div>
+
+                {footerBottomContact && (
+                  <div className="animate-[fadeIn_0.5s_ease-in-out]">
+                    <InputAreaTwo
+                      register={register}
+                      label="Contact Info"
+                      name="footer_Bottom_Contact"
+                      type="text"
+                      placeholder="e.g. Call Us: +01 123 456 789"
+                    />
+                    <Error errorName={errors.footer_Bottom_Contact} />
+                  </div>
+                )}
               </div>
             </div>
           </div>

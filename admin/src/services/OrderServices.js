@@ -96,6 +96,10 @@ const OrderServices = {
   sendEmailInvoiceToCustomer: async (body) => {
     return requests.post("/order/customer/invoice", body);
   },
+
+  addOrder: async (body) => {
+    return requests.post("/order/add", body);
+  },
 };
 
 export default OrderServices;

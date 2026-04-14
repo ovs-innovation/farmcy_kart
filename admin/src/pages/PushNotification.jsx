@@ -1,0 +1,341 @@
+import {
+  Button,
+  Card,
+  CardBody,
+  Input,
+  Pagination,
+  Table,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHeader,
+  Select,
+  Textarea,
+  Label,
+} from "@windmill/react-ui";
+import { useContext, useState, useEffect } from "react";
+import { FiEdit, FiPlus, FiSearch, FiTrash2, FiDownload, FiInfo } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
+
+//internal import
+import { SidebarContext } from "@/context/SidebarContext";
+import PushNotificationServices from "@/services/PushNotificationServices";
+import useAsync from "@/hooks/useAsync";
+import useToggleDrawer from "@/hooks/useToggleDrawer";
+import useFilter from "@/hooks/useFilter";
+import PageTitle from "@/components/Typography/PageTitle";
+import DeleteModal from "@/components/modal/DeleteModal";
+import BulkActionDrawer from "@/components/drawer/BulkActionDrawer";
+import MainDrawer from "@/components/drawer/MainDrawer";
+import TableLoading from "@/components/preloader/TableLoading";
+import CheckBox from "@/components/form/others/CheckBox";
+import PushNotificationTable from "@/components/push-notification/PushNotificationTable";
+import NotFound from "@/components/table/NotFound";
+import AnimatedContent from "@/components/common/AnimatedContent";
+import Uploader from "@/components/image-uploader/Uploader";
+import usePushNotificationSubmit from "@/hooks/usePushNotificationSubmit";
+
+const PushNotification = () => {
+  const { t } = useTranslation();
+  const { toggleDrawer, lang } = useContext(SidebarContext);
+
+  const [activeId, setActiveId] = useState(null);
+
+  const {
+    data,
+    loading,
+    error
+  } = useAsync(PushNotificationServices.getAllPushNotifications);
+
+  const [isCheckAll, setIsCheckAll] = useState(false);
+  const [isCheck, setIsCheck] = useState([]);
+
+  const { allId, serviceId, handleDeleteMany, handleUpdateMany } = useToggleDrawer();
+
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    errors,
+    setImageUrl,
+    imageUrl,
+    isSubmitting,
+    handleReset,
+    setValue,
+  } = usePushNotificationSubmit(activeId);
+
+  const {
+    dataTable,
+    serviceData,
+    totalResults,
+    resultsPerPage,
+    handleChangePage,
+    setSearchCoupon,
+  } = useFilter(data);
+
+  const handleSelectAll = () => {
+    setIsCheckAll(!isCheckAll);
+    setIsCheck(data?.map((li) => li._id));
+    if (isCheckAll) {
+      setIsCheck([]);
+    }
+  };
+
+  const [titleCount, setTitleCount] = useState(0);
+  const [descCount, setDescCount] = useState(0);
+
+  const handleUpdate = (id) => {
+    setActiveId(id);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <>
+      <PageTitle>Push Notification</PageTitle>
+
+      <DeleteModal
+        ids={allId}
+        setIsCheck={setIsCheck}
+        title="Selected Push Notification"
+        service={PushNotificationServices}
+      />
+
+      <AnimatedContent>
+        {/* Warning Alert */}
+        <div className="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6 rounded flex items-center gap-3">
+          <div className="flex-shrink-0">
+            <FiInfo className="text-orange-400 h-5 w-5" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-orange-700">
+              Setup Push Notification Messages for customer. Must setup <span className="text-blue-600 font-semibold cursor-pointer">Firebase Configuration</span> page to work notifications.
+            </p>
+          </div>
+        </div>
+
+        {/* Send Notification Form */}
+        <Card className="mb-8 border border-gray-100 dark:border-gray-700 shadow-sm overflow-visible">
+          <CardBody>
+            <h2 className="text-xl font-semibold mb-1">Send Notification</h2>
+            <p className="text-sm text-gray-500 mb-6 font-medium">Configure settings to send push notifications to targeted users in specific zones.</p>
+
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Left Side: Fields */}
+                <div className="md:col-span-2 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold">Zones <span className="text-red-500">*</span></Label>
+                      <Select
+                        {...register("zone", { required: "Zone is required" })}
+                        className="border-[#e5e7eb] focus:border-teal-400 focus:ring-0 h-10"
+                      >
+                        <option value="All">All</option>
+                      </Select>
+                      {errors.zone && <span className="text-red-400 text-xs">{errors.zone.message}</span>}
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold">Targeted User <span className="text-red-500">*</span></Label>
+                      <Select
+                        {...register("target", { required: "Target is required" })}
+                        className="border-[#e5e7eb] focus:border-teal-400 focus:ring-0 h-10"
+                      >
+                        <option value="Customer">Customer</option>
+                        <option value="Store">Store</option>
+                        <option value="Driver">Driver</option>
+                      </Select>
+                      {errors.target && <span className="text-red-400 text-xs">{errors.target.message}</span>}
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label className="text-sm font-semibold">Title <FiInfo className="inline ml-1 text-gray-300" /> <span className="text-red-500">*</span></Label>
+                      </div>
+                      <Textarea
+                        {...register("title", {
+                          required: "Title is required",
+                          maxLength: { value: 100, message: "Maximum 100 characters" }
+                        })}
+                        placeholder="Type Title"
+                        className="border-[#e5e7eb] focus:border-teal-400 focus:ring-0 min-h-[80px]"
+                        onChange={(e) => {
+                          setTitleCount(e.target.value.length);
+                          setValue("title", e.target.value);
+                        }}
+                      />
+                      <div className="flex justify-end">
+                        <span className="text-xs text-gray-400">{titleCount}/100</span>
+                      </div>
+                      {errors.title && <span className="text-red-400 text-xs">{errors.title.message}</span>}
+                    </div>
+
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <Label className="text-sm font-semibold">Description <FiInfo className="inline ml-1 text-gray-300" /> <span className="text-red-500">*</span></Label>
+                      </div>
+                      <Textarea
+                        {...register("description", {
+                          required: "Description is required",
+                          maxLength: { value: 200, message: "Maximum 200 characters" }
+                        })}
+                        placeholder="Type about the description"
+                        className="border-[#e5e7eb] focus:border-teal-400 focus:ring-0 min-h-[80px]"
+                        onChange={(e) => {
+                          setDescCount(e.target.value.length);
+                          setValue("description", e.target.value);
+                        }}
+                      />
+                      <div className="flex justify-end">
+                        <span className="text-xs text-gray-400">{descCount}/200</span>
+                      </div>
+                      {errors.description && <span className="text-red-400 text-xs">{errors.description.message}</span>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Side: Image Uploader */}
+                <div className="space-y-4">
+                  <Label className="text-sm font-semibold">Image</Label>
+                  <p className="text-xs text-gray-400">Upload your cover image</p>
+                  <div className="w-full bg-gray-50 border-2 border-dashed border-gray-200 rounded-lg p-6 flex flex-col items-center justify-center min-h-[200px]">
+                    <Uploader setImageUrl={setImageUrl} imageUrl={imageUrl} />
+                    <p className="text-[10px] text-gray-400 mt-4 text-center">JPEG, JPG, PNG, GIF, WEBP. Less Than 2MB <span className="font-bold">(2:1)</span></p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex justify-end gap-4 mt-8">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    handleReset();
+                    setActiveId(null);
+                    setTitleCount(0);
+                    setDescCount(0);
+                  }}
+                  className="px-14 h-[48px]  xl:w-[90px] bg-[#eef2f7] hover:bg-gray-200 text-white font-bold rounded-lg transition-colors border-none"
+                >
+                  Reset
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="px-10 h-[48px] bg-[#007980] hover:bg-[#005f63] text-white font-bold rounded-lg transition-colors border-none"
+                >
+                  {isSubmitting ? "Sending..." : activeId ? "Update & Send" : "Save & Send"}
+                </Button>
+              </div>
+            </form>
+          </CardBody>
+        </Card>
+
+        {/* Notification History Section */}
+        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm mb-6 border border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-700 mb-0">Notification History</h3>
+              <span className="bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 rounded-md text-sm text-gray-600 font-bold mb-0">
+                {totalResults}
+              </span>
+            </div>
+
+
+
+            <div className="flex items-center gap-3 w-full md:w-auto">
+
+              <div className="relative w-full md:w-[220px] lg:w-[220px] xl:w-[320px]">
+                <Input
+                  type="text"
+                  placeholder="Search by invoice or name..."
+                  className="w-full h-14 pl-6 pr-16 rounded-full border border-gray-300 bg-white text-base placeholder-gray-400 focus:border-teal-400 focus:ring-0"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-1 flex items-center text-[#8fc3c9] hover:text-teal-600"
+                >
+                  <FiSearch className="text-[30px]" />
+                </button>
+              </div>
+
+              <div className="relative w-full md:w-[50px] lg:w-[120px] xl:w-[150px]">
+
+                <Select className="w-40 border-gray-300 focus:border-teal-400 focus:ring-0 h-12">
+                  <option value="All">All</option>
+                  <option value="Customer">Customer</option>
+                  <option value="Driver">Driver</option>
+                  <option value="Store">Store</option>
+
+
+
+                </Select>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  layout="outline"
+                  className="h-10 px-4 border-gray-300 text-gray-600 flex items-center gap-2 font-semibold"
+                >
+                  <FiDownload className="text-sm" />
+                  Export
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AnimatedContent>
+
+      {loading ? (
+        <TableLoading row={8} col={9} width={140} height={20} />
+      ) : error ? (
+        <span className="text-center mx-auto text-red-500">{error}</span>
+      ) : serviceData?.length !== 0 ? (
+        <TableContainer className="mb-8 rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+          <Table>
+            <TableHeader className="bg-gray-50 dark:bg-gray-800">
+              <tr>
+                <TableCell>
+                  <CheckBox
+                    type="checkbox"
+                    name="selectAll"
+                    id="selectAll"
+                    handleClick={handleSelectAll}
+                    isChecked={isCheckAll}
+                  />
+                </TableCell>
+                <TableCell>SL</TableCell>
+                <TableCell>Image</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Description</TableCell>
+                <TableCell>Target</TableCell>
+                <TableCell>Zones</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell className="text-right">Action</TableCell>
+              </tr>
+            </TableHeader>
+            <PushNotificationTable
+              isCheck={isCheck}
+              notifications={dataTable}
+              setIsCheck={setIsCheck}
+              handleUpdate={handleUpdate}
+            />
+          </Table>
+          <TableFooter>
+            <Pagination
+              totalResults={totalResults}
+              resultsPerPage={resultsPerPage}
+              onChange={handleChangePage}
+              label="Table navigation"
+            />
+          </TableFooter>
+        </TableContainer>
+      ) : (
+        <NotFound title="Sorry, There are no notifications right now." />
+      )}
+    </>
+  );
+};
+
+export default PushNotification;

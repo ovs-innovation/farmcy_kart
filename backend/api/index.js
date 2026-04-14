@@ -1,3 +1,8 @@
+// Override DNS to use Google DNS (8.8.8.8) — fixes ECONNREFUSED on SRV lookups
+// when the system DNS blocks mongodb+srv:// connections to MongoDB Atlas
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "8.8.4.4"]);
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -24,10 +29,11 @@ const shiprocketRoutes = require("../routes/shiprocketRoutes");
 const taxRoutes = require("../routes/taxRoutes");
 const reviewRoutes = require("../routes/reviewRoutes");
 const faqRoutes = require("../routes/faqRoutes");
-
 const prescriptionRoutes = require("../routes/prescriptionRoutes");
 const testimonialRoutes = require("../routes/testimonialRoutes");
 const locationRoutes = require("../routes/locationRoutes");
+const refundRoutes = require("../routes/refundRoutes");
+
 const { isAuth, isAdmin } = require("../config/auth");
 // const {
 //   getGlobalSetting,
@@ -62,7 +68,7 @@ app.get("/", (req, res) => {
 // Example: http://localhost:8090/o/69819e2bff190a2118afe968  ->  http://localhost:3000/order/69819e2bff190a2118afe968
 
 app.get("/o/:id", (req, res) => {
-  const frontendBaseUrl = (process.env.STORE_URL || "http://localhost:3000, http://localhost:8081, exp://192.168.1.5:8081, http://192.168.1.9:8092/api, http://192.168.1.9:8091/api, http://192.168.1.9:8081, exp://192.168.1.9:8081, exp://192.168.1.8:8081").replace(/\/+$/, "");
+  const frontendBaseUrl = (process.env.STORE_URL || "http://localhost:3000, http://localhost:8081, exp://192.168.1.5:8081, http://192.168.1.9:8092/api, http://192.168.1.9:8091/api, http://192.168.1.9:8081, exp://192.168.1.9:8081, exp://192.168.1.10:8081").replace(/\/+$/, "");
   return res.redirect(302, `${frontendBaseUrl}/order/${req.params.id}`);
 });
 
@@ -85,6 +91,7 @@ app.use("/api/faqs", faqRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/location", locationRoutes);
+app.use("/api/refund", refundRoutes);
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);

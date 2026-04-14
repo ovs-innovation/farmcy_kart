@@ -1,100 +1,53 @@
 import { TableBody, TableCell, TableRow } from "@windmill/react-ui";
 import React from "react";
-import { FiEdit } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 
 //internal import
-import Tooltip from "@/components/tooltip/Tooltip";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
+import useToggleDrawer from "@/hooks/useToggleDrawer";
+import AttributeDrawer from "@/components/drawer/AttributeDrawer";
 import MainDrawer from "@/components/drawer/MainDrawer";
 import DeleteModal from "@/components/modal/DeleteModal";
-import useToggleDrawer from "@/hooks/useToggleDrawer";
-import CheckBox from "@/components/form/others/CheckBox";
-import ShowHideButton from "@/components/table/ShowHideButton";
-import EditDeleteButton from "@/components/table/EditDeleteButton";
-import AttributeDrawer from "@/components/drawer/AttributeDrawer";
 
-const AttributeTable = ({ isCheck, setIsCheck, attributes }) => {
-  const { title, serviceId, handleModalOpen, handleUpdate } = useToggleDrawer();
-
+const AttributeTable = ({ attributes, isCheck, setIsCheck }) => {
+  const { title, serviceId, handleUpdate, handleModalOpen } = useToggleDrawer();
   const { showingTranslateValue } = useUtilsFunction();
-
-  const handleClick = (e) => {
-    const { id, checked } = e.target;
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
-    }
-  };
-
-  // console.log('attributes', attributes);
 
   return (
     <>
-      {isCheck.length < 1 && <DeleteModal id={serviceId} title={title} />}
-
-      {isCheck.length < 2 && (
-        <MainDrawer>
-          <AttributeDrawer id={serviceId} />
-        </MainDrawer>
-      )}
+      <DeleteModal id={serviceId} title={title} />
+      
+      <MainDrawer>
+        <AttributeDrawer id={serviceId} />
+      </MainDrawer>
 
       <TableBody>
-        {attributes?.map((attribute) => (
-          <TableRow key={attribute._id}>
-            <TableCell>
-              <CheckBox
-                type="checkbox"
-                name="attribute"
-                id={attribute._id}
-                handleClick={handleClick}
-                isChecked={isCheck?.includes(attribute._id)}
-              />
+        {attributes?.map((attribute, index) => (
+          <TableRow key={attribute._id} className="hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors border-b border-gray-100 dark:border-gray-700">
+            <TableCell className="px-6 py-4 text-sm text-gray-500 w-24">
+              {index + 1}
             </TableCell>
-
-            <TableCell className="font-semibold uppercase text-xs">
+            <TableCell className="px-6 py-4 text-sm text-gray-500 w-32">
               {attribute?._id?.substring(20, 24)}
             </TableCell>
-
-            <TableCell className="font-medium text-sm">
-              {showingTranslateValue(attribute.title)}
+            <TableCell className="px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-300">
+              {showingTranslateValue(attribute.name) || showingTranslateValue(attribute.title)}
             </TableCell>
-
-            <TableCell className="font-medium text-sm">
-              {showingTranslateValue(attribute.name)}
-            </TableCell>
-
-            <TableCell className="font-medium text-sm">
-              {attribute.option}
-            </TableCell>
-
-            <TableCell className="text-center">
-              <ShowHideButton id={attribute._id} status={attribute.status} />
-            </TableCell>
-
-            <TableCell className="flex justify-center">
-              <Link
-                to={`/attributes/${attribute._id}`}
-                className="p-2 cursor-pointer text-gray-400 hover:text-store-600 focus:outline-none"
-              >
-                <Tooltip
-                  id="edit values"
-                  Icon={FiEdit}
-                  title="Edit Values"
-                  bgColor="#10B981"
-                />
-              </Link>
-            </TableCell>
-
-            <TableCell>
-              <EditDeleteButton
-                id={attribute._id}
-                isCheck={isCheck}
-                setIsCheck={setIsCheck}
-                handleUpdate={handleUpdate}
-                handleModalOpen={handleModalOpen}
-                title={showingTranslateValue(attribute.title)}
-              />
+            <TableCell className="px-6 py-4 w-32 text-center">
+              <div className="flex items-center justify-center gap-3">
+                <button
+                  onClick={() => handleUpdate(attribute._id)}
+                  className="p-1.5 flex items-center justify-center rounded border border-teal-500 text-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/30 transition-colors outline-none cursor-pointer"
+                >
+                  <FiEdit size={16} />
+                </button>
+                <button
+                  onClick={() => handleModalOpen(attribute._id, showingTranslateValue(attribute.name))}
+                  className="p-1.5 flex items-center justify-center rounded border border-red-400 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors outline-none cursor-pointer"
+                >
+                  <FiTrash2 size={16} />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         ))}

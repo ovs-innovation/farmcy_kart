@@ -293,198 +293,143 @@ const StoreHome = () => {
       </div>
 
       <>
-        <ul className="sm:flex grid grid-cols-3 text-sm font-medium text-center text-gray-500 sm:divide-x divide-gray-200 rounded-lg dark:divide-gray-700 dark:text-gray-400 mb-5">
+        <ul className="flex flex-wrap gap-3 mb-8">
           <li>
             <Link
               to={"/store/customization?storeTab=home-settings"}
-              className={`inline-block w-full px-4 py-3 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "home-settings" || location.search === ""
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500 sm:rounded-l-md rounded-tl-md`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("HomeSettings")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {tabName === "home-settings" || location.search === ""
-                  ? "Home"
-                  : "Home"}
-              </span>
+              Home Page
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=single-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "single-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("SingleSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {"Setting"}
-              </span>
+              Product Slug Page
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=about-us-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "about-us-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500 focus:outline-none dark:hover:text-white dark:hover:bg-store-500 sm:rounded-tr-none rounded-tr-md`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("AboutUsSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {"About"}
-              </span>
+              About Us
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=privacy-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "privacy-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("PrivacyTCSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {"Privacy"}
-              </span>
+              Privacy Policy & T&C
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=FAQ-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "FAQ-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("FAQSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {t("FAQSetting")}
-              </span>
+              FAQs
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=offers-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "offers-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("OffersStting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {t("OffersStting")}
-              </span>
+              Offers
             </Link>
           </li>
 
           <li>
             <Link
               to={"/store/customization?storeTab=contact-us-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "contact-us-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500 sm:rounded-bl-none rounded-bl-md`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("ContactUsStting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                Contact
-              </span>
+              Contact Us
             </Link>
           </li>
           <li>
             <Link
               to={"/store/customization?storeTab=checkout-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "checkout-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500 sm:rounded-bl-none rounded-bl-md`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("Checkout")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {t("Checkout")}
-              </span>
+              Checkout
             </Link>
           </li>
           <li>
             <Link
               to={"/store/customization?storeTab=dashboard-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "dashboard-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500 sm:rounded-bl-none rounded-bl-md`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("DashboardSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {t("Dashboard")}
-              </span>
+              Dashboard Settings
             </Link>
           </li>
           <li>
             <Link
               to={"/store/customization?storeTab=seo-settings"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "seo-settings"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("SeoSetting")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">
-                {"Seo"}
-              </span>
+              SEO Settings
             </Link>
           </li>
           <li>
             <Link
               to={"/store/customization?storeTab=theme-setting"}
-              className={`inline-block w-full py-3 px-4 shadow-md ${
+              className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "theme-setting"
-                  ? "bg-store-500 text-white dark:bg-store-500 dark:text-white"
-                  : "bg-gray-200 text-gray-800 font-medium dark:bg-gray-600 dark:text-gray-300"
-              } hover:text-white hover:bg-store-500  focus:outline-none dark:hover:text-white dark:hover:bg-store-500`}
+                  ? "bg-[#004f56] text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+              } text-center min-w-[120px]`}
             >
-              <span className="text-sm font-medium font-serif xl:inline-block hidden">
-                {t("Theme")}
-              </span>
-              <span className="text-sm font-medium font-serif xl:hidden">{"Theme"}</span>
+              Theme
             </Link>
           </li>
         </ul>
@@ -619,7 +564,7 @@ const StoreHome = () => {
         {/************* TabPanel 3*************/}
         {tabName === "about-us-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)} id="about-us-form">
                 <AboutUs
                   isSave={isSave}
@@ -666,7 +611,7 @@ const StoreHome = () => {
         {/************* TabPanel 4 *************/}
         {tabName === "privacy-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <PrivacyPolicy
                   isSave={isSave}
@@ -707,7 +652,7 @@ const StoreHome = () => {
         {/************* TabPanel 5 *************/}
         {tabName === "FAQ-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 mx-auto w-full bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 mx-auto w-full bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Faq
                   isSave={isSave}
@@ -734,7 +679,7 @@ const StoreHome = () => {
         {/************* TabPanel 6 *************/}
         {tabName === "offers-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Offer
                   errors={errors}
@@ -758,7 +703,7 @@ const StoreHome = () => {
         {/************* TabPanel 7 *************/}
         {tabName === "contact-us-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 w-full mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <ContactUs
                   isSave={isSave}
@@ -790,7 +735,7 @@ const StoreHome = () => {
         {/************* TabPanel 8 *************/}
         {tabName === "checkout-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 w-full mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Checkout
                   isSave={isSave}
@@ -806,7 +751,7 @@ const StoreHome = () => {
         {/************* TabPanel 9 *************/}
         {tabName === "dashboard-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 w-full mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <DashboardSetting
                   isSave={isSave}
@@ -822,7 +767,7 @@ const StoreHome = () => {
 
         {tabName === "seo-settings" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 w-full mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <SeoSetting
                   isSave={isSave}
@@ -840,7 +785,7 @@ const StoreHome = () => {
         )}
         {tabName === "theme-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-6 p-4 w-full mx-auto bg-white  dark:bg-gray-800 dark:text-gray-200 rounded-lg">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Theme register={register} isSubmitting={isSubmitting} defaultColor={themeColor} setValue={setValue} />
               </form>

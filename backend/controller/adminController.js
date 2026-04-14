@@ -199,9 +199,24 @@ const addStaff = async (req, res) => {
 };
 
 const getAllStaff = async (req, res) => {
-  // console.log('allamdin')
   try {
-    const admins = await Admin.find({}).sort({ _id: -1 });
+    const { searchText, role } = req.query;
+    let query = {};
+
+    if (role && role !== "All") {
+      query.role = role;
+    }
+
+    if (searchText) {
+      query.$or = [
+        { "name.en": { $regex: searchText, $options: "i" } },
+        { "name.default": { $regex: searchText, $options: "i" } },
+        { email: { $regex: searchText, $options: "i" } },
+        { phone: { $regex: searchText, $options: "i" } },
+      ];
+    }
+
+    const admins = await Admin.find(query).sort({ _id: -1 });
     res.send(admins);
   } catch (err) {
     res.status(500).send({

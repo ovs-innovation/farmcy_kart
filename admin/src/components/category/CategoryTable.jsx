@@ -1,124 +1,84 @@
-import { Avatar, TableBody, TableCell, TableRow } from "@windmill/react-ui";
-import { Link } from "react-router-dom";
-import { IoRemoveSharp } from "react-icons/io5";
+import { TableBody, TableCell, TableRow, Select } from "@windmill/react-ui";
+import { FiEdit, FiTrash2, FiCheck, FiSearch } from "react-icons/fi";
+import { useContext, useState } from "react";
+import { createPortal } from "react-dom";
 
 //internal import
-
-import CheckBox from "@/components/form/others/CheckBox";
-import useToggleDrawer from "@/hooks/useToggleDrawer";
-import DeleteModal from "@/components/modal/DeleteModal";
-import MainDrawer from "@/components/drawer/MainDrawer";
-import CategoryDrawer from "@/components/drawer/CategoryDrawer";
 import ShowHideButton from "@/components/table/ShowHideButton";
-import EditDeleteButton from "@/components/table/EditDeleteButton";
-import useUtilsFunction from "@/hooks/useUtilsFunction";
+import FeaturedButton from "@/components/table/FeaturedButton";
+import { SidebarContext } from "@/context/SidebarContext";
+import CategoryServices from "@/services/CategoryServices";
+import { notifyError, notifySuccess } from "@/utils/toast";
 
 const CategoryTable = ({
-  data,
-  lang,
-  isCheck,
   categories,
-  setIsCheck,
-  useParamId,
-  showChild,
+  lang,
+  handleUpdate,
+  handleModalOpen,
+  isSubCategory,
 }) => {
-  const { title, serviceId, handleModalOpen, handleUpdate } = useToggleDrawer();
-  const { showingTranslateValue } = useUtilsFunction();
+  const { setIsUpdate } = useContext(SidebarContext);
+  
+  const [alert, setAlert] = useState({ show: false, message: "", type: "success" });
 
-  const handleClick = (e) => {
-    const { id, checked } = e.target;
-    setIsCheck([...isCheck, id]);
-    if (!checked) {
-      setIsCheck(isCheck.filter((item) => item !== id));
+  const showAlert = (msg, type = "success") => {
+    setAlert({ show: true, message: msg, type: type });
+    setTimeout(() => setAlert({ show: false, message: "", type: "success" }), 3500);
+  };
+
+  const handlePriorityChange = async (id, priority) => {
+    try {
+      const res = await CategoryServices.updateCategory(id, { priority });
+      setIsUpdate(true);
+      showAlert(res.message, "success");
+    } catch (err) {
+      showAlert(err ? err?.response?.data?.message : err?.message, "error");
     }
   };
 
   return (
     <>
-      {isCheck?.length < 1 && (
-        <DeleteModal useParamId={useParamId} id={serviceId} title={title} />
-      )}
-
-      <MainDrawer>
-        <CategoryDrawer id={serviceId} data={data} lang={lang} />
-      </MainDrawer>
-
       <TableBody>
-        {categories?.map((category) => (
-          <TableRow key={category._id}>
-            <TableCell>
-              <CheckBox
-                type="checkbox"
-                name="category"
-                id={category._id}
-                handleClick={handleClick}
-                isChecked={isCheck?.includes(category._id)}
-              />
+        {categories?.map((category, i) => (
+          <TableRow key={category._id} className="text-gray-600 dark:text-gray-300 border-b border-gray-50 dark:border-gray-700/50 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/50 transition-colors">
+            <TableCell className="text-xs font-semibold">{i + 1}</TableCell>
+            <TableCell className="text-xs text-gray-500 dark:text-gray-400 font-medium tracking-wide">
+              {category._id.substring(category._id.length - 3)}
             </TableCell>
-
-            <TableCell className="font-semibold uppercase text-xs">
-              {category?._id?.substring(20, 24)}
-            </TableCell>
-            <TableCell>
-              {category?.icon ? (
-                <Avatar
-                  className="hidden mr-3 md:block bg-gray-50 p-1"
-                  src={category?.icon}
-                  alt={category?.parent}
-                />
-              ) : (
-                <Avatar
-                  src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
-                  alt="product"
-                  className="hidden p-1 mr-2 md:block bg-gray-50 shadow-none"
-                />
-              )}
-            </TableCell>
-
-            <TableCell className="font-medium text-sm ">
-              {category?.children.length > 0 ? (
-                <Link
-                  to={`/categories/${category?._id}`}
-                  className="text-blue-700"
-                >
-                  {showingTranslateValue(category?.name)}
-
-                  <>
-                    {showChild && (
-                      <>
-                        {" "}
-                        <div className="pl-2 ">
-                          {category?.children?.map((child) => (
-                            <div key={child._id}>
-                              <Link
-                                to={`/categories/${child?._id}`}
-                                className="text-blue-700"
-                              >
-                                <div className="flex text-xs items-center  text-blue-800">
-                                  <span className=" text-xs text-gray-500 pr-1">
-                                    <IoRemoveSharp />
-                                  </span>
-                                  <span className="text-gray-500">
-                                    {showingTranslateValue(child.name)}
-                                  </span>
-                                </div>
-                              </Link>
-                            </div>
-                          ))}
-                        </div>
-                      </>
+            
+            {isSubCategory ? (
+                <>
+                    <TableCell className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                        {category.parentName || "Main Category"}
+                    </TableCell>
+                    <TableCell className="text-xs text-gray-500 dark:text-gray-400 font-semibold">
+                        {category.name[lang] || category.name["en"] || category.name["default"]}
+                    </TableCell>
+                </>
+            ) : (
+                <>
+                  <TableCell className="text-center">
+                    {category.icon ? (
+                      <div className="flex justify-center items-center">
+                        <img 
+                          src={category.icon} 
+                          alt="icon" 
+                          className="w-10 h-10 object-cover rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-100 dark:border-gray-600 p-1 shadow-sm"
+                        />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 mx-auto bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center text-gray-400 text-xs shadow-sm shadow-inner">
+                        Img
+                      </div>
                     )}
-                  </>
-                </Link>
-              ) : (
-                <span>{showingTranslateValue(category?.name)}</span>
-              )}
-            </TableCell>
-            <TableCell className="text-sm">
-              {showingTranslateValue(category?.description)}
-            </TableCell>
+                  </TableCell>
+                  <TableCell className="text-sm font-bold text-gray-700 dark:text-gray-200">
+                      {category.name[lang] || category.name["en"] || category.name["default"] || "Untitled"}
+                  </TableCell>
+                </>
+            )}
 
-            <TableCell className="text-center">
+            <TableCell>
               <ShowHideButton
                 id={category._id}
                 category
@@ -126,19 +86,60 @@ const CategoryTable = ({
               />
             </TableCell>
             <TableCell>
-              <EditDeleteButton
-                id={category?._id}
-                parent={category}
-                isCheck={isCheck}
-                children={category?.children}
-                handleUpdate={handleUpdate}
-                handleModalOpen={handleModalOpen}
-                title={showingTranslateValue(category?.name)}
+              <FeaturedButton 
+                id={category._id} 
+                featured={category.featured} 
               />
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center">
+                <Select
+                  className={`text-[11px] font-bold h-8 rounded-lg border-0 ring-1 ring-gray-100 dark:ring-gray-700 px-3 w-28 cursor-pointer focus:ring-teal-500 transition-all appearance-none
+                    ${category.priority === 'High' ? 'text-red-600 bg-red-50 dark:bg-red-900/30 ring-red-100 dark:ring-red-900' : 
+                      category.priority === 'Medium' ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 ring-blue-100 dark:ring-blue-900' : 
+                      'text-teal-600 bg-teal-50 dark:bg-teal-900/30 ring-teal-100 dark:ring-teal-900'}`}
+                  value={category.priority || "Normal"}
+                  onChange={(e) => handlePriorityChange(category._id, e.target.value)}
+                >
+                  <option value="Normal">Normal</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Low">Low</option>
+                </Select>
+              </div>
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleUpdate(category._id)}
+                  className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-xl transition-all border border-blue-50 dark:border-blue-900/30"
+                >
+                  <FiEdit size={16} />
+                </button>
+                <button
+                  onClick={() => handleModalOpen(category._id, category.name[lang] || category.name["en"])}
+                  className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-xl transition-all border border-red-50 dark:border-red-900/30 hover:rotate-6 shadow-sm"
+                >
+                  <FiTrash2 size={16} />
+                </button>
+              </div>
             </TableCell>
           </TableRow>
         ))}
       </TableBody>
+      {/* Custom Professional Notification Banner */}
+      {alert.show && createPortal(
+        <div className={`fixed top-12 left-1/2 -translate-x-1/2 z-[9999] max-w-sm w-full px-6 py-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex items-center gap-4 border backdrop-blur-md animate-in slide-in-from-top-10 duration-500 ${alert.type === 'success' ? 'bg-teal-600/95 border-teal-500 text-white' : 'bg-red-600/95 border-red-500 text-white'}`}>
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+             {alert.type === 'success' ? <FiCheck size={20} /> : <FiSearch size={20} />}
+          </div>
+          <div className="flex-1 text-left">
+             <p className="font-extrabold text-[15px]">{alert.type === 'success' ? 'Success ✓' : 'Action Required'}</p>
+             <p className="text-[13px] opacity-90 font-medium">{alert.message}</p>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 };

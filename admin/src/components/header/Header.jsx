@@ -184,9 +184,9 @@ const Header = () => {
             orderSound.volume = 0.6;
             orderSound.play().catch(() => {});
           }
-          notifySuccess(latestOrderNotification.message || "New order received");
+          // notifySuccess(latestOrderNotification.message || "New order received");
         } else {
-          notifySuccess("New order received");
+          // notifySuccess("New order received");
         }
       }
       setLastUnreadDoc(nextUnread);
@@ -309,7 +309,7 @@ const Header = () => {
         </div>
       )}
 
-      <header className="z-30 py-4 bg-white shadow-sm dark:bg-gray-800">
+      <header className="z-30 py-4 bg-white shadow-sm border-b border-gray-50">
         <div className="container flex items-center justify-between h-full px-6 mx-auto text-store-500 dark:text-store-500">
           <button
             type="button"

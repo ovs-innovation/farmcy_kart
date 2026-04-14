@@ -33,9 +33,10 @@ const CustomerServices = {
   },
 
   // Admin: Get wholesalers
-  getAllWholesalers: async ({ searchText = "" } = {}) => {
+  getAllWholesalers: async ({ searchText = "", wholesalerStatus = "" } = {}) => {
     const params = new URLSearchParams();
     if (searchText) params.append("searchText", searchText);
+    if (wholesalerStatus) params.append("wholesalerStatus", wholesalerStatus);
     return requests.get(`/customer/wholesalers?${params.toString()}`);
   },
 

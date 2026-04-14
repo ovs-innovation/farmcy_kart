@@ -18,9 +18,34 @@ const FeatureCategory = ({ initialSelectedCategory }) => {
   });
 
   const parentCategories = useMemo(() => {
-    if (!data || !Array.isArray(data) || !data[0]?.children) return [];
-    return data[0].children;
-  }, [data]);
+    if (!data || !Array.isArray(data)) return [];
+
+    // Check if we have a single "Home" or "Root" category that acts as a container
+    const homeRoot = data.find(cat =>
+      cat.id === "" ||
+      showingTranslateValue(cat?.name)?.toLowerCase() === "home"
+    );
+
+    let topLevel = [];
+    if (homeRoot && homeRoot.children && homeRoot.children.length > 0) {
+      topLevel = homeRoot.children;
+    } else {
+      topLevel = data;
+    }
+
+    // Flattening logic: Promote children of "Medicine"
+    let finalCategories = [];
+    topLevel.forEach(cat => {
+      const name = showingTranslateValue(cat?.name)?.toLowerCase();
+      if ((name === 'medicine' || name === 'medicines') && cat.children?.length > 0) {
+        finalCategories = [...finalCategories, ...cat.children];
+      } else {
+        finalCategories.push(cat);
+      }
+    });
+
+    return finalCategories;
+  }, [data, showingTranslateValue]);
 
   const rightCategories = useMemo(() => {
     return selectedLeft?.children || [];

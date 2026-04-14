@@ -11,6 +11,9 @@ const {
   addStoreCustomizationSetting,
   getStoreCustomizationSetting,
   updateStoreCustomizationSetting,
+  addVendorSetting,
+  getVendorSetting,
+  updateVendorSetting,
 } = require("../controller/settingController");
 
 //add a global setting
@@ -44,5 +47,11 @@ router.get("/store/customization/all", getStoreCustomizationSetting);
 
 //update online store customization setting
 router.put("/store/customization/update", updateStoreCustomizationSetting);
+
+
+//vendor setting routes
+router.post("/vendor-setting/add", addVendorSetting);
+router.get("/vendor-setting/all", getVendorSetting);
+router.put("/vendor-setting/update", updateVendorSetting);
 
 module.exports = router;

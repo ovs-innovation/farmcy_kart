@@ -45,6 +45,12 @@ export const SidebarProvider = ({ children }) => {
   const [windowDimension, setWindowDimension] = useState(window.innerWidth);
   const [loading, setLoading] = useState(false);
   const [navBar, setNavBar] = useState(true);
+  const [alert, setAlert] = useState({ show: false, message: "", type: "success" });
+
+  const showAlert = (msg, type = "success") => {
+    setAlert({ show: true, message: msg, type: type });
+    setTimeout(() => setAlert({ show: false, message: "", type: "success" }), 4000);
+  };
   const { i18n } = useTranslation();
   const [tabIndex, setTabIndex] = useState(0);
   const { data: globalSetting } = useQuery({
@@ -135,7 +141,7 @@ export const SidebarProvider = ({ children }) => {
     // if (pathname) return;
     const defaultLang = globalSetting?.default_language || "en";
     const cookieLang = Cookies.get("i18next");
-    const currLang = Cookies.get("_currLang");
+    const cookieCurrLang = Cookies.get("_currLang");
 
     const removeRegion = (langCode) => langCode?.split("-")[0];
 
@@ -158,14 +164,16 @@ export const SidebarProvider = ({ children }) => {
     }
 
     // Change i18n language **only if it differs**
-    if (i18n.language !== selectedLang && !currLang) {
+    if (i18n.language !== selectedLang && !cookieCurrLang) {
       i18n.changeLanguage(selectedLang);
     }
 
     // Find the corresponding language object
-    if (languages?.length && !pathname && !currLang) {
-      const result = languages?.find((lang) => lang?.iso_code === selectedLang);
-      setCurrLang(result);
+    if (Array.isArray(languages) && languages.length > 0 && !pathname && !cookieCurrLang) {
+      const result = languages.find((lang) => lang?.iso_code === selectedLang);
+      if (result) {
+        setCurrLang(result);
+      }
     }
   }, [globalSetting?.default_language, languages]); // Add `languages` as a dependency
 
@@ -262,6 +270,8 @@ export const SidebarProvider = ({ children }) => {
         themeColor,
         themePalette: brandPalette,
         globalSetting,
+        alert,
+        showAlert,
       }}
     >
       {children}

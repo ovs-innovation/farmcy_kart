@@ -33,6 +33,7 @@
     "immutability-helper": "^3.1.1",
     "js-cookie": "^3.0.5",
     "local-storage": "^2.0.0",
+    "lucide-react": "^1.7.0",
     "million": "^2.2.1",
     "multiselect-react-dropdown": "^2.0.25",
     "pica": "^9.0.1",

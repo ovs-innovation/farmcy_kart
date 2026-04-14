@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import {
   Button,
   Card,
@@ -8,7 +8,7 @@ import {
   Label,
   Select,
 } from "@windmill/react-ui";
-import { FiPlus, FiTrash2, FiShoppingCart } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiShoppingCart, FiZoomIn, FiZoomOut, FiDownload, FiX, FiArrowLeft } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import PageTitle from "@/components/Typography/PageTitle";
 import PrescriptionServices from "@/services/PrescriptionServices";
@@ -19,6 +19,7 @@ import Spinner from "@/components/spinner/Spinner";
 
 const PrescriptionDetails = () => {
   const { id } = useParams();
+  const history = useHistory();
   const { t } = useTranslation();
   const [prescription, setPrescription] = useState(null);
   const [medicines, setMedicines] = useState([]);
@@ -28,6 +29,11 @@ const PrescriptionDetails = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isMounted = useRef(false);
   const searchRef = useRef(null);
+  
+  // Modal & Zoom State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
   console.log("searchResults", searchResults);
 
   const { data, loading } = useAsync(() =>
@@ -198,10 +204,49 @@ const PrescriptionDetails = () => {
     }
   };
 
+  const handleDownload = async (url, fileName) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName || "prescription";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName || "prescription";
+      link.target = "_blank";
+      link.click();
+    }
+  };
+
+  const openZoomModal = (file) => {
+    setSelectedFile(file);
+    setZoomLevel(1);
+    setIsModalOpen(true);
+  };
+
   if (loading) return <Spinner />;
 
   return (
     <>
+      <div className="flex items-center gap-2 mb-4 mt-2">
+        <Button
+          layout="link"
+          onClick={() => history.goBack()}
+          className="p-0 text-store-500 hover:text-store-600 h-auto"
+        >
+          <FiArrowLeft className="w-5 h-5 mr-1" />
+          <span className="text-sm font-bold uppercase tracking-wider">{t("Back")}</span>
+        </Button>
+      </div>
+
       <PageTitle>{t("Prescription Details")}</PageTitle>
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -215,12 +260,29 @@ const PrescriptionDetails = () => {
               {prescription?.files?.map((file, i) => (
                 <div key={i} className="border border-gray-200 dark:border-gray-600 p-4 rounded-lg bg-gray-50 dark:bg-gray-700">
                   {file.type === "image" ? (
-                    <div className="relative">
+                    <div className="relative group">
                       <img
                         src={file.url}
                         alt={`Prescription ${i + 1}`}
-                        className="w-full h-auto max-h-96 object-contain rounded"
+                        className="w-full h-auto max-h-96 object-contain rounded cursor-pointer transition-opacity group-hover:opacity-95"
+                        onClick={() => openZoomModal(file)}
                       />
+                      <div className="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => openZoomModal(file)}
+                          className="p-2 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-sm hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                          title="Zoom"
+                        >
+                          <FiZoomIn className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+                        </button>
+                        <button
+                          onClick={() => handleDownload(file.url, file.fileName || `prescription-${i + 1}`)}
+                          className="p-2 bg-white/80 dark:bg-gray-800/80 rounded-full shadow-sm hover:bg-white dark:hover:bg-gray-800 transition-colors"
+                          title="Download"
+                        >
+                          <FiDownload className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+                        </button>
+                      </div>
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8">
@@ -237,14 +299,23 @@ const PrescriptionDetails = () => {
                           d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
                         />
                       </svg>
-                      <a
-                        href={file.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-blue-500 hover:text-blue-700 underline font-medium"
-                      >
-                        View PDF - {file.fileName || "Prescription"}
-                      </a>
+                      <div className="flex items-center gap-4">
+                        <a
+                          href={file.url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-blue-500 hover:text-blue-700 underline font-medium"
+                        >
+                          View PDF - {file.fileName || "Prescription"}
+                        </a>
+                        <button
+                          onClick={() => handleDownload(file.url, file.fileName || `prescription-${i + 1}.pdf`)}
+                          className="flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors text-sm font-medium"
+                        >
+                          <FiDownload className="w-4 h-4" />
+                          Download
+                        </button>
+                      </div>
                       {file.fileSize && (
                         <span className="text-xs text-gray-500 mt-2">
                           {(file.fileSize / 1024 / 1024).toFixed(2)} MB
@@ -461,6 +532,69 @@ const PrescriptionDetails = () => {
           </CardBody>
         </Card>
       </div>
+
+      {/* Image Zoom Modal */}
+      {isModalOpen && selectedFile && (
+        <div 
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 transition-opacity duration-300 backdrop-blur-sm"
+          onClick={() => setIsModalOpen(false)}
+        >
+          {/* Modal Header/Controls */}
+          <div className="absolute top-0 left-0 w-full p-4 flex justify-between items-center bg-black/40 z-20">
+            <h3 className="text-white font-medium truncate max-w-[60%]">
+              {selectedFile.fileName || "Prescription View"}
+            </h3>
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={(e) => { e.stopPropagation(); setZoomLevel(prev => Math.min(prev + 0.25, 4)); }}
+                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition"
+                title="Zoom In"
+              >
+                <FiZoomIn size={20} />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); setZoomLevel(prev => Math.max(prev - 0.25, 0.5)); }}
+                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition"
+                title="Zoom Out"
+              >
+                <FiZoomOut size={20} />
+              </button>
+              <button 
+                onClick={(e) => { e.stopPropagation(); handleDownload(selectedFile.url, selectedFile.fileName || "prescription"); }}
+                className="p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 transition"
+                title="Download"
+              >
+                <FiDownload size={20} />
+              </button>
+              <button 
+                onClick={() => setIsModalOpen(false)}
+                className="p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition ml-2"
+                title="Close"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+          </div>
+
+          <div 
+            className="w-full h-full flex items-center justify-center overflow-auto p-12 scrollbar-hide"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <img
+              src={selectedFile.url}
+              alt="Zoomed Prescription"
+              className="max-w-none transition-transform duration-300 ease-out shadow-2xl rounded-sm"
+              style={{ transform: `scale(${zoomLevel})` }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          
+          {/* Zoom Indicator */}
+          <div className="absolute bottom-6 left-1/2 -translate-x-1/2 px-4 py-1.5 bg-gray-800/80 text-white text-sm rounded-full backdrop-blur-md">
+            {Math.round(zoomLevel * 100)}%
+          </div>
+        </div>
+      )}
     </>
   );
 };
