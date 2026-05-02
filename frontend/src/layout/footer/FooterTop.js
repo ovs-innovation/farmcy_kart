@@ -72,7 +72,7 @@ const FooterTop = () => {
                 alt="app download"
                 width={500}
                 height={394}
-                className="block w-auto"
+                className="block w-auto h-auto"
               />
             </div>
             <div className="text-center">
@@ -123,8 +123,8 @@ const FooterTop = () => {
                   >
                     <Image
                       width={170}
-                      height={10}
-                      className="mr-2 rounded"
+                      height={50}
+                      className="mr-2 rounded h-auto"
                       src={"/app/play-store.svg"}
                       alt="play store"
                     />
@@ -139,7 +139,7 @@ const FooterTop = () => {
                   alt="app download"
                   width={500}
                   height={394}
-                  className="block w-auto"
+                  className="block w-auto h-auto"
                 />
               </div>
             </div>

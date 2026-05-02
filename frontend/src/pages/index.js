@@ -457,26 +457,39 @@ export const getServerSideProps = async (context) => {
   const { cookies } = context.req;
   const { query, _id } = context.query;
 
-  const [data, attributes, brands] = await Promise.all([
-    ProductServices.getShowingStoreProducts({
-      category: _id ? _id : "",
-      title: query ? query : "",
-    }),
+  try {
+    const [data, attributes, brands] = await Promise.all([
+      ProductServices.getShowingStoreProducts({
+        category: _id ? _id : "",
+        title: query ? query : "",
+      }),
+      AttributeServices.getShowingAttributes(),
+      BrandServices.getShowingBrands(),
+    ]);
 
-    AttributeServices.getShowingAttributes(),
-    BrandServices.getShowingBrands(),
-  ]);
-
-  return {
-    props: {
-      attributes,
-      cookies: cookies,
-      popularProducts: data.popularProducts,
-      discountProducts: data.discountedProducts,
-      bestSellingProducts: data.bestSellingProducts,
-      brands,
-    },
-  };
+    return {
+      props: {
+        attributes: attributes || [],
+        cookies: cookies,
+        popularProducts: data?.popularProducts || [],
+        discountProducts: data?.discountedProducts || [],
+        bestSellingProducts: data?.bestSellingProducts || [],
+        brands: brands || [],
+      },
+    };
+  } catch (err) {
+    console.warn("getServerSideProps: Backend unavailable, rendering with empty data.", err?.message || err);
+    return {
+      props: {
+        attributes: [],
+        cookies: cookies,
+        popularProducts: [],
+        discountProducts: [],
+        bestSellingProducts: [],
+        brands: [],
+      },
+    };
+  }
 };
 
 export default Home;

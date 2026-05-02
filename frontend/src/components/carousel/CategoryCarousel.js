@@ -64,7 +64,7 @@ const CategoryCarousel = () => {
           spaceBetween={24}
           navigation={true}
           allowTouchMove={true}
-          loop={true}
+          loop={data?.[0]?.children?.length > 10}
           breakpoints={{
             320: {
               slidesPerView: 2,
@@ -125,7 +125,8 @@ const CategoryCarousel = () => {
                           alt={showingTranslateValue(category?.name) || "category"}
                           width={80}
                           height={80}
-                          className="object-contain w-full h-full transition-transform duration-500 group-hover:scale-110"
+                          style={{ width: 'auto', height: 'auto' }}
+                          className="object-contain transition-transform duration-500 group-hover:scale-110"
                         />
                       </div>
                       

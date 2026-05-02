@@ -47,7 +47,9 @@ const Header = () => {
   const [data, setData] = useState([]);
   const [totalDoc, setTotalDoc] = useState(0);
   const [totalUnreadDoc, setTotalUnreadDoc] = useState(0);
-  const [lastUnreadDoc, setLastUnreadDoc] = useState(0);
+  const [lastUnreadDoc, setLastUnreadDoc] = useState(() => {
+    return Number(localStorage.getItem("lastUnreadCount")) || 0;
+  });
   const [orderPopup, setOrderPopup] = useState(null);
   const [orderSound] = useState(
     () =>
@@ -128,61 +130,68 @@ const Header = () => {
               n.isRead === false ||
               n.seen === false)
         );
+
         if (latestOrderNotification) {
-          // Fetch order to get product image
-          try {
-            const orderData = await OrderServices.getOrderById(
-              latestOrderNotification.orderId
-            );
-            
-            // Get product image from order cart - handle both array and string formats
-            let productImage = null;
-            const cartItem = orderData?.cart?.[0];
-            
-            if (cartItem) {
-              if (Array.isArray(cartItem.image)) {
-                productImage = cartItem.image[0] || cartItem.image;
-              } else if (typeof cartItem.image === 'string') {
-                productImage = cartItem.image;
-              }
+          // Deduplicate by ID to prevent repeated popups on page navigation/refresh
+          const lastNotifiedId = localStorage.getItem("lastNotifiedOrderId");
+          
+          if (latestOrderNotification._id !== lastNotifiedId) {
+              localStorage.setItem("lastNotifiedOrderId", latestOrderNotification._id);
+            // Fetch order to get product image
+            try {
+              const orderData = await OrderServices.getOrderById(
+                latestOrderNotification.orderId
+              );
               
-              // Also check variant image if main image not found
-              if (!productImage && cartItem.variants?.[0]?.image) {
-                if (Array.isArray(cartItem.variants[0].image)) {
-                  productImage = cartItem.variants[0].image[0];
-                } else {
-                  productImage = cartItem.variants[0].image;
+              // Get product image from order cart - handle both array and string formats
+              let productImage = null;
+              const cartItem = orderData?.cart?.[0];
+              
+              if (cartItem) {
+                if (Array.isArray(cartItem.image)) {
+                  productImage = cartItem.image[0] || cartItem.image;
+                } else if (typeof cartItem.image === 'string') {
+                  productImage = cartItem.image;
+                }
+                
+                // Also check variant image if main image not found
+                if (!productImage && cartItem.variants?.[0]?.image) {
+                  if (Array.isArray(cartItem.variants[0].image)) {
+                    productImage = cartItem.variants[0].image[0];
+                  } else {
+                    productImage = cartItem.variants[0].image;
+                  }
                 }
               }
+              
+              // Fallback chain
+              productImage = productImage || 
+                latestOrderNotification.image ||
+                "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
+              
+              console.log("Order popup image:", productImage, "Order data:", orderData);
+              
+              setOrderPopup({
+                ...latestOrderNotification,
+                image: productImage,
+              });
+            } catch (err) {
+              console.error("Error fetching order for image:", err);
+              // If order fetch fails, use notification image or placeholder
+              setOrderPopup({
+                ...latestOrderNotification,
+                image:
+                  latestOrderNotification.image ||
+                  "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+              });
             }
             
-            // Fallback chain
-            productImage = productImage || 
-              latestOrderNotification.image ||
-              "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-            
-            console.log("Order popup image:", productImage, "Order data:", orderData);
-            
-            setOrderPopup({
-              ...latestOrderNotification,
-              image: productImage,
-            });
-          } catch (err) {
-            console.error("Error fetching order for image:", err);
-            // If order fetch fails, use notification image or placeholder
-            setOrderPopup({
-              ...latestOrderNotification,
-              image:
-                latestOrderNotification.image ||
-                "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
-            });
-          }
-          
-          // play sound softly
-          if (orderSound) {
-            orderSound.currentTime = 0;
-            orderSound.volume = 0.6;
-            orderSound.play().catch(() => {});
+            // play sound softly
+            if (orderSound) {
+              orderSound.currentTime = 0;
+              orderSound.volume = 0.6;
+              orderSound.play().catch(() => {});
+            }
           }
           // notifySuccess(latestOrderNotification.message || "New order received");
         } else {
@@ -190,6 +199,7 @@ const Header = () => {
         }
       }
       setLastUnreadDoc(nextUnread);
+      localStorage.setItem("lastUnreadCount", nextUnread);
       setUpdated(false);
     } catch (err) {
       setUpdated(false);

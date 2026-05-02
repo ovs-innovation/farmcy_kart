@@ -219,7 +219,7 @@ const useCheckoutSubmit = (storeSetting) => {
       setError("");
 
       const userDetails = {
-        name: `${data.firstName} ${data.lastName}`,
+        name: `${data.firstName || ""} ${data.lastName || ""}`.trim() || userInfo?.name || "A customer",
         contact: data.contact,
         email: data.email,
         address: data.address,
@@ -314,8 +314,8 @@ const useCheckoutSubmit = (storeSetting) => {
     try {
       const notificationInfo = {
         orderId: orderResponse?._id,
-        message: `${orderResponse?.user_info?.name
-          } placed an order of ${parseFloat(orderResponse?.total).toFixed(2)}!`,
+        message: `${orderResponse?.user_info?.name || "A customer"
+          } placed an order of ${parseFloat(orderResponse?.total || 0).toFixed(2)}!`,
         image:
           "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
       };

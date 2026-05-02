@@ -2,6 +2,8 @@ import React, { useState, useMemo } from "react";
 import { AiFillStar } from "react-icons/ai";
 import { useSession } from "next-auth/react";
 import { notifyError, notifySuccess } from "@utils/toast";
+import { UserContext } from "@context/UserContext";
+import { useContext } from "react";
 
 const StarSelector = ({ value, onChange, disabled }) => {
   const [hover, setHover] = useState(0);
@@ -45,7 +47,11 @@ const WriteReviewForm = ({
   isSubmitting,
 }) => {
   const { data: session, status } = useSession();
-  const isLoggedIn = status === "authenticated" && session?.user;
+  const { state: userState } = useContext(UserContext) || {};
+  
+  // Robust login check using both NextAuth and Custom Context
+  const isLoggedIn = (status === "authenticated" && session?.user) || !!userState?.userInfo;
+  const userInfo = session?.user || userState?.userInfo;
 
   const [rating, setRating] = useState(existingReview?.rating || 0);
   const [reviewText, setReviewText] = useState(

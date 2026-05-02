@@ -635,9 +635,9 @@ const Footer = () => {
                       className="inline-block transition-transform duration-300 hover:scale-105"
                     >
                       <Image
-                        width={170}
-                        height={50}
-                        className="rounded"
+                        width={150}
+                        height={44}
+                        className="h-11 w-auto object-contain rounded"
                         src={
                           storeCustomizationSetting?.home?.button1_img ||
                           "/app/app-store.svg"
@@ -658,12 +658,11 @@ const Footer = () => {
                       className="inline-block transition-transform duration-300 hover:scale-105"
                     >
                       <Image
-                        width={170}
-                        height={50}
-                        className="rounded"
+                        width={150}
+                        height={44}
+                        className="h-11 w-auto object-contain rounded"
                         src={
-                          "/app/play-store.svg" ||storeCustomizationSetting?.home?.button2_img 
-                          
+                          storeCustomizationSetting?.home?.button2_img || "/app/play-store.svg"
                         }
                         alt="Get it on Google Play"
                       />
@@ -679,12 +678,11 @@ const Footer = () => {
                 </h3>
                 <div className="mt-2">
                   <Image
-                    width={274}
-                    height={20}
-                    className="h-14 w-auto max-w-full rounded-lg object-contain"
+                    width={170}
+                    height={44}
+                    className="h-11 w-auto object-contain"
                     src={
-                      "/payment-method/razorpay_logo.svg" || storeCustomizationSetting?.footer?.payment_method_img 
-                     
+                      storeCustomizationSetting?.footer?.payment_method_img || "/payment-method/razorpay_logo.svg" 
                     }
                     alt="payment method"
                   />

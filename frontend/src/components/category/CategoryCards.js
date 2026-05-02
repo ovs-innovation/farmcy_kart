@@ -140,9 +140,9 @@ const CategoryCards = () => {
                       <Image
                         src={category.image}
                         alt={category.title}
-                        layout="fill"
-                        objectFit="contain"
-                        className="drop-shadow-2xl"
+                        fill
+                        className="drop-shadow-2xl object-contain"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
                   </div>

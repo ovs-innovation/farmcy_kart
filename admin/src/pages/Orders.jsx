@@ -311,7 +311,7 @@ const Orders = () => {
                       <option value="All">{t("All")}</option>
                       <option value="Cash">{t("Cash")}</option>
                       <option value="Card">{t("Card")}</option>
-                      <option value="Credit">{t("Credit")}</option>
+                      <option value="Credit">{t("Upi")}</option>
                     </select>
                     <FiChevronDown className="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none w-4 h-4" />
                   </div>

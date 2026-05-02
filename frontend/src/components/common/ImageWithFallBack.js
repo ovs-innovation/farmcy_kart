@@ -35,7 +35,7 @@ const ImageWithFallback = ({
         height={height}
         {...rest}
         style={{ objectFit, ...style }}
-        sizes="100%"
+        sizes="100vw"
         className={`${className} transition-transform duration-500 ease-out transform group-hover:scale-105`}
       />
     );
@@ -52,7 +52,7 @@ const ImageWithFallback = ({
         objectFit,
         ...style,
       }}
-      sizes="100%"
+      sizes="100vw"
       className={`${className} transition-transform duration-500 ease-out transform group-hover:scale-105`}
     />
   );

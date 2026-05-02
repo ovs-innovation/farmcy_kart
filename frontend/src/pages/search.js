@@ -395,8 +395,9 @@ const Search = ({ products, attributes }) => {
                   <Image
                     src="/logo/logo.png"
                     alt="logo"
-                    layout="fill"
-                    objectFit="contain"
+                    fill
+                    className="object-contain"
+                    sizes="32px"
                   />
                 </div>
                 <h1 className="text-lg font-semibold text-gray-800 capitalize truncate max-w-[120px]">

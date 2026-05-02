@@ -765,36 +765,41 @@ const useProductSubmit = (id) => {
   };
 
   //generate all combination combination - now shows preview with checkboxes
-  const handleGenerateCombination = () => {
+  const handleGenerateCombination = (isAuto = false) => {
     if (Object.keys(values).length === 0) {
-      return notifyError("Please select a variant first!");
+      if (!isAuto) notifyError("Please select a variant first!");
+      return;
     }
 
-    // Keep existing variants that have non-empty attributes
     const result = variants.filter(
-      ({
-        originalPrice,
-        discount,
-        price,
-        quantity,
-        barcode,
-        sku,
-        productId,
-        image,
-        ...rest
-      }) => JSON.stringify({ ...rest }) !== "{}"
+      (v) => {
+        const {
+          originalPrice, discount, price, quantity, barcode, sku, productId, image, 
+          title, description, slug, dynamicSections, mediaSections, ...rest
+        } = v;
+        return Object.keys(rest).length > 0;
+      }
     );
 
-    setVariants(result);
-
-    // Generate all possible combinations
     const combo = combinate(values);
     const baseSkuCode = sku || productId || "SKU";
     
-    // Create preview variants
-    const allPreviewCombo = combo.map((com, i) => {
+    const finalVariants = combo.map((com, i) => {
+      const existing = result.find(v => {
+        const {
+          originalPrice: op, discount: d, price: p, quantity: q, barcode: b, sku: s, productId: pi, image: img,
+          title: t, description: desc, slug: sl, dynamicSections: ds, mediaSections: ms, ...rest
+        } = v;
+        const comboKeys = Object.keys(com).sort();
+        const existingKeys = Object.keys(rest).sort();
+        if (comboKeys.length !== existingKeys.length) return false;
+        return comboKeys.every(key => com[key] === rest[key]);
+      });
+
+      if (existing) return existing;
+
       const variantIndex = result.length + i;
-      const newCom = {
+      return {
         ...com,
         originalPrice: getNumberTwo(originalPrice),
         price: getNumber(price),
@@ -805,47 +810,12 @@ const useProductSubmit = (id) => {
         sku: generateVariantSku(baseSkuCode, variantIndex),
         image: imageUrl[0] || "",
       };
-      return newCom;
     });
 
-    // Filter out duplicates
-    const previewCombo = allPreviewCombo.filter(
-      (newCom) => !isVariantDuplicate(newCom, result)
-    );
-
-    // Check if all variants are duplicates
-    if (previewCombo.length === 0 && allPreviewCombo.length > 0) {
-      notifyError(
-        `All ${allPreviewCombo.length} variant(s) already exist! Please select different attribute combinations.`
-      );
-      return;
-    }
-
-    // Show warning if some variants are duplicates
-    const duplicateCount = allPreviewCombo.length - previewCombo.length;
-    if (duplicateCount > 0) {
-      notifyError(
-        `${duplicateCount} duplicate variant(s) filtered out. ${previewCombo.length} new variant(s) available.`
-      );
-    }
-
-    // Set preview variants and select all by default
-    setPreviewVariants(previewCombo);
-    setSelectedPreviewVariants(previewCombo.map((_, idx) => idx));
-    setShowPreviewModal(true);
-
-    // Clear attribute selections after generating
-    setValues({});
-    // Reset attribute dropdowns
-    if (resetRef?.current) {
-      resetRef.current.forEach((ref) => {
-        if (ref && typeof ref.resetSelectedValues === "function") {
-          ref.resetSelectedValues();
-        }
-      });
-    }
+    setVariants(finalVariants);
+    setIsCombination(true);
+    if (!isAuto) notifySuccess(`${finalVariants.length} variants generated!`);
   };
-
   // Helper to generate UUID (simple version)
   const generateUUID = () => {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -1568,6 +1538,7 @@ const useProductSubmit = (id) => {
     attribue,
     setValues,
     variants,
+    setVariants,
     imageUrl,
     setImageUrl,
     thumbnailUrl,
@@ -1576,6 +1547,7 @@ const useProductSubmit = (id) => {
     isCombination,
     variantTitle,
     attributes,
+    setAttributes,
     attTitle,
     handleAddAtt,
     productId,

@@ -16,8 +16,8 @@ const SliderCarousel = () => {
 
   // Get all slider images from CMS
   const sliderImages = [
-    "/slider/dss11.webp" || storeCustomizationSetting?.slider?.first_img,
-    "/slider/dss22.webp" || storeCustomizationSetting?.slider?.second_img,
+    storeCustomizationSetting?.slider?.first_img || "/slider/dss11.webp",
+    storeCustomizationSetting?.slider?.second_img || "/slider/dss22.webp",
     storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
     storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
     storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
@@ -53,9 +53,9 @@ const SliderCarousel = () => {
               },
             }}
             autoplay={{
-              delay: 3000,
+              delay: 2000,
               disableOnInteraction: false,
-              pauseOnMouseEnter: true,
+              pauseOnMouseEnter: false,
             }}
             loop={sliderImages.length > 2}
             className="slider-carousel-swiper"
@@ -67,6 +67,7 @@ const SliderCarousel = () => {
                     src={image}
                     alt={`Slider ${index + 1}`}
                     fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-contain"
                     priority={index < 2}
                   />

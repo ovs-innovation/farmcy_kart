@@ -259,6 +259,7 @@ const routes = [
   { path: "/settings/retailer", component: VendorSettings },
   { path: "/settings/order", component: OrderSettings },
   { path: "/settings/refund", component: RefundSettings },
+  { path: "/settings/taxes", component: Taxes },
   // { path: "/settings/delivery-man", component: DeliveryManSettings },
   {
     path: "/store/customization",

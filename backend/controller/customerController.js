@@ -121,6 +121,30 @@ const loginWithPhone = async (req, res) => {
       });
     }
 
+    // Verify Firebase ID Token
+    let decodedToken;
+    try {
+      const admin = require("../config/firebase-admin");
+      if (admin.apps.length > 0) {
+        decodedToken = await admin.auth().verifyIdToken(idToken);
+        const firebasePhone = decodedToken.phone_number;
+
+        // Security check: ensure the token belongs to the phone number being logged in
+        if (firebasePhone !== phoneNumber) {
+          return res.status(401).send({
+            message: "Token phone number mismatch. Verification failed.",
+          });
+        }
+      } else {
+        console.warn("Firebase Admin not initialized, skipping token verification (Insecure).");
+      }
+    } catch (verifyErr) {
+      console.error("Firebase ID Token verification failed:", verifyErr);
+      return res.status(401).send({
+        message: "Invalid or expired Firebase token.",
+      });
+    }
+
     let user = await Customer.findOne({ phone: phoneNumber });
 
     if (!user) {
@@ -140,7 +164,7 @@ const loginWithPhone = async (req, res) => {
       address: user.address || "",
       image: user.image || "",
       message: "Login Successful!",
-      role: user.role || "customer", // Added role
+      role: user.role || "customer",
     });
   } catch (err) {
     res.status(500).send({

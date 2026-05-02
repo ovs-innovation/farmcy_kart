@@ -183,8 +183,8 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                 alt="product"
                 width={300}
                 height={300}
-                className="w-full h-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[190px] object-contain"
-                style={{ objectFit: 'contain' }}
+                className="max-w-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[190px] object-contain"
+                style={{ width: 'auto', height: 'auto', objectFit: 'contain' }}
               />
             ) : (
               <Image
@@ -193,11 +193,13 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                 height={300}
                 style={{
                   objectFit: "contain",
-                  maxHeight: "100px"
+                  maxHeight: "100px",
+                  width: 'auto',
+                  height: 'auto'
                 }}
                 sizes="100%"
                 alt="product"
-                className="w-full h-auto"
+                className="max-w-full h-auto"
               />
             )}
           </div>

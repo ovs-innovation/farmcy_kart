@@ -60,7 +60,7 @@ export const storeCustomization = {
       de: "Kasse",
     },
     phone: "+965 505 631288",
-    logo: "https://res.cloudinary.com/ahossain/image/upload/v1697687802/settings/logo-light_hls14v.svg",
+    logo: "/logo/logo.png",
   },
   home: {
     coupon_status: true,
@@ -811,8 +811,7 @@ export const storeCustomization = {
       de: "Profil aktualisieren",
     },
     block3_sub_link4: "/user/update-profile",
-    block4_logo:
-      "https://res.cloudinary.com/ahossain/image/upload/v1697688576/settings/logo-color_el4zmy.svg",
+    block4_logo: "/logo/logo.png",
     block4_address: {
       en: "987 Andre Plain Suite High Street 838, Lake Hestertown, USA",
       de: "987 Andre Plain Suite High Street 838, Lake Hestertown, USA",

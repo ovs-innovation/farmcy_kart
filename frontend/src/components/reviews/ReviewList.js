@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { AiFillStar } from "react-icons/ai";
 import { BiBadgeCheck } from "react-icons/bi";
-import { FiThumbsUp } from "react-icons/fi";
+import { FiThumbsUp, FiTrash2 } from "react-icons/fi";
 
 dayjs.extend(relativeTime);
 
@@ -21,6 +21,8 @@ const ReviewList = ({
   onLoadMore,
   canLoadMore,
   onMarkHelpful,
+  onDeleteReview,
+  currentUser,
 }) => {
   if (!reviews?.length && !loading) {
     return (
@@ -73,17 +75,29 @@ const ReviewList = ({
                 <span>•</span>
                 <span>{dayjs(review.createdAt).fromNow()}</span>
               </div>
-              <button
-                type="button"
-                onClick={() => onMarkHelpful(review)}
-                className="inline-flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700"
-              >
-                <FiThumbsUp className="w-3.5 h-3.5" />
-                <span>Helpful</span>
-                <span className="text-[11px]">
-                  ({review.helpfulCount || 0})
-                </span>
-              </button>
+              <div className="flex items-center space-x-3">
+                {currentUser?._id === review?.user?._id && (
+                  <button
+                    type="button"
+                    onClick={() => onDeleteReview(review._id)}
+                    className="inline-flex items-center space-x-1 text-xs text-red-500 hover:text-red-700"
+                  >
+                    <FiTrash2 className="w-3.5 h-3.5" />
+                    <span>Delete</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => onMarkHelpful(review)}
+                  className="inline-flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-700"
+                >
+                  <FiThumbsUp className="w-3.5 h-3.5" />
+                  <span>Helpful</span>
+                  <span className="text-[11px]">
+                    ({review.helpfulCount || 0})
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         ))}

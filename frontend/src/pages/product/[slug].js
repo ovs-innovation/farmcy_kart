@@ -713,6 +713,21 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
     }
   };
 
+  const handleDeleteReview = async (reviewId) => {
+    if (!reviewId) return;
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+    try {
+      await ReviewServices.deleteReview(reviewId);
+      setReviews((prev) => prev.filter((r) => r._id !== reviewId));
+      notifySuccess("Review deleted successfully.");
+      // If we deleted the only review by the current user, it will disappear from existingReview too
+    } catch (err) {
+      notifyError(
+        err?.response?.data?.message || "Failed to delete review."
+      );
+    }
+  };
+
   // Additional useEffect to handle variant changes when selectVa changes (for immediate updates on button click)
   useEffect(() => {
     // Only trigger if we have variants
@@ -1177,7 +1192,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
   }, [product?.faqs]);
 
   // category name slug
-  const category_name = showingTranslateValue(product?.category?.name)
+  const category_name = (showingTranslateValue(product?.category?.name) || "")
     .toLowerCase()
     .replace(/[^A-Z0-9]+/gi, "-");
 
@@ -2136,8 +2151,7 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                             <WriteReviewForm
                               productId={product?._id}
                               existingReview={reviews.find(
-                                // backend ensures one review per user; we rely on updated list
-                                () => false
+                                (r) => r.user?._id === userInfo?._id
                               )}
                               onSubmitReview={handleSubmitReview}
                               isSubmitting={reviewSubmitting}
@@ -2154,6 +2168,8 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                               onLoadMore={handleLoadMoreReviews}
                               canLoadMore={reviewsHasMore}
                               onMarkHelpful={handleMarkHelpful}
+                              onDeleteReview={handleDeleteReview}
+                              currentUser={userInfo}
                             />
                           </div>
 

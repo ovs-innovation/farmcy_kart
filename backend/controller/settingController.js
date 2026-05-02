@@ -18,9 +18,10 @@ const addGlobalSetting = async (req, res) => {
 
 const getGlobalSetting = async (req, res) => {
   try {
-    // console.log("getGlobalSetting");
-
     const globalSetting = await Setting.findOne({ name: "globalSetting" });
+    if (!globalSetting) {
+      return res.send({});
+    }
     res.send(globalSetting.setting);
   } catch (err) {
     res.status(500).send({
@@ -184,9 +185,6 @@ const addStoreCustomizationSetting = async (req, res) => {
 const getStoreCustomizationSetting = async (req, res) => {
   try {
     const { key, keyTwo } = req.query;
-    // console.log("getStoreCustomizationSetting");
-
-    // console.log("req query", req.query, "key", key, "keyTwo", keyTwo);
 
     let projection = {};
     if (key) {
@@ -207,7 +205,7 @@ const getStoreCustomizationSetting = async (req, res) => {
     );
 
     if (!storeCustomizationSetting) {
-      return res.status(404).send({ message: "Settings not found" });
+      return res.send({});
     }
 
     res.send(storeCustomizationSetting.setting);
@@ -217,7 +215,6 @@ const getStoreCustomizationSetting = async (req, res) => {
 };
 
 const getStoreSeoSetting = async (req, res) => {
-  // console.log("getStoreSeoSetting");
   try {
     const storeCustomizationSetting = await Setting.findOne(
       {
@@ -225,8 +222,7 @@ const getStoreSeoSetting = async (req, res) => {
       },
       { "setting.seo": 1, _id: 0 }
     );
-    // console.log("storeCustomizationSetting", storeCustomizationSetting);
-    res.send(storeCustomizationSetting?.setting);
+    res.send(storeCustomizationSetting?.setting || {});
   } catch (err) {
     res.status(500).send({
       message: err.message,

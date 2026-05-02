@@ -174,6 +174,14 @@ const NewSale = () => {
     const existingItem = cart.find(item => item._id === product._id);
     const price = product.prices?.price || product.prices?.originalPrice || 0;
     
+    // Stock Check
+    const availableStock = product.stock || 0;
+    const currentQtyInCart = existingItem ? existingItem.quantity : 0;
+
+    if (availableStock <= currentQtyInCart) {
+      return;
+    }
+
     if (existingItem) {
       setCart(cart.map(item => 
         item._id === product._id 
@@ -186,7 +194,8 @@ const NewSale = () => {
         title: product.title?.en || product.title,
         price: price,
         image: Array.isArray(product.image) ? product.image[0] : product.image,
-        quantity: 1
+        quantity: 1,
+        stock: availableStock // Store stock to check during quantity update
       }]);
     }
   };
@@ -211,6 +220,12 @@ const NewSale = () => {
     setCart(cart.map(item => {
       if (item._id === id) {
         const newQty = Math.max(1, item.quantity + delta);
+        
+        // Stock Check on Increase
+        if (delta > 0 && newQty > (item.stock || 0)) {
+           return item;
+        }
+        
         return { ...item, quantity: newQty };
       }
       return item;
@@ -252,7 +267,20 @@ const NewSale = () => {
       };
 
       await OrderServices.addOrder(orderData);
-      showAlert("Order placed successfully!", "success");
+      
+      // Sync to Customer Cart on Website
+      try {
+        const cartToSync = cart.map(item => ({
+          productId: item._id,
+          quantity: item.quantity
+        }));
+        await CustomerServices.updateCustomer(selectedCustomer, { cart: cartToSync });
+      } catch (syncErr) {
+        console.error("Cart sync failed", syncErr);
+        // We don't block the order if sync fails, but maybe log it
+      }
+
+      showAlert("Order placed successfully and synced to user cart!", "success");
       setCart([]);
       setSelectedCustomer("");
       setDeliveryInfo({ contactName: "", contactNumber: "", road: "", house: "", floor: "", address: "" });
@@ -346,8 +374,11 @@ const NewSale = () => {
                         <h3 className="text-[13px] font-bold text-gray-700 dark:text-gray-200 line-clamp-2 min-h-[38px] mb-2 font-sans group-hover:text-teal-600 transition-colors">
                           {product.title?.en || product.title}
                         </h3>
-                        <div className="mt-auto">
+                        <div className="mt-auto flex justify-between items-center">
                           <p className="text-[15px] text-teal-600 dark:text-teal-400 font-extrabold tracking-tight">₹ {Number(price).toFixed(2)}</p>
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${product.stock > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                            {product.stock > 0 ? `Stock: ${product.stock}` : 'Out of Stock'}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -408,7 +439,11 @@ const NewSale = () => {
                   
                   <ul className="max-h-64 overflow-y-auto custom-scrollbar">
                     {customers
-                      .filter(c => c.name.toLowerCase().includes(customerSearchTerm.toLowerCase()))
+                      .filter(c => 
+                        c.name?.toLowerCase().includes(customerSearchTerm.toLowerCase()) || 
+                        c.phone?.toLowerCase().includes(customerSearchTerm.toLowerCase()) || 
+                        c.email?.toLowerCase().includes(customerSearchTerm.toLowerCase())
+                      )
                       .map(cust => (
                         <li 
                           key={cust._id}
@@ -421,7 +456,10 @@ const NewSale = () => {
                         >
                           <div className="flex flex-col">
                             <span className="text-[14px] font-bold text-gray-800 dark:text-gray-100">{cust.name}</span>
-                            <span className="text-[11px] text-gray-500 font-medium">({cust.phone || 'No phone'})</span>
+                            <div className="flex items-center gap-2">
+                              <span className="text-[11px] text-gray-500 font-medium">({cust.phone || 'No phone'})</span>
+                              {cust.email && <span className="text-[11px] text-teal-600 font-medium"> - {cust.email}</span>}
+                            </div>
                           </div>
                           {selectedCustomer === cust._id && (
                             <FiCheck className="text-teal-600 font-bold" size={18} />
@@ -429,7 +467,11 @@ const NewSale = () => {
                         </li>
                       ))
                     }
-                    {customers.filter(c => c.name.toLowerCase().includes(customerSearchTerm.toLowerCase())).length === 0 && (
+                    {customers.filter(c => 
+                      c.name?.toLowerCase().includes(customerSearchTerm.toLowerCase()) || 
+                      c.phone?.toLowerCase().includes(customerSearchTerm.toLowerCase()) || 
+                      c.email?.toLowerCase().includes(customerSearchTerm.toLowerCase())
+                    ).length === 0 && (
                       <li className="px-5 py-8 text-center text-gray-400 text-sm italic">No results found</li>
                     )}
                   </ul>

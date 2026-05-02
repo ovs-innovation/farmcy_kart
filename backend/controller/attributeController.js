@@ -68,7 +68,6 @@ const getShowingAttributes = async (req, res) => {
       {
         $match: {
           status: "show",
-          "variants.status": "show",
         },
       },
       {

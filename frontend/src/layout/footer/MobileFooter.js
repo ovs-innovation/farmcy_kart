@@ -90,10 +90,11 @@ const MobileFooter = () => {
           >
             <div className="relative w-16 h-16">
               <Image
-                src="/logo/logo.png"
+                src={storeCustomizationSetting?.navbar?.logo || "/logo/logo.png"}
                 alt="logo"
-                layout="fill"
-                objectFit="contain"
+                fill
+                className="object-contain"
+                sizes="64px"
                 priority
               />
             </div>

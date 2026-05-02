@@ -82,8 +82,9 @@ const Prescription = () => {
                             item.productId.image[0] ||
                             "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
                           }
-                          layout="fill"
-                          objectFit="cover"
+                          fill
+                          className="object-cover"
+                          sizes="64px"
                           alt={showingTranslateValue(item.productId.title)}
                         />
                       </div>

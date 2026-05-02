@@ -40,8 +40,11 @@ const { isAuth, isAdmin } = require("../config/auth");
 //   getStoreCustomizationSetting,
 // } = require("../lib/notification/setting");
 
-connectDB();
+connectDB().catch((err) => {
+  console.error("⚠️  MongoDB connection failed — server will still start but DB operations will fail.", err.message);
+});
 const app = express();
+
 
 // We are using this for the express-rate-limit middleware
 // See: https://github.com/nfriedly/express-rate-limit

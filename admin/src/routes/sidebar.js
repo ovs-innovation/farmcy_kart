@@ -179,10 +179,6 @@ const sidebar = [
         path: "/brands",
         name: "Brands",
       },
-      {
-        path: "/taxes",
-        name: "Taxes",
-      },
     ],
   },
 
@@ -271,6 +267,10 @@ const sidebar = [
       {
         path: "/settings/refund",
         name: "Refund",
+      },
+      {
+        path: "/settings/taxes",
+        name: "Taxes",
       },
       // {
       //   path: "/settings/delivery-man",

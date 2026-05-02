@@ -90,7 +90,8 @@ const Navbar = () => {
       
       if (isHome) {
         // Higher threshold for home page to avoid double search bars (past hero banner)
-        if (scrollY > 200) {
+        // Increased to 400 to ensure main hero search bar is scrolled past
+        if (scrollY > 300) {
           setShowSearchInNavbar(true);
         } else {
           setShowSearchInNavbar(false);
@@ -157,13 +158,13 @@ const Navbar = () => {
               <Link href="/" className="mr-3 lg:mr-0 block">
                 <div className="relative w-28 h-12 sm:w-32 sm:h-12 lg:w-40 lg:h-20">
                   <Image
-                    width="0"
-                    height="0"
-                    sizes="100vw"
-                    className="h-full w-auto object-contain"
+                    width={100}
+                    height={40}
                     priority
-                    src={storeCustomizationSetting?.navbar?.logo}
+                    src={storeCustomizationSetting?.navbar?.logo || "/logo/logo.png"}
                     alt="logo"
+                    className="h-full w-auto object-contain"
+                    style={{ width: 'auto', height: 'auto' }}
                   />
                 </div>
               </Link>
