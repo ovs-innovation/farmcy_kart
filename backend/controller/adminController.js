@@ -129,7 +129,7 @@ const resetPassword = async (req, res) => {
   const staff = await Admin.findOne({ email: email });
 
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET_FOR_VERIFY, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET_FOR_VERIFY || "fallback_jwt_verify_secret", (err, decoded) => {
       if (err) {
         return res.status(500).send({
           message: "Token expired, please try again!",

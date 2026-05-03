@@ -51,9 +51,24 @@ const app = express();
 // app.enable('trust proxy');
 app.set("trust proxy", 1);
 
-// CORS configuration - allow all origins
-app.options("*", cors()); // include before other routes
-app.use(cors());
+// CORS configuration - allow frontend domain + localhost for dev
+const allowedOrigins = process.env.FRONTEND_URL 
+  ? [process.env.FRONTEND_URL, "http://localhost:3000", "http://localhost:5055"]
+  : ["http://localhost:3000", "http://localhost:5055", "*"];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes('*') || allowedOrigins.some(o => origin.startsWith(o))) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+app.options("*", cors(corsOptions)); // include before other routes
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "10mb" })); // Increased for review images
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -71,7 +86,7 @@ app.get("/", (req, res) => {
 // Example: http://localhost:8090/o/69819e2bff190a2118afe968  ->  http://localhost:3000/order/69819e2bff190a2118afe968
 
 app.get("/o/:id", (req, res) => {
-  const frontendBaseUrl = (process.env.STORE_URL || "http://localhost:3000, http://localhost:8081, exp://192.168.1.5:8081, http://192.168.1.9:8092/api, http://192.168.1.9:8091/api, http://192.168.1.9:8081, exp://192.168.1.9:8081, exp://192.168.1.10:8081").replace(/\/+$/, "");
+  const frontendBaseUrl = (process.env.FRONTEND_URL || process.env.STORE_URL || "http://localhost:3000").split(',')[0].trim().replace(/\/+$/, "");
   return res.redirect(302, `${frontendBaseUrl}/order/${req.params.id}`);
 });
 

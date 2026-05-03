@@ -13,7 +13,7 @@ const signInToken = (user) => {
       phone: user.phone,
       image: user.image,
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET || "fallback_jwt_secret",
     {
       expiresIn: "1d",
     }
@@ -28,7 +28,7 @@ const tokenForVerify = (user) => {
       email: user.email,
       password: user.password,
     },
-    process.env.JWT_SECRET_FOR_VERIFY,
+    process.env.JWT_SECRET_FOR_VERIFY || "fallback_jwt_verify_secret",
     { expiresIn: "15m" }
   );
 };
@@ -50,7 +50,7 @@ const isAuth = async (req, res, next) => {
         message: "Token is required",
       });
     }
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_jwt_secret");
     req.user = decoded;
     next();
   } catch (err) {
@@ -68,7 +68,7 @@ const isAuthOptional = async (req, res, next) => {
     if (authorization) {
       const token = authorization.split(" ")[1];
       if (token) {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback_jwt_secret");
         req.user = decoded;
         // console.log("isAuthOptional: Token verified for user:", decoded._id);
       }
@@ -92,7 +92,7 @@ const isAdmin = async (req, res, next) => {
   }
 };
 
-const secretKey = process.env.ENCRYPT_PASSWORD;
+const secretKey = process.env.ENCRYPT_PASSWORD || "default_encryption_key_for_dev_only";
 
 // Ensure the secret key is exactly 32 bytes (256 bits)
 const key = crypto.createHash("sha256").update(secretKey).digest();

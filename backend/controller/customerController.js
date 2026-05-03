@@ -23,7 +23,6 @@ const verifyEmailAddress = async (req, res) => {
   } else {
     const token = tokenForVerify(req.body);
     const globalSetting = await Setting.findOne({ name: "globalSetting" });
-    console.log("verifyEmailAddress globalSetting:", token);
     const option = {
       name: req.body.name,
       email: req.body.email,
@@ -198,7 +197,7 @@ const registerCustomer = async (req, res) => {
     if (token) {
       jwt.verify(
         token,
-        process.env.JWT_SECRET_FOR_VERIFY,
+        process.env.JWT_SECRET_FOR_VERIFY || "fallback_jwt_verify_secret",
         async (err, decoded) => {
           if (err) {
             return res.status(401).send({
@@ -639,7 +638,7 @@ const resetPassword = async (req, res) => {
   const customer = await Customer.findOne({ email: email });
 
   if (token) {
-    jwt.verify(token, process.env.JWT_SECRET_FOR_VERIFY, (err, decoded) => {
+    jwt.verify(token, process.env.JWT_SECRET_FOR_VERIFY || "fallback_jwt_verify_secret", (err, decoded) => {
       if (err) {
         return res.status(500).send({
           message: "Token expired, please try again!",
@@ -681,7 +680,7 @@ const sendCredentials = async (req, res) => {
       },
     });
 
-    const frontendUrl = process.env.STORE_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || process.env.STORE_URL || 'http://localhost:3000';
     const mailBody = {
       from: process.env.EMAIL_USER || 'no-reply@farmcykart.com',
       to: customer.email,
