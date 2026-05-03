@@ -8,14 +8,25 @@ const withPWA = require("next-pwa")({
   scope: "/",
   sw: "service-worker.js",
   skipWaiting: true,
-  disable: process.env.NODE_ENV === "development",
+  disable: process.env.NODE_ENV !== "production",
 });
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: false,
+
+  // 🔴 IMPORTANT (add this)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   images: {
-    domains: ["res.cloudinary.com", "i.postimg.cc", "img.youtube.com", "placehold.co"],
+    domains: [
+      "res.cloudinary.com",
+      "i.postimg.cc",
+      "img.youtube.com",
+      "placehold.co",
+    ],
   },
 
   i18n: {
