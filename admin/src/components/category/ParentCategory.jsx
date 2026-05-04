@@ -1,9 +1,8 @@
-import Multiselect from "multiselect-react-dropdown";
-import Tree from "rc-tree";
+import { useState, useEffect } from "react";
+import { Select } from "@windmill/react-ui";
 
-//internal import
+// internal import
 import useAsync from "@/hooks/useAsync";
-import { notifySuccess } from "@/utils/toast";
 import CategoryServices from "@/services/CategoryServices";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 
@@ -15,118 +14,133 @@ const ParentCategory = ({
   const { data, loading } = useAsync(CategoryServices?.getAllCategory);
   const { showingTranslateValue } = useUtilsFunction();
 
-  const STYLE = `
-  .rc-tree-child-tree {
-    display: block;
-  }
-  .node-motion {
-    transition: all .3s;
-    overflow-y: hidden;
-  }
-`;
+  // Local state: which parent category is picked in the first dropdown
+  const [selectedParentId, setSelectedParentId] = useState("");
+  // Local state: which sub-category is picked in the second dropdown
+  const [selectedSubId, setSelectedSubId] = useState("");
 
-  const motion = {
-    motionName: "node-motion",
-    motionAppear: false,
-    onAppearStart: (node) => {
-      return { height: 0 };
-    },
-    onAppearActive: (node) => ({ height: node.scrollHeight }),
-    onLeaveStart: (node) => ({ height: node.offsetHeight }),
-    onLeaveActive: () => ({ height: 0 }),
-  };
+  // Top-level (parent) categories — those with no parent or at root level
+  const parentCategories = Array.isArray(data) ? data : [];
 
-  const renderCategories = (categories) => {
-    let myCategories = [];
-    for (let category of categories) {
-      myCategories.push({
-        title: showingTranslateValue(category.name),
-        key: category._id,
-        children:
-          category?.children?.length > 0 && renderCategories(category.children),
-      });
-    }
+  // Sub-categories of the chosen parent
+  const subCategories = parentCategories.find(
+    (c) => c._id === selectedParentId
+  )?.children || [];
 
-    return myCategories;
-  };
-
-  const findObject = (categories, target) => {
+  // Helper: find a category object by id (recursive)
+  const findObject = (categories, targetId) => {
     if (!categories || !Array.isArray(categories)) return undefined;
-    
-    for (const category of categories) {
-      if (category._id === target) return category;
-      if (category.children && category.children.length > 0) {
-        const found = findObject(category.children, target);
+    for (const cat of categories) {
+      if (cat._id === targetId) return cat;
+      if (cat.children?.length > 0) {
+        const found = findObject(cat.children, targetId);
         if (found) return found;
       }
     }
     return undefined;
   };
 
-  const handleSelect = (key) => {
-    const result = findObject(data, key);
+  // Push a category into the selectedCategory list (same logic as before)
+  const addCategory = (id) => {
+    if (!id) return;
+    const result = findObject(data, id);
+    if (!result) return;
 
-    if (result !== undefined) {
-      const getCategory = selectedCategory.filter(
-        (value) => value._id === result._id
-      );
+    const already = selectedCategory.some((v) => v._id === result._id);
+    if (already) return; // silently skip duplicate (matches original logic)
 
-      if (getCategory.length !== 0) {
-        return notifySuccess("This category already selected!");
-      }
+    const entry = {
+      _id: result._id,
+      name: showingTranslateValue(result.name),
+    };
 
-      setSelectedCategory((pre) => [
-        ...pre,
-        {
-          _id: result?._id,
-          name: showingTranslateValue(result?.name),
-        },
-      ]);
-      setDefaultCategory(() => [
-        {
-          _id: result?._id,
-          name: showingTranslateValue(result?.name),
-        },
-      ]);
+    setSelectedCategory((prev) => [...prev, entry]);
+    setDefaultCategory(() => [entry]);
+  };
+
+  // When parent dropdown changes
+  const handleParentChange = (e) => {
+    const id = e.target.value;
+    setSelectedParentId(id);
+    setSelectedSubId(""); // reset sub-category
+
+    // If the parent itself has no children, select it as the category
+    const cat = parentCategories.find((c) => c._id === id);
+    if (cat && (!cat.children || cat.children.length === 0)) {
+      addCategory(id);
     }
   };
 
-  const handleRemove = (v) => {
-    setSelectedCategory(v);
+  // When sub-category dropdown changes
+  const handleSubChange = (e) => {
+    const id = e.target.value;
+    setSelectedSubId(id);
+    if (id) addCategory(id);
+  };
+
+  // Remove a selected category chip
+  const handleRemove = (removedId) => {
+    const updated = selectedCategory.filter((v) => v._id !== removedId);
+    setSelectedCategory(updated);
   };
 
   return (
-    <>
-      <div className="mb-2">
-        <Multiselect
-          displayValue="name"
-          groupBy="name"
-          isObject={true}
-          hidePlaceholder={true}
-          onKeyPressFn={function noRefCheck() {}}
-          onRemove={(v) => handleRemove(v)}
-          onSearch={function noRefCheck() {}}
-          onSelect={(v) => handleSelect(v)}
-          // options={selectedCategory}
-          selectedValues={selectedCategory}
-          placeholder={"Select Category"}
-        ></Multiselect>
-      </div>
+    <div className="space-y-3">
+      {/* ── Category Dropdown ── */}
+      <Select
+        value={selectedParentId}
+        onChange={handleParentChange}
+        disabled={loading}
+        className="w-full border-gray-200 focus:border-[#008f89]"
+      >
+        <option value="">
+          {loading ? "Loading categories..." : "Select Category"}
+        </option>
+        {parentCategories.map((cat) => (
+          <option key={cat._id} value={cat._id}>
+            {showingTranslateValue(cat.name)}
+          </option>
+        ))}
+      </Select>
 
-      {!loading && data !== undefined && (
-        <div className="draggable-demo capitalize">
-          <style dangerouslySetInnerHTML={{ __html: STYLE }} />
-          <Tree
-            expandAction="click"
-            treeData={renderCategories(data)}
-            // defaultCheckedKeys={id}
-            onSelect={(v) => handleSelect(v[0])}
-            motion={motion}
-            animation="slide-up"
-          />
+      {/* ── Sub-category Dropdown (only shown when parent has children) ── */}
+      {selectedParentId && subCategories.length > 0 && (
+        <Select
+          value={selectedSubId}
+          onChange={handleSubChange}
+          className="w-full border-gray-200 focus:border-[#008f89]"
+        >
+          <option value="">Select Sub-category</option>
+          {subCategories.map((sub) => (
+            <option key={sub._id} value={sub._id}>
+              {showingTranslateValue(sub.name)}
+            </option>
+          ))}
+        </Select>
+      )}
+
+      {/* ── Selected Category Chips ── */}
+      {selectedCategory.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-1">
+          {selectedCategory.map((cat) => (
+            <span
+              key={cat._id}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#e6f4f3] text-[#008f89] border border-[#b2dedd]"
+            >
+              {cat.name}
+              <button
+                type="button"
+                onClick={() => handleRemove(cat._id)}
+                className="ml-1 text-[#008f89] hover:text-red-500 leading-none"
+                title="Remove"
+              >
+                ×
+              </button>
+            </span>
+          ))}
         </div>
       )}
-    </>
+    </div>
   );
 };
 
