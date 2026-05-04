@@ -11,6 +11,7 @@ import { notifyError, notifySuccess } from "@/utils/toast";
 import { SidebarContext } from "@/context/SidebarContext";
 import SettingServices from "@/services/SettingServices";
 import CouponServices from "@/services/CouponServices";
+import ProductServices from "@/services/ProductServices";
 
 const createEditorState = (text) => {
   const contentState = stateFromHTML(text);
@@ -26,6 +27,18 @@ const useStoreHomeSubmit = () => {
   const [couponList, setCouponList] = useState([]);
   const [couponList1, setCouponList1] = useState([]);
   const [language, setLanguage] = useState("en");
+  const [products, setProducts] = useState([]);
+
+  const [sliderProductId, setSliderProductId] = useState("");
+  const [sliderProductSlug, setSliderProductSlug] = useState("");
+  const [sliderProductIdTwo, setSliderProductIdTwo] = useState("");
+  const [sliderProductSlugTwo, setSliderProductSlugTwo] = useState("");
+  const [sliderProductIdThree, setSliderProductIdThree] = useState("");
+  const [sliderProductSlugThree, setSliderProductSlugThree] = useState("");
+  const [sliderProductIdFour, setSliderProductIdFour] = useState("");
+  const [sliderProductSlugFour, setSliderProductSlugFour] = useState("");
+  const [sliderProductIdFive, setSliderProductIdFive] = useState("");
+  const [sliderProductSlugFive, setSliderProductSlugFive] = useState("");
 
   const [isSave, setIsSave] = useState(true);
   const [printSlip, setPrintSlip] = useState(true);
@@ -690,6 +703,8 @@ const useStoreHomeSubmit = () => {
               [language]: data.slider_button_name || "",
             }),
             first_link: data.slider_button_link,
+            first_productId: sliderProductId,
+            first_productSlug: sliderProductSlug,
 
             second_img: sliderImageTwo,
             second_title: handleRemoveEmptyKey({
@@ -705,6 +720,8 @@ const useStoreHomeSubmit = () => {
               [language]: data.slider_button_name_two || "",
             }),
             second_link: data.slider_button_link_two,
+            second_productId: sliderProductIdTwo,
+            second_productSlug: sliderProductSlugTwo,
 
             third_img: sliderImageThree,
             third_title: handleRemoveEmptyKey({
@@ -720,6 +737,8 @@ const useStoreHomeSubmit = () => {
               [language]: data.slider_button_name_three || "",
             }),
             third_link: data.slider_button_link_three,
+            third_productId: sliderProductIdThree,
+            third_productSlug: sliderProductSlugThree,
 
             four_img: sliderImageFour,
             four_title: handleRemoveEmptyKey({
@@ -735,6 +754,8 @@ const useStoreHomeSubmit = () => {
               [language]: data.slider_button_name_four || "",
             }),
             four_link: data.slider_button_link_four,
+            four_productId: sliderProductIdFour,
+            four_productSlug: sliderProductSlugFour,
 
             five_img: sliderImageFive,
             five_title: handleRemoveEmptyKey({
@@ -750,6 +771,8 @@ const useStoreHomeSubmit = () => {
               [language]: data.slider_button_name_five || "",
             }),
             five_link: data.slider_button_link_five,
+            five_productId: sliderProductIdFive,
+            five_productSlug: sliderProductSlugFive,
           },
 
           checkout: {
@@ -1327,6 +1350,17 @@ const useStoreHomeSubmit = () => {
           setLeftRightArrow(res?.slider?.left_right_arrow);
           setBottomDots(res?.slider?.bottom_dots);
           setBothSliderOption(res?.slider?.both_slider);
+
+          setSliderProductId(res?.slider?.first_productId || "");
+          setSliderProductSlug(res?.slider?.first_productSlug || "");
+          setSliderProductIdTwo(res?.slider?.second_productId || "");
+          setSliderProductSlugTwo(res?.slider?.second_productSlug || "");
+          setSliderProductIdThree(res?.slider?.third_productId || "");
+          setSliderProductSlugThree(res?.slider?.third_productSlug || "");
+          setSliderProductIdFour(res?.slider?.four_productId || "");
+          setSliderProductSlugFour(res?.slider?.four_productSlug || "");
+          setSliderProductIdFive(res?.slider?.five_productId || "");
+          setSliderProductSlugFive(res?.slider?.five_productSlug || "");
 
           setValue("slider_title", res?.slider?.first_title[language || "en"]);
           setValue(
@@ -2040,6 +2074,13 @@ const useStoreHomeSubmit = () => {
           setValue("meta_description", res.seo.meta_description);
           setValue("meta_keywords", res.seo.meta_keywords);
           setValue("meta_url", res.seo.meta_url);
+
+          // fetch all products for selection
+          const prodRes = await ProductServices.getAllProducts({
+            page: 1,
+            limit: 500,
+          });
+          setProducts(prodRes?.products);
         }
       } catch (err) {
         notifyError(err ? err?.response?.data?.message : err?.message);
@@ -2264,6 +2305,27 @@ const useStoreHomeSubmit = () => {
     termsConditionsTextEdit,
     setTermsConditionsTextEdit,
     isSubmitting,
+    products,
+    sliderProductId,
+    setSliderProductId,
+    sliderProductSlug,
+    setSliderProductSlug,
+    sliderProductIdTwo,
+    setSliderProductIdTwo,
+    sliderProductSlugTwo,
+    setSliderProductSlugTwo,
+    sliderProductIdThree,
+    setSliderProductIdThree,
+    sliderProductSlugThree,
+    setSliderProductSlugThree,
+    sliderProductIdFour,
+    setSliderProductIdFour,
+    sliderProductSlugFour,
+    setSliderProductSlugFour,
+    sliderProductIdFive,
+    setSliderProductIdFive,
+    sliderProductSlugFive,
+    setSliderProductSlugFive,
   };
 };
 

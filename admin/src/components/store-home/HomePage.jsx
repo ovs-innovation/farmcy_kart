@@ -20,6 +20,7 @@ import InputAreaTwo from "@/components/form/input/InputAreaTwo";
 import SwitchToggle from "@/components/form/switch/SwitchToggle";
 import TextAreaCom from "@/components/form/others/TextAreaCom";
 import SelectProductLimit from "@/components/form/selectOption/SelectProductLimit";
+import useUtilsFunction from "@/hooks/useUtilsFunction";
 
 const HomePage = ({
   register,
@@ -115,11 +116,55 @@ const HomePage = ({
   termsConditionsMenuLink,
   couponList,
   setCouponList,
+  products,
+  sliderProductId,
+  setSliderProductId,
+  sliderProductSlug,
+  setSliderProductSlug,
+  sliderProductIdTwo,
+  setSliderProductIdTwo,
+  sliderProductSlugTwo,
+  setSliderProductSlugTwo,
+  sliderProductIdThree,
+  setSliderProductIdThree,
+  sliderProductSlugThree,
+  setSliderProductSlugThree,
+  sliderProductIdFour,
+  setSliderProductIdFour,
+  sliderProductSlugFour,
+  setSliderProductSlugFour,
+  sliderProductIdFive,
+  setSliderProductIdFive,
+  sliderProductSlugFive,
+  setSliderProductSlugFive,
 }) => {
   const { mode } = useContext(WindmillContext);
   const { t } = useTranslation();
+  const { showingTranslateValue } = useUtilsFunction();
 
-  // console.log("mode", mode);
+  const ProductSelector = ({ label, value, onChangeId, onChangeSlug }) => (
+    <div className="mt-4">
+      <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => {
+          const prodId = e.target.value;
+          const selectedProd = products.find(p => p._id === prodId);
+          onChangeId(prodId);
+          onChangeSlug(selectedProd ? selectedProd.slug : "");
+        }}
+        className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#004f56] focus:border-[#004f56] bg-white transition-all duration-200"
+      >
+        <option value="">None (No redirection)</option>
+        {products?.map((prod) => (
+          <option key={prod._id} value={prod._id}>
+            {showingTranslateValue(prod.title)}
+          </option>
+        ))}
+      </select>
+      <p className="text-[10px] text-gray-400 mt-1 italic">Selecting a product will redirect users to its page when they click this banner.</p>
+    </div>
+  );
 
   return (
     <>
@@ -412,10 +457,16 @@ const HomePage = ({
               </div>
 
               <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm min-h-[300px]">
-                <TabPanel>
+                 <TabPanel>
                   <div className="max-w-3xl mx-auto">
                     <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 1</label>
                     <Uploader imageUrl={sliderImage} setImageUrl={setSliderImage} useOriginalSize={true} />
+                    <ProductSelector 
+                      label="Link to Product (Optional)" 
+                      value={sliderProductId} 
+                      onChangeId={setSliderProductId} 
+                      onChangeSlug={setSliderProductSlug}
+                    />
                   </div>
                 </TabPanel>
 
@@ -423,6 +474,12 @@ const HomePage = ({
                   <div className="max-w-3xl mx-auto">
                     <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 2</label>
                     <Uploader imageUrl={sliderImageTwo} setImageUrl={setSliderImageTwo} useOriginalSize={true} />
+                    <ProductSelector 
+                      label="Link to Product (Optional)" 
+                      value={sliderProductIdTwo} 
+                      onChangeId={setSliderProductIdTwo} 
+                      onChangeSlug={setSliderProductSlugTwo}
+                    />
                   </div>
                 </TabPanel>
 
@@ -430,6 +487,12 @@ const HomePage = ({
                   <div className="max-w-3xl mx-auto">
                     <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 3</label>
                     <Uploader imageUrl={sliderImageThree} setImageUrl={setSliderImageThree} useOriginalSize={true} />
+                    <ProductSelector 
+                      label="Link to Product (Optional)" 
+                      value={sliderProductIdThree} 
+                      onChangeId={setSliderProductIdThree} 
+                      onChangeSlug={setSliderProductSlugThree}
+                    />
                   </div>
                 </TabPanel>
 
@@ -437,6 +500,12 @@ const HomePage = ({
                   <div className="max-w-3xl mx-auto">
                     <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 4</label>
                     <Uploader imageUrl={sliderImageFour} setImageUrl={setSliderImageFour} useOriginalSize={true} />
+                    <ProductSelector 
+                      label="Link to Product (Optional)" 
+                      value={sliderProductIdFour} 
+                      onChangeId={setSliderProductIdFour} 
+                      onChangeSlug={setSliderProductSlugFour}
+                    />
                   </div>
                 </TabPanel>
 
@@ -444,6 +513,12 @@ const HomePage = ({
                   <div className="max-w-3xl mx-auto">
                     <label className="block text-sm font-bold text-gray-700 mb-4">{t("SliderImages")} 5</label>
                     <Uploader imageUrl={sliderImageFive} setImageUrl={setSliderImageFive} useOriginalSize={true} />
+                    <ProductSelector 
+                      label="Link to Product (Optional)" 
+                      value={sliderProductIdFive} 
+                      onChangeId={setSliderProductIdFive} 
+                      onChangeSlug={setSliderProductSlugFive}
+                    />
                   </div>
                 </TabPanel>
 

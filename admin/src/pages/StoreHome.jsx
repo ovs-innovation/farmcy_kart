@@ -221,7 +221,27 @@ const StoreHome = () => {
     setShippingDeliveryPolicyTextEdit,
     isSubmitting,
     themeColor,
-    // showChild,
+    products,
+    sliderProductId,
+    setSliderProductId,
+    sliderProductSlug,
+    setSliderProductSlug,
+    sliderProductIdTwo,
+    setSliderProductIdTwo,
+    sliderProductSlugTwo,
+    setSliderProductSlugTwo,
+    sliderProductIdThree,
+    setSliderProductIdThree,
+    sliderProductSlugThree,
+    setSliderProductSlugThree,
+    sliderProductIdFour,
+    setSliderProductIdFour,
+    sliderProductSlugFour,
+    setSliderProductSlugFour,
+    sliderProductIdFive,
+    setSliderProductIdFive,
+    sliderProductSlugFive,
+    setSliderProductSlugFive,
   } = useStoreHomeSubmit();
 
   useEffect(() => {
@@ -533,6 +553,27 @@ const StoreHome = () => {
                   couponList={couponList}
                   setCouponList={setCouponList}
                   isSubmitting={isSubmitting}
+                  products={products}
+                  sliderProductId={sliderProductId}
+                  setSliderProductId={setSliderProductId}
+                  sliderProductSlug={sliderProductSlug}
+                  setSliderProductSlug={setSliderProductSlug}
+                  sliderProductIdTwo={sliderProductIdTwo}
+                  setSliderProductIdTwo={setSliderProductIdTwo}
+                  sliderProductSlugTwo={sliderProductSlugTwo}
+                  setSliderProductSlugTwo={setSliderProductSlugTwo}
+                  sliderProductIdThree={sliderProductIdThree}
+                  setSliderProductIdThree={setSliderProductIdThree}
+                  sliderProductSlugThree={sliderProductSlugThree}
+                  setSliderProductSlugThree={setSliderProductSlugThree}
+                  sliderProductIdFour={sliderProductIdFour}
+                  setSliderProductIdFour={setSliderProductIdFour}
+                  sliderProductSlugFour={sliderProductSlugFour}
+                  setSliderProductSlugFour={setSliderProductSlugFour}
+                  sliderProductIdFive={sliderProductIdFive}
+                  setSliderProductIdFive={setSliderProductIdFive}
+                  sliderProductSlugFive={sliderProductSlugFive}
+                  setSliderProductSlugFive={setSliderProductSlugFive}
                 />
               </form>
             </div>
