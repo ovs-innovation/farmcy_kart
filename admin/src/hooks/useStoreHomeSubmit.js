@@ -40,6 +40,13 @@ const useStoreHomeSubmit = () => {
   const [sliderProductIdFive, setSliderProductIdFive] = useState("");
   const [sliderProductSlugFive, setSliderProductSlugFive] = useState("");
 
+  const [promoProductId1, setPromoProductId1] = useState("");
+  const [promoProductSlug1, setPromoProductSlug1] = useState("");
+  const [promoProductId2, setPromoProductId2] = useState("");
+  const [promoProductSlug2, setPromoProductSlug2] = useState("");
+  const [promoProductId3, setPromoProductId3] = useState("");
+  const [promoProductSlug3, setPromoProductSlug3] = useState("");
+
   const [isSave, setIsSave] = useState(true);
   const [printSlip, setPrintSlip] = useState(true);
   const [emailSlip, setEmailSlip] = useState(true);
@@ -266,10 +273,16 @@ const useStoreHomeSubmit = () => {
 
             promotional_banner_image1: promotionalBannerImage1,
             promotional_banner_link1: data.promotional_banner_link1 || "",
+            promotional_banner_productId1: promoProductId1,
+            promotional_banner_productSlug1: promoProductSlug1,
             promotional_banner_image2: promotionalBannerImage2,
             promotional_banner_link2: data.promotional_banner_link2 || "",
+            promotional_banner_productId2: promoProductId2,
+            promotional_banner_productSlug2: promoProductSlug2,
             promotional_banner_image3: promotionalBannerImage3,
             promotional_banner_link3: data.promotional_banner_link3 || "",
+            promotional_banner_productId3: promoProductId3,
+            promotional_banner_productSlug3: promoProductSlug3,
 
             discount_title: handleRemoveEmptyKey({
               ...resData?.home?.discount_title,
@@ -1316,8 +1329,14 @@ const useStoreHomeSubmit = () => {
           );
           setValue("quick_delivery_link", res?.home?.quick_delivery_link);
           setValue("promotional_banner_link1", res?.home?.promotional_banner_link1 || "");
+          setPromoProductId1(res?.home?.promotional_banner_productId1 || "");
+          setPromoProductSlug1(res?.home?.promotional_banner_productSlug1 || "");
           setValue("promotional_banner_link2", res?.home?.promotional_banner_link2 || "");
+          setPromoProductId2(res?.home?.promotional_banner_productId2 || "");
+          setPromoProductSlug2(res?.home?.promotional_banner_productSlug2 || "");
           setValue("promotional_banner_link3", res?.home?.promotional_banner_link3 || "");
+          setPromoProductId3(res?.home?.promotional_banner_productId3 || "");
+          setPromoProductSlug3(res?.home?.promotional_banner_productSlug3 || "");
           setValue(
             "latest_discount_title",
             res?.home?.latest_discount_title[language || "en"]
@@ -2326,6 +2345,18 @@ const useStoreHomeSubmit = () => {
     setSliderProductIdFive,
     sliderProductSlugFive,
     setSliderProductSlugFive,
+    promoProductId1,
+    setPromoProductId1,
+    promoProductSlug1,
+    setPromoProductSlug1,
+    promoProductId2,
+    setPromoProductId2,
+    promoProductSlug2,
+    setPromoProductSlug2,
+    promoProductId3,
+    setPromoProductId3,
+    promoProductSlug3,
+    setPromoProductSlug3,
   };
 };
 

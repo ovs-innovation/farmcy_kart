@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { useRef } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -14,17 +15,35 @@ const SliderCarousel = () => {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
-  // Get all slider images from CMS
-  const sliderImages = [
-    storeCustomizationSetting?.slider?.first_img || "/slider/dss11.webp",
-    storeCustomizationSetting?.slider?.second_img || "/slider/dss22.webp",
-    storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
-    storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
-    storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
-  ].filter(Boolean).map(img => showingImage(img));
+  // Get all slider images and links from CMS
+  const sliderData = [
+    {
+      img: storeCustomizationSetting?.slider?.first_img || "/slider/dss11.webp",
+      slug: storeCustomizationSetting?.slider?.first_productSlug
+    },
+    {
+      img: storeCustomizationSetting?.slider?.second_img || "/slider/dss22.webp",
+      slug: storeCustomizationSetting?.slider?.second_productSlug
+    },
+    {
+      img: storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
+      slug: storeCustomizationSetting?.slider?.third_productSlug
+    },
+    {
+      img: storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
+      slug: storeCustomizationSetting?.slider?.four_productSlug
+    },
+    {
+      img: storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
+      slug: storeCustomizationSetting?.slider?.five_productSlug
+    },
+  ].filter(item => item.img).map(item => ({
+    ...item,
+    img: showingImage(item.img)
+  }));
 
   // Don't render if no images
-  if (!sliderImages || sliderImages.length === 0) {
+  if (!sliderData || sliderData.length === 0) {
     return null;
   }
 
@@ -57,20 +76,33 @@ const SliderCarousel = () => {
               disableOnInteraction: false,
               pauseOnMouseEnter: false,
             }}
-            loop={sliderImages.length >= 4}
+            loop={sliderData.length >= 4}
             className="slider-carousel-swiper"
           >
-            {sliderImages.map((image, index) => (
+            {sliderData.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="relative w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                  <Image
-                    src={image}
-                    alt={`Slider ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-contain"
-                    priority={index === 0}
-                  />
+                  {item.slug ? (
+                    <Link href={`/product/${item.slug}`}>
+                      <Image
+                        src={item.img}
+                        alt={`Slider ${index + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-contain cursor-pointer hover:scale-105 transition-transform duration-500"
+                        priority={index === 0}
+                      />
+                    </Link>
+                  ) : (
+                    <Image
+                      src={item.img}
+                      alt={`Slider ${index + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-contain"
+                      priority={index === 0}
+                    />
+                  )}
                 </div>
               </SwiperSlide>
             ))}

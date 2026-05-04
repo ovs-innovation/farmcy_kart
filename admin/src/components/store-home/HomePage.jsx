@@ -129,15 +129,135 @@ const HomePage = ({
   setSliderProductIdThree,
   sliderProductSlugThree,
   setSliderProductSlugThree,
-  sliderProductIdFour,
-  setSliderProductIdFour,
-  sliderProductSlugFour,
-  setSliderProductSlugFour,
-  sliderProductIdFive,
-  setSliderProductIdFive,
-  sliderProductSlugFive,
-  setSliderProductSlugFive,
-}) => {
+const HomePage = (props) => {
+  const {
+    register,
+    errors,
+    coupons,
+    headerLogo,
+    setHeaderLogo,
+    sliderImage,
+    setSliderImage,
+    sliderImageTwo,
+    setSliderImageTwo,
+    sliderImageThree,
+    setSliderImageThree,
+    sliderImageFour,
+    setSliderImageFour,
+    sliderImageFive,
+    setSliderImageFive,
+    placeholderImage,
+    setPlaceHolderImage,
+    quickSectionImage,
+    setQuickSectionImage,
+    promotionalBannerImage1,
+    setPromotionalBannerImage1,
+    promotionalBannerImage2,
+    setPromotionalBannerImage2,
+    promotionalBannerImage3,
+    setPromotionalBannerImage3,
+    getYourDailyNeedImageLeft,
+    setGetYourDailyNeedImageLeft,
+    getYourDailyNeedImageRight,
+    setGetYourDailyNeedImageRight,
+    footerLogo,
+    setFooterLogo,
+    paymentImage,
+    setPaymentImage,
+    isSave,
+    isCoupon,
+    isSliderFullWidth,
+    setIsCoupon,
+    setIsSliderFullWidth,
+    featuredCategories,
+    setFeaturedCategories,
+    popularProducts,
+    setPopularProducts,
+    setQuickDelivery,
+    quickDelivery,
+    setLatestDiscounted,
+    latestDiscounted,
+    setDailyNeeds,
+    dailyNeeds,
+    setFeaturePromo,
+    featurePromo,
+    setFooterBlock1,
+    footerBlock1,
+    setFooterBlock2,
+    footerBlock2,
+    setFooterBlock3,
+    footerBlock3,
+    setFooterBlock4,
+    footerBlock4,
+    setFooterSocialLinks,
+    footerSocialLinks,
+    setFooterPaymentMethod,
+    footerPaymentMethod,
+    allowPromotionBanner,
+    setAllowPromotionBanner,
+    isSubmitting,
+    setLeftRightArrow,
+    leftRightArrow,
+    setBottomDots,
+    bottomDots,
+    setBothSliderOption,
+    bothSliderOption,
+    getButton1image,
+    setGetButton1image,
+    getButton2image,
+    setGetButton2image,
+    setFooterBottomContact,
+    footerBottomContact,
+    setCategoriesMenuLink,
+    categoriesMenuLink,
+    setAboutUsMenuLink,
+    aboutUsMenuLink,
+    setContactUsMenuLink,
+    contactUsMenuLink,
+    setOffersMenuLink,
+    offersMenuLink,
+    setFaqMenuLink,
+    faqMenuLink,
+    setPrivacyPolicyMenuLink,
+    privacyPolicyMenuLink,
+    setTermsConditionsMenuLink,
+    termsConditionsMenuLink,
+    couponList,
+    setCouponList,
+    products,
+    sliderProductId,
+    setSliderProductId,
+    sliderProductSlug,
+    setSliderProductSlug,
+    sliderProductIdTwo,
+    setSliderProductIdTwo,
+    sliderProductSlugTwo,
+    setSliderProductSlugTwo,
+    sliderProductIdThree,
+    setSliderProductIdThree,
+    sliderProductSlugThree,
+    setSliderProductSlugThree,
+    sliderProductIdFour,
+    setSliderProductIdFour,
+    sliderProductSlugFour,
+    setSliderProductSlugFour,
+    sliderProductIdFive,
+    setSliderProductIdFive,
+    sliderProductSlugFive,
+    setSliderProductSlugFive,
+    promoProductId1,
+    setPromoProductId1,
+    promoProductSlug1,
+    setPromoProductSlug1,
+    promoProductId2,
+    setPromoProductId2,
+    promoProductSlug2,
+    setPromoProductSlug2,
+    promoProductId3,
+    setPromoProductId3,
+    promoProductSlug3,
+    setPromoProductSlug3,
+  } = props;
   const { mode } = useContext(WindmillContext);
   const { t } = useTranslation();
   const { showingTranslateValue } = useUtilsFunction();
@@ -1086,6 +1206,14 @@ const HomePage = ({
                   />
                   <Error errorName={errors.promotional_banner_link1} />
                 </div>
+                <div>
+                  <ProductSelector
+                    label="Link to Product (Optional)"
+                    value={promoProductId1}
+                    onChangeId={setPromoProductId1}
+                    onChangeSlug={setPromoProductSlug1}
+                  />
+                </div>
               </div>
 
               {/* Banner 2 - Small Top */}
@@ -1113,6 +1241,14 @@ const HomePage = ({
                   />
                   <Error errorName={errors.promotional_banner_link2} />
                 </div>
+                <div>
+                  <ProductSelector
+                    label="Link to Product (Optional)"
+                    value={promoProductId2}
+                    onChangeId={setPromoProductId2}
+                    onChangeSlug={setPromoProductSlug2}
+                  />
+                </div>
               </div>
 
               {/* Banner 3 - Small Bottom */}
@@ -1139,6 +1275,14 @@ const HomePage = ({
                     placeholder="/search?..."
                   />
                   <Error errorName={errors.promotional_banner_link3} />
+                </div>
+                <div>
+                  <ProductSelector
+                    label="Link to Product (Optional)"
+                    value={promoProductId3}
+                    onChangeId={setPromoProductId3}
+                    onChangeSlug={setPromoProductSlug3}
+                  />
                 </div>
               </div>
             </div>

@@ -312,7 +312,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                       {storeCustomizationSetting?.home?.promotional_banner_image1 && (
                         <div className="md:col-span-2">
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link1 || "#"}>
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug1 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug1}` : (storeCustomizationSetting?.home?.promotional_banner_link1 || "#")}>
                             <Image
                               width={500}
                               height={48}
@@ -327,7 +327,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
                       <div className="md:col-span-1 flex flex-col gap-2">
                         {storeCustomizationSetting?.home?.promotional_banner_image2 && (
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link2 || "#"}>
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug2 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug2}` : (storeCustomizationSetting?.home?.promotional_banner_link2 || "#")}>
                             <Image
                               width={500}
                               height={100}
@@ -339,7 +339,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                           </Link>
                         )}
                         {storeCustomizationSetting?.home?.promotional_banner_image3 && (
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_link3 || "#"}>
+                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug3 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug3}` : (storeCustomizationSetting?.home?.promotional_banner_link3 || "#")}>
                             <Image
                               width={600}
                               height={600}
