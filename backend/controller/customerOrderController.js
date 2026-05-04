@@ -65,23 +65,29 @@ const populateCartTaxFields = async (cart) => {
   
   // Fetch product tax fields if there are product IDs
   if (productIds.length > 0) {
-    const products = await Product.find({ _id: { $in: productIds } }).select('_id taxRate hsnCode');
+    const products = await Product.find({ _id: { $in: productIds } }).select('_id taxRate hsnCode mrp originalPrice batchNo expDate');
     const productMap = {};
     products.forEach(product => {
       productMap[product._id.toString()] = {
         taxRate: product.taxRate || 0,
-        hsnCode: product.hsnCode || ''
+        hsnCode: product.hsnCode || '',
+        mrp: product.mrp || product.originalPrice || 0,
+        batchNo: product.batchNo || '',
+        expDate: product.expDate || ''
       };
     });
     
-    // Add taxRate and hsnCode to cart items
+    // Add taxRate, hsnCode, mrp, batchNo, and expDate to cart items
     cart = cart.map(item => {
       const productId = item.productId || item.id || item._id;
       if (productId && productMap[productId]) {
         return { 
           ...item, 
           taxRate: item.taxRate || productMap[productId].taxRate,
-          hsn: item.hsn || item.hsnCode || productMap[productId].hsnCode
+          hsn: item.hsn || item.hsnCode || productMap[productId].hsnCode,
+          mrp: item.mrp || productMap[productId].mrp || productMap[productId].originalPrice,
+          batchNo: item.batchNo || productMap[productId].batchNo,
+          expDate: item.expDate || productMap[productId].expDate
         };
       }
       return item;

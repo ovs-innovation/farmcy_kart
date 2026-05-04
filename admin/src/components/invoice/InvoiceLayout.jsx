@@ -117,10 +117,10 @@ const InvoiceLayout = ({ data, printRef, globalSetting, currency, getNumberTwo }
               
             {/* Bill From - from common settings */}
             <div className="flex-1 min-w-[0] items-start">
-              <p className="text-semibold md:text-base font-semibold text-gray-900 truncate">
+              <p className="text-semibold md:text-base font-semibold text-gray-900">
                 {globalSetting?.company_name || "AQOSU FARMACYKART PRIVATE LIMITED"}
               </p>
-              <p className="text-sm text-gray-600 leading-snug line-clamp-1">
+              <p className="text-sm text-gray-600 leading-snug">
                 {globalSetting?.address ||
                   "GF D-90, KH NO-1100, RAJNAGAR COLONY, BEHTA HAJIPUR, LONI BORDER, LONI, GHAZIABAD, UTTAR PRADESH, Landmark: NEAR MUNISH PUBLIC, Pin: 201102"}
               </p>

@@ -34,7 +34,7 @@ const OrderTable = ({ data, currency }) => {
         
         // Calculate GST on selling price (SP = MRP - discount)
         // GST Amount = (Selling Price × Quantity × GST Rate) / 100
-        const gstRateVal = Number(item.taxRate || item.gstRate || item.gstPercentage);
+        const gstRateVal = Number(item.taxRate || item.gstRate || item.gstPercentage || 0) || 0;
         
         // Selling price = item.price or (MRP - discount)
         const sellingPrice = hasValidPrice ? itemPrice : (mrp - discountPerItem);

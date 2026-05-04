@@ -54,7 +54,7 @@ const InvoiceOrderTable = ({ data, currency, getNumberTwo }) => {
         }
         
         // Calculate GST on selling price
-        const gstRateVal = Math.abs(Number(item.taxRate || item.gstRate || item.gstPercentage || 0));
+        const gstRateVal = Math.abs(Number(item.taxRate || item.gstRate || item.gstPercentage || 0)) || 0;
         
         // Selling price is always positive
         const sellingPrice = Math.abs(Number(item.price)) || 0;
