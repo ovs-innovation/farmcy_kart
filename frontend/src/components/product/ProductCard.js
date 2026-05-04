@@ -183,7 +183,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                 alt="product"
                 width={300}
                 height={300}
-                className="max-w-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[190px] object-contain"
+                className="max-w-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[190px] object-contain w-auto h-auto"
                 style={{ width: 'auto', height: 'auto', objectFit: 'contain' }}
               />
             ) : (

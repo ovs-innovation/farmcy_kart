@@ -54,7 +54,7 @@ const BrandSection = ({ brands = [] }) => {
           </button>
 
           <Swiper
-            loop={brands.length > 5}
+            loop={brands.length >= 10}
             autoplay={{
               delay: 3000,
               disableOnInteraction: false,
@@ -95,7 +95,8 @@ const BrandSection = ({ brands = [] }) => {
                         alt={showingTranslateValue(brand.name)}
                         fill
                         sizes="(max-width: 640px) 100px, (max-width: 1024px) 150px, 200px"
-                        className="object-contain w-full h-full"
+                        className="object-contain"
+                        style={{ width: 'auto', height: 'auto' }}
                       />
                     </div>
                     <h3 className="font-semibold text-xs sm:text-sm md:text-base text-gray-800 line-clamp-1">

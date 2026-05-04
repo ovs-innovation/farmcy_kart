@@ -158,13 +158,12 @@ const Navbar = () => {
               <Link href="/" className="mr-3 lg:mr-0 block">
                 <div className="relative w-28 h-12 sm:w-32 sm:h-12 lg:w-40 lg:h-20">
                   <Image
-                    width={100}
-                    height={40}
+                    fill
                     priority
                     src={storeCustomizationSetting?.navbar?.logo || "/logo/logo.png"}
                     alt="logo"
-                    className="h-full w-auto object-contain"
-                    style={{ width: 'auto', height: 'auto' }}
+                    className="object-contain"
+                    sizes="(max-width: 768px) 120px, 160px"
                   />
                 </div>
               </Link>

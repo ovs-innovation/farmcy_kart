@@ -1,7 +1,3 @@
-// Override DNS to use Google DNS (8.8.8.8) — fixes ECONNREFUSED on SRV lookups
-// when the system DNS blocks mongodb+srv:// connections to MongoDB Atlas
-const dns = require("dns");
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 require("dotenv").config();
 const mongoose = require("mongoose");
@@ -39,6 +35,14 @@ if (process.env.MONGO_URI) {
       bufferMaxEntries: 0,
       connectTimeoutMS: 10000,
       socketTimeoutMS: 30000,
+    });
+
+    mongo_connection.on("error", (err) => {
+      console.error("⚠️ Secondary MongoDB connection error:", err.message);
+    });
+
+    mongo_connection.on("connected", () => {
+      console.log("✅ Secondary MongoDB connected!");
     });
   } catch (err) {
     console.warn("Warning: Could not create separate MongoDB connection:", err.message);

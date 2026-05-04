@@ -84,7 +84,7 @@ const Login = () => {
       setStep("otp");
       notifySuccess("OTP sent successfully!");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.message);
       let msg = "Failed to send OTP.";
       if (error.code === "auth/invalid-app-credential") msg = "Verification failed. Check Firebase console for localhost domain.";
       setOtpError(msg);

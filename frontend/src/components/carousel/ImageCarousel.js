@@ -28,7 +28,7 @@ const ImageCarousel = ({ images, handleChangeImage }) => {
         spaceBetween={8}
         navigation={false}
         allowTouchMove={true}
-        loop={shouldLoop}
+        loop={validImages.length >= 8}
         autoplay={false}
         slidesPerView={slidesPerView}
         breakpoints={{

@@ -57,7 +57,7 @@ const SliderCarousel = () => {
               disableOnInteraction: false,
               pauseOnMouseEnter: false,
             }}
-            loop={sliderImages.length > 2}
+            loop={sliderImages.length >= 4}
             className="slider-carousel-swiper"
           >
             {sliderImages.map((image, index) => (
@@ -69,7 +69,7 @@ const SliderCarousel = () => {
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-contain"
-                    priority={index < 2}
+                    priority={index === 0}
                   />
                 </div>
               </SwiperSlide>

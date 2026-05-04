@@ -175,10 +175,9 @@ const Footer = () => {
                   "/logo/logo.png"
                 }
                 alt="logo"
-                width={200}
-                height={80}
-                className="w-full h-auto max-h-20 object-contain"
-                sizes="100vw"
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 150px, 200px"
                 priority
               />
             </div>

@@ -110,7 +110,7 @@ const MainCarousel = () => {
           delay: 2000,
           disableOnInteraction: false,
         }}
-        loop={sliderData?.length > 1}
+        loop={sliderData?.length >= 2}
         pagination={
           (storeCustomizationSetting?.slider?.bottom_dots ||
             storeCustomizationSetting?.slider?.both_slider) && {
@@ -138,7 +138,7 @@ const MainCarousel = () => {
                 fill
                 className="object-cover"
                 sizes="100vw"
-                priority
+                priority={i === 0}
               />
             </div>
 

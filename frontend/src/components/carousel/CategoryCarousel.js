@@ -64,7 +64,7 @@ const CategoryCarousel = () => {
           spaceBetween={24}
           navigation={true}
           allowTouchMove={true}
-          loop={data?.[0]?.children?.length > 10}
+          loop={data?.[0]?.children?.length >= 10}
           breakpoints={{
             320: {
               slidesPerView: 2,
