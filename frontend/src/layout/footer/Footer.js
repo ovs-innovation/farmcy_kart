@@ -11,13 +11,11 @@ import {
   TwitterIcon,
   WhatsappIcon,
 } from "react-share";
-import { 
-  FaInstagram
-} from "react-icons/fa";
-import { 
-  FiMail, 
-  FiPhone, 
-  FiMapPin, 
+import { FaInstagram } from "react-icons/fa";
+import {
+  FiMail,
+  FiPhone,
+  FiMapPin,
   FiChevronRight,
   FiChevronDown,
   FiFileText,
@@ -27,7 +25,7 @@ import {
   FiUser,
   FiShoppingBag,
   FiPackage,
-  FiSettings
+  FiSettings,
 } from "react-icons/fi";
 
 //internal import
@@ -48,7 +46,7 @@ const Footer = () => {
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
   const [email, setEmail] = useState("");
   const [loadingSubscribe, setLoadingSubscribe] = useState(false);
-  
+
   // State for collapsible sections on mobile (only first 3 blocks)
   const [openSections, setOpenSections] = useState({
     block1: false,
@@ -102,16 +100,20 @@ const Footer = () => {
       <div className="relative bg-gradient-to-b from-store-500/10 via-store-400/5 to-transparent">
         {/* Decorative Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }}></div>
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+              backgroundSize: "60px 60px",
+            }}
+          ></div>
         </div>
-        
+
         {/* Decorative Wave - Animated */}
         <div className="relative overflow-hidden">
-          <style dangerouslySetInnerHTML={{
-            __html: `
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
               @keyframes waveMove {
                 0% {
                   transform: translateX(0);
@@ -123,48 +125,50 @@ const Footer = () => {
               .footer-wave {
                 animation: waveMove 25s linear infinite;
               }
-            `
-          }} />
-          <div className="footer-wave" style={{ width: '200%', display: 'flex' }}>
-            <svg 
-              className="h-12 md:h-16 lg:h-20 flex-shrink-0" 
-              viewBox="0 0 1440 120" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg" 
+            `,
+            }}
+          />
+          <div
+            className="footer-wave"
+            style={{ width: "200%", display: "flex" }}
+          >
+            <svg
+              className="h-12 md:h-16 lg:h-20 flex-shrink-0"
+              viewBox="0 0 1440 120"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="none"
-              style={{ width: '50%', height: '100%' }}
+              style={{ width: "50%", height: "100%" }}
             >
-              <path 
-                d="M0,80 C240,20 480,140 720,80 C960,20 1200,140 1440,80 L1440,0 L0,0 Z" 
+              <path
+                d="M0,80 C240,20 480,140 720,80 C960,20 1200,140 1440,80 L1440,0 L0,0 Z"
                 fill={`var(--store-color-500)`}
                 opacity="0.4"
               />
             </svg>
-            <svg 
-              className="h-12 md:h-16 lg:h-20 flex-shrink-0" 
-              viewBox="0 0 1440 120" 
-              fill="none" 
-              xmlns="http://www.w3.org/2000/svg" 
+            <svg
+              className="h-12 md:h-16 lg:h-20 flex-shrink-0"
+              viewBox="0 0 1440 120"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
               preserveAspectRatio="none"
-              style={{ width: '50%', height: '100%' }}
+              style={{ width: "50%", height: "100%" }}
             >
-              <path 
-                d="M0,80 C240,20 480,140 720,80 C960,20 1200,140 1440,80 L1440,0 L0,0 Z" 
+              <path
+                d="M0,80 C240,20 480,140 720,80 C960,20 1200,140 1440,80 L1440,0 L0,0 Z"
                 fill={`var(--store-color-500)`}
                 opacity="0.4"
               />
             </svg>
           </div>
         </div>
-        
-       
       </div>
 
       <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 lg:px-16 xl:px-20 relative z-10">
         <div className="py-4 hidden md:block border-b border-gray-200">
-           <FeatureCard />
+          <FeatureCard />
         </div>
-        
+
         {/* Logo at Top Left - Only visible on small screens */}
         <div className="py-4 border-b border-gray-200 block md:hidden">
           <Link href="/" className="inline-block" rel="noreferrer">
@@ -208,7 +212,9 @@ const Footer = () => {
               </button>
               <ul
                 className={`text-sm flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
-                  openSections.block1 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  openSections.block1
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
                 } md:max-h-none md:opacity-100 md:mb-2`}
               >
                 <li className="group">
@@ -250,7 +256,7 @@ const Footer = () => {
                   >
                     <FiChevronRight className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
                     {showingTranslateValue(
-                      storeCustomizationSetting?.footer_block_one_link_three_title
+                      storeCustomizationSetting?.footer_block_one_link_three_title,
                     )}
                     <CMSkeleton
                       count={1}
@@ -304,7 +310,9 @@ const Footer = () => {
               </button>
               <ul
                 className={`text-sm lg:text-15px flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
-                  openSections.block2 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  openSections.block2
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
                 } md:max-h-none md:opacity-100 md:mb-2`}
               >
                 <li className="group">
@@ -398,7 +406,9 @@ const Footer = () => {
               </button>
               <ul
                 className={`text-sm lg:text-15px flex flex-col space-y-2 overflow-hidden transition-all duration-300 ${
-                  openSections.block3 ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+                  openSections.block3
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
                 } md:max-h-none md:opacity-100 md:mb-2`}
               >
                 <li className="group">
@@ -471,13 +481,12 @@ const Footer = () => {
 
           {storeCustomizationSetting?.footer?.block4_status && (
             <div className="pb-3.5 sm:pb-0">
-              
               {/* Address Section - Always Visible */}
               <div className="space-y-2  ">
                 <h3 className="text-base font-bold text-gray-800">
                   Registered Office Address
                 </h3>
-                
+
                 {/* Company Name */}
                 {loading ? (
                   <div className="mb-2">
@@ -490,7 +499,7 @@ const Footer = () => {
                     </p>
                   </div>
                 ) : null}
-                
+
                 <div className="flex items-start gap-3 text-gray-600">
                   <FiMapPin className="w-5 h-5 text-gray-500 flex-shrink-0 mt-1" />
                   <p className="leading-6 font-sans text-sm text-left">
@@ -504,7 +513,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-3 text-gray-600 hover:text-store-600 transition-colors">
                   <FiPhone className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  <a 
+                  <a
                     href={`tel:${storeCustomizationSetting?.footer?.block4_phone}`}
                     className="text-sm hover:underline"
                   >
@@ -513,7 +522,7 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center gap-3 text-gray-600 hover:text-store-600 transition-colors">
                   <FiMail className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                  <a 
+                  <a
                     href={`mailto:${storeCustomizationSetting?.footer?.block4_email}`}
                     className="text-sm hover:underline break-all"
                   >
@@ -524,8 +533,6 @@ const Footer = () => {
             </div>
           )}
         </div>
-
-        
 
         {/* Social Media Section */}
         <div className="py-4 border-t border-gray-200">
@@ -542,73 +549,93 @@ const Footer = () => {
                   </h3>
                 )}
                 <ul className="text-sm flex flex-wrap gap-3">
-                    {storeCustomizationSetting?.footer?.social_facebook && (
-                      <li className="group">
-                        <Link
-                          href={`${storeCustomizationSetting?.footer?.social_facebook}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
-                        >
-                          <FacebookIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
-                        </Link>
-                      </li>
-                    )}
-                    {storeCustomizationSetting?.footer?.social_twitter && (
-                      <li className="group">
-                        <Link
-                          href={`${storeCustomizationSetting?.footer?.social_twitter}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
-                        >
-                          <TwitterIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
-                        </Link>
-                      </li>
-                    )}
-                    {storeCustomizationSetting?.footer?.social_instagram && (
-                      <li className="group">
-                        <Link
-                          href={`${storeCustomizationSetting?.footer?.social_instagram}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
-                        >
-                          <div className="rounded-full shadow-md group-hover:shadow-lg transition-shadow">
-                            <FaInstagram size={40} style={{ color: "#E4405F" }} className="rounded-full" />
-                          </div>
-                        </Link>
-                      </li>
-                    )}
-                    {storeCustomizationSetting?.footer?.social_linkedin && (
-                      <li className="group">
-                        <Link
-                          href={`${storeCustomizationSetting?.footer?.social_linkedin}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
-                        >
-                          <LinkedinIcon size={40} round className=" rounded-full group-hover:shadow-lg transition-shadow" />
-                        </Link>
-                      </li>
-                    )}
-                    {storeCustomizationSetting?.footer?.social_whatsapp && (
-                      <li className="group">
-                        <Link
-                          href={`${storeCustomizationSetting?.footer?.social_whatsapp}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
-                        >
-                          <WhatsappIcon size={40} round className="rounded-full group-hover:shadow-lg transition-shadow" />
-                        </Link>
-                      </li>
-                    )}
+                  {storeCustomizationSetting?.footer?.social_facebook && (
+                    <li className="group">
+                      <Link
+                        href={`${storeCustomizationSetting?.footer?.social_facebook}`}
+                        aria-label="Social Link"
+                        rel="noreferrer"
+                        target="_blank"
+                        className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+                      >
+                        <FacebookIcon
+                          size={40}
+                          round
+                          className="rounded-full group-hover:shadow-lg transition-shadow"
+                        />
+                      </Link>
+                    </li>
+                  )}
+                  {storeCustomizationSetting?.footer?.social_twitter && (
+                    <li className="group">
+                      <Link
+                        href={`${storeCustomizationSetting?.footer?.social_twitter}`}
+                        aria-label="Social Link"
+                        rel="noreferrer"
+                        target="_blank"
+                        className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+                      >
+                        <TwitterIcon
+                          size={40}
+                          round
+                          className="rounded-full group-hover:shadow-lg transition-shadow"
+                        />
+                      </Link>
+                    </li>
+                  )}
+                  {storeCustomizationSetting?.footer?.social_instagram && (
+                    <li className="group">
+                      <Link
+                        href={`${storeCustomizationSetting?.footer?.social_instagram}`}
+                        aria-label="Social Link"
+                        rel="noreferrer"
+                        target="_blank"
+                        className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+                      >
+                        <div className="rounded-full shadow-md group-hover:shadow-lg transition-shadow">
+                          <FaInstagram
+                            size={40}
+                            style={{ color: "#E4405F" }}
+                            className="rounded-full"
+                          />
+                        </div>
+                      </Link>
+                    </li>
+                  )}
+                  {storeCustomizationSetting?.footer?.social_linkedin && (
+                    <li className="group">
+                      <Link
+                        href={`${storeCustomizationSetting?.footer?.social_linkedin}`}
+                        aria-label="Social Link"
+                        rel="noreferrer"
+                        target="_blank"
+                        className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+                      >
+                        <LinkedinIcon
+                          size={40}
+                          round
+                          className=" rounded-full group-hover:shadow-lg transition-shadow"
+                        />
+                      </Link>
+                    </li>
+                  )}
+                  {storeCustomizationSetting?.footer?.social_whatsapp && (
+                    <li className="group">
+                      <Link
+                        href={`${storeCustomizationSetting?.footer?.social_whatsapp}`}
+                        aria-label="Social Link"
+                        rel="noreferrer"
+                        target="_blank"
+                        className="block text-center mx-auto transition-transform duration-300 hover:scale-110 hover:-translate-y-1"
+                      >
+                        <WhatsappIcon
+                          size={40}
+                          round
+                          className="rounded-full group-hover:shadow-lg transition-shadow"
+                        />
+                      </Link>
+                    </li>
+                  )}
                 </ul>
               </div>
             )}
@@ -621,52 +648,46 @@ const Footer = () => {
                 <h3 className="text-base font-bold mb-2 text-gray-800">
                   Download Our App
                 </h3>
-                <div className="flex gap-3">
-                  {(storeCustomizationSetting?.home?.daily_need_app_link ||
-                    storeCustomizationSetting?.home?.button1_img) && (
-                    <Link
-                      href={
-                        storeCustomizationSetting?.home?.daily_need_app_link ||
-                        "#"
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-block transition-transform duration-300 hover:scale-105"
-                    >
+                <div className="flex gap-3 items-center">
+                  <Link
+                    href={
+                      storeCustomizationSetting?.home?.daily_need_app_link ||
+                      "#"
+                    }
+                  >
+                    <div className="w-[150px] h-[44px]">
                       <Image
                         width={150}
                         height={44}
-                        className="h-11 w-auto object-contain rounded"
+                        className="w-full h-full object-fill rounded"
                         src={
                           storeCustomizationSetting?.home?.button1_img ||
                           "/app/app-store.svg"
                         }
                         alt="Download on the App Store"
                       />
-                    </Link>
-                  )}
-                  {(storeCustomizationSetting?.home?.daily_need_google_link ||
-                    storeCustomizationSetting?.home?.button2_img) && (
-                    <Link
-                      href={
-                        storeCustomizationSetting?.home?.daily_need_google_link ||
-                        "#"
-                      }
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-block transition-transform duration-300 hover:scale-105"
-                    >
+                    </div>
+                  </Link>
+
+                  <Link
+                    href={
+                      storeCustomizationSetting?.home?.daily_need_google_link ||
+                      "#"
+                    }
+                  >
+                    <div className="w-[150px] h-[44px]">
                       <Image
                         width={150}
                         height={44}
-                        className="h-11 w-auto object-contain rounded"
+                        className="w-full h-full object-fill rounded"
                         src={
-                          storeCustomizationSetting?.home?.button2_img || "/app/play-store.svg"
+                          storeCustomizationSetting?.home?.button2_img ||
+                          "/app/play-store.svg"
                         }
                         alt="Get it on Google Play"
                       />
-                    </Link>
-                  )}
+                    </div>
+                  </Link>
                 </div>
               </div>
             )}
@@ -675,22 +696,24 @@ const Footer = () => {
                 <h3 className="text-base font-bold mb-2 text-gray-800">
                   Payment Methods
                 </h3>
-                <div className="mt-2">
-                  <Image
-                    width={170}
-                    height={44}
-                    className="h-11 w-auto object-contain"
-                    src={
-                      storeCustomizationSetting?.footer?.payment_method_img || "/payment-method/razorpay_logo.svg" 
-                    }
-                    alt="payment method"
-                  />
+                <div className="mt-2 flex items-center">
+                  <div className="w-[150px] h-[44px] flex items-center justify-center">
+                    <Image
+                      width={150}
+                      height={44}
+                      className="w-full h-full object-fill rounded"
+                      src={
+                        storeCustomizationSetting?.footer?.payment_method_img ||
+                        "/payment-method/razorpay_logo.svg"
+                      }
+                      alt="payment method"
+                    />
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </div>
- 
 
         {/* Copyright Section */}
         <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex flex-col md:flex-row justify-between items-center py-2 border-t border-gray-200 gap-0 md:gap-2">
@@ -724,4 +747,3 @@ const Footer = () => {
 };
 
 export default dynamic(() => Promise.resolve(Footer), { ssr: false });
-

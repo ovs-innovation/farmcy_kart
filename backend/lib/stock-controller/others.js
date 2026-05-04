@@ -33,10 +33,12 @@ const handleProductQuantity = async (cart) => {
     for (const p of cart) {
       if (p?.isCombination) {
         // Handle variant quantity updates
-        await Product.findOneAndUpdate(
+        const updatedProduct = await Product.findOneAndUpdate(
           {
             _id: p._id,
             "variants.productId": p?.variant?.productId || "",
+            stock: { $gte: p.quantity },
+            "variants.quantity": { $gte: p.quantity },
           },
           {
             $inc: {
@@ -49,11 +51,15 @@ const handleProductQuantity = async (cart) => {
             new: true,
           }
         );
+        if (!updatedProduct) {
+          console.error(`Failed to decrease stock for combination product ${p._id}. Insufficient stock.`);
+        }
       } else {
         // Handle regular product quantity updates
-        await Product.findOneAndUpdate(
+        const updatedProduct = await Product.findOneAndUpdate(
           {
             _id: p._id,
+            stock: { $gte: p.quantity },
           },
           {
             $inc: {
@@ -65,6 +71,9 @@ const handleProductQuantity = async (cart) => {
             new: true,
           }
         );
+        if (!updatedProduct) {
+          console.error(`Failed to decrease stock for product ${p._id}. Insufficient stock.`);
+        }
       }
     }
   } catch (err) {

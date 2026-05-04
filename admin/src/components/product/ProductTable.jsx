@@ -110,11 +110,20 @@ const ProductTable = ({ products, isCheck, setIsCheck }) => {
             </TableCell>
 
             <TableCell>
-              <span className="text-sm">{product.stock}</span>
+              <span className={`text-sm font-semibold ${product.stock <= 10 ? "text-red-600" : ""}`}>
+                {Math.max(0, product.stock)}
+                {product.stock <= 10 && product.stock > 0 && (
+                  <span className="text-[10px] block text-red-500 font-bold tracking-tight uppercase">
+                    Low Stock
+                  </span>
+                )}
+              </span>
             </TableCell>
             <TableCell>
-              {product.stock > 0 ? (
+              {product.stock > 10 ? (
                 <Badge type="success">{t("Selling")}</Badge>
+              ) : product.stock > 0 ? (
+                <Badge type="warning">Low Stock</Badge>
               ) : (
                 <Badge type="danger">{t("SoldOut")}</Badge>
               )}

@@ -19,7 +19,14 @@ const Stock = ({ stock, card }) => {
             }`}
           >
             {t("stock")} :
-            <span className="text-orange-700 pl-1 font-bold">{stock} </span>
+            <span className={`pl-1 font-bold ${stock <= 10 ? "text-red-500" : "text-orange-700"}`}>
+              {Math.max(0, stock)}{" "}
+            </span>
+            {stock <= 10 && (
+              <span className="text-[10px] text-red-600 ml-1 font-bold animate-pulse">
+                (Low Stock)
+              </span>
+            )}
           </span>
         </>
       )}

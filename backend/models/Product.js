@@ -201,11 +201,14 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       required: false,
+      min: [0, "Stock cannot be negative"],
     },
 
     sales: {
       type: Number,
       required: false,
+      default: 0,
+      min: [0, "Sales cannot be negative"],
     },
 
     tag: [String],
@@ -233,7 +236,7 @@ const productSchema = new mongoose.Schema(
           attributes: { type: Object, default: {} },
           originalPrice: { type: Number },
           price: { type: Number },
-          quantity: { type: Number },
+          quantity: { type: Number, min: [0, "Quantity cannot be negative"] },
         },
       ],
       default: [],

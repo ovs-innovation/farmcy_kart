@@ -123,53 +123,44 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
               <div className="flex-1 min-w-[0] items-start">
                 
                 <p className="text-semibold md:text-base font-semibold text-gray-900 truncate">
-                  {globalSetting?.company_name || "Farmacykart Private Limited"}
+                  {globalSetting?.company_name || "AQOSU FARMACYKART PRIVATE LIMITED"}
                 </p>
                 <p className=" text-sm text-gray-600 leading-snug -mt-4 line-clamp-1">
                   {globalSetting?.address ||
-                    "C-39, Basement, Block-5, Okhla Industrial Area-2, New Delhi, Delhi-110020"}
+                    "GF D-90, KH NO-1100, RAJNAGAR COLONY, BEHTA HAJIPUR, LONI BORDER, LONI, GHAZIABAD, UTTAR PRADESH, Landmark: NEAR MUNISH PUBLIC, Pin: 201102"}
                 </p>
                 {/* Email */}
                <div  className="flex gap-x-3">
-                 {globalSetting?.email && (
                   <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
                     <div className="font-semibold">Email:</div>
-                    <div>{globalSetting.email}</div>
+                    <div>{globalSetting?.email || "farmacykart@gmail.com"}</div>
                   </div>
 
-                )}
-                 {globalSetting?.contact && (
                   <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
                     <div className="font-semibold">Phone No:</div>
-                    <div>{globalSetting.contact}</div>
+                    <div>{globalSetting?.contact || "07112255930"}</div>
                   </div>
-                )}
-                {/* Phone */}
                </div>
                
                 <div className="flex gap-x-2">
                   {/* GST */}
-                {globalSetting?.gstin && (
                   <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
                     <div className="font-semibold">GST NO.:</div>
-                    <div>{globalSetting.gstin}</div>
+                    <div>{globalSetting?.gstin || "09AAZCA5886C1ZV"}</div>
                   </div>
-                )}
-                {/* CIN */}
-                {globalSetting?.cin && (
-                  <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
-                    <div className="font-semibold">CIN:</div>
-                    <div>{globalSetting.cin}</div>
-                  </div>
-                )}
+                  {/* CIN */}
+                  {globalSetting?.cin && (
+                    <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
+                      <div className="font-semibold">CIN:</div>
+                      <div>{globalSetting.cin}</div>
+                    </div>
+                  )}
                 </div>
                 {/* DL */}
-                {globalSetting?.dl_number && (
-                  <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
-                    <div className="font-semibold">DL No:</div>
-                    <div>{globalSetting.dl_number}</div>
-                  </div>
-                )}
+                <div className="flex gap-x-2 text-sm text-gray-600 leading-snug mt-0.5">
+                  <div className="font-semibold">DL No:</div>
+                  <div>{globalSetting?.dl_number || "UP14200002337, UP14210002215"}</div>
+                </div>
                 
               </div>
 
