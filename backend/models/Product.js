@@ -112,6 +112,7 @@ const productSchema = new mongoose.Schema(
         wholePrice: {
           type: Number,
           default: 0,
+          min: [0, "Wholesale price cannot be negative"],
         },
         minQuantity: {
           type: Number,
@@ -216,14 +217,18 @@ const productSchema = new mongoose.Schema(
       originalPrice: {
         type: Number,
         required: true,
+        min: [0, "Original price cannot be negative"],
       },
       price: {
         type: Number,
         required: true,
+        min: [0, "Sale price cannot be negative"],
       },
       discount: {
         type: Number,
         required: false,
+        default: 0,
+        min: [0, "Discount cannot be negative"],
       },
     },
     variants: [{}],
@@ -234,8 +239,8 @@ const productSchema = new mongoose.Schema(
           barcode: { type: String },
           combinationLabel: { type: String },
           attributes: { type: Object, default: {} },
-          originalPrice: { type: Number },
-          price: { type: Number },
+          originalPrice: { type: Number, min: [0, "Original price cannot be negative"] },
+          price: { type: Number, min: [0, "Sale price cannot be negative"] },
           quantity: { type: Number, min: [0, "Quantity cannot be negative"] },
         },
       ],

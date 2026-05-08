@@ -8,8 +8,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
-import QRCodeLib from "qrcode";
+import { useEffect } from "react";
 
 Font.register({
   family: "Open Sans",
@@ -303,8 +302,6 @@ const InvoiceForDownload = ({
   logo,
   isWholesaler,
 }) => {
-  const [qrDataUrl, setQrDataUrl] = useState("");
-
   // Calculate discount same as Invoice.js
   const mrpTotal = data?.cart?.reduce((sum, item) => {
     const mrp = isWholesaler 
@@ -352,33 +349,6 @@ const InvoiceForDownload = ({
     return `FK/${year}/${invStr}`;
   };
 
-  useEffect(() => {
-    if (!data) return;
-
-    const orderId = data?._id || data?.id || data?.orderId;
-    if (!orderId) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-    const backendOrigin =
-      apiBase.replace(/\/api\/?$/i, "") || (typeof window !== "undefined" ? window.location.origin : "");
-
-    const qrLink = `${backendOrigin.replace(/\/+$/, "")}/o/${orderId}`;
-
-    QRCodeLib.toDataURL(
-      qrLink,
-      {
-        width: 180,
-        margin: 1,
-      },
-      (err, url) => {
-        if (err) {
-          console.error("QR code generation error:", err);
-          return;
-        }
-        setQrDataUrl(url);
-      }
-    );
-  }, [data, data?._id, data?.id, data?.orderId]);
 
   return (
     <>
@@ -527,14 +497,6 @@ const InvoiceForDownload = ({
                   </View>
                 </View>
 
-                {/* QR Code */}
-                {qrDataUrl && (
-                  <View style={{ width: "23%", alignItems: "start", justifyContent: "flex-center" , paddingTop:7}}>
-                    <View style={{ width: 60, height: 60, border: 1, borderColor: "#e5e7eb", borderRadius: 4, padding: 4, backgroundColor: "#ffffff" }}>
-                      <Image src={qrDataUrl} style={{ width: "100%", height: "100%" }} />
-                    </View>
-                  </View>
-                )}
               </View>
             </View>
           </View>

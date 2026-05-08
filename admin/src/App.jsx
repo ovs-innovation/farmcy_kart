@@ -14,12 +14,14 @@ const Login = lazy(() => import("@/pages/Login"));
 const SignUp = lazy(() => import("@/pages/SignUp"));
 const ForgetPassword = lazy(() => import("@/pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
+import FcmTokenHandler from "@/components/push-notification/FcmTokenHandler";
 
 const App = () => {
   return (
     <>
       <DynamicHead />
       <ToastContainer />
+      <FcmTokenHandler />
       <Router>
         <AccessibleNavigationAnnouncer />
         <Switch>

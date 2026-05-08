@@ -46,7 +46,7 @@ const Price = ({
   }
 
   // Use passed `price` prop if provided, otherwise fallback to product prices
-  const effectivePrice = typeof price === 'number' && !Number.isNaN(price) ? price : Number(product?.prices?.price || 0);
+  const effectivePrice = Math.max(0, typeof price === 'number' && !Number.isNaN(price) ? price : Number(product?.prices?.price || 0));
 
   return (
     <div className="font-serif product-price font-bold">
@@ -60,7 +60,7 @@ const Price = ({
             }
           >
             {currency}
-            {getNumberTwo(price)}
+            {getNumberTwo(Math.max(0, price))}
           </span>
           {(!hideDiscountAndMRP && originalPrice > price) ? (
             <>

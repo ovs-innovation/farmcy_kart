@@ -36,248 +36,219 @@ const DeleteModal = ({ id, ids, setIsCheck, category, title, useParamId }) => {
     }
     try {
       setIsSubmitting(true);
-      if (location.pathname === "/products") {
+      
+      // Category Deletion
+      if (location.pathname === "/categories" || location.pathname.startsWith("/categories/") || category) {
         if (ids) {
-          const res = await ProductServices.deleteManyProducts({
-            ids: ids,
-          });
+          const res = await CategoryServices.deleteManyCategory({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
+        } else {
+          if (!id) {
+            notifyError("Please select a category first!");
+            return closeModal();
+          }
+          const res = await CategoryServices.deleteCategory(id);
+          setIsUpdate(true);
+          notifySuccess(res.message);
+          closeModal();
+          setServiceId();
+          return;
+        }
+      }
+
+      // Product Deletion
+      if (location.pathname === "/products") {
+        if (ids) {
+          const res = await ProductServices.deleteManyProducts({ ids: ids });
+          setIsUpdate(true);
+          showAlert(res.message, "success");
+          setIsCheck([]);
+          setServiceId();
+          closeModal();
+          return;
         } else {
           const res = await ProductServices.deleteProduct(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
+      // Coupon Deletion
       if (location.pathname === "/coupons") {
         if (ids) {
-          const res = await CouponServices.deleteManyCoupons({
-            ids: ids,
-          });
+          const res = await CouponServices.deleteManyCoupons({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await CouponServices.deleteCoupon(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
-
-
-      if (location.pathname === "/categories" || category) {
-        if (ids) {
-          //  console.log('delete modal categorices',ids)
-          const res = await CategoryServices.deleteManyCategory({
-            ids: ids,
-          });
-          //  console.log('delete many category res',res)
-          setIsUpdate(true);
-          showAlert(res.message, "success");
-          setIsCheck([]);
-          setServiceId();
-          closeModal();
-          setIsSubmitting(false);
-        } else {
-          if (id === undefined || !id) {
-            notifyError("Please select a category first!");
-            setIsSubmitting(false);
-            return closeModal();
-          }
-          // console.log('delete modal open',id)
-          const res = await CategoryServices.deleteCategory(id);
-          setIsUpdate(true);
-          notifySuccess(res.message);
-          closeModal();
-          setServiceId();
-          setIsSubmitting(false);
-        }
-      } else if (
-        location.pathname === `/categories/${useParamId}` ||
-        category
-      ) {
-        // console.log('delete modal ')
-        if (id === undefined || !id) {
-          notifyError("Please select a category first!");
-          setIsSubmitting(false);
-          return closeModal();
-        }
-
-        const res = await CategoryServices.deleteCategory(id);
-        setIsUpdate(true);
-        notifySuccess(res.message);
-        closeModal();
-        setServiceId();
-        setIsSubmitting(false);
-      }
-
+      // Customer/Wholesaler Deletion
       if (location.pathname === "/customers" || location.pathname === "/wholesalers") {
         const res = await CustomerServices.deleteCustomer(id);
         setIsUpdate(true);
         notifySuccess(res.message);
         setServiceId();
         closeModal();
-        setIsSubmitting(false);
+        return;
       }
 
-      if (location.pathname === "/attributes") {
+      // Attribute Deletion
+      if (location.pathname === "/attributes" || location.pathname.startsWith("/attributes/")) {
+        // Child Attribute Deletion
+        if (location.pathname.includes("/") && location.pathname.split("/").length > 2) {
+          if (ids) {
+            const res = await AttributeServices.deleteManyChildAttribute({
+              id: location.pathname.split("/")[2],
+              ids: ids,
+            });
+            setIsUpdate(true);
+            showAlert(res.message, "success");
+            setServiceId();
+            setIsCheck([]);
+            closeModal();
+            return;
+          } else {
+            const res = await AttributeServices.deleteChildAttribute({
+              id: id,
+              ids: location.pathname.split("/")[2],
+            });
+            setIsUpdate(true);
+            showAlert(res.message, "success");
+            setServiceId();
+            closeModal();
+            return;
+          }
+        }
+        
+        // Parent Attribute Deletion
         if (ids) {
-          const res = await AttributeServices.deleteManyAttribute({
-            ids: ids,
-          });
+          const res = await AttributeServices.deleteManyAttribute({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await AttributeServices.deleteAttribute(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
-      if (
-        location.pathname === `/attributes/${location.pathname.split("/")[2]}`
-      ) {
-        if (ids) {
-          const res = await AttributeServices.deleteManyChildAttribute({
-            id: location.pathname.split("/")[2],
-            ids: ids,
-          });
-          setIsUpdate(true);
-          showAlert(res.message, "success");
-          setServiceId();
-          setIsCheck([]);
-          closeModal();
-          setIsSubmitting(false);
-        } else {
-          // console.log("att value delete", id, location.pathname.split("/")[2]);
-
-          const res = await AttributeServices.deleteChildAttribute({
-            id: id,
-            ids: location.pathname.split("/")[2],
-          });
-          setIsUpdate(true);
-          showAlert(res.message, "success");
-          setServiceId();
-          closeModal();
-          setIsSubmitting(false);
-        }
-      }
-
+      // Staff Deletion
       if (location.pathname === "/our-staff") {
         const res = await AdminServices.deleteStaff(id);
         setIsUpdate(true);
         notifySuccess(res.message);
         setServiceId();
         closeModal();
-        setIsSubmitting(false);
+        return;
       }
 
+      // Language Deletion
       if (location.pathname === "/languages") {
         if (ids) {
-          const res = await LanguageServices.deleteManyLanguage({
-            ids: ids,
-          });
+          const res = await LanguageServices.deleteManyLanguage({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await LanguageServices.deleteLanguage(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
+      // Currency Deletion
       if (location.pathname === "/currencies") {
         if (ids) {
-          const res = await CurrencyServices.deleteManyCurrency({
-            ids: ids,
-          });
+          const res = await CurrencyServices.deleteManyCurrency({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await CurrencyServices.deleteCurrency(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
+      // Brand Deletion
       if (location.pathname === "/brands") {
         if (ids) {
-          const res = await BrandServices.deleteManyBrands({
-            ids: ids,
-          });
+          const res = await BrandServices.deleteManyBrands({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await BrandServices.deleteBrand(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
 
+      // Push Notification Deletion
       if (location.pathname === "/push-notification") {
         if (ids) {
-          const res = await PushNotificationServices.deleteManyPushNotifications({
-            ids: ids,
-          });
+          const res = await PushNotificationServices.deleteManyPushNotifications({ ids: ids });
           setIsUpdate(true);
           showAlert(res.message, "success");
           setIsCheck([]);
           closeModal();
-          setIsSubmitting(false);
+          return;
         } else {
           const res = await PushNotificationServices.deletePushNotification(id);
           setIsUpdate(true);
           showAlert(res.message, "success");
           setServiceId();
           closeModal();
-          setIsSubmitting(false);
+          return;
         }
       }
     } catch (err) {
       showAlert(err ? err?.response?.data?.message : err?.message, "error");
       setServiceId();
-      setIsCheck([]);
+      if (setIsCheck) setIsCheck([]);
       closeModal();
+    } finally {
       setIsSubmitting(false);
     }
   };

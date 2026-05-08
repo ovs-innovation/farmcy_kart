@@ -319,7 +319,9 @@ const Input = ({ label, value, onChange, type = "text", placeholder }) => (
          <input 
             type={type} 
             value={value} 
-            onChange={e => onChange(e.target.value)} 
+            onChange={e => onChange(type === "number" ? Math.max(0, parseFloat(e.target.value) || 0) : e.target.value)} 
+            min={type === "number" ? "0" : undefined}
+            onKeyDown={type === "number" ? (e => (e.key === '-' || e.key === 'e') && e.preventDefault()) : undefined}
             placeholder={placeholder}
             className="w-full h-14 px-6 bg-white border border-slate-200 rounded-2xl text-slate-700 font-bold outline-none focus:border-teal-500 transition-all dark:bg-gray-800 dark:border-gray-700 dark:text-white text-left placeholder:text-slate-300 shadow-sm" 
          />

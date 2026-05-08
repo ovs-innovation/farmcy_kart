@@ -164,7 +164,7 @@ const ChildCategory = () => {
           <h1 className="text-xl font-extrabold text-gray-800 dark:text-gray-100">Add New Sub Category</h1>
         </div>
 
-        <DeleteModal id={serviceId} />
+        <DeleteModal id={serviceId} category={true} />
 
         <MainDrawer>
           <CategoryDrawer id={serviceId} data={data} lang={lang} />

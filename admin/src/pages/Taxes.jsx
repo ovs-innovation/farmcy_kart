@@ -84,8 +84,9 @@ const Taxes = () => {
               type="number"
               min="0"
               step="0.01"
+              onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
               value={rate}
-              onChange={(e) => setRate(e.target.value)}
+              onChange={(e) => setRate(Math.max(0, parseFloat(e.target.value) || 0))}
               placeholder="18"
             />
           </div>

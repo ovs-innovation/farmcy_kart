@@ -115,13 +115,13 @@ const RecentOrder = ({ data, loading, error }) => {
 
   return (
     <>
-      <div>
+      <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-50 mt-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-bold text-gray-800 font-serif flex items-center gap-2">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-lg font-bold text-gray-800 font-serif flex items-center gap-2">
             {showingTranslateValue(storeCustomizationSetting?.dashboard?.recent_order) || "Recent Orders"}
           </h3>
-          <Link href="/user/my-orders" className="text-xs text-store-600 hover:underline font-semibold">
+          <Link href="/user/my-orders" className="text-sm text-store-600 hover:underline font-semibold">
             View all →
           </Link>
         </div>
@@ -141,7 +141,7 @@ const RecentOrder = ({ data, loading, error }) => {
         ) : (
           <>
             {/* ── Desktop Table ── */}
-            <div className="hidden sm:block overflow-x-auto rounded-xl border border-gray-100">
+            <div className="hidden sm:block overflow-x-auto rounded-xl">
               <table className="min-w-full divide-y divide-gray-100">
                 <thead>
                   <tr className="bg-gray-50">
@@ -178,6 +178,9 @@ const RecentOrder = ({ data, loading, error }) => {
                         <div className="flex items-center gap-1.5">
                           <Link href={`/order/${order._id}`} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-store-500 hover:text-white transition-all">
                             <FiEye size={10} /> View
+                          </Link>
+                          <Link href={`/order/${order._id}`} className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg bg-store-50 text-store-600 hover:bg-store-500 hover:text-white transition-all">
+                            <FiTruck size={10} /> Track
                           </Link>
                           <button
                             type="button"
@@ -227,7 +230,7 @@ const RecentOrder = ({ data, loading, error }) => {
                   </div>
                   <div className="px-3 py-2.5 bg-gray-50 border-t border-gray-100 flex gap-2">
                     <Link href={`/order/${order._id}`} className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg bg-white border border-gray-200 text-gray-600 hover:border-store-400 hover:text-store-600 transition-all">
-                      <FiEye size={11} /> Details
+                      <FiTruck size={11} /> Track
                     </Link>
                     <button type="button" disabled={reorderingId === order._id} onClick={() => handleReorder(order)}
                       className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 text-xs font-semibold rounded-lg bg-store-500 text-white hover:bg-store-600 disabled:opacity-60 transition-all">

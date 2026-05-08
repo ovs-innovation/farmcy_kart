@@ -157,7 +157,7 @@ const Retailer = () => {
         <div className="bg-white dark:bg-gray-800 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100/50 dark:border-gray-700/50 p-6 mb-8 transition-all">
           <form onSubmit={handleSearch} className="flex flex-col lg:flex-row items-center gap-5">
             <div className="relative flex items-center flex-1 w-full group">
-              <FiSearch className="absolute left-5 text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none" />
+              <FiSearch className="absolute left-1 text-gray-400 group-focus-within:text-emerald-500 transition-colors pointer-events-none" />
               <input
                 type="text"
                 value={searchInput}

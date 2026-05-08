@@ -18,6 +18,7 @@ import { UserProvider } from "@context/UserContext";
 import DefaultSeo from "@components/common/DefaultSeo";
 import { SidebarProvider } from "@context/SidebarContext";
 import SettingServices from "@services/SettingServices";
+import FcmTokenHandler from "@components/FcmTokenHandler";
 
 let persistor = persistStore(store);
 
@@ -84,6 +85,7 @@ function MyApp({ Component, pageProps }) {
                 <SidebarProvider>
                   <CartProvider>
                     <DefaultSeo />
+                    <FcmTokenHandler />
                     <Component {...pageProps} />
                   </CartProvider>
                 </SidebarProvider>

@@ -104,7 +104,7 @@ const Prescription = () => {
                           {currency}
                           {isWholesaler && item.productId?.wholePrice && Number(item.productId.wholePrice) > 0
                             ? getNumberTwo(Number(item.productId.wholePrice))
-                            : (item.productId.prices?.price || 0)}
+                            : getNumberTwo(item.productId.prices?.price || 0)}
                            
                         </p>
                       </div>

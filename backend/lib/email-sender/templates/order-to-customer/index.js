@@ -591,4 +591,8 @@ const customerInvoiceEmailBody = (option) => {
 </html>`;
 };
 
-module.exports = customerInvoiceEmailBody;
+const { orderConfirmationBody } = require("./confirmation");
+module.exports = {
+  customerInvoiceEmailBody,
+  orderConfirmationBody,
+};

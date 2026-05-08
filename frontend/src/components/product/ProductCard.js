@@ -251,7 +251,7 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                         </p>
                       )}
                       <p className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
-                        {currency}{getNumberTwo(currentPrice)}
+                        {currency}{getNumberTwo(Math.max(0, currentPrice))}
                       </p>
                       {isWholesaler && wholesalePrice && (
                         <p className="text-xs text-gray-500 mt-1">Wholesale: <span className="font-semibold">{currency}{getNumberTwo(wholesalePrice)}</span>{product.minQuantity ? ` (Min ${product.minQuantity})` : ""}</p>

@@ -29,7 +29,7 @@ const PrescriptionStatus = ({ userId }) => {
   
   // Get the latest prescription (or all recent ones)
   const recentPrescriptions = prescriptions.slice(0, 2); // Show latest 2
-  const showStatusCards = false;
+  const showStatusCards = true;
 
   // Don't render if no userId or still loading
   if (!userId || isLoading) {
@@ -135,100 +135,14 @@ const PrescriptionStatus = ({ userId }) => {
 
   return (
     <div className="mb-8 space-y-4">
-      {showStatusCards && (
-        <>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-800">Prescription Status</h2>
-            {prescriptions.length > 1 && (
-              <span className="text-sm text-gray-500">Showing {recentPrescriptions.length} of {prescriptions.length}</span>
-            )}
-          </div>
 
-          {recentPrescriptions.map((prescription, index) => {
-            const statusConfig = getStatusConfig(prescription.status);
-            const StatusIcon = statusConfig.icon;
 
-            return (
-              <div
-                key={prescription._id || index}
-                className={`relative overflow-hidden rounded-2xl border-2 ${statusConfig.borderColor} bg-gradient-to-br ${statusConfig.bgGradient} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
-              >
-                {/* Status Badge */}
-                <div 
-                  className={`absolute top-4 right-4 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide`}
-                  style={{ backgroundColor: statusConfig.statusBadgeColor || undefined }}
-                >
-                  {prescription.status}
-                </div>
-
-                {/* Animated Background Pattern */}
-                <div className="absolute inset-0 opacity-5">
-                  <div className="absolute inset-0" style={{
-                    backgroundImage: `radial-gradient(circle at 20% 50%, ${palette[500]} 0%, transparent 50%),
-                                     radial-gradient(circle at 80% 80%, ${palette[400]} 0%, transparent 50%)`,
-                  }}></div>
-                </div>
-
-                <div className="relative p-6">
-                  <div className="flex flex-col sm:flex-row items-start gap-4">
-                    {/* Icon Section */}
-                    <div className={`relative flex-shrink-0 ${statusConfig.pulse ? 'animate-pulse' : ''}`}>
-                      <div className={`p-4 rounded-2xl ${statusConfig.iconBg} shadow-md`}>
-                        <StatusIcon className={`text-3xl ${statusConfig.iconColor}`} />
-                      </div>
-                      {statusConfig.pulse && (
-                        <div className={`absolute inset-0 rounded-2xl ${statusConfig.iconBg} animate-ping opacity-20`}></div>
-                      )}
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className={`text-lg font-bold ${statusConfig.textColor}`}>
-                          {statusConfig.message}
-                        </h3>
-                      </div>
-                      <p className="text-sm text-gray-600 mb-4">
-                        {statusConfig.subMessage}
-                      </p>
-
-                      {/* Prescription Details */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-4 border-t border-white border-opacity-30">
-                        <div className="flex items-center gap-2 text-sm text-gray-700">
-                          <FiCalendar className="text-gray-500" />
-                          <span className="font-medium">Submitted:</span>
-                          <span>{formatDate(prescription.createdAt)}</span>
-                        </div>
-                        {prescription.updatedAt && prescription.updatedAt !== prescription.createdAt && (
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <FiClock className="text-gray-500" />
-                            <span className="font-medium">Updated:</span>
-                            <span>{formatDate(prescription.updatedAt)}</span>
-                          </div>
-                        )}
-                        {prescription.prescriptionNumber && (
-                          <div className="flex items-center gap-2 text-sm text-gray-700">
-                            <FiFileText className="text-gray-500" />
-                            <span className="font-medium">Prescription #:</span>
-                            <span className="font-mono">{prescription.prescriptionNumber}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </>
-      )}
-
-      <div className="max-w-screen-2xl mx-auto pt-2">
-        <div className="rounded-md font-serif">
+      <div className="max-w-screen-2xl mx-auto pt-4">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-50 font-serif">
           <div className="flex flex-col">
-            <h3 className="text-lg font-serif font-medium mb-5">Prescription Details</h3>
-            <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="align-middle inline-block border border-gray-100 rounded-md min-w-full pb-2 sm:px-6 lg:px-8">
+            <h3 className="text-lg font-serif font-bold text-gray-800 mb-6">Prescription Details</h3>
+            <div className="-my-2 overflow-x-auto">
+              <div className="align-middle inline-block min-w-full pb-2">
                 <div className="overflow-hidden border-b last:border-b-0 border-gray-100 rounded-md">
                   <table className="table-auto min-w-full border border-gray-100 divide-y divide-gray-200">
                     <thead className="bg-gray-50">

@@ -172,7 +172,7 @@ const NewSale = () => {
 
   const addToCart = (product) => {
     const existingItem = cart.find(item => item._id === product._id);
-    const price = product.prices?.price || product.prices?.originalPrice || 0;
+    const price = Math.max(0, product.prices?.price || product.prices?.originalPrice || 0);
     
     // Stock Check
     const availableStock = product.stock || 0;
@@ -353,7 +353,7 @@ const NewSale = () => {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {products.map((product) => {
                    const productImage = Array.isArray(product.image) ? product.image[0] : product.image;
-                   const price = product.prices?.price || product.prices?.originalPrice || 0;
+                   const price = Math.max(0, product.prices?.price || product.prices?.originalPrice || 0);
                    return (
                     <div 
                       key={product._id} 
@@ -375,7 +375,7 @@ const NewSale = () => {
                           {product.title?.en || product.title}
                         </h3>
                         <div className="mt-auto flex justify-between items-center">
-                          <p className="text-[15px] text-teal-600 dark:text-teal-400 font-extrabold tracking-tight">₹ {Number(price).toFixed(2)}</p>
+                          <p className="text-[15px] text-teal-600 dark:text-teal-400 font-extrabold tracking-tight">₹ {Math.max(0, Number(price)).toFixed(2)}</p>
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${product.stock > 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
                             {product.stock > 0 ? `Stock: ${product.stock}` : 'Out of Stock'}
                           </span>
@@ -888,8 +888,10 @@ const NewSale = () => {
                   <label className="block text-sm font-medium mb-1">Quantity</label>
                   <input 
                     type="number" 
+                    min="1"
+                    onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                     value={editingItem.quantity} 
-                    onChange={(e) => setEditingItem({ ...editingItem, quantity: parseInt(e.target.value) || 1 })}
+                    onChange={(e) => setEditingItem({ ...editingItem, quantity: Math.max(1, parseInt(e.target.value) || 1) })}
                     className="w-full border rounded p-2"
                   />
                 </div>
@@ -897,8 +899,11 @@ const NewSale = () => {
                   <label className="block text-sm font-medium mb-1">Price (Override)</label>
                   <input 
                     type="number" 
+                    min="0"
+                    step="0.01"
+                    onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                     value={editingItem.price} 
-                    onChange={(e) => setEditingItem({ ...editingItem, price: parseFloat(e.target.value) || 0 })}
+                    onChange={(e) => setEditingItem({ ...editingItem, price: Math.max(0, parseFloat(e.target.value) || 0) })}
                     className="w-full border rounded p-2"
                   />
                 </div>

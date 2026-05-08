@@ -45,6 +45,8 @@ const InputValue = ({
           type={type}
           name={name}
           step={0.01}
+          min={minValue || 0}
+          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
           disabled={disabled}
           placeholder={placeholder}
           defaultValue={defaultValue}

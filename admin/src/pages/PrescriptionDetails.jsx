@@ -480,6 +480,7 @@ const PrescriptionDetails = () => {
                         <Input
                           type="number"
                           min={medicine.minQuantity || 1}
+                          onKeyDown={(e) => (e.key === '-' || e.key === 'e' || e.key === '.') && e.preventDefault()}
                           readOnly={false}
                           disabled={false}
                           className="text-sm py-1 h-8 text-center"

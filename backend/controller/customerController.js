@@ -6,8 +6,10 @@ const Order = require("../models/Order");
 const Setting = require("../models/Setting");
 const { signInToken, tokenForVerify } = require("../config/auth");
 const { sendEmail } = require("../lib/email-sender/sender");
+const { sendSMS } = require("../lib/sms-sender/sender");
 const {
   customerRegisterBody,
+  otpEmailBody,
 } = require("../lib/email-sender/templates/register");
 const {
   forgetPasswordEmailBody,
@@ -32,9 +34,7 @@ const verifyEmailAddress = async (req, res) => {
     };
     const body = {
       from: globalSetting?.setting?.email || process.env.EMAIL_USER,
-      // from: "info@demomailtrap.com",
       to: `${req.body.email}`,
-      subject: "Email Activation",
       subject: "Verify Your Email",
       html: customerRegisterBody(option),
     };
@@ -53,22 +53,11 @@ const verifyEmailAddress = async (req, res) => {
 const verifyPhoneNumber = async (req, res) => {
   const phoneNumber = req.body.phone;
 
-  // console.log("verifyPhoneNumber", phoneNumber);
-
-  // Check if phone number is provided and is in the correct format
   if (!phoneNumber) {
     return res.status(400).send({
       message: "Phone number is required.",
     });
   }
-
-  // Optional: Add phone number format validation here (if required)
-  // const phoneRegex = /^[0-9]{10}$/; // Basic validation for 10-digit phone numbers
-  // if (!phoneRegex.test(phoneNumber)) {
-  //   return res.status(400).send({
-  //     message: "Invalid phone number format. Please provide a valid number.",
-  //   });
-  // }
 
   try {
     // Check if the phone number is already associated with an existing customer
@@ -242,37 +231,170 @@ const registerCustomer = async (req, res) => {
 
 const registerCustomerDirect = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const isAdded = await Customer.findOne({ email });
+    const { name, email, phone, password } = req.body;
+
+    // Optional: block disposable email domains
+    const disposableDomains = [
+      "tempmail.com", "mailinator.com", "yopmail.com", "10minutemail.com",
+      "temp-mail.org", "guerrillamail.com", "sharklasers.com", "dispostable.com"
+    ];
+    const domain = email?.split("@")[1];
+    if (domain && disposableDomains.includes(domain)) {
+      return res.status(400).send({
+        message: "Disposable email addresses are not allowed. Please use a real email.",
+      });
+    }
+
+    const isAdded = await Customer.findOne({ $or: [{ email }, { phone }] });
 
     if (isAdded) {
       return res.status(403).send({
-        message: "This Email is already in use!",
+        message: "Email or Phone is already in use!",
       });
     }
+
+    // Generate 6-digit OTP
+
+
 
     const newUser = new Customer({
       name,
       email,
+      phone,
       password: bcrypt.hashSync(password),
       role: "customer",
+      emailVerified: true,
+
+
     });
 
     await newUser.save();
+
     const token = signInToken(newUser);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     res.send({
       token,
       _id: newUser._id,
       name: newUser.name,
       email: newUser.email,
-      role: newUser.role || "customer",
+      phone: newUser.phone,
       message: "Registration Successful!",
+      requiresVerification: false,
     });
   } catch (err) {
     res.status(500).send({
       message: err.message,
     });
+  }
+};
+
+const verifyEmailOTP = async (req, res) => {
+  try {
+    const { email, phone, otp } = req.body;
+    const user = await Customer.findOne({ $or: [{ email: email || "___" }, { phone: phone || "___" }] });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).send({ message: "Email is already verified." });
+    }
+
+    if (user.emailVerificationOtp !== otp) {
+      return res.status(400).send({ message: "Invalid OTP code." });
+    }
+
+    if (new Date() > user.emailVerificationExpires) {
+      return res.status(400).send({ message: "OTP has expired. Please request a new one." });
+    }
+
+    user.emailVerified = true;
+    user.emailVerificationOtp = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+
+    const token = signInToken(user);
+    res.send({
+      token,
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      message: "Email verified successfully! You are now logged in.",
+    });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+};
+
+const resendVerificationEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await Customer.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    if (user.emailVerified) {
+      return res.status(400).send({ message: "Email is already verified." });
+    }
+
+    // Generate new OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
+
+    user.emailVerificationOtp = otp;
+    user.emailVerificationExpires = otpExpires;
+    await user.save();
+
+    const globalSetting = await Setting.findOne({ name: "globalSetting" });
+    const option = {
+      name: user.name,
+      email: user.email,
+      otp: otp,
+      contact_email: globalSetting?.setting?.email || "support@farmacykart.com",
+      shop_name: globalSetting?.setting?.shop_name || "Farmacykart",
+    };
+
+    const body = {
+      from: globalSetting?.setting?.email || process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Your New Verification OTP",
+      html: otpEmailBody(option),
+    };
+
+    await sendEmail(body);
+    res.send({ message: "A new OTP has been sent to your email." });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
 };
 
@@ -545,6 +667,14 @@ const loginCustomer = async (req, res) => {
       customer.password &&
       bcrypt.compareSync(req.body.password, customer.password)
     ) {
+
+
+
+
+
+
+
+
       // If the account is a wholesaler, check approval status
       if (customer.role === 'wholesaler') {
         if (customer.wholesalerStatus === 'pending') {
@@ -774,6 +904,7 @@ const signUpWithProvider = async (req, res) => {
         name: user.name,
         email: user.email,
         image: user.picture,
+        emailVerified: true, // OAuth emails are pre-verified
       });
 
       const signUpCustomer = await newUser.save();
@@ -816,6 +947,7 @@ const signUpWithOauthProvider = async (req, res) => {
         name: req.body.name,
         email: req.body.email,
         image: req.body.image,
+        emailVerified: true,
       });
 
       const signUpCustomer = await newUser.save();
@@ -1592,6 +1724,20 @@ const checkCustomerExistance = async (req, res) => {
   }
 };
 
+const updateFcmToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    await Customer.findByIdAndUpdate(req.params.id, { $set: { fcmToken } });
+    res.status(200).send({
+      message: "FCM Token updated successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   checkCustomerExistance,
   loginCustomer,
@@ -1629,4 +1775,7 @@ module.exports = {
   updateCartItem,
   removeFromCart,
   clearCart,
+  updateFcmToken,
+  verifyEmailOTP,
+  resendVerificationEmail,
 };

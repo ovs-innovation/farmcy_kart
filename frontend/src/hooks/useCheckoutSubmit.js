@@ -197,8 +197,8 @@ const useCheckoutSubmit = (storeSetting) => {
           : discountProductTotal * (discountPercentage.value / 100);
     }
 
-    const discountAmountTotal = calculatedDiscountAmount || 0;
-    totalValue = Number(subTotal) - discountAmountTotal;
+    const discountAmountTotal = Math.max(0, calculatedDiscountAmount || 0);
+    totalValue = Math.max(0, Number(subTotal) - discountAmountTotal);
 
     setDiscountAmount(discountAmountTotal);
     setTotal(totalValue);
@@ -698,6 +698,23 @@ const useCheckoutSubmit = (storeSetting) => {
     }
   };
 
+  const handleRemoveCoupon = () => {
+    isRemovingCouponRef.current = true;
+    setDiscountPercentage(0);
+    Cookies.remove("couponInfo");
+    setCouponInfo({});
+    setMinimumAmount(0);
+    setIsCouponApplied(false);
+    setSelectedCouponCode("");
+    setDiscountAmount(0);
+    dispatch({ type: "SAVE_COUPON", payload: null });
+    notifySuccess("Coupon removed successfully!");
+    setTimeout(() => {
+      isRemovingCouponRef.current = false;
+    }, 100);
+  };
+
+
   return {
     register,
     errors,
@@ -729,6 +746,7 @@ const useCheckoutSubmit = (storeSetting) => {
     handleDefaultShippingAddress,
     taxSummary,
     setValue,
+    handleRemoveCoupon,
   };
 };
 

@@ -53,95 +53,97 @@ const ChangePassword = () => {
       )}
       description="This is change-password page"
     >
-      <h2 className="text-xl font-serif font-semibold mb-5">
-        {showingTranslateValue(
-          storeCustomizationSetting?.dashboard?.change_password
-        )}
-      </h2>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="md:grid-cols-6 md:gap-6">
-          <div className="md:mt-0 md:col-span-2">
-            <div className="lg:mt-6 bg-white">
-              <div className="grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-6">
-                  <InputArea
-                    register={register}
-                    label={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.user_email
-                    )}
-                    name="email"
-                    type="email"
-                    autocomplete="username"
-                    placeholder={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.user_email
-                    )}
-                    readOnly={true}
-                  />
-                  <Error errorName={errors.email} />
-                </div>
-                <div className="col-span-6 sm:col-span-6">
-                  <InputArea
-                    register={register}
-                    label={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.current_password
-                    )}
-                    name="currentPassword"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.current_password
-                    )}
-                  />
-                  <Error errorName={errors.currentPassword} />
-                </div>
-                <div className="col-span-6 sm:col-span-6">
-                  <InputArea
-                    register={register}
-                    label={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.new_password
-                    )}
-                    name="newPassword"
-                    type="password"
-                    autocomplete="new-password"
-                    placeholder={showingTranslateValue(
-                      storeCustomizationSetting?.dashboard?.new_password
-                    )}
-                    pattern={/.{8,}/}
-                    patternMessage={"Password must be at least 8 characters long."}
-                  />
-                  <Error errorName={errors.newPassword} />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="mt-5 text-right">
-          {loading ? (
-            <button
-              disabled={loading}
-              type="submit"
-              className={`md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto`}
-            >
-              <img
-                src="/loader/spinner.gif"
-                alt="Loading"
-                width={20}
-                height={10}
-              />
-              <span className="font-serif ml-2 font-light">Processing</span>
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className={`md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto`}
-            >
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-50 transition-all hover:shadow-md">
+          <div className="mb-8 border-b border-gray-50 pb-6 text-center sm:text-left">
+            <h2 className="text-2xl font-serif font-bold text-gray-800">
               {showingTranslateValue(
                 storeCustomizationSetting?.dashboard?.change_password
               )}
-            </button>
-          )}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">Keep your account secure by updating your password regularly</p>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <InputArea
+                  register={register}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.user_email
+                  )}
+                  name="email"
+                  type="email"
+                  autocomplete="username"
+                  placeholder="Your Email"
+                  readOnly={true}
+                />
+                <Error errorName={errors.email} />
+              </div>
+
+              <div className="space-y-1">
+                <InputArea
+                  register={register}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.current_password
+                  )}
+                  name="currentPassword"
+                  type="password"
+                  autocomplete="current-password"
+                  placeholder="Enter Current Password"
+                />
+                <Error errorName={errors.currentPassword} />
+              </div>
+
+              <div className="space-y-1">
+                <InputArea
+                  register={register}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.new_password
+                  )}
+                  name="newPassword"
+                  type="password"
+                  autocomplete="new-password"
+                  placeholder="Enter New Password (min. 8 characters)"
+                  pattern={/.{8,}/}
+                  patternMessage={"Password must be at least 8 characters long."}
+                />
+                <Error errorName={errors.newPassword} />
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-50 flex justify-center sm:justify-end">
+              <button
+                disabled={loading}
+                type="submit"
+                className={`group flex items-center justify-center gap-2 px-8 py-3.5 bg-store-500 text-white font-bold rounded-xl hover:bg-store-600 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed min-w-[200px]`}
+              >
+                {loading ? (
+                  <>
+                    <img
+                      src="/loader/spinner.gif"
+                      alt="Loading"
+                      width={20}
+                      height={20}
+                      className="brightness-0 invert"
+                    />
+                    <span>Updating...</span>
+                  </>
+                ) : (
+                  <>
+                    {showingTranslateValue(
+                      storeCustomizationSetting?.dashboard?.change_password
+                    )}
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
         </div>
-      </form>
+      </div>
     </Dashboard>
   );
 };

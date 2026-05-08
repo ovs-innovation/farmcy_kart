@@ -317,6 +317,20 @@ const updatedStatus = async (req, res) => {
   }
 };
 
+const updateFcmToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    await Admin.findByIdAndUpdate(req.params.id, { $set: { fcmToken } });
+    res.status(200).send({
+      message: "FCM Token updated successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   registerAdmin,
   loginAdmin,
@@ -328,4 +342,5 @@ module.exports = {
   updateStaff,
   deleteStaff,
   updatedStatus,
+  updateFcmToken,
 };

@@ -302,338 +302,247 @@ const MyAccount = () => {
   // console.log("data", data?.shippingAddress);
 
   return (
-    <Dashboard title="my-account" description="This is my account page">
-      <div className="overflow-hidden">
-        <div className="grid gap-4 mb-8 grid-cols-1">
-          {/* User Info Card */}
-          <div className="flex h-full relative">
-            <div className="flex items-center border border-gray-200 w-full rounded-lg p-4 relative">
-              <Link
-                href="/user/update-profile"
-                className="absolute top-2 right-2 bg-store-500 text-white px-3 py-1 rounded hover:bg-store-600"
-              >
-                Edit
-              </Link>
-              <div className="flex items-center justify-center rounded-full text-xl text-center mr-4 bg-gray-200">
-                {userInfo?.image ? (
-                  <img
-                    src={userInfo.image}
-                    width={64}
-                    height={64}
-                    className="h-16 w-16 rounded-full object-cover border-2 border-gray-300"
-                    alt={userInfo?.name[0]}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-16 w-16 rounded-full bg-gray-200 text-xl font-bold text-center mr-4 border-2 border-gray-300">
-                    {userInfo?.name?.charAt(0)}
+    <Dashboard title="My Account" description="Manage your profile and shipping addresses">
+      <div className="max-w-4xl">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-2xl font-serif font-bold text-gray-800">My Account</h1>
+          <p className="text-sm text-gray-500 mt-1">View and manage your account details and delivery addresses.</p>
+        </div>
+
+        <div className="space-y-8">
+          {/* User Profile Card - Premium Design */}
+          <div className="relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 transition-all hover:shadow-md">
+            {/* Subtle Top Accent */}
+            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-store-400 to-store-600"></div>
+            
+            <div className="p-8">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                  <div className="relative group">
+                    <div className="absolute inset-0 bg-store-500 rounded-full blur opacity-10 group-hover:opacity-20 transition-opacity"></div>
+                    {userInfo?.image ? (
+                      <img
+                        src={userInfo.image}
+                        className="relative h-24 w-24 rounded-full object-cover border-4 border-white shadow-md"
+                        alt={userInfo?.name}
+                      />
+                    ) : (
+                      <div className="relative flex items-center justify-center h-24 w-24 rounded-full bg-store-50 text-store-600 text-4xl font-bold border-4 border-white shadow-md">
+                        {userInfo?.name?.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div>
-                <h5 className="leading-none mb-2 text-base font-medium text-gray-700">
-                  {userInfo?.name}
-                </h5>
-                <p className="text-sm text-gray-500">{userInfo?.email}</p>
-                <p className="text-sm text-gray-500">{userInfo?.phone}</p>
+                  
+                  <div>
+                    <div className="flex flex-col sm:flex-row items-center gap-3 mb-2">
+                      <h2 className="text-2xl font-serif font-bold text-gray-800">
+                        {userInfo?.name}
+                      </h2>
+                      {isWholesaler && (
+                        <span className="px-3 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-100">
+                          Wholesaler
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center md:justify-start gap-2 text-gray-500 text-sm">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                        {userInfo?.email}
+                      </div>
+                      <div className="flex items-center justify-center md:justify-start gap-2 text-gray-500 text-sm">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                        {userInfo?.phone}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <Link
+                  href="/user/update-profile"
+                  className="flex items-center gap-2 px-6 py-3 bg-white border-2 border-store-500 text-store-600 text-sm font-bold rounded-2xl hover:bg-store-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  Edit Profile
+                </Link>
               </div>
             </div>
           </div>
 
           {/* Shipping Addresses Section */}
-          <div className="sm:col-span-2">
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h5 className="text-base font-medium text-gray-700">Shipping Addresses</h5>
-                <button
-                  type="button"
-                  onClick={handleAddAddress}
-                  className="bg-store-500 text-white px-3 py-1 rounded hover:bg-store-600 text-sm"
-                >
-                  + Add Address
-                </button>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-store-500 rounded-xl text-white shadow-sm">
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-lg font-serif font-bold text-gray-800">Delivery Addresses</h3>
+                  <p className="text-xs text-gray-500 font-medium">Where would you like your orders delivered?</p>
+                </div>
               </div>
+              <button
+                type="button"
+                onClick={handleAddAddress}
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-store-500 text-white px-5 py-2.5 rounded-xl hover:bg-store-600 transition-all text-sm font-bold shadow-md hover:shadow-lg"
+              >
+                <FiPlus size={18} /> Add New Address
+              </button>
+            </div>
 
+            <div className="p-6">
               {!isLoading && error ? (
                 <Error error={error} />
               ) : hasShippingAddress ? (
-                <div className="space-y-3">
+                <div className="grid gap-6 md:grid-cols-2">
                   {shippingAddresses.map((address) => (
                     <div
                       key={address._id || address.id}
-                      className="border border-gray-200 rounded-lg p-4 hover:border-store-300 transition-colors"
+                      className={`group relative p-6 rounded-2xl border-2 transition-all duration-300 ${
+                        address.isDefault 
+                          ? 'border-store-500 bg-store-50/10' 
+                          : 'border-gray-100 hover:border-store-200 bg-white hover:shadow-md'
+                      }`}
                     >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h6 className="text-sm font-semibold text-gray-900">
-                              {address.addressType || 'Home'} ({address.city || ''}, {address.zipCode || ''})
-                            </h6>
-                            {address.isDefault && (
-                              <span className="px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 rounded">
-                                Default
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-700 font-medium mb-1">{address.name}</p>
-                          <p className="text-sm text-gray-500">{address.phone}</p>
-                          <p className="text-sm text-gray-500">
-                            {address.address}, {address.city}, {address.country} - {address.zipCode}
-                          </p>
+                      {address.isDefault && (
+                        <div className="absolute -top-3 left-6 px-3 py-0.5 bg-store-500 text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm">
+                          Default
                         </div>
-                        <div className="flex items-center gap-2 ml-4">
+                      )}
+                      
+                      <div className="flex justify-between items-start mb-4">
+                        <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-lg border ${
+                          address.addressType === 'Home' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 
+                          address.addressType === 'Work' ? 'bg-amber-50 text-amber-600 border-amber-100' : 
+                          'bg-gray-50 text-gray-600 border-gray-100'
+                        }`}>
+                          {address.addressType || 'Home'}
+                        </span>
+                        
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             type="button"
                             onClick={() => handleEditAddress(address)}
-                            className="text-gray-400 hover:text-store-600 p-1 transition-colors"
+                            className="p-2 text-gray-400 hover:text-store-600 hover:bg-store-50 rounded-xl transition-all"
                             title="Edit address"
                           >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                           </button>
                           {shippingAddresses.length > 1 && (
                             <button
                               type="button"
                               onClick={() => handleDeleteAddress(address._id || address.id)}
-                              className="text-gray-400 hover:text-red-600 p-1 transition-colors"
+                              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
                               title="Delete address"
                             >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                             </button>
                           )}
                         </div>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <h4 className="text-base font-bold text-gray-800">{address.name}</h4>
+                        <p className="text-sm font-medium text-gray-500">{address.phone}</p>
+                        <p className="text-sm text-gray-600 leading-relaxed pt-2 border-t border-gray-50 mt-3">
+                          {address.address}, {address.city}, {address.country} - <span className="font-bold text-gray-800">{address.zipCode}</span>
+                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <p className="mt-2 text-sm text-gray-600">No shipping addresses found</p>
-                  <p className="text-xs text-gray-500 mt-1">Add your first shipping address</p>
+                <div className="text-center py-16 bg-gray-50/50 rounded-2xl border-2 border-dashed border-gray-100">
+                  <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto mb-5 shadow-sm text-store-200">
+                    <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-bold text-gray-800">No addresses saved yet</h4>
+                  <p className="text-sm text-gray-500 mt-2 max-w-xs mx-auto">Add your delivery addresses for a faster checkout experience.</p>
                 </div>
               )}
             </div>
           </div>
+
+          {/* Wholesaler Section - Only if applicable */}
+          {isWholesaler && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-500 rounded-xl text-white shadow-sm">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-serif font-bold text-gray-800">Business Documents</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingWholesaler((v) => !v)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    isEditingWholesaler 
+                      ? 'bg-gray-100 text-gray-600 hover:bg-gray-200' 
+                      : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border border-emerald-200'
+                  }`}
+                >
+                  {isEditingWholesaler ? "Done" : "Update Documents"}
+                </button>
+              </div>
+
+              <div className="p-6">
+                {!customerLoading && customerError && <Error error={customerError} />}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {[
+                    { label: "Aadhar Card", field: "aadhar", publicField: "aadharPublicId", tokenField: "aadharDeleteToken" },
+                    { label: "PAN Card", field: "pan", publicField: "panPublicId", tokenField: "panDeleteToken" },
+                    { label: "GST Certificate", field: "gst", publicField: "gstPublicId", tokenField: "gstDeleteToken", optional: docs?.gstNotRequired },
+                    { label: "Drug License", field: "drugLicense", publicField: "drugLicensePublicId", tokenField: "drugLicenseDeleteToken", optional: docs?.drugLicenseNotRequired }
+                  ].map((doc) => (
+                    <div key={doc.field} className="p-4 rounded-xl border border-gray-50 bg-gray-50/30">
+                      <div className="flex items-center justify-between gap-4">
+                        <span className="text-sm font-bold text-gray-700">{doc.label}</span>
+                        {doc.optional && !isEditingWholesaler ? (
+                          <span className="text-[10px] font-black uppercase text-gray-400 bg-gray-100 px-2 py-0.5 rounded">Not Required</span>
+                        ) : isEditingWholesaler ? (
+                          <Uploader
+                            compact
+                            imageUrl={docs[doc.field]}
+                            setImageUrl={(url) => setDocs((p) => ({ ...p, [doc.field]: url || "" }))}
+                            folder="wholesaler"
+                            accept={acceptDocs}
+                            maxSize={10 * 1024 * 1024}
+                            uniquePublicId={true}
+                            onUploadComplete={(data) => handleDocUploadComplete(doc.field, doc.publicField, doc.tokenField, data)}
+                            onRemove={() => handleDocRemove(doc.field, doc.publicField, doc.tokenField)}
+                          />
+                        ) : docs[doc.field] ? (
+                          <a
+                            href={docs[doc.field]}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex items-center gap-1 text-xs font-bold text-store-600 hover:underline"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                            View
+                          </a>
+                        ) : (
+                          <span className="text-[10px] font-black uppercase text-red-400 bg-red-50 px-2 py-0.5 rounded border border-red-100">Missing</span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-
-        {isWholesaler && (
-          <div className="border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h5 className="text-base font-medium text-gray-700">
-                Wholesaler Details
-              </h5>
-              <button
-                type="button"
-                onClick={() => setIsEditingWholesaler((v) => !v)}
-                className="bg-store-500 text-white px-3 py-1 rounded hover:bg-store-600"
-              >
-                {isEditingWholesaler ? "Close" : "Edit"}
-              </button>
-            </div>
-
-            {!customerLoading && customerError && <Error error={customerError} />}
-
-            <div className="grid gap-6 sm:grid-cols-2 grid-cols-1">
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium text-gray-700">Aadhar</div>
-                  <div className="flex-1 flex justify-end">
-                    {isEditingWholesaler ? (
-                      <Uploader
-                        compact
-                        imageUrl={docs.aadhar}
-                        setImageUrl={(url) =>
-                          setDocs((p) => ({ ...p, aadhar: url || "" }))
-                        }
-                        folder="wholesaler"
-                        accept={acceptDocs}
-                        maxSize={10 * 1024 * 1024}
-                        uniquePublicId={true}
-                        onUploadComplete={(data) =>
-                          handleDocUploadComplete(
-                            "aadhar",
-                            "aadharPublicId",
-                            "aadharDeleteToken",
-                            data
-                          )
-                        }
-                        onRemove={() =>
-                          handleDocRemove(
-                            "aadhar",
-                            "aadharPublicId",
-                            "aadharDeleteToken"
-                          )
-                        }
-                      />
-                    ) : docs?.aadhar ? (
-                      <a
-                        href={docs.aadhar}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm underline text-store-600"
-                      >
-                        View
-                      </a>
-                    ) : (
-                      <div className="text-sm text-gray-500">Not uploaded</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium text-gray-700">PAN</div>
-                  <div className="flex-1 flex justify-end">
-                    {isEditingWholesaler ? (
-                      <Uploader
-                        compact
-                        imageUrl={docs.pan}
-                        setImageUrl={(url) =>
-                          setDocs((p) => ({ ...p, pan: url || "" }))
-                        }
-                        folder="wholesaler"
-                        accept={acceptDocs}
-                        maxSize={10 * 1024 * 1024}
-                        uniquePublicId={true}
-                        onUploadComplete={(data) =>
-                          handleDocUploadComplete(
-                            "pan",
-                            "panPublicId",
-                            "panDeleteToken",
-                            data
-                          )
-                        }
-                        onRemove={() =>
-                          handleDocRemove(
-                            "pan",
-                            "panPublicId",
-                            "panDeleteToken"
-                          )
-                        }
-                      />
-                    ) : docs?.pan ? (
-                      <a
-                        href={docs.pan}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm underline text-store-600"
-                      >
-                        View
-                      </a>
-                    ) : (
-                      <div className="text-sm text-gray-500">Not uploaded</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium text-gray-700">GST</div>
-                  <div className="flex-1 flex justify-end">
-                    {docs?.gstNotRequired && !isEditingWholesaler ? (
-                      <div className="text-sm text-gray-500">Not required</div>
-                    ) : isEditingWholesaler ? (
-                      <Uploader
-                        compact
-                        imageUrl={docs.gst}
-                        setImageUrl={(url) =>
-                          setDocs((p) => ({ ...p, gst: url || "" }))
-                        }
-                        folder="wholesaler"
-                        accept={acceptDocs}
-                        maxSize={10 * 1024 * 1024}
-                        uniquePublicId={true}
-                        onUploadComplete={(data) =>
-                          handleDocUploadComplete(
-                            "gst",
-                            "gstPublicId",
-                            "gstDeleteToken",
-                            data
-                          )
-                        }
-                        onRemove={() =>
-                          handleDocRemove(
-                            "gst",
-                            "gstPublicId",
-                            "gstDeleteToken"
-                          )
-                        }
-                      />
-                    ) : docs?.gst ? (
-                      <a
-                        href={docs.gst}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm underline text-store-600"
-                      >
-                        View
-                      </a>
-                    ) : (
-                      <div className="text-sm text-gray-500">Not uploaded</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <div className="flex items-center justify-between gap-3">
-                  <div className="text-sm font-medium text-gray-700">Drug License</div>
-                  <div className="flex-1 flex justify-end">
-                    {docs?.drugLicenseNotRequired && !isEditingWholesaler ? (
-                      <div className="text-sm text-gray-500">Not required</div>
-                    ) : isEditingWholesaler ? (
-                      <Uploader
-                        compact
-                        imageUrl={docs.drugLicense}
-                        setImageUrl={(url) =>
-                          setDocs((p) => ({ ...p, drugLicense: url || "" }))
-                        }
-                        folder="wholesaler"
-                        accept={acceptDocs}
-                        maxSize={10 * 1024 * 1024}
-                        uniquePublicId={true}
-                        onUploadComplete={(data) =>
-                          handleDocUploadComplete(
-                            "drugLicense",
-                            "drugLicensePublicId",
-                            "drugLicenseDeleteToken",
-                            data
-                          )
-                        }
-                        onRemove={() =>
-                          handleDocRemove(
-                            "drugLicense",
-                            "drugLicensePublicId",
-                            "drugLicenseDeleteToken"
-                          )
-                        }
-                      />
-                    ) : docs?.drugLicense ? (
-                      <a
-                        href={docs.drugLicense}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm underline text-store-600"
-                      >
-                        View
-                      </a>
-                    ) : (
-                      <div className="text-sm text-gray-500">Not uploaded</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Address Modal */}

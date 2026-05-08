@@ -321,29 +321,44 @@ const getOrderById = async (req, res) => {
   }
 };
 
-const updateOrder = (req, res) => {
-  const newStatus = req.body.status;
-  Order.updateOne(
-    {
-      _id: req.params.id,
-    },
-    {
-      $set: {
-        status: newStatus,
+const updateOrder = async (req, res) => {
+  try {
+    const { status, message, courierName, trackingNumber, trackingUrl, estimatedDeliveryDate } = req.body;
+    
+    const updateData = { status };
+    if (courierName) updateData.courierName = courierName;
+    if (trackingNumber) updateData.trackingNumber = trackingNumber;
+    if (trackingUrl) updateData.trackingUrl = trackingUrl;
+    if (estimatedDeliveryDate) updateData.estimatedDeliveryDate = estimatedDeliveryDate;
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: updateData,
+        $push: {
+          trackingHistory: {
+            status,
+            message: message || `Order status updated to ${status}`,
+            timestamp: new Date(),
+          },
+        },
       },
-    },
-    (err) => {
-      if (err) {
-        res.status(500).send({
-          message: err.message,
-        });
-      } else {
-        res.status(200).send({
-          message: "Order Updated Successfully!",
-        });
-      }
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
     }
-  );
+
+    res.status(200).send({
+      message: "Order Updated Successfully!",
+      order,
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
 };
 
 const deleteOrder = (req, res) => {

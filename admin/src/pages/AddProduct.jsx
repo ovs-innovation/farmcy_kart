@@ -413,9 +413,9 @@ const AddProduct = () => {
           <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6">
             <h2 className="text-lg font-bold text-gray-800 mb-6">Price Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-              <div><label className="block text-sm font-medium text-gray-700 mb-2">Unit Price ₹ <span className="text-red-500">*</span></label><Input type="number" {...register("originalPrice")} placeholder="0" className="w-full border-gray-200" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Unit Price ₹ <span className="text-red-500">*</span></label><Input type="number" step="0.01" min="0" onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()} {...register("originalPrice")} placeholder="0" className="w-full border-gray-200" /></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-2">Discount Type</label><Select {...register("discountType")} className="w-full border-gray-200"><option value="flat">Flat (₹)</option><option value="percentage">Percentage (%)</option></Select></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-2">Discount</label><Input type="number" {...register("discount")} placeholder="0" className="w-full border-gray-200" /></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-2">Discount</label><Input type="number" step="0.01" min="0" onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()} {...register("discount")} placeholder="0" className="w-full border-gray-200" /></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-2">Sale Price ₹</label><Input type="number" readOnly value={watch("discountType") === "percentage" ? (Math.max(0, (Number(watch("originalPrice")) || 0) - ((Number(watch("originalPrice")) || 0) * (Number(watch("discount")) || 0) / 100))).toFixed(2) : Math.max(0, (Number(watch("originalPrice")) || 0) - (Number(watch("discount")) || 0))} className="w-full border-teal-200 bg-teal-50 font-bold text-teal-700" /></div>
             </div>
           </div>
@@ -631,6 +631,9 @@ const AddProduct = () => {
                             value={variant.originalPrice || 0} 
                             onChange={(e) => handleVariantChange(index, "originalPrice", e.target.value)} 
                             className="h-10 border-gray-200 focus:border-[#008f89] w-full" 
+                            min="0"
+                            step="0.01"
+                            onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                           />
                         </td>
                         <td className="px-6 py-4">

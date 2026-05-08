@@ -135,6 +135,8 @@ const AddCouponForm = ({
               <Input
                 {...register("limitSameUser")}
                 type="number"
+                min="1"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e' || e.key === '.') && e.preventDefault()}
                 placeholder="EX: 10"
                 className="w-full"
               />
@@ -183,6 +185,9 @@ const AddCouponForm = ({
               <Input
                 {...register("minimumAmount")}
                 type="number"
+                min="0"
+                step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                 defaultValue={0}
                 className="w-full"
               />
@@ -196,6 +201,9 @@ const AddCouponForm = ({
               <Input
                 {...register("discountPercentage")}
                 type="number"
+                min="0"
+                step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                 placeholder="EX: 100"
                 className="w-full"
               />
@@ -208,6 +216,9 @@ const AddCouponForm = ({
               <Input
                 {...register("maxDiscount")}
                 type="number"
+                min="0"
+                step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                 defaultValue={0}
                 className="w-full"
               />

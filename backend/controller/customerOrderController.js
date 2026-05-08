@@ -17,7 +17,80 @@ const {
   handleProductQuantity,
   checkStock,
 } = require("../lib/stock-controller/others");
-const customerInvoiceEmailBody = require("../lib/email-sender/templates/order-to-customer");
+const { 
+  customerInvoiceEmailBody,
+  orderConfirmationBody 
+} = require("../lib/email-sender/templates/order-to-customer");
+const { sendSMS } = require("../lib/sms-sender/sender");
+
+const sendOrderNotifications = async (order) => {
+  try {
+    const globalSetting = await Setting.findOne({ name: "globalSetting" });
+    const shopName = globalSetting?.setting?.shop_name || "Farmacykart";
+    const contactEmail = globalSetting?.setting?.email || "support@farmacykart.com";
+    const currency = order.company_info?.currency || "₹";
+
+    // 1. Send Email Confirmation
+    if (!order.confirmationEmailSent) {
+      const emailOption = {
+        name: order.user_info.name,
+        invoice: order.invoice,
+        total: order.total,
+        currency: currency,
+        date: new Date(order.createdAt).toLocaleDateString(),
+        paymentStatus: order.paymentMethod === "Cash On Delivery" ? "Pending" : "Confirmed",
+        status: order.status || "Pending",
+        trackingUrl: `${process.env.STORE_URL}/user/dashboard`,
+        contact_email: contactEmail,
+        shop_name: shopName,
+      };
+
+      const emailBody = {
+        from: contactEmail,
+        to: order.user_info.email,
+        subject: `Order Confirmed - #${order.invoice}`,
+        html: orderConfirmationBody(emailOption),
+      };
+
+      try {
+        await sendEmail(emailBody);
+        order.confirmationEmailSent = true;
+      } catch (err) {
+        console.error("Order confirmation email failed:", err.message);
+      }
+    }
+
+    // 2. Send SMS Confirmation
+    if (!order.confirmationSmsSent && order.user_info.contact) {
+      const smsMessage = `Hi ${order.user_info.name}, your order #${order.invoice} of ${currency}${order.total} has been placed successfully at ${shopName}. Track here: ${process.env.STORE_URL}/user/dashboard`;
+      
+      const smsSent = await sendSMS(order.user_info.contact, smsMessage);
+      if (smsSent) {
+        order.confirmationSmsSent = true;
+      }
+    }
+
+    // 3. Initialize Tracking History if empty
+    if (!order.trackingHistory || order.trackingHistory.length === 0) {
+      order.trackingHistory = [{
+        status: "Order Placed",
+        message: "Your order has been successfully placed.",
+        timestamp: new Date()
+      }];
+    }
+
+    await Order.updateOne({ _id: order._id }, { 
+      $set: { 
+        confirmationEmailSent: order.confirmationEmailSent,
+        confirmationSmsSent: order.confirmationSmsSent,
+        trackingHistory: order.trackingHistory
+      } 
+    });
+
+  } catch (error) {
+    console.error("sendOrderNotifications error:", error.message);
+  }
+};
 
 // Helper function to populate brand names in order cart items
 const populateBrandNames = async (order) => {
@@ -117,6 +190,9 @@ const addOrder = async (req, res) => {
     const order = await newOrder.save();
     res.status(201).send(order);
     handleProductQuantity(order.cart);
+    
+    // Send notifications after order is created (non-blocking)
+    sendOrderNotifications(order);
   } catch (err) {
     res.status(500).send({
       message: err.message,
@@ -297,6 +373,9 @@ const addRazorpayOrder = async (req, res) => {
     const order = await newOrder.save();
     res.status(201).send(order);
     handleProductQuantity(order.cart);
+    
+    // Send notifications after order is created (non-blocking)
+    sendOrderNotifications(order);
   } catch (err) {
     res.status(500).send({
       message: err.message,

@@ -118,7 +118,7 @@ const Category = () => {
           <h1 className="text-lg font-bold text-gray-800">Add New Category</h1>
         </div>
 
-        <DeleteModal id={serviceId} />
+        <DeleteModal id={serviceId} category={true} />
 
         <MainDrawer>
           <CategoryDrawer id={serviceId} data={data} lang={lang} />

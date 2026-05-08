@@ -68,6 +68,10 @@ const adminSchema = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    fcmToken: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

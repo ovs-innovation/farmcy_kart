@@ -20,6 +20,8 @@ const CombinationInput = ({
           value={value || 0}
           type="number"
           name={name}
+          min="0"
+          onKeyDown={(e) => (e.key === '-' || e.key === 'e' || (name === 'quantity' && e.key === '.')) && e.preventDefault()}
           pattern="^[0-9]+$"
           placeholder={placeholder}
           className={`mx-1 h-8 w-18 md:w-20 lg:w-20 p-2`}
@@ -32,6 +34,8 @@ const CombinationInput = ({
           defaultValue={value}
           type="number"
           name={name}
+          min="0"
+          onKeyDown={(e) => (e.key === '-' || e.key === 'e' || (name === 'quantity' && e.key === '.')) && e.preventDefault()}
           pattern="^[0-9]+$"
           placeholder={placeholder}
           className={`mx-1 h-8 w-18 md:w-20 lg:w-20 p-2`}

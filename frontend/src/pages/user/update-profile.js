@@ -104,123 +104,113 @@ const UpdateProfile = () => {
       )}
       description="This is edit profile page"
     >
-      <div className="max-w-screen-2xl">
-        <div className="md:grid md:grid-cols-3 md:gap-6">
-          <div className="md:col-span-1">
-            <div className="px-4 sm:px-0">
-              <h2 className="text-xl font-serif font-semibold mb-5">
-                {showingTranslateValue(
-                  storeCustomizationSetting?.dashboard?.update_profile
-                )}
-              </h2>
-            </div>
+      <div className="max-w-4xl mx-auto">
+        <div className="bg-white p-8 rounded-xl shadow-sm border border-gray-50 transition-all hover:shadow-md">
+          <div className="mb-8 border-b border-gray-50 pb-6">
+            <h2 className="text-2xl font-serif font-bold text-gray-800">
+              {showingTranslateValue(
+                storeCustomizationSetting?.dashboard?.update_profile
+              )}
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">Update your personal information and profile picture</p>
           </div>
-        </div>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="md:mt-0 md:col-span-2">
-            <div className="bg-white space-y-6">
-              <div>
-                <Label label="Photo" />
-                <div className="mt-1 flex items-center">
-                  <div className="w-full">
-                    <Uploader imageUrl={imageUrl} setImageUrl={setImageUrl} />
-                    {imageUrl && (
-                      <p className="text-xs mt-2 text-center" style={{ color: '#006E44' }}>
-                        ✓ Image ready to save
-                      </p>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            {/* Photo Section */}
+            <div className="bg-gray-50/50 p-6 rounded-xl border border-gray-100">
+              <Label label="Profile Photo" className="text-sm font-bold text-gray-700 mb-4 block" />
+              <div className="flex flex-col items-center sm:flex-row gap-6">
+                <div className="flex-1 w-full">
+                  <Uploader imageUrl={imageUrl} setImageUrl={setImageUrl} />
+                  {imageUrl && (
+                    <div className="flex items-center justify-center gap-1.5 mt-3 text-store-600 font-semibold text-xs">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Image ready to save
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Form Fields Section */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <InputArea
+                  register={register}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.full_name
+                  )}
+                  name="name"
+                  type="text"
+                  placeholder="Your Full Name"
+                />
+                <Error errorName={errors.name} />
+              </div>
+
+              <div className="space-y-1">
+                <InputArea
+                  register={register}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.user_phone
+                  )}
+                  name="phone"
+                  type="tel"
+                  placeholder="Your Phone Number"
+                />
+                <Error errorName={errors.phone} />
+              </div>
+
+              <div className="md:col-span-2 space-y-1">
+                <InputArea
+                  register={register}
+                  name="email"
+                  type="email"
+                  readOnly={true}
+                  label={showingTranslateValue(
+                    storeCustomizationSetting?.dashboard?.user_email
+                  )}
+                  placeholder="Your Email Address"
+                  required={true}
+                />
+                <p className="text-[10px] text-gray-400 mt-1 italic">Email cannot be changed as it is linked to your account identity.</p>
+                <Error errorName={errors.email} />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <div className="pt-6 border-t border-gray-50 flex justify-end">
+              <button
+                disabled={loading}
+                type="submit"
+                className={`group flex items-center justify-center gap-2 px-8 py-3.5 bg-store-500 text-white font-bold rounded-xl hover:bg-store-600 transition-all shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed min-w-[180px]`}
+              >
+                {loading ? (
+                  <>
+                    <img
+                      src="/loader/spinner.gif"
+                      alt="Loading"
+                      width={20}
+                      height={20}
+                      className="brightness-0 invert"
+                    />
+                    <span>Processing...</span>
+                  </>
+                ) : (
+                  <>
+                    {showingTranslateValue(
+                      storeCustomizationSetting?.dashboard?.update_button
                     )}
-                  </div>
-                </div>
-              </div>
+                    <svg className="w-5 h-5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                    </svg>
+                  </>
+                )}
+              </button>
             </div>
-
-            <div className="mt-10 sm:mt-0">
-              <div className="md:grid-cols-6 md:gap-6">
-                <div className="mt-5 md:mt-0 md:col-span-2">
-                  <div className="lg:mt-6 mt-4 bg-white">
-                    <div className="grid grid-cols-6 gap-6">
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputArea
-                          register={register}
-                          label={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.full_name
-                          )}
-                          name="name"
-                          type="text"
-                          placeholder={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.full_name
-                          )}
-                        />
-                        <Error errorName={errors.name} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputArea
-                          register={register}
-                          label={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.user_phone
-                          )}
-                          name="phone"
-                          type="tel"
-                          placeholder={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.user_phone
-                          )}
-                        />
-                        <Error errorName={errors.phone} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputArea
-                          register={register}
-                          name="email"
-                          type="email"
-                          readOnly={true}
-                          label={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.user_email
-                          )}
-                          placeholder={showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.user_email
-                          )}
-                          required={true}
-                        />
-                        <Error errorName={errors.email} />
-                      </div>
-                    </div>
-                    <div className="col-span-6 sm:col-span-3 mt-5 text-right">
-                      {loading ? (
-                        <button
-                          disabled={loading}
-                          type="submit"
-                          className={`md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto`}
-                        >
-                          <img
-                            src="/loader/spinner.gif"
-                            alt="Loading"
-                            width={20}
-                            height={10}
-                          />
-                          <span className="font-serif ml-2 font-light">
-                            Processing
-                          </span>
-                        </button>
-                      ) : (
-                        <button
-                          disabled={loading}
-                          type="submit"
-                          className={`md:text-sm leading-5 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-medium text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-store-500 text-white px-5 md:px-6 lg:px-8 py-2 md:py-3 lg:py-3 hover:text-white hover:bg-store-600 h-12 mt-1 text-sm lg:text-sm w-full sm:w-auto`}
-                        >
-                          {showingTranslateValue(
-                            storeCustomizationSetting?.dashboard?.update_button
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </Dashboard>
   );

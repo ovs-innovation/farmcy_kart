@@ -38,7 +38,7 @@ const CheckoutCard = ({ item }) => {
             </span>
             <span className="text-xs text-gray-400 mb-2">
               Item Price{currency}
-              {item.price}
+              {item.price.toFixed(2)}
             </span>
           </p>
           <div className="h-8 w-20 flex flex-wrap items-center justify-evenly p-1 border border-gray-100 bg-white text-gray-600 rounded-md">

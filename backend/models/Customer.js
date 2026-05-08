@@ -184,6 +184,22 @@ const customerSchema = new mongoose.Schema(
         },
       },
     ],
+    fcmToken: {
+      type: String,
+      required: false,
+    },
+    emailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationOtp: {
+      type: String,
+      required: false,
+    },
+    emailVerificationExpires: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,

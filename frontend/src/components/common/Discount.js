@@ -19,7 +19,7 @@ const Discount = ({ discount, product, slug, modal }) => {
     originalPrice = price + discountVal;
   }
 
-  const discountPercentage = originalPrice > 0 ? getNumber(
+  const discountPercentage = originalPrice > price ? getNumber(
     ((originalPrice - price) / originalPrice) * 100
   ) : 0;
 

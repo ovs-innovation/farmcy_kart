@@ -148,6 +148,17 @@ const PushNotification = () => {
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-semibold">Click Action URL (Optional)</Label>
+                      <Input
+                        {...register("clickAction")}
+                        placeholder="https://farmacykart.com/products/example"
+                        className="border-[#e5e7eb] focus:border-teal-400 focus:ring-0 h-10"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <div className="flex justify-between">

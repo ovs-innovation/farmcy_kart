@@ -29,7 +29,7 @@ const useUtilsFunction = () => {
   };
 
   const getNumberTwo = (value = 0) => {
-    return parseFloat(value || 0).toFixed(globalSetting?.floating_number || 2);
+    return parseFloat(value || 0).toFixed(2);
   };
 
   //for translation

@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getMessaging, isSupported } from "firebase/messaging";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -10,10 +11,10 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
-// console.log("firebaseConfig", firebaseConfig);
 
 let app;
 let auth = null;
+let messaging = null;
 
 if (typeof window !== "undefined") {
   try {
@@ -21,11 +22,18 @@ if (typeof window !== "undefined") {
       app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
       auth = getAuth(app);
       auth.useDeviceLanguage();
+      
+      // Initialize messaging
+      isSupported().then((supported) => {
+        if (supported) {
+          messaging = getMessaging(app);
+        }
+      });
     }
   } catch (error) {
     console.error("Firebase initialization error:", error);
   }
 }
 
-export { auth };
+export { auth, messaging };
 export default app;

@@ -16,6 +16,8 @@ const InputArea = ({
   required = true,
   pattern, // Added pattern as a prop
   patternMessage = "Invalid input", // Optional: Custom error message for pattern validation
+  maxLength,
+  onInput,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
@@ -46,6 +48,8 @@ const InputArea = ({
           defaultValue={defaultValue}
           placeholder={placeholder}
           autoComplete={autocomplete}
+          maxLength={maxLength}
+          onInput={onInput}
           className={`$${
             Icon ? "py-2 pl-10" : "py-2 px-4 md:px-5"
           } w-full appearance-none border text-sm opacity-75 text-input rounded-md placeholder-body min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-${(useGetSetting()?.storeCustomizationSetting?.theme?.color) || 'green'}-500 h-11 md:h-12 $${

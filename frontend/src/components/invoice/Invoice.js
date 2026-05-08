@@ -2,7 +2,6 @@ import dayjs from "dayjs";
 import React, { useEffect, useState, useContext } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import QRCodeLib from "qrcode";
 //internal import
 import OrderTable from "@components/order/OrderTable";
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -17,9 +16,6 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
   const { state } = useContext(UserContext) || {};
   const isWholesaler = state?.userInfo?.role && state.userInfo.role.toString().toLowerCase() === "wholesaler";
   const storeColor = storeCustomizationSetting?.theme?.color || "green";
-
-  const [qrDataUrl, setQrDataUrl] = useState("");
-
   // Aggregate values for summary box - match checkout page exactly
   const mrpTotal =
     data?.cart?.reduce((sum, item) => {
@@ -67,40 +63,6 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
     return `FK/${year}/${invStr}`;
   };
 
-  useEffect(() => {
-    if (!data) return;
-
-    // QR should open order page on scan (keep it short using backend redirect route /o/:id)
-    const orderId = data?._id || data?.id || data?.orderId;
-    if (!orderId) return;
-
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
-    const backendOrigin =
-      apiBase.replace(/\/api\/?$/i, "") || (typeof window !== "undefined" ? window.location.origin : "");
-
-    const qrLink = `${backendOrigin.replace(/\/+$/, "")}/o/${orderId}`;
-
-    QRCodeLib.toDataURL(
-      qrLink,
-      {
-        width: 180,
-        margin: 1,
-      },
-      (err, url) => {
-        if (err) {
-          // eslint-disable-next-line no-console
-          console.error("QR code generation error:", err);
-          return;
-        }
-        setQrDataUrl(url);
-      }
-    );
-  }, [
-    data,
-    data?._id,
-    data?.id,
-    data?.orderId,
-  ]);
 
   return (
     <div ref={printRef} className=" ">
@@ -229,20 +191,7 @@ const Invoice = ({ data, printRef, globalSetting, currency }) => {
             </div>
           </div>
 
-          {/* QR Code - right side */}
-          <div className="border-l-2 border-store-600 pl-6">
-            {qrDataUrl && (
-            <div className="flex-shrink-0 self-center">
-              <div className="bg-white border border-gray-200 rounded-xl p-2">
-                <img
-                  src={qrDataUrl}
-                  alt="Invoice QR"
-                  className="w-20 h-20 md:w-28 md:h-28 object-contain"
-                />
-              </div>
-            </div>
-          )}
-          </div>
+
           </div>
           </div>
            

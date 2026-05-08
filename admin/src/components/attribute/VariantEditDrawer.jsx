@@ -260,6 +260,7 @@ const VariantEditDrawer = ({
                 onChange={(e) => setCurrentOriginalPrice(e.target.value)}
                 min="0"
                 step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
               />
               <Error errorName={errors.variantOriginalPrice} />
             </div>
@@ -275,6 +276,7 @@ const VariantEditDrawer = ({
                 onChange={(e) => setCurrentPrice(e.target.value)}
                 min="0"
                 step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
               />
               <Error errorName={errors.variantPrice} />
             </div>
@@ -292,6 +294,7 @@ const VariantEditDrawer = ({
               value={currentQuantity}
               onChange={(e) => setCurrentQuantity(e.target.value)}
               min="0"
+              onKeyDown={(e) => (e.key === '-' || e.key === 'e' || e.key === '.') && e.preventDefault()}
             />
             <Error errorName={errors.variantQuantity} />
           </div>

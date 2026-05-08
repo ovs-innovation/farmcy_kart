@@ -160,6 +160,20 @@ const deleteManyNotification = async (req, res) => {
   }
 };
 
+const updateFcmToken = async (req, res) => {
+  try {
+    const { fcmToken } = req.body;
+    await Customer.findByIdAndUpdate(req.params.id, { $set: { fcmToken } });
+    res.status(200).send({
+      message: "FCM Token updated successfully!",
+    });
+  } catch (err) {
+    res.status(500).send({
+      message: err.message,
+    });
+  }
+};
+
 module.exports = {
   getAllNotification,
   addNotification,
@@ -168,4 +182,5 @@ module.exports = {
   deleteNotificationByProductId,
   updateManyStatusNotification,
   deleteManyNotification,
+  updateFcmToken,
 };

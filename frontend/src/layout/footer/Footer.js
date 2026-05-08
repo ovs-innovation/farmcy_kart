@@ -26,6 +26,7 @@ import {
   FiShoppingBag,
   FiPackage,
   FiSettings,
+  FiMessageSquare,
 } from "react-icons/fi";
 
 //internal import
@@ -378,6 +379,15 @@ const Footer = () => {
                         storeCustomizationSetting?.footer?.block2_sub_title4
                       }
                     />
+                  </Link>
+                </li>
+                <li className="group">
+                  <Link
+                    href="/faq"
+                    className="text-gray-600 inline-flex items-center w-full hover:text-store-600 transition-all duration-300"
+                  >
+                    <FiMessageSquare className="w-4 h-4 mr-2 text-gray-500 group-hover:text-store-600 transition-colors" />
+                    <span>FAQ</span>
                   </Link>
                 </li>
               </ul>

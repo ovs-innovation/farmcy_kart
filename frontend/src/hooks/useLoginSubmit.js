@@ -34,18 +34,20 @@ const useLoginSubmit = () => {
 
     try {
       if (router.pathname === "/auth/signup") {
-        // Custom sign-up method
-        // console.log("Need to use custom sign-up method");
-
-        // Call the sign-up API which also handles sending the email verification
-        const res = await CustomerServices.verifyEmailAddress({
+        // Call the sign-up API (now creates pending account and sends OTP)
+        const res = await CustomerServices.registerUser({
           name,
           email,
           password,
         });
 
-        // console.log("res", res);
-        notifySuccess(res.message);
+        if (res.requiresVerification) {
+          notifySuccess(res.message);
+          router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+        } else {
+          notifySuccess(res.message || "Signup successful!");
+          router.push("/auth/login");
+        }
         return setLoading(false);
       } else if (router.pathname === "/auth/forget-password") {
         // Call the forget password API for reset password
@@ -118,8 +120,10 @@ const useLoginSubmit = () => {
             return;
           }
 
-          // Check if it's a wholesaler verification error
-          if (respData?.wholesalerStatus) {
+          if (respData?.requiresVerification) {
+            notifyError(respData.message || "Please verify your email.");
+            router.push(`/auth/verify-email?email=${encodeURIComponent(respData.email || email)}`);
+          } else if (respData?.wholesalerStatus) {
             setWholesalerStatus(respData.wholesalerStatus);
             notifyError(respData.message || "Account not yet approved.");
           } else {

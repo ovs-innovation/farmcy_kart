@@ -37,6 +37,8 @@ const InputValueFive = ({
           {...register(`${name}`, value)}
           name={name}
           type={type}
+          min={minValue || 0}
+          onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
           disabled={disabled}
           defaultValue={defaultValue}
           placeholder={placeholder}

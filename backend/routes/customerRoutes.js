@@ -33,18 +33,29 @@ const {
   removeFromCart,
   clearCart,
   checkCustomerExistance,
+  updateFcmToken,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
   emailVerificationLimit,
   phoneVerificationLimit,
 } = require("../lib/email-sender/sender");
+const {
+  verifyEmailOTP,
+  resendVerificationEmail,
+} = require("../controller/customerController");
 
 //verify email
 router.post("/verify-email", emailVerificationLimit, verifyEmailAddress);
 
 //verify phone number
 router.post("/verify-phone", phoneVerificationLimit, verifyPhoneNumber);
+
+// Verify email with OTP
+router.post("/verify-email-otp", emailVerificationLimit, verifyEmailOTP);
+
+// Resend verification email
+router.post("/resend-verification", emailVerificationLimit, resendVerificationEmail);
 
 //login with phone
 router.post("/login-phone", loginWithPhone);
@@ -171,5 +182,8 @@ router.put("/:id", updateCustomer);
 
 //delete a user
 router.delete("/:id", deleteCustomer);
+
+// update fcm token
+router.put("/update-fcm-token/:id", updateFcmToken);
 
 module.exports = router;

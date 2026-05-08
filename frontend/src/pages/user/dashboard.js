@@ -123,12 +123,14 @@ const Dashboard = ({ title, description, children }) => {
           title={title ? title : "Dashboard"}
           description={description ? description : "This is User Dashboard"}
         >
-          <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
+          <div className="bg-gray-50/50 min-h-screen">
+            <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
             <div className="py-10 lg:py-12 flex flex-col lg:flex-row w-full">
-              <div className="flex-shrink-0 w-full lg:w-80 mr-7 lg:mr-10  xl:mr-10 ">
-                <div className="bg-white p-4 rounded-md mb-5 lg:hidden flex justify-between items-center">
+              <div className="flex-shrink-0 w-full lg:w-80 mr-7 lg:mr-10 xl:mr-10">
+                {/* Mobile Header */}
+                <div className="bg-white p-4 rounded-xl mb-5 lg:hidden flex justify-between items-center shadow-sm">
                   <div>
-                    <h2 className="text-xl font-serif font-semibold text-gray-700">
+                    <h2 className="text-xl font-serif font-bold text-gray-800">
                       {userInfo?.name}
                     </h2>
                     <span className="text-sm text-gray-500">
@@ -137,53 +139,73 @@ const Dashboard = ({ title, description, children }) => {
                   </div>
                   <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="p-2 bg-store-500 rounded-md text-white hover:bg-store-600 transition-colors"
+                    className="p-2 bg-store-500 rounded-lg text-white hover:bg-store-600 transition-all shadow-md"
                   >
                     <FiGrid className="w-6 h-6" />
                   </button>
                 </div>
-                <div className={`${isOpen ? 'block' : 'hidden'} lg:block bg-white p-4 sm:p-5 lg:p-8 rounded-md sticky top-32`}>
-                  {userSidebar?.map((item) => (
-                    <span
-                      key={item.title}
-                      className={`p-2 my-2 flex font-serif items-center rounded-md hover:bg-gray-50 w-full hover:text-store-600`}
-                    >
-                      <item.icon
-                        className="flex-shrink-0 h-4 w-4"
-                        aria-hidden="true"
-                      />
-                      <Link
-                        href={item.href}
-                        className={`inline-flex items-center justify-between ml-2 text-sm font-medium w-full hover:text-store-600`}
-                      >
-                        {item.title}
-                      </Link>
-                    </span>
-                  ))}
-                  <span className={`p-2 flex font-serif items-center rounded-md hover:bg-gray-50 w-full hover:text-store-600`}>
-                    <span className="mr-2">
-                      <IoLockOpenOutline />
-                    </span>{" "}
+
+                {/* Sidebar Menu */}
+                <div className={`${isOpen ? 'block' : 'hidden'} lg:block bg-white p-6 rounded-xl shadow-sm border border-gray-50 sticky top-32`}>
+                  {/* User Profile Header (Desktop) */}
+                  <div className="hidden lg:flex flex-col items-center mb-8 pb-8 border-b border-gray-100">
+                    <div className="w-20 h-20 rounded-full bg-store-50 flex items-center justify-center text-store-600 text-3xl font-bold mb-4 shadow-inner">
+                      {userInfo?.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <h2 className="text-lg font-serif font-bold text-gray-800 text-center line-clamp-1">
+                      {userInfo?.name}
+                    </h2>
+                    <p className="text-sm text-gray-500 text-center line-clamp-1">
+                      {userInfo?.email || userInfo?.phone}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    {userSidebar?.map((item) => {
+                      const isActive = router.pathname === item.href;
+                      return (
+                        <Link
+                          key={item.title}
+                          href={item.href}
+                          className={`group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                            isActive
+                              ? 'bg-store-500 text-white shadow-md'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-store-600'
+                          }`}
+                        >
+                          <item.icon
+                            className={`flex-shrink-0 h-5 w-5 mr-3 transition-colors ${
+                              isActive ? 'text-white' : 'text-gray-400 group-hover:text-store-500'
+                            }`}
+                            aria-hidden="true"
+                          />
+                          {item.title}
+                        </Link>
+                      );
+                    })}
+
                     <button
                       onClick={handleLogOut}
-                      className={`inline-flex items-center justify-between text-sm font-medium w-full hover:text-store-600`}
+                      className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl text-red-500 hover:bg-red-50 transition-all duration-200 mt-4 border-t border-gray-50 pt-6"
                     >
-                      {showingTranslateValue(
-                        storeCustomizationSetting?.navbar?.logout
-                      )}
+                      <IoLockOpenOutline className="flex-shrink-0 h-5 w-5 mr-3" />
+                      {showingTranslateValue(storeCustomizationSetting?.navbar?.logout) || "Logout"}
                     </button>
-                  </span>
+                  </div>
                 </div>
               </div>
-              <div className="w-full bg-white mt-4 lg:mt-0 p-4 sm:p-5 lg:p-8 rounded-md overflow-hidden">
+              <div className="w-full mt-4 lg:mt-0 lg:ml-4 overflow-hidden">
                 {!children && (
                   <div className="overflow-hidden">
-                    <h2 className="text-xl font-serif font-semibold mb-5">
-                      {showingTranslateValue(
-                        storeCustomizationSetting?.dashboard?.dashboard_title
-                      )}
-                    </h2>
-                    <div className="grid gap-4 mb-8 grid-cols-2 xl:grid-cols-4">
+                    <div className="mb-8">
+                      <h2 className="text-2xl font-serif font-bold text-gray-800">
+                        Welcome back, {userInfo?.name}!
+                      </h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Here's what's happening with your account today.
+                      </p>
+                    </div>
+                    <div className="grid gap-6 mb-10 grid-cols-2 xl:grid-cols-4">
                       <Card
                         title={showingTranslateValue(
                           storeCustomizationSetting?.dashboard?.total_order
@@ -224,6 +246,7 @@ const Dashboard = ({ title, description, children }) => {
                   </div>
                 )}
                 {children}
+                </div>
               </div>
             </div>
           </div>

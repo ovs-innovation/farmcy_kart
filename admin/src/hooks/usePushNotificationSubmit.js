@@ -27,6 +27,7 @@ const usePushNotificationSubmit = (id) => {
         zone: data.zone,
         target: data.target,
         status: status,
+        clickAction: data.clickAction,
       };
 
       if (id) {
@@ -56,6 +57,7 @@ const usePushNotificationSubmit = (id) => {
             setValue("description", res.description);
             setValue("zone", res.zone);
             setValue("target", res.target);
+            setValue("clickAction", res.clickAction);
             setImageUrl(res.image);
             setStatus(res.status);
           }

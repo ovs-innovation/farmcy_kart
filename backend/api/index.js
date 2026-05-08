@@ -29,6 +29,7 @@ const prescriptionRoutes = require("../routes/prescriptionRoutes");
 const testimonialRoutes = require("../routes/testimonialRoutes");
 const locationRoutes = require("../routes/locationRoutes");
 const refundRoutes = require("../routes/refundRoutes");
+const pushNotificationRoutes = require("../routes/pushNotificationRoutes");
 
 const { isAuth, isAdmin } = require("../config/auth");
 // const {
@@ -106,6 +107,7 @@ app.use("/api/prescriptions", prescriptionRoutes);
 app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/refund", refundRoutes);
+app.use("/api/push-notification", pushNotificationRoutes);
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);

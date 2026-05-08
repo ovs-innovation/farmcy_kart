@@ -28,6 +28,7 @@
     "draft-js-import-html": "^1.4.1",
     "draftjs-to-html": "^0.9.1",
     "export-from-json": "^1.7.2",
+    "firebase": "^12.12.1",
     "i18next": "^22.5.1",
     "i18next-browser-languagedetector": "^7.0.2",
     "immutability-helper": "^3.1.1",

@@ -14,142 +14,158 @@ const PrivacyPolicy = () => {
 
   return (
     <Layout title="Privacy Policy" description="This is privacy policy page">
-      <SimpleHeader
-        title={
-          showingTranslateValue(storeCustomizationSetting?.privacy_policy?.title) ||
-          "Privacy Policy"
-        }
-      />
-      
-      <div className="bg-gray-50 min-h-screen py-8 px-4 sm:px-0">
-        <div className=" ">
-          
-          {/* Main Policy Box */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden text-justify">
-            
-            {/* Content Section with Box Style */}
-            <div className="p-6 lg:p-8">
-              
-              {/* CMS Content in Box */}
-              <div className="privacy-policy-content">
-                <div className="text-gray-600 leading-relaxed">
-                  <CMSkeleton
-                    html
-                    count={15}
-                    height={15}
-                    error={error}
-                    loading={loading}
-                    data={storeCustomizationSetting?.privacy_policy?.description}
-                  />
-                </div>
+      {/* Header Section */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-10 py-12 lg:py-16">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-2 text-store-600 font-semibold text-sm uppercase tracking-wider mb-3">
+                {/* <FiShield className="w-4 h-4" /> */}
+                {/* <span>Legal Information</span> */}
               </div>
-
-              {/* Loading States */}
-              {loading && (
-                <div className="mt-6 space-y-4">
-                  <CMSkeleton count={15} height={15} loading={loading} />
-                  <CMSkeleton count={15} height={15} loading={loading} />
-                </div>
-              )}
+              <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight">
+                {showingTranslateValue(storeCustomizationSetting?.privacy_policy?.title) || "Privacy Policy"}
+              </h1>
+              <p className="mt-4 text-gray-500 text-lg max-w-2xl">
+                We value your privacy and are committed to protecting your personal data. This policy explains how we handle your information.
+              </p>
+            </div>
+            <div className="hidden lg:block">
+              <div className="w-20 h-20 bg-store-50 rounded-2xl flex items-center justify-center">
+                <FiLock className="w-10 h-10 text-store-600" />
+              </div>
             </div>
           </div>
-
-          {/* Info Cards Grid - 2x2 Layout */}
-          {!loading && !error && (
-            <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-5">
-              
-              {/* Card 1 - Data Protection */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiLock className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-800 mb-2">Data Protection</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      Your personal information is encrypted and securely stored using industry-standard security measures.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 2 - Transparency */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiEye className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-800 mb-2">Transparency</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      We clearly explain how we collect, use, and protect your personal information.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 3 - Secure Storage */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiDatabase className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-800 mb-2">Secure Storage</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      All data is stored in secure, encrypted databases with restricted access controls.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Card 4 - Global Standards */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow">
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <FiGlobe className="w-5 h-5 text-orange-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-base font-semibold text-gray-800 mb-2">Global Standards</h3>
-                    <p className="text-sm text-gray-600 leading-relaxed">
-                      We comply with international privacy regulations and data protection laws.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* Contact Section - Box Style */}
-          {!loading && !error && (
-            <div className="mt-8">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100 p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center flex-shrink-0">
-                    <FiHeadphones className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">Have Questions About Privacy?</h3>
-                    <p className="text-sm text-gray-600 mb-4">
-                      If you have any questions or concerns about our privacy policy, please contact our privacy team.
-                    </p>
-                    <div className="flex flex-wrap items-center gap-4">
-                      <div className="flex items-center gap-2 text-sm text-blue-700 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <FiShield className="w-4 h-4" />
-                        <span className="font-medium">Your Privacy is Our Priority</span>
+        </div>
+      </div>
+      
+      <div className="bg-gray-50 min-h-screen py-12 lg:py-16">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-10">
+          <div className="flex flex-col lg:flex-row gap-10">
+            
+            {/* Sidebar - Quick Navigation */}
+            <div className="lg:w-1/3 order-2 lg:order-1">
+              <div className="sticky top-24 space-y-6">
+                {/* Info Card */}
+                <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                  <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <FiAlertCircle className="w-5 h-5 text-store-500" />
+                    Quick Summary
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex gap-3">
+                      <div className="mt-1 bg-green-100 p-1 rounded-full flex-shrink-0">
+                        <FiCheckCircle className="w-3 h-3 text-green-600" />
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-blue-700 bg-white px-4 py-2 rounded-lg shadow-sm">
-                        <FiCheckCircle className="w-4 h-4" />
-                        <span className="font-medium">100% Secure</span>
+                      <p className="text-sm text-gray-600">Your data is never sold to third parties.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="mt-1 bg-green-100 p-1 rounded-full flex-shrink-0">
+                        <FiCheckCircle className="w-3 h-3 text-green-600" />
                       </div>
+                      <p className="text-sm text-gray-600">Secure encryption for all personal details.</p>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="mt-1 bg-green-100 p-1 rounded-full flex-shrink-0">
+                        <FiCheckCircle className="w-3 h-3 text-green-600" />
+                      </div>
+                      <p className="text-sm text-gray-600">You have full control over your data.</p>
                     </div>
                   </div>
                 </div>
+
+                {/* Contact Support Card */}
+                <div className="bg-store-600 rounded-2xl p-6 text-white shadow-lg shadow-store-200">
+                  <h3 className="text-lg font-bold mb-2 flex items-center gap-2">
+                    <FiHeadphones className="w-5 h-5" />
+                    Need Help?
+                  </h3>
+                  <p className="text-store-100 text-sm mb-4">
+                    If you have any questions about our privacy practices, our team is here to help.
+                  </p>
+                  <button className="w-full py-3 bg-white text-store-600 rounded-xl font-bold text-sm hover:bg-store-50 transition-colors shadow-sm">
+                    Contact Privacy Team
+                  </button>
+                </div>
               </div>
             </div>
-          )}
 
+            {/* Main Content Area */}
+            <div className="lg:w-2/3 order-1 lg:order-2">
+              <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-8 md:p-12">
+                  <div className="privacy-policy-content prose prose-slate max-w-none">
+                    <style dangerouslySetInnerHTML={{
+                      __html: `
+                        .privacy-policy-content h2 { 
+                          font-size: 1.5rem; 
+                          font-weight: 700; 
+                          color: #111827; 
+                          margin-top: 2rem; 
+                          margin-bottom: 1rem;
+                          border-bottom: 1px solid #f3f4f6;
+                          padding-bottom: 0.5rem;
+                        }
+                        .privacy-policy-content p { 
+                          color: #4b5563; 
+                          line-height: 1.75; 
+                          margin-bottom: 1.25rem;
+                        }
+                        .privacy-policy-content ul { 
+                          list-style-type: disc; 
+                          padding-left: 1.5rem; 
+                          margin-bottom: 1.25rem;
+                          color: #4b5563;
+                        }
+                        .privacy-policy-content li { 
+                          margin-bottom: 0.5rem; 
+                        }
+                        .privacy-policy-content strong {
+                          color: #111827;
+                          font-weight: 600;
+                        }
+                      `
+                    }} />
+                    <div className="text-gray-600 leading-relaxed">
+                      <CMSkeleton
+                        html
+                        count={20}
+                        height={18}
+                        error={error}
+                        loading={loading}
+                        data={storeCustomizationSetting?.privacy_policy?.description}
+                      />
+                    </div>
+                  </div>
+
+                  {loading && (
+                    <div className="space-y-6">
+                      <CMSkeleton count={10} height={20} loading={loading} />
+                      <CMSkeleton count={10} height={20} loading={loading} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Trust Badges */}
+              {!loading && !error && (
+                <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {[
+                    { icon: FiLock, label: "Secure SSL", color: "blue" },
+                    { icon: FiShield, label: "Data Safety", color: "green" },
+                    { icon: FiEye, label: "Transparency", color: "purple" },
+                    { icon: FiGlobe, label: "GDPR Ready", color: "orange" }
+                  ].map((item, idx) => (
+                    <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 flex flex-col items-center text-center gap-2 shadow-sm hover:shadow-md transition-shadow">
+                      <item.icon className={`w-6 h-6 text-${item.color}-500`} />
+                      <span className="text-xs font-bold text-gray-700">{item.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
         </div>
       </div>
     </Layout>

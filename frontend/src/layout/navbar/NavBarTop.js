@@ -100,8 +100,8 @@ const NavBarTop = () => {
   };
 
   useEffect(() => {
-    if (userInfo) {
-      const decoded = jwtDecode(userInfo?.token);
+    if (userInfo && typeof userInfo.token === "string") {
+      const decoded = jwtDecode(userInfo.token);
 
       const expireTime = new Date(decoded?.exp * 1000);
       const currentTime = new Date();

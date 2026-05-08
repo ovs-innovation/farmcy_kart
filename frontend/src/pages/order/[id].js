@@ -15,6 +15,7 @@ import Loading from "@components/preloader/Loading";
 import OrderServices from "@services/OrderServices";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import InvoiceForDownload from "@components/invoice/InvoiceForDownload";
+import OrderTracking from "@components/order/OrderTracking";
 import { setToken } from "@services/httpServices";
 import { UserContext } from "@context/UserContext";
 
@@ -98,6 +99,8 @@ const Order = ({ params }) => {
                 }
               </PDFDownloadLink>
             </div>
+
+            <OrderTracking order={data} />
 
             <Invoice
               data={data}

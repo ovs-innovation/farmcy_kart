@@ -2,18 +2,23 @@ import Link from "next/link";
 import React, { useRef } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation } from "swiper/modules";
+import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import useGetSetting from "@hooks/useGetSetting";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import "swiper/css";
 import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 const SliderCarousel = () => {
   const { storeCustomizationSetting } = useGetSetting();
   const { showingImage } = useUtilsFunction();
   const prevRef = useRef(null);
   const nextRef = useRef(null);
+
+  const { left_right_arrow, bottom_dots, both_slider } = storeCustomizationSetting?.slider || {};
+  const showArrows = left_right_arrow || both_slider;
+  const showDots = bottom_dots || both_slider;
 
   // Get all slider images and links from CMS
   const sliderData = [
@@ -53,14 +58,21 @@ const SliderCarousel = () => {
         <div className="relative">
           <Swiper
             onInit={(swiper) => {
-              swiper.params.navigation.prevEl = prevRef.current;
-              swiper.params.navigation.nextEl = nextRef.current;
-              swiper.navigation.init();
-              swiper.navigation.update();
+              if (showArrows) {
+                swiper.params.navigation.prevEl = prevRef.current;
+                swiper.params.navigation.nextEl = nextRef.current;
+                swiper.navigation.init();
+                swiper.navigation.update();
+              }
             }}
-            modules={[Autoplay, Navigation]}
+            modules={[Autoplay, Navigation, Pagination]}
             spaceBetween={30}
             slidesPerView={1}
+            pagination={showDots ? { clickable: true } : false}
+            navigation={showArrows ? {
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            } : false}
             breakpoints={{
               640: {
                 slidesPerView: 2,
@@ -76,7 +88,7 @@ const SliderCarousel = () => {
               disableOnInteraction: false,
               pauseOnMouseEnter: false,
             }}
-            loop={sliderData.length >= 4}
+            loop={sliderData.length > 1}
             className="slider-carousel-swiper"
           >
             {sliderData.map((item, index) => (
@@ -109,18 +121,22 @@ const SliderCarousel = () => {
           </Swiper>
 
           {/* Navigation Buttons */}
-          <button
-            ref={prevRef}
-            className="prev-slider absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-x-4"
-          >
-            <IoChevronBack className="text-xl text-gray-600" />
-          </button>
-          <button
-            ref={nextRef}
-            className="next-slider absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform translate-x-4"
-          >
-            <IoChevronForward className="text-xl text-gray-600" />
-          </button>
+          {showArrows && (
+            <>
+              <button
+                ref={prevRef}
+                className="prev-slider absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform -translate-x-4"
+              >
+                <IoChevronBack className="text-xl text-gray-600" />
+              </button>
+              <button
+                ref={nextRef}
+                className="next-slider absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg border border-gray-100 rounded-full p-2 hover:bg-store-50 transition-colors transform translate-x-4"
+              >
+                <IoChevronForward className="text-xl text-gray-600" />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

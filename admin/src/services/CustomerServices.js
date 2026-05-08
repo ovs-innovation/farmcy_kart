@@ -80,6 +80,10 @@ const CustomerServices = {
   deleteShippingAddress: async (customerId, addressId) => {
     return requests.delete(`/customer/shipping/address/${customerId}/${addressId}`);
   },
+
+  updateFcmToken: async (id, fcmToken) => {
+    return requests.put(`/customer/update-fcm-token/${id}`, { fcmToken });
+  },
 };
 
 export default CustomerServices;

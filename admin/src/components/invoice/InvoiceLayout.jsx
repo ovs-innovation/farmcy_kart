@@ -1,13 +1,11 @@
 import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
-import QRCodeLib from "qrcode";
+import React from "react";
 
 // internal import
 import InvoiceOrderTable from "@/components/invoice/InvoiceOrderTable";
 
 // Modern invoice layout copied from frontend Invoice.js, adapted for admin
 const InvoiceLayout = ({ data, printRef, globalSetting, currency, getNumberTwo }) => {
-  const [qrDataUrl, setQrDataUrl] = useState("");
 
   // Check if this is a wholesaler order
   const isWholesaler = 
@@ -68,35 +66,6 @@ const InvoiceLayout = ({ data, printRef, globalSetting, currency, getNumberTwo }
     return `FK/${year}/${invStr}`;
   };
 
-  useEffect(() => {
-    if (!data) return;
-
-    const orderId = data?._id || data?.id || data?.orderId;
-    if (!orderId) return;
-
-    const apiBase = process.env.REACT_APP_API_BASE_URL || "";
-    const backendOrigin =
-      apiBase.replace(/\/api\/?$/i, "") ||
-      (typeof window !== "undefined" ? window.location.origin : "");
-
-    const qrLink = `${backendOrigin.replace(/\/+$/, "")}/o/${orderId}`;
-
-    QRCodeLib.toDataURL(
-      qrLink,
-      {
-        width: 180,
-        margin: 1,
-      },
-      (err, url) => {
-        if (err) {
-          // eslint-disable-next-line no-console
-          console.error("QR code generation error:", err);
-          return;
-        }
-        setQrDataUrl(url);
-      }
-    );
-  }, [data, data?._id, data?.id, data?.orderId]);
 
   return (
     <div ref={printRef} className="">
@@ -220,20 +189,6 @@ const InvoiceLayout = ({ data, printRef, globalSetting, currency, getNumberTwo }
                 </div>
               </div>
 
-              {/* QR Code - right side */}
-              <div className="border-l-2 border-[#006E44] pl-6">
-                {qrDataUrl && (
-                  <div className="flex-shrink-0 self-center">
-                    <div className="bg-white border border-gray-200 rounded-xl p-2">
-                      <img
-                        src={qrDataUrl}
-                        alt="Invoice QR"
-                        className="w-20 h-20 md:w-28 md:h-28 object-contain"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </div>

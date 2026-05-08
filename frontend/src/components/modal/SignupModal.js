@@ -189,20 +189,31 @@ export const SignupContent = ({ onSuccess }) => {
             setSubmitting(false);  } 
         };
 
-    const handleCustomerSubmit = async ({ name, email, password }) => {
+    const handleCustomerSubmit = async ({ name, email, phone, password }) => {
         setCustomerLoading(true);
         try {
-            const res = await CustomerServices.registerUser({ name, email, password });
+            const res = await CustomerServices.registerUser({ name, email, phone, password });
             if (res) {
-                const userInfo = {
-                    _id: res._id, name: res.name, email: res.email,
-                    phone: res.phone || "", address: res.address || "",
-                    image: res.image || "", token: res.token, role: res.role || "customer",};
+                if (res.requiresVerification) {
+                    notifySuccess(res.message);
+                    router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
+                } else {
+                    const userInfo = {
+                        _id: res._id,
+                        name: res.name,
+                        email: res.email,
+                        phone: res.phone || "",
+                        address: res.address || "",
+                        image: res.image || "",
+                        token: res.token,
+                        role: res.role || "customer",
+                    };
                     Cookies.set("userInfo", JSON.stringify(userInfo), { expires: 1 });
                     if (dispatch) dispatch({ type: "USER_LOGIN", payload: userInfo });
-                notifySuccess("Account created successfully!");
-                if (onSuccess) onSuccess();
-                router.push("/");
+                    notifySuccess("Account created successfully!");
+                    if (onSuccess) onSuccess();
+                    router.push("/");
+                }
             }
         } catch (error) {
             notifyError(error?.response?.data?.message || error?.message);
@@ -350,6 +361,24 @@ export const SignupContent = ({ onSuccess }) => {
                             <Error errorName={errors.email} />
                         </div>
 
+                        {/* Phone */}
+                        <div>
+                            <InputArea
+                                register={register}
+                                label="Phone Number"
+                                name="phone"
+                                type="tel"
+                                placeholder="9876543210"
+                                Icon={MdOutlineVerified}
+                                required
+                                pattern={/^[0-9]{10}$/}
+                                patternMessage="Please enter a valid 10-digit number"
+                                maxLength="10"
+                                onInput={(e) => (e.target.value = e.target.value.replace(/\D/g, ""))}
+                            />
+                            <Error errorName={errors.phone} />
+                        </div>
+
                         {/* Password */}
                         <div>
                             <InputArea
@@ -479,7 +508,8 @@ export const SignupContent = ({ onSuccess }) => {
                                     </span>
                                     <input
                                         value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
+                                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
+                                        maxLength="10"
                                         className="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
                                             focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
                                         placeholder="9876543210"

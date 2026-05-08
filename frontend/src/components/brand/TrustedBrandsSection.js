@@ -88,7 +88,7 @@ const TrustedBrandsSection = ({ brands = [] }) => {
         __html: `
           /* Horizontal marquee animation */
           @keyframes marqueeLeft {
-            0% { transform: translateX(50%); }
+            0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
           }
           .marquee-track {
@@ -96,9 +96,7 @@ const TrustedBrandsSection = ({ brands = [] }) => {
             gap: 1.5rem;
             width: max-content;
             will-change: transform;
-            /* Start from right by default (helps when animation begins) */
-            transform: translateX(50%);
-            animation: marqueeLeft 30s linear infinite;
+            animation: marqueeLeft 6s linear infinite;
           }
           /* Pause on hover */
           .marquee-track:hover {
@@ -115,7 +113,7 @@ const TrustedBrandsSection = ({ brands = [] }) => {
           /* Reduce movement speed on small screens */
           @media (max-width: 640px) {
             .marquee-track {
-              animation-duration: 45s;
+              animation-duration: 10s;
             }
           }
         `

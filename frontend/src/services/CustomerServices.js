@@ -131,6 +131,21 @@ const CustomerServices = {
   clearCartDB: async (customerId) => {
     return requests.delete(`/customer/cart/${customerId}/clear`);
   },
+
+  /** Update FCM token for push notifications */
+  updateFcmToken: async (id, fcmToken) => {
+    return requests.put(`/customer/update-fcm-token/${id}`, { fcmToken });
+  },
+
+  /** Verify Email with OTP */
+  verifyEmailOTP: async (body) => {
+    return requests.post("/customer/verify-email-otp", body);
+  },
+
+  /** Resend Verification Email */
+  resendVerificationEmail: async (body) => {
+    return requests.post("/customer/resend-verification", body);
+  },
 };
 
 export default CustomerServices;

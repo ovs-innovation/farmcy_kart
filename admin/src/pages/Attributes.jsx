@@ -110,7 +110,7 @@ const Attributes = () => {
           <h1 className="text-[20px] font-bold text-gray-800 tracking-tight">Add New Attribute</h1>
         </div>
 
-        <DeleteModal id={serviceId} />
+        <DeleteModal id={serviceId} title="Attribute" />
 
         <MainDrawer>
           <AttributeDrawer id={serviceId} />

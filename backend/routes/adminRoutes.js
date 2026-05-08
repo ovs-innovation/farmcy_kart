@@ -11,6 +11,7 @@ const {
   updateStaff,
   deleteStaff,
   updatedStatus,
+  updateFcmToken,
 } = require("../controller/adminController");
 const { passwordVerificationLimit } = require("../lib/email-sender/sender");
 
@@ -43,5 +44,8 @@ router.put("/update-status/:id", updatedStatus);
 
 //delete a staff
 router.delete("/:id", deleteStaff);
+
+// update fcm token
+router.put("/update-fcm-token/:id", updateFcmToken);
 
 module.exports = router;

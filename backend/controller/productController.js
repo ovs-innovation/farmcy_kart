@@ -312,10 +312,13 @@ const sanitizeFaqSection = (faqSection = {}) => {
 const addProduct = async (req, res) => {
   try {
     if (req.body.prices) {
-      const originalPrice = Number(req.body.prices.originalPrice) || 0;
-      const discount = Number(req.body.prices.discount) || 0;
+      const originalPrice = Math.max(0, Number(req.body.prices.originalPrice) || 0);
+      const discount = Math.max(0, Number(req.body.prices.discount) || 0);
       const discountAmount = (originalPrice * discount) / 100;
-      req.body.prices.price = originalPrice - discountAmount;
+      
+      req.body.prices.originalPrice = originalPrice;
+      req.body.prices.discount = discount;
+      req.body.prices.price = Math.max(0, originalPrice - discountAmount);
     }
 
     const taxFields = normalizeTaxPayload(req.body);
@@ -324,8 +327,8 @@ const addProduct = async (req, res) => {
       ...req.body,
       ...taxFields,
       isWholesaler: req.body.isWholesaler === true || req.body.isWholesaler === 'true',
-      wholePrice: Number(req.body.wholePrice ?? req.body.wholesalerPrice) || 0,
-      minQuantity: Number.isFinite(Number(req.body.minQuantity ?? req.body.wholesalerMinQuantity)) ? parseInt(req.body.minQuantity ?? req.body.wholesalerMinQuantity, 10) : 0,
+      wholePrice: Math.max(0, Number(req.body.wholePrice ?? req.body.wholesalerPrice) || 0),
+      minQuantity: Math.max(0, Number.isFinite(Number(req.body.minQuantity ?? req.body.wholesalerMinQuantity)) ? parseInt(req.body.minQuantity ?? req.body.wholesalerMinQuantity, 10) : 0),
       dynamicSections: sanitizeDynamicSections(req.body.dynamicSections),
       mediaSections: sanitizeMediaSections(req.body.mediaSections),
       faqs: sanitizeFaqSection(req.body.faqs),
@@ -506,10 +509,13 @@ const updateProduct = async (req, res) => {
   // console.log('variant',req.body.variants)
   try {
     if (req.body.prices) {
-      const originalPrice = Number(req.body.prices.originalPrice) || 0;
-      const discount = Number(req.body.prices.discount) || 0;
+      const originalPrice = Math.max(0, Number(req.body.prices.originalPrice) || 0);
+      const discount = Math.max(0, Number(req.body.prices.discount) || 0);
       const discountAmount = (originalPrice * discount) / 100;
-      req.body.prices.price = originalPrice - discountAmount;
+
+      req.body.prices.originalPrice = originalPrice;
+      req.body.prices.discount = discount;
+      req.body.prices.price = Math.max(0, originalPrice - discountAmount);
     }
 
     const product = await Product.findById(req.params.id);
@@ -559,7 +565,7 @@ const updateProduct = async (req, res) => {
         product.isWholesaler = req.body.isWholesaler === true || req.body.isWholesaler === 'true';
       }
       if (Object.prototype.hasOwnProperty.call(req.body, "wholePrice") || Object.prototype.hasOwnProperty.call(req.body, "wholesalerPrice")) {
-        const val = Number(req.body.wholePrice ?? req.body.wholesalerPrice);
+        const val = Math.max(0, Number(req.body.wholePrice ?? req.body.wholesalerPrice));
         product.wholePrice = Number.isFinite(val) ? val : 0;
       }
       if (Object.prototype.hasOwnProperty.call(req.body, "minQuantity") || Object.prototype.hasOwnProperty.call(req.body, "wholesalerMinQuantity")) {

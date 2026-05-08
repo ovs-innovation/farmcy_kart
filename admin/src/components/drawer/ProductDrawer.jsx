@@ -1122,6 +1122,9 @@ const ProductDrawer = ({ id }) => {
                 </label>
                 <Input
                   type="number"
+                  min="0"
+                  step="0.01"
+                  onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                   value={variantEditForm.originalPrice}
                   onChange={(e) =>
                     handleVariantFormChange("originalPrice", e.target.value)
@@ -1150,6 +1153,9 @@ const ProductDrawer = ({ id }) => {
                 </label>
                 <Input
                   type="number"
+                  min="0"
+                  step="0.01"
+                  onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                   value={variantEditForm.discount}
                   onChange={(e) =>
                     handleVariantFormChange("discount", e.target.value)
@@ -1172,6 +1178,8 @@ const ProductDrawer = ({ id }) => {
                 <label className="text-sm font-medium mb-1 block">Quantity</label>
                 <Input
                   type="number"
+                  min="0"
+                  onKeyDown={(e) => (e.key === '-' || e.key === 'e' || e.key === '.') && e.preventDefault()}
                   value={variantEditForm.quantity}
                   onChange={(e) =>
                     handleVariantFormChange("quantity", e.target.value)
@@ -1742,6 +1750,7 @@ const ProductDrawer = ({ id }) => {
                 type="number"
                 min="0"
                 step="0.01"
+                onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()}
                 value={quickTaxRate}
                 onChange={(e) => setQuickTaxRate(e.target.value)}
                 placeholder="18"

@@ -46,6 +46,11 @@ const AdminServices = {
   deleteStaff: async (id) => {
     return requests.delete(`/admin/${id}`);
   },
+
+  /** Update FCM token for push notifications */
+  updateFcmToken: async (id, fcmToken) => {
+    return requests.put(`/admin/update-fcm-token/${id}`, { fcmToken });
+  },
 };
 
 export default AdminServices;

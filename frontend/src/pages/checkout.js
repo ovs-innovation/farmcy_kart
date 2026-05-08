@@ -120,6 +120,7 @@ const Checkout = () => {
     taxSummary,
     setValue,
     isCouponApplied,
+    handleRemoveCoupon,
   } = useCheckoutSubmit(storeSetting);
 
   const selectedPaymentMethod = watch("paymentMethod");
@@ -183,6 +184,35 @@ const Checkout = () => {
       [name]: type === 'checkbox' ? checked : value
     });
   };
+
+  // Auto fetch location by pincode
+  React.useEffect(() => {
+    const fetchLocation = async () => {
+      if (addressForm.zipCode && addressForm.zipCode.length === 6 && /^\d+$/.test(addressForm.zipCode)) {
+        try {
+          const response = await fetch(`https://api.postalpincode.in/pincode/${addressForm.zipCode}`);
+          const data = await response.json();
+          if (data && data[0] && data[0].Status === "Success" && data[0].PostOffice && data[0].PostOffice.length > 0) {
+            const postOffice = data[0].PostOffice[0];
+            setAddressForm(prev => ({
+              ...prev,
+              city: postOffice.District || postOffice.Block || postOffice.Name,
+              country: postOffice.State
+            }));
+            notifySuccess(`Location fetched: ${postOffice.District || postOffice.Block || postOffice.Name}, ${postOffice.State}`);
+          }
+        } catch (error) {
+          console.error("Error fetching location details:", error);
+        }
+      }
+    };
+    
+    const timeoutId = setTimeout(() => {
+      fetchLocation();
+    }, 500);
+    
+    return () => clearTimeout(timeoutId);
+  }, [addressForm.zipCode]);
 
   // Open modal for adding new address
   const handleAddAddress = () => {
@@ -565,15 +595,59 @@ const Checkout = () => {
                   <div className="flex items-center mt-4 py-4 lg:py-4 text-sm w-full font-semibold text-gray-500 last:border-b-0 last:text-base last:pb-0">
                     <form className="w-full">
                       {couponInfo.couponCode ? (
-                        <span className={`bg-store-50 px-4 py-3 leading-tight w-full rounded-md flex justify-between`}>
-                          {" "}
-                          <p className={`text-store-600`}>Coupon Applied </p>{" "}
-                          <span className="text-red-500 text-right">
-                            {couponInfo.couponCode}
-                          </span>
-                        </span>
+                        <div className="relative bg-emerald-50 border-2 border-dashed border-emerald-400 rounded-lg p-5 w-full overflow-hidden shadow-sm">
+                          {/* Cutouts for coupon effect */}
+                          <div className="absolute top-1/2 -left-3 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full border-r-2 border-dashed border-emerald-400 z-10"></div>
+                          <div className="absolute top-1/2 -right-3 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full border-l-2 border-dashed border-emerald-400 z-10"></div>
+                          
+                          <div className="flex justify-between items-start mb-2">
+                            <div className="flex flex-col gap-1">
+                              <span className="text-xs uppercase font-bold tracking-widest text-emerald-600 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z" /></svg>
+                                Coupon Applied
+                              </span>
+                              <span className="text-xl sm:text-2xl font-black text-emerald-800 tracking-widest uppercase font-serif">
+                                {couponInfo.couponCode}
+                              </span>
+                            </div>
+                            <div className="bg-emerald-500 text-white p-1.5 rounded-full shadow-sm mt-1">
+                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                              </svg>
+                            </div>
+                          </div>
+                          
+                          <div className="border-t-2 border-dashed border-emerald-200 my-4 relative"></div>
+                          
+                          <div className="flex justify-between items-center">
+                            <div className="text-sm text-emerald-800 font-medium">
+                              You save <span className="font-bold text-lg text-emerald-600">{currency}{discountAmount.toFixed(2)}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={handleRemoveCoupon}
+                                className="text-xs font-bold text-red-500 hover:text-red-700 transition-colors uppercase tracking-wider"
+                              >
+                                Remove
+                              </button>
+                              <span className="text-emerald-300">|</span>
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveCoupon()}
+                                className="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors uppercase tracking-wider"
+                              >
+                                Change
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       ) : (
                         <div className="space-y-3">
+                          <p className="text-xs text-gray-500 italic mb-2">
+                            * Applying a new coupon will replace the existing coupon.
+                          </p>
                           {availableCoupons && availableCoupons.length > 0 ? (
                             <>
                               <select
@@ -844,13 +918,13 @@ const Checkout = () => {
                       onChange={(e) => setAgreeToTerms(e.target.checked)}
                       className="mt-1 h-4 w-4 text-store-600 focus:ring-store-500 border-gray-300 rounded cursor-pointer"
                     />
-                    <label htmlFor="agreeToTerms" className="text-sm text-gray-700 cursor-pointer">
+                    <label htmlFor="agreeToTerms" className="text-sm text-gray-900 font-semibold cursor-pointer">
                       By placing the order, you agree to our{" "}
-                      <Link href="/terms" className="text-store-600 hover:underline font-medium">
+                      <Link href="/terms" className="text-store-700 hover:text-store-800 hover:underline font-bold">
                         Terms & Conditions
                       </Link>
                       {" "}and{" "}
-                      <Link href="/privacy" className="text-store-600 hover:underline font-medium">
+                      <Link href="/privacy" className="text-store-700 hover:text-store-800 hover:underline font-bold">
                         Privacy Policy
                       </Link>
                     </label>

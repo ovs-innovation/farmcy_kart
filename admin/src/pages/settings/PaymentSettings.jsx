@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import {
   FiCheck,
@@ -11,9 +11,16 @@ import {
 import PageTitle from "@/components/Typography/PageTitle";
 import AnimatedContent from "@/components/common/AnimatedContent";
 import SwitchToggle from "@/components/form/switch/SwitchToggle";
+import SettingServices from "@/services/SettingServices";
+import { notifySuccess, notifyError } from "@/utils/toast";
+import { SidebarContext } from "@/context/SidebarContext";
+import spinnerLoadingImage from "@/assets/img/spinner.gif";
 
 const PaymentSettings = () => {
   const { t } = useTranslation();
+  const { setIsUpdate } = useContext(SidebarContext);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   
   // Local state for UI interaction
   const [paymentOptions, setPaymentOptions] = useState({
@@ -25,8 +32,56 @@ const PaymentSettings = () => {
     remainingDigital: true,
   });
 
+  useEffect(() => {
+    const fetchPaymentSettings = async () => {
+      try {
+        const res = await SettingServices.getStoreSetting();
+        if (res) {
+          setPaymentOptions({
+            cashOnDelivery: res.cod_status ?? true,
+            digitalPayment: res.razorpay_status ?? true,
+            offlinePayment: res.offline_payment_status ?? true,
+            combinedPayment: res.combined_payment_status ?? true,
+            remainingCOD: res.remaining_cod_status ?? true,
+            remainingDigital: res.remaining_digital_status ?? true,
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching payment settings", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPaymentSettings();
+  }, []);
+
   const toggleOption = (key) => {
     setPaymentOptions(prev => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const handleSave = async () => {
+    try {
+      setIsSubmitting(true);
+      const payload = {
+        name: "storeSetting",
+        setting: {
+          cod_status: paymentOptions.cashOnDelivery,
+          razorpay_status: paymentOptions.digitalPayment,
+          offline_payment_status: paymentOptions.offlinePayment,
+          combined_payment_status: paymentOptions.combinedPayment,
+          remaining_cod_status: paymentOptions.remainingCOD,
+          remaining_digital_status: paymentOptions.remainingDigital,
+        },
+      };
+
+      const res = await SettingServices.updateStoreSetting(payload);
+      setIsUpdate(true);
+      notifySuccess(res.message || "Payment settings updated successfully!");
+    } catch (err) {
+      notifyError(err?.response?.data?.message || err.message || "Something went wrong");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -130,12 +185,18 @@ const PaymentSettings = () => {
                </button>
 
                <button
-                 type="button"
-                 className="h-14 px-12 rounded-xl bg-[#0e7e87] text-[17px] font-bold text-white shadow-[0_8px_20px_-8px_#0e7e87] transition-all hover:shadow-[0_12px_24px_-10px_#0e7e87] hover:bg-[#0c6c74] flex items-center justify-center gap-2"
-               >
-                 <FiSave className="h-5 w-5" />
-                 <span>Save Information</span>
-               </button>
+                  type="button"
+                  onClick={handleSave}
+                  disabled={isSubmitting}
+                  className="h-14 px-12 rounded-xl bg-[#0e7e87] text-[17px] font-bold text-white shadow-[0_8px_20px_-8px_#0e7e87] transition-all hover:shadow-[0_12px_24px_-10px_#0e7e87] hover:bg-[#0c6c74] flex items-center justify-center gap-2 disabled:opacity-70"
+                >
+                  {isSubmitting ? (
+                    <img src={spinnerLoadingImage} alt="Saving" width={22} height={22} />
+                  ) : (
+                    <FiSave className="h-5 w-5" />
+                  )}
+                  <span>{isSubmitting ? "Saving..." : "Save Information"}</span>
+                </button>
              </div>
           </section>
 
