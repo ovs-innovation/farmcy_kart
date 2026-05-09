@@ -43,7 +43,7 @@ const createTestimonial = async (req, res) => {
 const getPublicTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.find({ status: "published" })
-      .sort({ sortOrder: 1, createdAt: -1 })
+      .sort({ createdAt: -1 })
       .lean();
     res.send(testimonials);
   } catch (err) {
@@ -54,7 +54,7 @@ const getPublicTestimonials = async (req, res) => {
 const getAllTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.find({})
-      .sort({ sortOrder: 1, createdAt: -1 })
+      .sort({ createdAt: -1 })
       .lean();
     res.send(testimonials);
   } catch (err) {

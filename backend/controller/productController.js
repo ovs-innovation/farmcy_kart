@@ -384,7 +384,7 @@ const addAllProducts = async (req, res) => {
 
 const getShowingProducts = async (req, res) => {
   try {
-    const products = await Product.find({ status: "show" }).sort({ _id: -1 });
+    const products = await Product.find({ status: "show" }).sort({ createdAt: -1 });
     res.send(products);
     // console.log("products", products);
   } catch (err) {
@@ -425,7 +425,7 @@ const getAllProducts = async (req, res) => {
   } else if (price === "date-updated-desc") {
     sortObject.updatedAt = -1;
   } else {
-    sortObject = { _id: -1 };
+    sortObject = { createdAt: -1 };
   }
 
   if (status === "published") {
@@ -812,7 +812,7 @@ const getShowingStoreProducts = async (req, res) => {
       products = await Product.find(queryObject)
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
-        .sort({ _id: -1 })
+        .sort({ createdAt: -1 })
         .limit(500);
       relatedProducts = await Product.find({
         category: products[0]?.category,
@@ -823,21 +823,21 @@ const getShowingStoreProducts = async (req, res) => {
       products = await Product.find(queryObject)
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
-        .sort({ _id: -1 })
+        .sort({ createdAt: -1 })
         .limit(500);
     } else {
       // Fetch all products for the default view (e.g., /search page without filters)
       products = await Product.find({ status: "show" })
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
-        .sort({ _id: -1 })
+        .sort({ createdAt: -1 })
         .limit(500);
 
       // Newest Products (Mapped to Popular Products in frontend currently)
       popularProducts = await Product.find({ status: "show" })
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
-        .sort({ _id: -1 })
+        .sort({ createdAt: -1 })
         .limit(20);
 
       // Best Selling Products
@@ -879,7 +879,7 @@ const getShowingStoreProducts = async (req, res) => {
       })
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
-        .sort({ _id: -1 })
+        .sort({ createdAt: -1 })
         .limit(20);
     }
 

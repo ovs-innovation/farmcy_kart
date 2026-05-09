@@ -651,26 +651,7 @@ const AddProduct = () => {
               </div>
             )}
 
-            <div className="flex justify-end space-x-4 mt-8">
-              <button 
-                type="button" 
-                onClick={() => {
-                  setAttributes([]);
-                  setVariants([]);
-                  setValues({});
-                }} 
-                className="px-8 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 font-medium"
-              >
-                Reset
-              </button>
-              <button 
-                type="submit" 
-                disabled={isSubmitting} 
-                className="px-8 py-2 bg-[#00706b] text-white rounded-md hover:bg-[#005a56] font-medium"
-              >
-                Submit
-              </button>
-            </div>
+
           </div>
 
           <div className="flex justify-end mt-8">

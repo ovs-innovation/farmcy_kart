@@ -79,7 +79,7 @@ const addPushNotification = async (req, res) => {
 // Get all notifications
 const getAllPushNotifications = async (req, res) => {
   try {
-    const notifications = await PushNotification.find({}).sort({ _id: -1 });
+    const notifications = await PushNotification.find({}).sort({ createdAt: -1 });
     res.status(200).send(notifications);
   } catch (err) {
     res.status(500).send({

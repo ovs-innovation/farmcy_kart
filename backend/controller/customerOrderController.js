@@ -60,11 +60,17 @@ const sendOrderNotifications = async (order) => {
       }
     }
 
-    // 2. Send SMS Confirmation
+    // 2. Send SMS/WhatsApp Confirmation
     if (!order.confirmationSmsSent && order.user_info.contact) {
       const smsMessage = `Hi ${order.user_info.name}, your order #${order.invoice} of ${currency}${order.total} has been placed successfully at ${shopName}. Track here: ${process.env.STORE_URL}/user/dashboard`;
       
-      const smsSent = await sendSMS(order.user_info.contact, smsMessage);
+      const variables = {
+        name: order.user_info.name,
+        orderid: order.invoice,
+        amount: order.total,
+      };
+
+      const smsSent = await sendSMS(order.user_info.contact, smsMessage, variables);
       if (smsSent) {
         order.confirmationSmsSent = true;
       }
@@ -461,7 +467,7 @@ const getOrderCustomer = async (req, res) => {
 
     // query for orders
     const orders = await Order.find({ user: req.user._id })
-      .sort({ _id: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limits);
 

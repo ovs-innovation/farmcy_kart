@@ -44,7 +44,7 @@ const getShowingCurrency = async (req, res) => {
   try {
    
       const currencies = await Currencie.find({ status: 'show' }).sort({
-        _id: -1,
+        createdAt: -1,
       });
       res.send(currencies);
     }  catch (err) {

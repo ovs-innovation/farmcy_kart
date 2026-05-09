@@ -48,7 +48,7 @@ const createFaq = async (req, res) => {
 const getPublicFaqs = async (req, res) => {
   try {
     const faqs = await Faq.find({ status: "published" })
-      .sort({ sortOrder: 1, createdAt: -1 })
+      .sort({ createdAt: -1 })
       .lean();
     res.send(faqs);
   } catch (err) {
@@ -59,7 +59,7 @@ const getPublicFaqs = async (req, res) => {
 const getAllFaqs = async (req, res) => {
   try {
     const faqs = await Faq.find({})
-      .sort({ sortOrder: 1, createdAt: -1 })
+      .sort({ createdAt: -1 })
       .lean();
     res.send(faqs);
   } catch (err) {

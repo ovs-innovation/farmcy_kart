@@ -33,7 +33,7 @@ const addAllCategory = async (req, res) => {
 const getShowingCategory = async (req, res) => {
   try {
     const categories = await Category.find({ status: "show" }).sort({
-      _id: -1,
+      createdAt: -1,
     });
     const categoryList = readyToParentAndChildrenCategory(categories);
     res.send(categoryList);
@@ -47,7 +47,7 @@ const getShowingCategory = async (req, res) => {
 // get all category parent and child
 const getAllCategory = async (req, res) => {
   try {
-    const categories = await Category.find({}).sort({ _id: -1 });
+    const categories = await Category.find({}).sort({ createdAt: -1 });
     const categoryList = readyToParentAndChildrenCategory(categories);
     res.send(categoryList);
   } catch (err) {
@@ -59,7 +59,7 @@ const getAllCategory = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find({}).sort({ _id: -1 });
+    const categories = await Category.find({}).sort({ createdAt: -1 });
     res.send(categories);
   } catch (err) {
     res.status(500).send({

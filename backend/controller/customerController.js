@@ -306,34 +306,6 @@ const registerCustomerDirect = async (req, res) => {
       message: "Registration successful! Please check your email for the verification OTP.",
       requiresVerification: true,
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     res.send({
       token,
       _id: newUser._id,
@@ -1116,7 +1088,7 @@ const getAllCustomers = async (req, res) => {
       ];
     }
 
-    const users = await Customer.find(query).sort({ _id: -1 });
+    const users = await Customer.find(query).sort({ createdAt: -1 });
     res.send(users);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -1141,7 +1113,7 @@ const getAllWholesalers = async (req, res) => {
       ];
     }
 
-    const wholesalers = await Customer.find(query).sort({ _id: -1 });
+    const wholesalers = await Customer.find(query).sort({ createdAt: -1 });
     res.send(wholesalers);
   } catch (err) {
     res.status(500).send({ message: err.message });

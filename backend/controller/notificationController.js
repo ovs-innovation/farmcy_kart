@@ -44,7 +44,7 @@ const getAllNotification = async (req, res) => {
       status: { $in: ["read", "unread"] },
     })
       .sort({
-        _id: -1,
+        createdAt: -1,
       })
       .skip(skip)
       .limit(limits);

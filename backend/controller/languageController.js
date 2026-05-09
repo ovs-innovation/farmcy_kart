@@ -29,7 +29,7 @@ const addAllLanguage = async (req, res) => {
 const getAllLanguages = async (req, res) => {
   // console.log('get all language')
   try {
-    const languages = await Language.find({});
+    const languages = await Language.find({}).sort({ createdAt: -1 });
     // console.log('languages',languages)
     res.send(languages);
   } catch (err) {
@@ -45,7 +45,7 @@ const getShowingLanguage = async (req, res) => {
 
     // console.log('get showing language')
     const languages = await Language.find({ status: "show" }).sort({
-      _id: -1,
+      createdAt: -1,
     });
     res.send(languages);
   } catch (err) {

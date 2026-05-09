@@ -216,7 +216,7 @@ const getAllStaff = async (req, res) => {
       ];
     }
 
-    const admins = await Admin.find(query).sort({ _id: -1 });
+    const admins = await Admin.find(query).sort({ createdAt: -1 });
     res.send(admins);
   } catch (err) {
     res.status(500).send({

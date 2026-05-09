@@ -87,7 +87,7 @@ const addBrand = async (req, res) => {
 
 const getAllBrands = async (req, res) => {
   try {
-    const brands = await Brand.find({}).sort({ sortOrder: 1, createdAt: -1 });
+    const brands = await Brand.find({}).sort({ createdAt: -1 });
     res.send(brands);
   } catch (err) {
     res.status(500).send({ message: err.message });
@@ -97,7 +97,6 @@ const getAllBrands = async (req, res) => {
 const getShowingBrands = async (req, res) => {
   try {
     const brands = await Brand.find({ status: "show" }).sort({
-      sortOrder: 1,
       createdAt: -1,
     });
     res.send(brands);

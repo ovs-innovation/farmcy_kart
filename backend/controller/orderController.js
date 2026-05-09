@@ -149,7 +149,7 @@ const getAllOrders = async (req, res) => {
       .select(
         "_id invoice paymentMethod subTotal total user_info user cart discount shippingCost status createdAt updatedAt shiprocket"
       )
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limits);
 
@@ -197,7 +197,7 @@ const getAllOrders = async (req, res) => {
         paymentMethod: 1,
         // createdAt: 1,
         updatedAt: 1,
-      }).sort({ updatedAt: -1 });
+      }).sort({ createdAt: -1 });
       for (const order of filteredOrders) {
         const { paymentMethod, total } = order;
         const existPayment = methodTotals.find(
@@ -232,7 +232,7 @@ const getAllOrders = async (req, res) => {
 
 const getOrderCustomer = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.params.id }).sort({ _id: -1 });
+    const orders = await Order.find({ user: req.params.id }).sort({ createdAt: -1 });
     
     // Populate brand names in all orders
     const ordersWithBrandNames = [];
@@ -399,7 +399,7 @@ const getDashboardRecentOrder = async (req, res) => {
 
     // query for orders
     const orders = await Order.find(queryObject)
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limits);
 
@@ -749,7 +749,7 @@ const getDashboardOrders = async (req, res) => {
 
     // query for orders
     const orders = await Order.find({})
-      .sort({ _id: -1 })
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limits);
 

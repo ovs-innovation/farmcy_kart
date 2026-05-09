@@ -38,7 +38,7 @@ const getAllCoupons = async (req, res) => {
     if (status) {
       queryObject.status = { $regex: `${status}`, $options: "i" };
     }
-    const coupons = await Coupon.find(queryObject).sort({ _id: -1 });
+    const coupons = await Coupon.find(queryObject).sort({ createdAt: -1 });
     // console.log('coups',coupons)
     res.send(coupons);
   } catch (err) {
@@ -53,7 +53,7 @@ const getShowingCoupons = async (req, res) => {
   try {
     const coupons = await Coupon.find({
       status: "show",
-    }).sort({ _id: -1 });
+    }).sort({ createdAt: -1 });
     res.send(coupons);
   } catch (err) {
     res.status(500).send({

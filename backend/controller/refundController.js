@@ -22,7 +22,7 @@ const addRefundReason = async (req, res) => {
 // Get All Refund Data (Reasons + Mode)
 const getRefundData = async (req, res) => {
   try {
-    const reasons = await Refund.find({}).sort({ _id: -1 });
+    const reasons = await Refund.find({}).sort({ createdAt: -1 });
     const setting = await Setting.findOne({ name: "refundSetting" });
     res.send({
       reasons,

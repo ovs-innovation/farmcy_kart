@@ -52,7 +52,7 @@ const getAllAttributes = async (req, res) => {
     const { type, option, option1 } = req.query;
     const attributes = await Attribute.find({
       $or: [{ type: type }, { $or: [{ option: option }, { option: option1 }] }],
-    });
+    }).sort({ createdAt: -1 });
     res.send(attributes);
   } catch (err) {
     res.status(500).send({
@@ -100,7 +100,7 @@ const getShowingAttributes = async (req, res) => {
 
 const getShowingAttributesTest = async (req, res) => {
   try {
-    const attributes = await Attribute.find({ status: "show" });
+    const attributes = await Attribute.find({ status: "show" }).sort({ createdAt: -1 });
     res.send(attributes);
   } catch (err) {
     res.status(500).send({
