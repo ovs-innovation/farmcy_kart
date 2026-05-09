@@ -2,14 +2,14 @@ import { useRouter } from "next/router";
 import { useMemo, useState, useEffect } from "react";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const useFilter = (data) => {
+const useFilter = (data, allCategories = []) => {
   const router = useRouter();
   const [pending, setPending] = useState([]);
   const [processing, setProcessing] = useState([]);
   const [delivered, setDelivered] = useState([]);
   const [sortedField, setSortedField] = useState("");
   const [selectedBrands, setSelectedBrands] = useState([]);
-  const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedRating, setSelectedRating] = useState(0);
   const [selectedDiscount, setSelectedDiscount] = useState(0);
@@ -71,11 +71,49 @@ const useFilter = (data) => {
 
     // Filter by Category
     if (selectedCategories.length > 0) {
-      services = services.filter((product) =>
-        selectedCategories.includes(product.category?._id || product.category) ||
-        (product?.categories && Array.isArray(product.categories) && 
-         product.categories.some(cat => selectedCategories.includes(cat?._id || cat)))
-      );
+      // Get names of selected categories for fallback matching
+      const selectedNames = new Set();
+      
+      const findNameInTree = (cats, id) => {
+        for (const c of cats) {
+          if (c._id === id) {
+            const name = c.name?.en || c.name;
+            if (typeof name === 'string') selectedNames.add(name.toLowerCase().trim());
+          }
+          if (c.children) findNameInTree(c.children, id);
+        }
+      };
+
+      selectedCategories.forEach(id => findNameInTree(allCategories, id));
+
+      services = services.filter((product) => {
+        const productCategoryIds = [];
+        const productCategoryNames = [];
+        
+        const processCategory = (cat) => {
+          if (!cat) return;
+          const id = (cat._id || cat).toString();
+          productCategoryIds.push(id);
+          
+          const name = cat.name?.en || cat.name;
+          if (typeof name === 'string') {
+            productCategoryNames.push(name.toLowerCase().trim());
+          }
+        };
+
+        processCategory(product.category);
+        if (product.categories && Array.isArray(product.categories)) {
+          product.categories.forEach(processCategory);
+        }
+
+        // Match by ID
+        if (productCategoryIds.some(id => selectedCategories.includes(id))) return true;
+
+        // Match by Name (Fallback for duplicates)
+        if (productCategoryNames.some(name => selectedNames.has(name))) return true;
+        
+        return false;
+      });
     }
 
     // Filter by Price

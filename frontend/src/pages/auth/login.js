@@ -127,8 +127,18 @@ const Login = () => {
         router.push("/");
       }
     } catch (error) {
-      setOtpError("Invalid OTP.");
-      notifyError("Invalid OTP.");
+      const backendMessage = error.response?.data?.message || error.message;
+      console.error("OTP Error:", error);
+      
+      if (backendMessage.includes("invalid-verification-code") || backendMessage.includes("Invalid OTP")) {
+        setOtpError("Invalid OTP code. Please try again.");
+      } else if (backendMessage.includes("session-expired") || backendMessage.includes("SESSION_EXPIRED")) {
+        setOtpError("OTP session expired. Please send OTP again.");
+        setStep("phone");
+      } else {
+        setOtpError(backendMessage || "Login failed. Please try again.");
+      }
+      notifyError(backendMessage || "Login failed.");
     } finally {
       setOtpLoading(false);
     }

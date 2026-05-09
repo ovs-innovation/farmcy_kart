@@ -813,7 +813,7 @@ const getShowingStoreProducts = async (req, res) => {
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
         .sort({ _id: -1 })
-        .limit(100);
+        .limit(500);
       relatedProducts = await Product.find({
         category: products[0]?.category,
       })
@@ -824,14 +824,14 @@ const getShowingStoreProducts = async (req, res) => {
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
         .sort({ _id: -1 })
-        .limit(100);
+        .limit(500);
     } else {
       // Fetch all products for the default view (e.g., /search page without filters)
       products = await Product.find({ status: "show" })
         .populate({ path: "category", select: "name _id" })
         .populate({ path: "brand", select: "_id name slug logo" })
         .sort({ _id: -1 })
-        .limit(100);
+        .limit(500);
 
       // Newest Products (Mapped to Popular Products in frontend currently)
       popularProducts = await Product.find({ status: "show" })

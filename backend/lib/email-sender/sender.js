@@ -4,19 +4,11 @@ const rateLimit = require("express-rate-limit");
 const sendEmail = (body) => {
   return new Promise((resolve, reject) => {
     const transporter = nodemailer.createTransport({
-      host: process.env.HOST,
-      // service: process.env.SERVICE, //comment this line if you use custom server/domain
-      port: process.env.EMAIL_PORT,
-      secure: String(process.env.EMAIL_PORT) === "465",
+      service: process.env.SERVICE || "gmail",
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
-
-      // uncomment for debugging or custom servers (not recommended in prod)
-      // tls: {
-      //   rejectUnauthorized: false,
-      // },
     });
 
     transporter.verify((err, success) => {

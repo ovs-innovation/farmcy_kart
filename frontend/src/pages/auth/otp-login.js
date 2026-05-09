@@ -113,7 +113,13 @@ const OTPLogin = () => {
         router.push("/");
       }
     } catch (err) {
-      setError("Invalid OTP.");
+      const backendMessage = err.response?.data?.message || err.message;
+      if (backendMessage.includes("invalid-verification-code") || backendMessage.includes("Invalid OTP")) {
+        setError("Invalid OTP code. Please try again.");
+      } else {
+        setError(backendMessage || "Login failed. Please try again.");
+      }
+      console.error("Verification error:", err);
     } finally {
       setLoading(false);
     }

@@ -133,7 +133,12 @@ const loginWithPhone = async (req, res) => {
       });
     }
 
-    let user = await Customer.findOne({ phone: phoneNumber });
+    let user = await Customer.findOne({
+      $or: [
+        { phone: phoneNumber },
+        { phone: phoneNumber.slice(-10) }
+      ]
+    });
 
     if (!user) {
       return res.status(404).send({
@@ -253,7 +258,7 @@ const registerCustomerDirect = async (req, res) => {
       });
     }
 
-    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString(); const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
 
 
 
@@ -263,14 +268,44 @@ const registerCustomerDirect = async (req, res) => {
       phone,
       password: bcrypt.hashSync(password),
       role: "customer",
-      emailVerified: true,
+      emailVerified: false, emailVerificationOtp: otp, emailVerificationExpires: otpExpires,
 
 
     });
 
     await newUser.save();
 
-    const token = signInToken(newUser);
+    // Send OTP Email
+    try {
+      const globalSetting = await Setting.findOne({ name: "globalSetting" });
+      const option = {
+        name: newUser.name,
+        email: newUser.email,
+        otp: otp,
+        contact_email: globalSetting?.setting?.email || "support@farmacykart.com",
+        shop_name: globalSetting?.setting?.shop_name || "Farmacykart",
+      };
+
+      const body = {
+        from: globalSetting?.setting?.email || process.env.EMAIL_USER,
+        to: newUser.email,
+        subject: "Verify Your Email - OTP",
+        html: otpEmailBody(option),
+      };
+
+      await sendEmail(body);
+    } catch (emailErr) {
+      console.error("Signup Email Error:", emailErr);
+    }
+
+    res.send({
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      phone: newUser.phone,
+      message: "Registration successful! Please check your email for the verification OTP.",
+      requiresVerification: true,
+    });
 
 
 
@@ -306,7 +341,7 @@ const registerCustomerDirect = async (req, res) => {
       email: newUser.email,
       phone: newUser.phone,
       message: "Registration Successful!",
-      requiresVerification: false,
+      requiresVerification: true,
     });
   } catch (err) {
     res.status(500).send({
@@ -904,7 +939,7 @@ const signUpWithProvider = async (req, res) => {
         name: user.name,
         email: user.email,
         image: user.picture,
-        emailVerified: true, // OAuth emails are pre-verified
+        emailVerified: false, emailVerificationOtp: otp, emailVerificationExpires: otpExpires, // OAuth emails are pre-verified
       });
 
       const signUpCustomer = await newUser.save();
@@ -947,7 +982,7 @@ const signUpWithOauthProvider = async (req, res) => {
         name: req.body.name,
         email: req.body.email,
         image: req.body.image,
-        emailVerified: true,
+        emailVerified: false, emailVerificationOtp: otp, emailVerificationExpires: otpExpires,
       });
 
       const signUpCustomer = await newUser.save();

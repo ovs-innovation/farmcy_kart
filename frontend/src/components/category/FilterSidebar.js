@@ -130,6 +130,7 @@ const FilterSidebar = ({
                   if (allSelected) {
                     tags.push({ id: parentCat._id, name: parentCat.name, isParent: true });
                     childIds.forEach((id) => consumed.add(id));
+                    consumed.add(parentCat._id); // Prevent duplicate parent tags
                   }
                 }
               }
@@ -181,13 +182,13 @@ const FilterSidebar = ({
               />
             </span>
           )}
-          {priceRange.max < 5000 && (
+          {priceRange.max < 100000 && (
             <span className="inline-flex items-center px-2 py-1 bg-gray-100 text-xs rounded-sm">
               Max: {priceRange.max}
               <IoClose
                 className="ml-1 cursor-pointer"
                 onClick={() =>
-                  setPriceRange((prev) => ({ ...prev, max: 5000 }))
+                  setPriceRange((prev) => ({ ...prev, max: 100000 }))
                 }
               />
             </span>
@@ -314,8 +315,9 @@ const FilterSidebar = ({
             <option value="0">0 {currency}</option>
             <option value="500">500 {currency}</option>
             <option value="1000">1000 {currency}</option>
-            <option value="2000">2000 {currency}</option>
             <option value="5000">5000 {currency}</option>
+            <option value="10000">10000 {currency}</option>
+            <option value="50000">50000 {currency}</option>
           </select>
           <span className="text-gray-400 text-xs">to</span>
           <select
@@ -324,27 +326,27 @@ const FilterSidebar = ({
             className="w-full text-sm border-gray-300 rounded-sm focus:ring-store-500"
           >
            <option value={priceRange.max}>
-              {priceRange.max === 5000 ? "Max" : `${priceRange.max} ${currency}`}
+              {priceRange.max >= 100000 ? "Max" : `${priceRange.max} ${currency}`}
             </option>
-            <option value="100">100 {currency}</option>
-            <option value="200">200 {currency}</option>
-            <option value="300">300 {currency}</option>
             <option value="1000">1000 {currency}</option>
             <option value="5000">5000 {currency}</option>
+            <option value="10000">10000 {currency}</option>
+            <option value="50000">50000 {currency}</option>
+            <option value="100000">100000 {currency}</option>
           </select>
         </div>
         <input
           type="range"
           min="0"
-          max="5000"
-          step="100"
+          max="100000"
+          step="500"
           value={priceRange.max}
           onChange={(e) => handlePriceChange(e, "max")}
           className="w-full mt-4 h-1.5 rounded-lg appearance-none cursor-pointer accent-store-600"
           style={{
             background: `linear-gradient(to right, var(--store-color-600) 0%, var(--store-color-600) ${
-              (priceRange.max / 5000) * 100
-            }%, #e5e7eb ${(priceRange.max / 5000) * 100}%, #e5e7eb 100%)`,
+              (priceRange.max / 100000) * 100
+            }%, #e5e7eb ${(priceRange.max / 100000) * 100}%, #e5e7eb 100%)`,
           }}
         />
       </div>

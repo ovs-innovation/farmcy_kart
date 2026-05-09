@@ -33,6 +33,7 @@ const Search = ({ products, attributes }) => {
   const [isSortModalOpen, setIsSortModalOpen] = useState(false);
   const { totalItems } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const isSidebarAction = useRef(false);
 
   useEffect(() => {
     setIsLoading(false);
@@ -40,6 +41,20 @@ const Search = ({ products, attributes }) => {
 
   // Maintain local products state so we can refetch when query params change (category/_id etc.)
   const [initialProducts, setInitialProducts] = useState(products || []);
+  const [categories, setCategories] = useState([]);
+
+  // Fetch categories for useFilter name-based matching
+  useEffect(() => {
+    const fetchCats = async () => {
+      try {
+        const res = await CategoryServices.getShowingCategory();
+        setCategories(res || []);
+      } catch (err) {
+        console.error("Error fetching categories in search.js", err);
+      }
+    };
+    fetchCats();
+  }, []);
 
   // Call useFilter hook FIRST to get sortedField and other values
   const {
@@ -56,7 +71,7 @@ const Search = ({ products, attributes }) => {
     selectedDiscount,
     setSelectedDiscount,
     sortedField,
-  } = useFilter(initialProducts);
+  } = useFilter(initialProducts, categories);
 
   // Reset visible products when sort or filters change
   // This useEffect must come AFTER useFilter call
@@ -101,8 +116,6 @@ const Search = ({ products, attributes }) => {
       newQuery.sort = value;
     }
     
-    // Update URL - use push with shallow: false to ensure proper navigation
-    // This ensures router.query updates and page properly navigates
     router.push(
       {
         pathname: "/search",
@@ -112,6 +125,58 @@ const Search = ({ products, attributes }) => {
       { shallow: false }
     );
   };
+
+  // Main synchronization useEffect for products and URL params
+  useEffect(() => {
+    const fetchByQuery = async () => {
+      setIsLoading(true);
+      try {
+        const id = router.query._id;
+        const q = router.query.query;
+        const brand = router.query.brand;
+
+        const response = await ProductServices.getShowingStoreProducts({
+          category: "", 
+          title: q ? encodeURIComponent(q) : "",
+          brand: brand ? brand : "",
+        });
+
+        if (response?.products) {
+          setInitialProducts(response.products);
+          
+          if (id && !isSidebarAction.current) {
+            const findAndSelect = (cats, targetId) => {
+              for (const c of cats) {
+                if (c._id === targetId) {
+                  const ids = (c.children && c.children.length > 0) ? [c._id, ...c.children.map(child => child._id)] : [c._id];
+                  setSelectedCategories(ids);
+                  return true;
+                }
+                if (c.children && findAndSelect(c.children, targetId)) return true;
+              }
+              return false;
+            };
+            
+            if (!findAndSelect(categories, id)) {
+              setSelectedCategories([id]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      } finally {
+        setIsLoading(false);
+        isSidebarAction.current = false;
+      }
+    };
+
+    if (router.isReady) {
+      if (!router.query._id && !isSidebarAction.current) {
+        setSelectedCategories([]);
+      }
+      fetchByQuery();
+    }
+  }, [router.isReady, router.query._id, router.query.query, router.query.brand, categories]);
 
   // Clear search query and URL filters when sidebar filters are applied
   const clearSearchQuery = () => {
@@ -136,13 +201,14 @@ const Search = ({ products, attributes }) => {
           query: newQuery,
         },
         undefined,
-        { scroll: false }
+        { scroll: false, shallow: true }
       );
     }
   };
 
   // Wrapper functions that clear search query before applying filters
   const handleBrandChange = (brandId) => {
+    isSidebarAction.current = true;
     clearSearchQuery();
     if (selectedBrands.includes(brandId)) {
       setSelectedBrands(selectedBrands.filter((id) => id !== brandId));
@@ -152,48 +218,51 @@ const Search = ({ products, attributes }) => {
   };
 
   const handleCategoryChange = (catIdOrIds) => {
+    isSidebarAction.current = true;
+    
+    // Clear URL params but keep it shallow to maintain state stability
     clearSearchQuery();
 
-    // If an array of ids is passed (parent toggle), add/remove them in bulk
+    // Toggle logic
     if (Array.isArray(catIdOrIds)) {
       const idsToToggle = catIdOrIds;
-      const anySelected = idsToToggle.some((id) => selectedCategories.includes(id));
-      if (anySelected) {
-        // Remove all provided ids
-        setSelectedCategories((prev) => prev.filter((id) => !idsToToggle.includes(id)));
-      } else {
-        // Add missing ids
-        setSelectedCategories((prev) => [...prev, ...idsToToggle.filter((id) => !prev.includes(id))]);
-      }
-      return;
-    }
-
-    // Single id toggle (subcategory or parent id directly)
-    const catId = catIdOrIds;
-    if (selectedCategories.includes(catId)) {
-      setSelectedCategories(selectedCategories.filter((id) => id !== catId));
+      setSelectedCategories((prev) => {
+        const anySelected = idsToToggle.some((id) => prev.includes(id));
+        if (anySelected) {
+          return prev.filter((id) => !idsToToggle.includes(id));
+        } else {
+          return [...prev, ...idsToToggle.filter((id) => !prev.includes(id))];
+        }
+      });
     } else {
-      setSelectedCategories([...selectedCategories, catId]);
+      const catId = catIdOrIds;
+      setSelectedCategories((prev) => 
+        prev.includes(catId) ? prev.filter((id) => id !== catId) : [...prev, catId]
+      );
     }
   };
 
   const handlePriceRangeChange = (newPriceRange) => {
     // This function receives the full priceRange object from FilterSidebar
+    isSidebarAction.current = true;
     clearSearchQuery();
     setPriceRange(newPriceRange);
   };
 
   const handleRatingChange = (rating) => {
+    isSidebarAction.current = true;
     clearSearchQuery();
     setSelectedRating(rating);
   };
 
   const handleDiscountChange = (discount) => {
+    isSidebarAction.current = true;
     clearSearchQuery();
     setSelectedDiscount(discount);
   };
 
   const handleClearAll = () => {
+    isSidebarAction.current = true;
     setSelectedBrands([]);
     setPriceRange({ min: 0, max: 100000 });
     setSelectedCategories([]);
@@ -219,75 +288,43 @@ const Search = ({ products, attributes }) => {
 
   // Re-fetch products client-side when category/_id or brand or query changes in the URL
   useEffect(() => {
-    if (!router.isReady) return;
-
     const fetchByQuery = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
-        const q = router.query.query || "";
-        const id = router.query._id || "";
-        const brand = router.query.brand || "";
+        const id = router.query._id;
+        const q = router.query.query;
+        const brand = router.query.brand;
+
         const response = await ProductServices.getShowingStoreProducts({
           category: id ? id : "",
           title: q ? encodeURIComponent(q) : "",
           brand: brand ? brand : "",
         });
-        setInitialProducts(response?.products || []);
-        // scrolling disabled to avoid jump
+
+        if (response?.products) {
+          setInitialProducts(response.products);
+          
+          // Sync selection with URL if not a sidebar action
+          if (id && !isSidebarAction.current) {
+             setSelectedCategories([id]);
+          }
+        }
       } catch (err) {
-        console.error("Error fetching products for query:", err);
+        console.error("Error fetching products:", err);
       } finally {
         setIsLoading(false);
+        isSidebarAction.current = false;
       }
     };
 
-    (async () => {
-      try {
-        await fetchByQuery();
-
-        // Also set selectedCategories so sidebar filters reflect the URL
-        if (router.query._id) {
-          try {
-            const catRes = await CategoryServices.getShowingCategory();
-            const parents = (catRes && (catRes[0]?.children || catRes)) || [];
-            let found = null;
-            for (const parentCat of parents) {
-              if (parentCat._id === router.query._id) {
-                found = parentCat;
-                break;
-              }
-              if (parentCat.children) {
-                const child = parentCat.children.find((c) => c._id === router.query._id);
-                if (child) {
-                  found = child;
-                  break;
-                }
-              }
-            }
-
-            if (found) {
-              if (found.children && found.children.length > 0) {
-                // parent selected => select all child ids
-                const childIds = found.children.map((c) => c._id);
-                setSelectedCategories(childIds);
-              } else {
-                // child's id
-                setSelectedCategories([found._id]);
-              }
-            } else {
-              setSelectedCategories([router.query._id]);
-            }
-          } catch (err) {
-            console.error("Error fetching categories for selection", err);
-            setSelectedCategories([router.query._id]);
-          }
-        } else {
-          setSelectedCategories([]);
-        }
-      } catch (err) {
-        console.error("Error fetching products for query:", err);
+    if (router.isReady) {
+      // Clear selection ONLY if there is NO category in URL AND it's not a sidebar action
+      if (!router.query._id && !isSidebarAction.current) {
+        setSelectedCategories([]);
       }
-    })();
+      
+      fetchByQuery();
+    }
   }, [router.isReady, router.query._id, router.query.query, router.query.brand]);
 
   const handleSearchChange = (value) => {
