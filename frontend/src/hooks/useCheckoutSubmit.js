@@ -61,6 +61,7 @@ const useCheckoutSubmit = (storeSetting) => {
         userId: userInfo?.id,
       }),
     select: (data) => data?.shippingAddress,
+    enabled: !!userInfo?.id,
   });
 
   const hasShippingAddress =
@@ -121,7 +122,7 @@ const useCheckoutSubmit = (storeSetting) => {
         const applicable = (coupons || []).filter((coupon) => {
           const min = Number(coupon.minimumAmount || 0);
           const notExpired = coupon.endTime ? !dayjs().isAfter(dayjs(coupon.endTime)) : true;
-          return notExpired && total >= min;
+          return notExpired;
         });
         setAvailableCoupons(applicable);
 
@@ -678,7 +679,7 @@ const useCheckoutSubmit = (storeSetting) => {
 
       if (total < result[0]?.minimumAmount) {
         notifyError(
-          `Minimum ${result[0].minimumAmount} USD required for Apply this coupon!`
+          `Minimum ${result[0].minimumAmount} ${currency} required for Apply this coupon!`
         );
         return;
       } else {

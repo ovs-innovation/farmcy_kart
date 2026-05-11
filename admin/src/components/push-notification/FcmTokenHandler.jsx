@@ -15,7 +15,9 @@ const FcmTokenHandler = () => {
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') return;
 
-        const token = await getToken(messaging);
+        const token = await getToken(messaging, {
+          vapidKey: import.meta.env.VITE_APP_FIREBASE_VAPID_KEY,
+        });
 
         if (token) {
           const adminInfo = Cookies.get('adminInfo') ? JSON.parse(Cookies.get('adminInfo')) : null;

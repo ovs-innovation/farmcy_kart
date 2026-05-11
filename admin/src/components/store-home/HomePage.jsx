@@ -150,6 +150,39 @@ const HomePage = (props) => {
     setPromoProductId3,
     promoProductSlug3,
     setPromoProductSlug3,
+    categories,
+    sliderCategoryId,
+    setSliderCategoryId,
+    sliderCategorySlug,
+    setSliderCategorySlug,
+    sliderCategoryIdTwo,
+    setSliderCategoryIdTwo,
+    sliderCategorySlugTwo,
+    setSliderCategorySlugTwo,
+    sliderCategoryIdThree,
+    setSliderCategoryIdThree,
+    sliderCategorySlugThree,
+    setSliderCategorySlugThree,
+    sliderCategoryIdFour,
+    setSliderCategoryIdFour,
+    sliderCategorySlugFour,
+    setSliderCategorySlugFour,
+    sliderCategoryIdFive,
+    setSliderCategoryIdFive,
+    sliderCategorySlugFive,
+    setSliderCategorySlugFive,
+    promoCategoryId1,
+    setPromoCategoryId1,
+    promoCategorySlug1,
+    setPromoCategorySlug1,
+    promoCategoryId2,
+    setPromoCategoryId2,
+    promoCategorySlug2,
+    setPromoCategorySlug2,
+    promoCategoryId3,
+    setPromoCategoryId3,
+    promoCategorySlug3,
+    setPromoCategorySlug3,
   } = props;
   const { mode } = useContext(WindmillContext);
   const { t } = useTranslation();
@@ -168,14 +201,36 @@ const HomePage = (props) => {
         }}
         className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#004f56] focus:border-[#004f56] bg-white transition-all duration-200"
       >
-        <option value="">None (No redirection)</option>
+        <option value="">None (No product redirection)</option>
         {products?.map((prod) => (
           <option key={prod._id} value={prod._id}>
             {showingTranslateValue(prod.title)}
           </option>
         ))}
       </select>
-      <p className="text-[10px] text-gray-400 mt-1 italic">Selecting a product will redirect users to its page when they click this banner.</p>
+    </div>
+  );
+
+  const CategorySelector = ({ label, value, onChangeId, onChangeSlug }) => (
+    <div className="mt-4">
+      <label className="block text-sm font-bold text-gray-700 mb-2">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => {
+          const catId = e.target.value;
+          const selectedCat = categories.find(c => c._id === catId);
+          onChangeId(catId);
+          onChangeSlug(selectedCat ? selectedCat.slug : "");
+        }}
+        className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#004f56] focus:border-[#004f56] bg-white transition-all duration-200"
+      >
+        <option value="">None (No category redirection)</option>
+        {categories?.map((cat) => (
+          <option key={cat._id} value={cat._id}>
+            {showingTranslateValue(cat.name)}
+          </option>
+        ))}
+      </select>
     </div>
   );
 
@@ -480,6 +535,13 @@ const HomePage = (props) => {
                       onChangeId={setSliderProductId} 
                       onChangeSlug={setSliderProductSlug}
                     />
+                    <CategorySelector 
+                      label="Link to Category (Optional)" 
+                      value={sliderCategoryId} 
+                      onChangeId={setSliderCategoryId} 
+                      onChangeSlug={setSliderCategorySlug}
+                    />
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Selecting a product or category will redirect users to its page when they click this banner. If both are selected, product link will take priority.</p>
                   </div>
                 </TabPanel>
 
@@ -493,6 +555,13 @@ const HomePage = (props) => {
                       onChangeId={setSliderProductIdTwo} 
                       onChangeSlug={setSliderProductSlugTwo}
                     />
+                    <CategorySelector 
+                      label="Link to Category (Optional)" 
+                      value={sliderCategoryIdTwo} 
+                      onChangeId={setSliderCategoryIdTwo} 
+                      onChangeSlug={setSliderCategorySlugTwo}
+                    />
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Selecting a product or category will redirect users to its page when they click this banner. If both are selected, product link will take priority.</p>
                   </div>
                 </TabPanel>
 
@@ -506,6 +575,13 @@ const HomePage = (props) => {
                       onChangeId={setSliderProductIdThree} 
                       onChangeSlug={setSliderProductSlugThree}
                     />
+                    <CategorySelector 
+                      label="Link to Category (Optional)" 
+                      value={sliderCategoryIdThree} 
+                      onChangeId={setSliderCategoryIdThree} 
+                      onChangeSlug={setSliderCategorySlugThree}
+                    />
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Selecting a product or category will redirect users to its page when they click this banner. If both are selected, product link will take priority.</p>
                   </div>
                 </TabPanel>
 
@@ -519,6 +595,13 @@ const HomePage = (props) => {
                       onChangeId={setSliderProductIdFour} 
                       onChangeSlug={setSliderProductSlugFour}
                     />
+                    <CategorySelector 
+                      label="Link to Category (Optional)" 
+                      value={sliderCategoryIdFour} 
+                      onChangeId={setSliderCategoryIdFour} 
+                      onChangeSlug={setSliderCategorySlugFour}
+                    />
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Selecting a product or category will redirect users to its page when they click this banner. If both are selected, product link will take priority.</p>
                   </div>
                 </TabPanel>
 
@@ -532,6 +615,13 @@ const HomePage = (props) => {
                       onChangeId={setSliderProductIdFive} 
                       onChangeSlug={setSliderProductSlugFive}
                     />
+                    <CategorySelector 
+                      label="Link to Category (Optional)" 
+                      value={sliderCategoryIdFive} 
+                      onChangeId={setSliderCategoryIdFive} 
+                      onChangeSlug={setSliderCategorySlugFive}
+                    />
+                    <p className="text-[10px] text-gray-400 mt-2 italic">Selecting a product or category will redirect users to its page when they click this banner. If both are selected, product link will take priority.</p>
                   </div>
                 </TabPanel>
 
@@ -1106,6 +1196,12 @@ const HomePage = (props) => {
                     onChangeId={setPromoProductId1}
                     onChangeSlug={setPromoProductSlug1}
                   />
+                  <CategorySelector
+                    label="Link to Category (Optional)"
+                    value={promoCategoryId1}
+                    onChangeId={setPromoCategoryId1}
+                    onChangeSlug={setPromoCategorySlug1}
+                  />
                 </div>
               </div>
 
@@ -1141,6 +1237,12 @@ const HomePage = (props) => {
                     onChangeId={setPromoProductId2}
                     onChangeSlug={setPromoProductSlug2}
                   />
+                  <CategorySelector
+                    label="Link to Category (Optional)"
+                    value={promoCategoryId2}
+                    onChangeId={setPromoCategoryId2}
+                    onChangeSlug={setPromoCategorySlug2}
+                  />
                 </div>
               </div>
 
@@ -1175,6 +1277,12 @@ const HomePage = (props) => {
                     value={promoProductId3}
                     onChangeId={setPromoProductId3}
                     onChangeSlug={setPromoProductSlug3}
+                  />
+                  <CategorySelector
+                    label="Link to Category (Optional)"
+                    value={promoCategoryId3}
+                    onChangeId={setPromoCategoryId3}
+                    onChangeSlug={setPromoCategorySlug3}
                   />
                 </div>
               </div>

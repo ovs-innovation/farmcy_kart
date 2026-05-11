@@ -14,6 +14,7 @@ const usePushNotificationSubmit = (id) => {
     setValue,
     clearErrors,
     reset,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -86,6 +87,7 @@ const usePushNotificationSubmit = (id) => {
     isSubmitting,
     handleReset,
     setValue,
+    watch,
   };
 };
 

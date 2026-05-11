@@ -141,18 +141,18 @@ const LowStock = () => {
           <FiAlertTriangle className="w-5 h-5 text-white" />
         </div>
         <div>
-          <h1 className="text-[20px] font-bold text-gray-800 leading-tight tracking-tight">Low Stock List</h1>
-          <p className="text-xs text-gray-500">Products with ≤{STOCK_THRESHOLD} units remaining</p>
+          <h1 className="text-[20px] font-bold text-gray-800 dark:text-gray-200 leading-tight tracking-tight">Low Stock List</h1>
+          <p className="text-xs text-gray-500 dark:text-gray-400">Products with ≤{STOCK_THRESHOLD} units remaining</p>
         </div>
-        <span className="ml-1 bg-orange-50 border border-orange-200 text-orange-700 text-[12px] font-bold px-3 py-1 rounded-lg shadow-sm">
+        <span className="ml-1 bg-orange-50 dark:bg-orange-900/30 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-400 text-[12px] font-bold px-3 py-1 rounded-lg shadow-sm">
           {lowStockProducts.length} items
         </span>
       </div>
 
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
 
         {/* ── Toolbar ── */}
-        <div className="px-5 py-4 border-b border-gray-100">
+        <div className="px-5 py-4 border-b border-gray-100 dark:border-gray-700">
           <form onSubmit={handleSearch}>
             <div className="flex items-center gap-3 flex-wrap">
 
@@ -166,7 +166,7 @@ const LowStock = () => {
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search product name..."
                   style={{ height: 44 }}
-                  className="w-full pl-10 pr-9 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-700 placeholder-gray-400 outline-none focus:border-teal-500 focus:bg-white transition-all"
+                  className="w-full pl-10 pr-9 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200 placeholder-gray-400 outline-none focus:border-teal-500 focus:bg-white dark:focus:bg-gray-800 transition-all"
                 />
                 {searchInput && (
                   <button
@@ -184,11 +184,11 @@ const LowStock = () => {
                 value={brandFilter}
                 onChange={(e) => { setBrandFilter(e.target.value); setCurrentPage(1); }}
                 style={{ height: 44 }}
-                className="border border-gray-200 bg-gray-50 rounded-xl text-sm text-gray-600 px-3 outline-none focus:border-teal-500 transition-all"
+                className="border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 rounded-xl text-sm text-gray-600 dark:text-gray-300 px-3 outline-none focus:border-teal-500 transition-all"
               >
-                <option value="">All Stores</option>
+                <option value="" className="dark:bg-gray-800">All Stores</option>
                 {brands?.map((b) => (
-                  <option key={b._id} value={b._id}>{formatText(b.name)}</option>
+                  <option key={b._id} value={b._id} className="dark:bg-gray-800">{formatText(b.name)}</option>
                 ))}
               </select>
 
@@ -208,7 +208,7 @@ const LowStock = () => {
                   type="button"
                   onClick={handleReset}
                   style={{ height: 44 }}
-                  className="px-4 bg-gray-100 text-gray-600 text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-1.5 shrink-0"
+                  className="px-4 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 text-sm font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-1.5 shrink-0"
                 >
                   <FiX size={14} />
                   Clear
@@ -220,7 +220,7 @@ const LowStock = () => {
                 type="button"
                 onClick={handleExportCSV}
                 style={{ height: 44 }}
-                className="ml-auto px-4 bg-white border border-gray-200 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors flex items-center gap-2 shadow-sm shrink-0"
+                className="ml-auto px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-2 shadow-sm shrink-0"
               >
                 <FiDownload size={14} className="text-gray-500" />
                 Export
@@ -234,7 +234,7 @@ const LowStock = () => {
             <div className="flex items-center gap-2 mt-3 flex-wrap">
               <span className="text-[11px] text-gray-400 font-semibold uppercase tracking-wide">Active:</span>
               {searchQuery && (
-                <span className="inline-flex items-center gap-1.5 bg-teal-50 border border-teal-200 text-teal-700 text-[12px] font-semibold px-2.5 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-400 text-[12px] font-semibold px-2.5 py-1 rounded-full">
                   "{searchQuery}"
                   <button type="button" onClick={handleClearSearch} className="hover:text-teal-900">
                     <FiX size={10} />
@@ -242,7 +242,7 @@ const LowStock = () => {
                 </span>
               )}
               {brandFilter && (
-                <span className="inline-flex items-center gap-1.5 bg-violet-50 border border-violet-200 text-violet-700 text-[12px] font-semibold px-2.5 py-1 rounded-full">
+                <span className="inline-flex items-center gap-1.5 bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-800 text-violet-700 dark:text-violet-400 text-[12px] font-semibold px-2.5 py-1 rounded-full">
                   Store filter
                   <button type="button" onClick={() => { setBrandFilter(""); setCurrentPage(1); }} className="hover:text-violet-900">
                     <FiX size={10} />
@@ -262,7 +262,7 @@ const LowStock = () => {
           <TableContainer className="rounded-none shadow-none border-none">
             <Table className="w-full">
               <TableHeader>
-                <tr className="bg-gray-50/70 border-b border-gray-100 text-gray-500 text-[10px] font-extrabold uppercase tracking-widest">
+                <tr className="bg-gray-50/70 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 text-gray-500 dark:text-gray-400 text-[10px] font-extrabold uppercase tracking-widest">
                   <TableCell className="py-4 px-6 w-12">Sl</TableCell>
                   <TableCell className="py-4 px-6">Product Name</TableCell>
                   <TableCell className="py-4 px-6">Store</TableCell>
@@ -270,15 +270,15 @@ const LowStock = () => {
                   <TableCell className="py-4 px-6 text-center">Action</TableCell>
                 </tr>
               </TableHeader>
-              <TableBody className="bg-white divide-y divide-gray-50">
+              <TableBody className="bg-white dark:bg-gray-800 divide-y divide-gray-50 dark:divide-gray-700">
                 {lowStockProducts.map((p, i) => (
-                  <TableRow key={p._id} className="hover:bg-gray-50/60 transition-colors group">
+                  <TableRow key={p._id} className="hover:bg-gray-50/60 dark:hover:bg-gray-700/50 transition-colors group">
                     <TableCell className="px-6 py-4 text-[13px] font-medium text-gray-400">
                       {(currentPage - 1) * RESULTS_PER_PAGE + i + 1}
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+                        <div className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0">
                           {p.image?.[0] ? (
                             <img src={p.image[0]} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -288,7 +288,7 @@ const LowStock = () => {
                           )}
                         </div>
                         <div>
-                          <p className="text-[13px] font-bold text-gray-800 leading-tight max-w-[220px] truncate group-hover:text-teal-700 transition-colors">
+                          <p className="text-[13px] font-bold text-gray-800 dark:text-gray-200 leading-tight max-w-[220px] truncate group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
                             {showingTranslateValue(p.title)}
                           </p>
                           {p.sku && (
@@ -307,7 +307,7 @@ const LowStock = () => {
                       <button
                         onClick={() => handleUpdate(p._id)}
                         title="Edit product"
-                        className="h-9 w-9 inline-flex items-center justify-center bg-white border border-teal-200 text-teal-600 rounded-xl hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all shadow-sm"
+                        className="h-9 w-9 inline-flex items-center justify-center bg-white dark:bg-gray-800 border border-teal-200 dark:border-teal-900/50 text-teal-600 dark:text-teal-400 rounded-xl hover:bg-teal-600 dark:hover:bg-teal-500 hover:text-white dark:hover:text-white hover:border-teal-600 dark:hover:border-teal-500 transition-all shadow-sm"
                       >
                         <FiEdit size={14} />
                       </button>
@@ -316,7 +316,7 @@ const LowStock = () => {
                 ))}
               </TableBody>
             </Table>
-            <TableFooter className="bg-white border-t border-gray-100 px-6 py-4">
+            <TableFooter className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 px-6 py-4">
               {totalDoc > RESULTS_PER_PAGE && (
                 <Pagination
                   totalResults={totalDoc}

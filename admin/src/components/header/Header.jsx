@@ -319,8 +319,8 @@ const Header = () => {
         </div>
       )}
 
-      <header className="z-30 py-4 bg-white shadow-sm border-b border-gray-50">
-        <div className="container flex items-center justify-between h-full px-6 mx-auto text-store-500 dark:text-store-500">
+      <header className="z-30 py-4 bg-white dark:bg-gray-800 shadow-sm border-b border-gray-50 dark:border-gray-700">
+        <div className="container flex items-center justify-between h-full px-6 mx-auto text-store-500 dark:text-gray-300">
           <button
             type="button"
             onClick={() => setNavBar(!navBar)}

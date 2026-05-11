@@ -22,8 +22,15 @@ const useLoginSubmit = () => {
     control,
     register,
     handleSubmit,
+    reset,
+    setValue,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
   // console.log("router", router.pathname === "/auth/signup");
 
@@ -43,9 +50,11 @@ const useLoginSubmit = () => {
 
         if (res.requiresVerification) {
           notifySuccess(res.message);
+          reset();
           router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
         } else {
           notifySuccess(res.message || "Signup successful!");
+          reset();
           router.push("/auth/login");
         }
         return setLoading(false);
@@ -101,6 +110,7 @@ const useLoginSubmit = () => {
             }
 
             const url = redirectUrl ? "/checkout" : "/";
+            reset();
             router.push(url);
             setLoading(false);
           } else {
@@ -151,6 +161,8 @@ const useLoginSubmit = () => {
     control,
     handleSubmit,
     submitHandler,
+    reset,
+    setValue,
     wholesalerStatus,
   };
 };

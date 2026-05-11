@@ -312,7 +312,13 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                       {storeCustomizationSetting?.home?.promotional_banner_image1 && (
                         <div className="md:col-span-2">
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug1 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug1}` : (storeCustomizationSetting?.home?.promotional_banner_link1 || "#")}>
+                          <Link href={
+                            storeCustomizationSetting?.home?.promotional_banner_productSlug1 
+                              ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug1}` 
+                              : storeCustomizationSetting?.home?.promotional_banner_categorySlug1 
+                                ? `/search?category=${storeCustomizationSetting.home.promotional_banner_categorySlug1}${storeCustomizationSetting.home.promotional_banner_categoryId1 ? `&_id=${storeCustomizationSetting.home.promotional_banner_categoryId1}` : ""}` 
+                                : (storeCustomizationSetting?.home?.promotional_banner_link1 || "#")
+                          }>
                             <Image
                               width={500}
                               height={48}
@@ -327,7 +333,13 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
 
                       <div className="md:col-span-1 flex flex-col gap-2">
                         {storeCustomizationSetting?.home?.promotional_banner_image2 && (
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug2 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug2}` : (storeCustomizationSetting?.home?.promotional_banner_link2 || "#")}>
+                          <Link href={
+                            storeCustomizationSetting?.home?.promotional_banner_productSlug2 
+                              ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug2}` 
+                              : storeCustomizationSetting?.home?.promotional_banner_categorySlug2 
+                                ? `/search?category=${storeCustomizationSetting.home.promotional_banner_categorySlug2}${storeCustomizationSetting.home.promotional_banner_categoryId2 ? `&_id=${storeCustomizationSetting.home.promotional_banner_categoryId2}` : ""}` 
+                                : (storeCustomizationSetting?.home?.promotional_banner_link2 || "#")
+                          }>
                             <Image
                               width={500}
                               height={100}
@@ -339,7 +351,13 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                           </Link>
                         )}
                         {storeCustomizationSetting?.home?.promotional_banner_image3 && (
-                          <Link href={storeCustomizationSetting?.home?.promotional_banner_productSlug3 ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug3}` : (storeCustomizationSetting?.home?.promotional_banner_link3 || "#")}>
+                          <Link href={
+                            storeCustomizationSetting?.home?.promotional_banner_productSlug3 
+                              ? `/product/${storeCustomizationSetting.home.promotional_banner_productSlug3}` 
+                              : storeCustomizationSetting?.home?.promotional_banner_categorySlug3 
+                                ? `/search?category=${storeCustomizationSetting.home.promotional_banner_categorySlug3}${storeCustomizationSetting.home.promotional_banner_categoryId3 ? `&_id=${storeCustomizationSetting.home.promotional_banner_categoryId3}` : ""}` 
+                                : (storeCustomizationSetting?.home?.promotional_banner_link3 || "#")
+                          }>
                             <Image
                               width={600}
                               height={600}
@@ -427,7 +445,7 @@ const Home = ({ popularProducts, discountProducts, bestSellingProducts, attribut
                           </button>
 
                           <div className="flex justify-end mt-4 px-2">
-                            <Link href="/search?sort=most-discounted" className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
+                            <Link href={`/search?category=${storeCustomizationSetting?.home?.discount_categorySlug}${storeCustomizationSetting?.home?.discount_categoryId ? `&_id=${storeCustomizationSetting?.home?.discount_categoryId}` : ""}`} className="inline-flex items-center gap-1 text-sm font-semibold text-store-500 border border-store-500 rounded-full px-4 py-1 hover:bg-store-500 hover:text-white transition-colors">
                               View All <IoChevronForward />
                             </Link>
                           </div>

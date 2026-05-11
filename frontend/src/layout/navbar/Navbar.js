@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useCart } from "react-use-cart";
 import { IoChevronDownOutline, IoBagHandleOutline, IoLockClosedOutline, IoSearchOutline,
-  IoChevronForward, IoChevronDown
+  IoChevronForward, IoChevronDown, IoHome
 } from "react-icons/io5";
 import { FiShoppingCart, FiHeart } from "react-icons/fi";
 import useTranslation from "next-translate/useTranslation";
@@ -169,8 +169,8 @@ const Navbar = () => {
               </Link>
 
               <div className="hidden lg:flex items-center gap-6 font-medium text-gray-700">
-                <Link href="/" className="hover:text-store-500 transition-colors">
-                  Home
+                <Link href="/" className="transition-colors text-2xl text-emerald-800" aria-label="Home">
+                  <IoHome />
                 </Link>
                 <div className="relative group">
 

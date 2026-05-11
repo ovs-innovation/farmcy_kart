@@ -97,7 +97,7 @@ const Testimonials = () => {
       </MainDrawer>
       <DeleteModal id={serviceId} title={title} />
 
-      <div className="bg-[#f0f2f5] min-h-screen pb-10">
+      <div className="bg-[#f0f2f5] dark:bg-gray-900 min-h-screen pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
           {/* Header */}
@@ -107,10 +107,10 @@ const Testimonials = () => {
                 <FiMessageCircle size={22} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800 tracking-tight leading-tight">Customer Testimonials</h1>
-                <p className="text-xs text-gray-500 mt-1">Showcase video reviews from happy customers</p>
+                <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight leading-tight">Customer Testimonials</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Showcase video reviews from happy customers</p>
               </div>
-              <span className="ml-2 bg-white border border-gray-200 text-gray-600 text-sm font-bold px-3 py-1 rounded-lg shadow-sm">
+              <span className="ml-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-bold px-3 py-1 rounded-lg shadow-sm">
                 {data.length} Total
               </span>
             </div>
@@ -123,7 +123,7 @@ const Testimonials = () => {
           </div>
 
           {/* Search/Filter Bar */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-8">
             <form onSubmit={handleSearch} className="flex flex-wrap items-center gap-3">
               <div className="relative flex items-center min-w-[200px] flex-1 max-w-sm">
                 <FiSearch className="absolute left-3.5 text-gray-400 w-4 h-4" />
@@ -132,16 +132,16 @@ const Testimonials = () => {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search by title..."
-                  className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:border-violet-500 focus:bg-white transition-all shadow-sm"
+                  className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm focus:outline-none focus:border-violet-500 focus:bg-white dark:focus:bg-gray-800 transition-all shadow-sm dark:text-gray-200"
                 />
               </div>
               <button type="submit" className="h-11 px-6 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 shadow-sm transition-all text-sm">
                 Filter
               </button>
-              <button
+                <button
                 type="button"
                 onClick={handleReset}
-                className="h-11 px-6 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-all text-sm"
+                className="h-11 px-6 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all text-sm"
               >
                 Reset
               </button>
@@ -153,7 +153,7 @@ const Testimonials = () => {
               <TableLoading row={4} col={3} width={250} height={20} />
             </div>
           ) : error ? (
-            <div className="text-center text-red-500 py-20 bg-white rounded-2xl border border-dashed border-red-200">
+            <div className="text-center text-red-500 py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-red-200 dark:border-red-900/50">
                <p className="font-bold">Backend Connection Failed</p>
                <p className="text-sm mt-2">{error}</p>
             </div>
@@ -162,7 +162,7 @@ const Testimonials = () => {
               {filteredTestimonials.map((item) => {
                 const embedUrl = getEmbedUrl(item.video);
                 return (
-                  <div key={item._id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group hover:shadow-lg transition-all duration-300">
+                  <div key={item._id} className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col group hover:shadow-lg transition-all duration-300">
                      <div className="relative w-full aspect-video bg-black">
                        {embedUrl ? (
                          <iframe
@@ -181,11 +181,11 @@ const Testimonials = () => {
                        </div>
                      </div>
                      <div className="p-5 flex-1 flex flex-col">
-                        <h3 className="text-[15px] font-bold text-gray-800 mb-4 line-clamp-1 group-hover:text-violet-700 transition-colors">{item.title}</h3>
-                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+                        <h3 className="text-[15px] font-bold text-gray-800 dark:text-gray-200 mb-4 line-clamp-1 group-hover:text-violet-700 transition-colors">{item.title}</h3>
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50 dark:border-gray-700">
                            <div className="flex flex-col">
-                              <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Display Order</span>
-                              <span className="text-sm font-bold text-gray-700">{item.sortOrder || 0}</span>
+                              <span className="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-wider">Display Order</span>
+                              <span className="text-sm font-bold text-gray-700 dark:text-gray-300">{item.sortOrder || 0}</span>
                            </div>
                            <div className="flex items-center gap-1.5">
                              <button
@@ -210,12 +210,12 @@ const Testimonials = () => {
               })}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl py-24 flex flex-col items-center border border-gray-50 shadow-sm">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                   <FiMessageCircle className="text-gray-200" size={40} />
+            <div className="bg-white dark:bg-gray-800 rounded-2xl py-24 flex flex-col items-center border border-gray-50 dark:border-gray-700 shadow-sm">
+                <div className="w-20 h-20 bg-gray-50 dark:bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                   <FiMessageCircle className="text-gray-200 dark:text-gray-600" size={40} />
                 </div>
-                <p className="text-gray-400 text-base font-bold">No testimonials found</p>
-                <button onClick={() => { setServiceId(null); toggleDrawer(); }} className="mt-4 text-sm text-violet-600 font-bold hover:underline hover:text-violet-700">+ Add your first testimonial</button>
+                <p className="text-gray-400 dark:text-gray-500 text-base font-bold">No testimonials found</p>
+                <button onClick={() => { setServiceId(null); toggleDrawer(); }} className="mt-4 text-sm text-violet-600 dark:text-violet-400 font-bold hover:underline hover:text-violet-700">+ Add your first testimonial</button>
             </div>
           )}
         </div>

@@ -100,7 +100,8 @@ const Order = ({ params }) => {
               </PDFDownloadLink>
             </div>
 
-            <OrderTracking order={data} />
+            {/* Order Tracking removed from invoice - moved to User Track Order page */}
+            {/* <OrderTracking order={data} /> */}
 
             <Invoice
               data={data}

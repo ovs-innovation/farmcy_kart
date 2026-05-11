@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import MainModal from "@components/modal/MainModal";
 import { useForm } from "react-hook-form";
 import { FiLock, FiMail, FiUser, FiCheckCircle, FiArrowRight, FiShield, FiEye, FiEyeOff } from "react-icons/fi";
@@ -71,8 +71,34 @@ export const SignupContent = ({ onSuccess }) => {
     const [submitting, setSubmitting] = useState(false);
 
     /* ── Customer state ── */
-    const { register, handleSubmit, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+        defaultValues: {
+            name: '',
+            email: '',
+            phone: '',
+            password: '',
+            agreeterm: false
+        }
+    });
     const [customerLoading, setCustomerLoading] = useState(false);
+
+    /* ── Reset on mount and tab switch ── */
+    useEffect(() => {
+        // Stage 1: Immediate reset
+        reset({ name: '', email: '', phone: '', password: '', agreeterm: false });
+        resetWholesalerForm();
+
+        // Stage 2: Delayed aggressive reset
+        const timer = setTimeout(() => {
+            reset({ name: '', email: '', phone: '', password: '', agreeterm: false });
+            setValue("name", "");
+            setValue("email", "");
+            setValue("phone", "");
+            setValue("password", "");
+            resetWholesalerForm();
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [reset, setValue, activeTab]);
 
     /* ── Helpers ── */
     const resetWholesalerForm = () => {
@@ -82,6 +108,10 @@ export const SignupContent = ({ onSuccess }) => {
         setAadharFile(null); setPanFile(null); setShopImageFile(null); setBusinessDocFile(null);
         setAadharUrl(""); setPanUrl(""); setShopImageUrl(""); setBusinessDocUrl("");
         setAadharPreview(""); setPanPreview(""); setShopImagePreview(""); setBusinessDocPreview("");
+        
+        // Reset agreement checkbox
+        const terms = document.getElementById("wholesaler-agree");
+        if (terms) terms.checked = false;
     };
 
     const uploadToCloudinary = async (file, folder = "wholesaler") => {
@@ -196,6 +226,7 @@ export const SignupContent = ({ onSuccess }) => {
             if (res) {
                 if (res.requiresVerification) {
                     notifySuccess(res.message);
+                    reset();
                     router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
                 } else {
                     const userInfo = {
@@ -211,6 +242,7 @@ export const SignupContent = ({ onSuccess }) => {
                     Cookies.set("userInfo", JSON.stringify(userInfo), { expires: 1 });
                     if (dispatch) dispatch({ type: "USER_LOGIN", payload: userInfo });
                     notifySuccess("Account created successfully!");
+                    reset();
                     if (onSuccess) onSuccess();
                     router.push("/");
                 }
@@ -334,7 +366,10 @@ export const SignupContent = ({ onSuccess }) => {
             {/* ── CUSTOMER FORM ── */}
             {activeTab === "customer" && (
                 <div className="space-y-5">
-                    <form onSubmit={handleSubmit(handleCustomerSubmit)} className="space-y-5">
+                    <form onSubmit={handleSubmit(handleCustomerSubmit)} className="space-y-5" autoComplete="off">
+                        {/* Trap inputs to catch browser autofill */}
+                        <input type="text" name="dummy-customer-email" style={{ display: 'none' }} tabIndex="-1" aria-hidden="true" />
+                        <input type="password" name="dummy-customer-password" style={{ display: 'none' }} tabIndex="-1" aria-hidden="true" />
                         {/* Name */}
                         <div>
                             <InputArea
@@ -357,6 +392,7 @@ export const SignupContent = ({ onSuccess }) => {
                                 type="email"
                                 placeholder="john@example.com"
                                 Icon={FiMail}
+                                autocomplete="new-email"
                             />
                             <Error errorName={errors.email} />
                         </div>
@@ -388,6 +424,7 @@ export const SignupContent = ({ onSuccess }) => {
                                 type="password"
                                 placeholder="Minimum 8 characters"
                                 Icon={FiLock}
+                                autocomplete="new-password"
                                 pattern={/^.{8,}$/}
                                 patternMessage="Password must be at least 8 characters."
                             />
@@ -443,7 +480,10 @@ export const SignupContent = ({ onSuccess }) => {
             {/* ── WHOLESALER FORM ── */}
             {activeTab === "wholesaler" && (
                 <div className="space-y-6">
-                    <form onSubmit={handleWholesalerSubmit} className="space-y-6">
+                    <form onSubmit={handleWholesalerSubmit} className="space-y-6" autoComplete="off">
+                        {/* Trap inputs to catch browser autofill */}
+                        <input type="text" name="dummy-wholesaler-email" style={{ display: 'none' }} tabIndex="-1" aria-hidden="true" />
+                        <input type="password" name="dummy-wholesaler-password" style={{ display: 'none' }} tabIndex="-1" aria-hidden="true" />
 
                         {/* ─── Section 1: Business Details ─── */}
                         <div className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-5 sm:p-6 border border-gray-100 space-y-4">
@@ -489,6 +529,7 @@ export const SignupContent = ({ onSuccess }) => {
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             type="email"
+                                            autoComplete="off"
                                             className="w-full pl-9 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm
                                                 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
                                             placeholder="name@business.com"
@@ -531,6 +572,7 @@ export const SignupContent = ({ onSuccess }) => {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             type={showPassword ? "text" : "password"}
+                                            autoComplete="new-password"
                                             className="w-full pl-9 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-sm
                                                 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
                                             placeholder="Min. 8 characters"

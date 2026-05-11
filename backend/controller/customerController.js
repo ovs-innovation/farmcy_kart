@@ -303,15 +303,6 @@ const registerCustomerDirect = async (req, res) => {
       name: newUser.name,
       email: newUser.email,
       phone: newUser.phone,
-      message: "Registration successful! Please check your email for the verification OTP.",
-      requiresVerification: true,
-    });
-    res.send({
-      token,
-      _id: newUser._id,
-      name: newUser.name,
-      email: newUser.email,
-      phone: newUser.phone,
       message: "Registration Successful!",
       requiresVerification: true,
     });
@@ -907,6 +898,8 @@ const signUpWithProvider = async (req, res) => {
         role: isAdded.role || "customer",
       });
     } else {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
       const newUser = new Customer({
         name: user.name,
         email: user.email,
@@ -950,6 +943,8 @@ const signUpWithOauthProvider = async (req, res) => {
         role: isAdded.role || "customer",
       });
     } else {
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      const otpExpires = new Date(Date.now() + 15 * 60 * 1000);
       const newUser = new Customer({
         name: req.body.name,
         email: req.body.email,

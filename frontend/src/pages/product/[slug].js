@@ -1670,9 +1670,6 @@ const ProductScreen = ({ product, attributes, relatedProducts }) => {
                           {product?.composition?.enabled !== false && product?.composition?.description && (
                             <div className="mt-8 border border-gray-200 rounded-lg p-6 bg-white">
                               <div className="flex items-center gap-3 mb-4">
-                                {product.composition.icon && (
-                                  <img src={product.composition.icon} alt="" className="w-8 h-8" />
-                                )}
                                 <h2 className="text-xl font-semibold text-gray-800">
                                   {product.composition.title || "Composition"}
                                 </h2>

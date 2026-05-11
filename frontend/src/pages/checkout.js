@@ -8,8 +8,10 @@ import {
   IoBagHandle,
   IoWalletSharp,
   IoClose,
-  IoChevronForward 
+  IoChevronForward,
+  IoLocationOutline
 } from "react-icons/io5";
+import { FiLoader } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import { ImCreditCard } from "react-icons/im";
 import useTranslation from "next-translate/useTranslation";
@@ -29,6 +31,7 @@ import useCheckoutSubmit from "@hooks/useCheckoutSubmit";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import SettingServices from "@services/SettingServices";
 import CustomerServices from "@services/CustomerServices";
+import LocationServices from "@services/LocationServices";
 import SwitchToggle from "@components/form/SwitchToggle";
 import { notifySuccess, notifyError } from "@utils/toast";
 import { UserContext } from "@context/UserContext";
@@ -40,6 +43,7 @@ const Checkout = () => {
   const [editingAddress, setEditingAddress] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [isLocationLoading, setIsLocationLoading] = useState(false);
   const formRef = useRef(null);
   const [addressForm, setAddressForm] = useState({
     name: "",
@@ -214,6 +218,77 @@ const Checkout = () => {
     return () => clearTimeout(timeoutId);
   }, [addressForm.zipCode]);
 
+  // Handle Use Current Location
+  const handleUseCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      notifyError("Geolocation is not supported by your browser");
+      return;
+    }
+
+    setIsLocationLoading(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const geocodeData = await LocationServices.getReverseGeocode({ lat: latitude, lng: longitude });
+
+          if (geocodeData.status === 'OK' && geocodeData.results && geocodeData.results.length > 0) {
+            const result = geocodeData.results[0];
+            
+            // Extract address components
+            let street = "";
+            let city = "";
+            let state = "";
+            let zip = "";
+
+            // Street address parts
+            const streetNumber = result.address_components.find(c => c.types.includes("street_number"))?.long_name || "";
+            const route = result.address_components.find(c => c.types.includes("route"))?.long_name || "";
+            const sublocality = result.address_components.find(c => c.types.includes("sublocality"))?.long_name || "";
+            
+            street = [streetNumber, route, sublocality].filter(Boolean).join(", ");
+            
+            // If street is still empty, use formatted_address part
+            if (!street) {
+                street = result.formatted_address.split(",")[0];
+            }
+
+            city = result.address_components.find(c => c.types.includes("locality"))?.long_name || "";
+            state = result.address_components.find(c => c.types.includes("administrative_area_level_1"))?.long_name || "";
+            zip = result.address_components.find(c => c.types.includes("postal_code"))?.long_name || "";
+
+            setAddressForm(prev => ({
+              ...prev,
+              address: street || prev.address,
+              city: city || prev.city,
+              country: state || prev.country,
+              zipCode: zip || prev.zipCode
+            }));
+
+            notifySuccess("Location updated successfully!");
+          } else {
+            notifyError("Unable to fetch current location. Please try again.");
+          }
+        } catch (error) {
+          console.error("Location error:", error);
+          notifyError("Unable to fetch current location. Please try again.");
+        } finally {
+          setIsLocationLoading(false);
+        }
+      },
+      (error) => {
+        setIsLocationLoading(false);
+        if (error.code === error.PERMISSION_DENIED) {
+          notifyError("Location permission denied. Please allow location access.");
+        } else {
+          notifyError("Unable to fetch current location. Please try again.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  };
+
   // Open modal for adding new address
   const handleAddAddress = () => {
     setEditingAddress(null);
@@ -375,7 +450,7 @@ const Checkout = () => {
                           <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                           </svg>
-                          + Add Address
+                          Add Address
                         </button>
                       </div>
 
@@ -384,7 +459,7 @@ const Checkout = () => {
                           {shippingAddresses.map((address) => {
                             const locationText = `${address.city || ''}${address.city && address.zipCode ? ', ' : ''}${address.zipCode || ''}`;
                             const locationDisplay = locationText.length > 25 ? locationText.substring(0, 25) + '..' : locationText;
-                            const fullAddress = `${address.name || ''}, ${address.address || ''}, ${address.city || ''}${address.city && address.country ? ', ' : ''}${address.country || ''}.`;
+                            const fullAddress = `${address.address || ''}, ${address.city || ''}${address.city && address.country ? ', ' : ''}${address.country || ''}.`;
                             
                             const isSelected = selectedAddress?._id === address._id || selectedAddress?.id === address.id;
                             
@@ -978,6 +1053,23 @@ const Checkout = () => {
               {/* Form */}
               <form onSubmit={handleAddressSubmit} className="flex-1 overflow-y-auto scrollbar-hide px-6 py-4">
                 <div className="space-y-4">
+                  {/* Use Current Location Button */}
+                  <div className="mb-4">
+                    <button
+                      type="button"
+                      onClick={handleUseCurrentLocation}
+                      disabled={isLocationLoading}
+                      className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg font-semibold text-sm hover:bg-emerald-100 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isLocationLoading ? (
+                        <FiLoader className="animate-spin" size={18} />
+                      ) : (
+                        <IoLocationOutline size={18} />
+                      )}
+                      {isLocationLoading ? "Fetching Location..." : "Use Current Location"}
+                    </button>
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Full Name

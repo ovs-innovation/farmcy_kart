@@ -242,6 +242,51 @@ const StoreHome = () => {
     setSliderProductIdFive,
     sliderProductSlugFive,
     setSliderProductSlugFive,
+    categories,
+    sliderCategoryId,
+    setSliderCategoryId,
+    sliderCategorySlug,
+    setSliderCategorySlug,
+    sliderCategoryIdTwo,
+    setSliderCategoryIdTwo,
+    sliderCategorySlugTwo,
+    setSliderCategorySlugTwo,
+    sliderCategoryIdThree,
+    setSliderCategoryIdThree,
+    sliderCategorySlugThree,
+    setSliderCategorySlugThree,
+    sliderCategoryIdFour,
+    setSliderCategoryIdFour,
+    sliderCategorySlugFour,
+    setSliderCategorySlugFour,
+    sliderCategoryIdFive,
+    setSliderCategoryIdFive,
+    sliderCategorySlugFive,
+    setSliderCategorySlugFive,
+    promoProductId1,
+    setPromoProductId1,
+    promoProductSlug1,
+    setPromoProductSlug1,
+    promoCategoryId1,
+    setPromoCategoryId1,
+    promoCategorySlug1,
+    setPromoCategorySlug1,
+    promoProductId2,
+    setPromoProductId2,
+    promoProductSlug2,
+    setPromoProductSlug2,
+    promoCategoryId2,
+    setPromoCategoryId2,
+    promoCategorySlug2,
+    setPromoCategorySlug2,
+    promoProductId3,
+    setPromoProductId3,
+    promoProductSlug3,
+    setPromoProductSlug3,
+    promoCategoryId3,
+    setPromoCategoryId3,
+    promoCategorySlug3,
+    setPromoCategorySlug3,
   } = useStoreHomeSubmit();
 
   useEffect(() => {
@@ -319,8 +364,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=home-settings"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "home-settings" || location.search === ""
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Home Page
@@ -332,8 +377,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=single-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "single-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Product Slug Page
@@ -345,8 +390,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=about-us-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "about-us-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               About Us
@@ -358,8 +403,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=privacy-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "privacy-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Privacy Policy & T&C
@@ -371,8 +416,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=FAQ-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "FAQ-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               FAQs
@@ -384,8 +429,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=offers-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "offers-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Offers
@@ -397,8 +442,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=contact-us-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "contact-us-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Contact Us
@@ -409,8 +454,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=checkout-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "checkout-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Checkout
@@ -421,8 +466,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=dashboard-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "dashboard-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Dashboard Settings
@@ -433,8 +478,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=seo-settings"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "seo-settings"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               SEO Settings
@@ -445,8 +490,8 @@ const StoreHome = () => {
               to={"/store/customization?storeTab=theme-setting"}
               className={`inline-block px-6 py-4 text-sm font-bold rounded-2xl transition-all duration-200 ${
                 tabName === "theme-setting"
-                  ? "bg-[#004f56] text-white shadow-lg scale-105"
-                  : "bg-[#d0eaec] text-[#004f56] hover:bg-[#c2e4e6]"
+                  ? "bg-[#004f56] dark:bg-emerald-600 text-white shadow-lg scale-105"
+                  : "bg-[#d0eaec] dark:bg-gray-700 text-[#004f56] dark:text-emerald-400 hover:bg-[#c2e4e6] dark:hover:bg-gray-600"
               } text-center min-w-[120px]`}
             >
               Theme
@@ -570,10 +615,54 @@ const StoreHome = () => {
                   setSliderProductIdFour={setSliderProductIdFour}
                   sliderProductSlugFour={sliderProductSlugFour}
                   setSliderProductSlugFour={setSliderProductSlugFour}
-                  sliderProductIdFive={sliderProductIdFive}
                   setSliderProductIdFive={setSliderProductIdFive}
                   sliderProductSlugFive={sliderProductSlugFive}
                   setSliderProductSlugFive={setSliderProductSlugFive}
+                  categories={categories}
+                  sliderCategoryId={sliderCategoryId}
+                  setSliderCategoryId={setSliderCategoryId}
+                  sliderCategorySlug={sliderCategorySlug}
+                  setSliderCategorySlug={setSliderCategorySlug}
+                  sliderCategoryIdTwo={sliderCategoryIdTwo}
+                  setSliderCategoryIdTwo={setSliderCategoryIdTwo}
+                  sliderCategorySlugTwo={sliderCategorySlugTwo}
+                  setSliderCategorySlugTwo={setSliderCategorySlugTwo}
+                  sliderCategoryIdThree={sliderCategoryIdThree}
+                  setSliderCategoryIdThree={setSliderCategoryIdThree}
+                  sliderCategorySlugThree={sliderCategorySlugThree}
+                  setSliderCategorySlugThree={setSliderCategorySlugThree}
+                  sliderCategoryIdFour={sliderCategoryIdFour}
+                  setSliderCategoryIdFour={setSliderCategoryIdFour}
+                  sliderCategorySlugFour={sliderCategorySlugFour}
+                  setSliderCategorySlugFour={setSliderCategorySlugFour}
+                  sliderCategoryIdFive={sliderCategoryIdFive}
+                  setSliderCategoryIdFive={setSliderCategoryIdFive}
+                  sliderCategorySlugFive={sliderCategorySlugFive}
+                  setSliderCategorySlugFive={setSliderCategorySlugFive}
+                  promoProductId1={promoProductId1}
+                  setPromoProductId1={setPromoProductId1}
+                  promoProductSlug1={promoProductSlug1}
+                  setPromoProductSlug1={setPromoProductSlug1}
+                  promoCategoryId1={promoCategoryId1}
+                  setPromoCategoryId1={setPromoCategoryId1}
+                  promoCategorySlug1={promoCategorySlug1}
+                  setPromoCategorySlug1={setPromoCategorySlug1}
+                  promoProductId2={promoProductId2}
+                  setPromoProductId2={setPromoProductId2}
+                  promoProductSlug2={promoProductSlug2}
+                  setPromoProductSlug2={setPromoProductSlug2}
+                  promoCategoryId2={promoCategoryId2}
+                  setPromoCategoryId2={setPromoCategoryId2}
+                  promoCategorySlug2={promoCategorySlug2}
+                  setPromoCategorySlug2={setPromoCategorySlug2}
+                  promoProductId3={promoProductId3}
+                  setPromoProductId3={setPromoProductId3}
+                  promoProductSlug3={promoProductSlug3}
+                  setPromoProductSlug3={setPromoProductSlug3}
+                  promoCategoryId3={promoCategoryId3}
+                  setPromoCategoryId3={setPromoCategoryId3}
+                  promoCategorySlug3={promoCategorySlug3}
+                  setPromoCategorySlug3={setPromoCategorySlug3}
                 />
               </form>
             </div>
@@ -605,7 +694,7 @@ const StoreHome = () => {
         {/************* TabPanel 3*************/}
         {tabName === "about-us-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)} id="about-us-form">
                 <AboutUs
                   isSave={isSave}
@@ -652,7 +741,7 @@ const StoreHome = () => {
         {/************* TabPanel 4 *************/}
         {tabName === "privacy-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <PrivacyPolicy
                   isSave={isSave}
@@ -693,7 +782,7 @@ const StoreHome = () => {
         {/************* TabPanel 5 *************/}
         {tabName === "FAQ-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 mx-auto w-full bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 mx-auto w-full bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Faq
                   isSave={isSave}
@@ -720,7 +809,7 @@ const StoreHome = () => {
         {/************* TabPanel 6 *************/}
         {tabName === "offers-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Offer
                   errors={errors}
@@ -744,7 +833,7 @@ const StoreHome = () => {
         {/************* TabPanel 7 *************/}
         {tabName === "contact-us-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <ContactUs
                   isSave={isSave}
@@ -776,7 +865,7 @@ const StoreHome = () => {
         {/************* TabPanel 8 *************/}
         {tabName === "checkout-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Checkout
                   isSave={isSave}
@@ -792,7 +881,7 @@ const StoreHome = () => {
         {/************* TabPanel 9 *************/}
         {tabName === "dashboard-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <DashboardSetting
                   isSave={isSave}
@@ -826,7 +915,7 @@ const StoreHome = () => {
         )}
         {tabName === "theme-setting" && (
           <AnimatedContent>
-            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb]">
+            <div className="sm:container md:p-8 p-4 w-full mx-auto bg-white dark:bg-gray-800 dark:text-gray-200 rounded-2xl shadow-sm border border-[#e5e7eb] dark:border-gray-700">
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Theme register={register} isSubmitting={isSubmitting} defaultColor={themeColor} setValue={setValue} />
               </form>

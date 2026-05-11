@@ -1,60 +1,113 @@
-import { useEffect } from 'react';
-import { getToken, onMessage } from 'firebase/messaging';
-import { messaging } from '@lib/firebase';
+import { useEffect, useRef } from 'react';
+import { getMessaging, getToken, onMessage, isSupported } from 'firebase/messaging';
+import app from '@lib/firebase';
 import CustomerServices from '@services/CustomerServices';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { FiBell, FiExternalLink, FiX } from 'react-icons/fi';
 
 const FcmTokenHandler = () => {
+  const lastMessageId = useRef(null);
+
   useEffect(() => {
     const setupFcm = async () => {
       try {
         if (typeof window === 'undefined') return;
 
-        // Check if messaging is initialized
-        if (!messaging) return;
+        // 1. Check if Firebase is supported and initialize messaging inside the hook
+        const supported = await isSupported();
+        if (!supported) {
+          console.log("FCM is not supported in this browser");
+          return;
+        }
 
-        // Request permission
+        const messaging = getMessaging(app);
+        console.log("FCM Messaging Initialized:", !!messaging);
+
+        // 2. Request permission
         const permission = await Notification.requestPermission();
         if (permission !== 'granted') {
           console.log('Notification permission denied');
           return;
         }
 
-        // Get token
+        // 3. Get token
         const token = await getToken(messaging, {
-          vapidKey: 'BMYtYq_x6A0Y6_z3v_4x-f_q7R8rX_V-I_k8G_M7x_H_q-V_A_r_v_x_w_y_z_1_2_3_4_5_6_7_8_9_0', // I need the actual VAPID key if possible, but Firebase often works without it if default is used. Actually, it's better to have it.
+          vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY,
         });
 
         if (token) {
-          // console.log('FCM Token:', token);
+          console.log("FCM Token Generated:", token.substring(0, 10) + "...");
           const userInfo = Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')) : null;
-          
           if (userInfo && userInfo._id) {
             await CustomerServices.updateFcmToken(userInfo._id, token);
           }
         }
 
-        // Handle foreground messages
+        // 4. Handle foreground messages
         onMessage(messaging, (payload) => {
-          console.log('Message received in foreground: ', payload);
+          console.log("FOREGROUND FCM MESSAGE RECEIVED", payload);
+          
+          // Prevent duplicate notifications
+          if (payload.messageId && lastMessageId.current === payload.messageId) {
+            console.log("Duplicate message ignored:", payload.messageId);
+            return;
+          }
+          lastMessageId.current = payload.messageId;
+
+          // Extract data
+          const title = payload.notification?.title || payload.data?.title || "New Notification";
+          const body = payload.notification?.body || payload.data?.body || payload.data?.description || "";
+          const imageUrl = payload.notification?.image || payload.data?.image || payload.notification?.imageUrl;
+          const clickAction = payload.data?.click_action || payload.data?.url || '/';
+
+          // Show Top-Right Toast
           toast.info(
-            <div>
-              <strong>{payload.notification.title}</strong>
-              <p>{payload.notification.body}</p>
+            <div className="flex items-start gap-3 p-1">
+              {imageUrl ? (
+                <div className="flex-shrink-0 w-12 h-12 relative rounded-lg overflow-hidden border border-gray-100 shadow-sm">
+                  <img 
+                    src={imageUrl} 
+                    alt="notification" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+              ) : (
+                <div className="flex-shrink-0 w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                  <FiBell className="text-emerald-600 text-lg" />
+                </div>
+              )}
+              <div className="flex-grow min-w-0">
+                <h4 className="text-sm font-bold text-gray-800 truncate mb-0.5">{title}</h4>
+                <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{body}</p>
+                <div className="mt-1 flex items-center gap-1 text-[10px] font-bold text-emerald-600 uppercase tracking-wider">
+                  View Details <FiExternalLink />
+                </div>
+              </div>
             </div>,
             {
+              icon: false,
+              closeButton: ({ closeToast }) => (
+                <button onClick={closeToast} className="p-1 hover:bg-gray-100 rounded transition-all">
+                  <FiX className="text-gray-400" />
+                </button>
+              ),
               onClick: () => {
-                if (payload.data.click_action) {
-                  window.open(payload.data.click_action, '_blank');
+                if (clickAction) {
+                  window.open(clickAction, '_blank');
                 }
-              }
+              },
+              className: "rounded-xl shadow-xl border border-gray-50",
+              bodyClassName: "p-0",
+              position: "top-right",
+              autoClose: 6000,
             }
           );
         });
 
       } catch (error) {
-        console.error('Error setting up FCM:', error);
+        console.error('Error setting up FCM in component:', error);
       }
     };
 

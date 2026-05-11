@@ -113,7 +113,7 @@ const Faqs = () => {
       </MainDrawer>
       <DeleteModal id={serviceId} title={title} />
 
-      <div className="bg-[#f0f2f5] min-h-screen pb-10">
+      <div className="bg-[#f0f2f5] dark:bg-gray-900 min-h-screen pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
           {/* Header */}
@@ -123,10 +123,10 @@ const Faqs = () => {
                 <FiHelpCircle size={22} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800 tracking-tight leading-tight">Customer Support FAQs</h1>
-                <p className="text-xs text-gray-500 mt-1">Manage common questions and video guides</p>
+                <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200 tracking-tight leading-tight">Customer Support FAQs</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Manage common questions and video guides</p>
               </div>
-              <span className="ml-2 bg-white border border-gray-200 text-gray-600 text-sm font-bold px-3 py-1 rounded-lg shadow-sm">
+              <span className="ml-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300 text-sm font-bold px-3 py-1 rounded-lg shadow-sm">
                 {data.length} Total
               </span>
             </div>
@@ -147,7 +147,7 @@ const Faqs = () => {
           </div>
 
           {/* Search/Filter Bar */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-8">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-8">
             <form onSubmit={handleSearch} className="flex flex-wrap items-center gap-3">
               <div className="relative flex items-center min-w-[200px] flex-1 max-w-sm">
                 <FiSearch className="absolute left-3.5 text-gray-400 w-4 h-4" />
@@ -156,16 +156,16 @@ const Faqs = () => {
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
                   placeholder="Search questions or answers..."
-                  className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:border-store-500 focus:bg-white transition-all shadow-sm"
+                  className="w-full h-11 pl-10 pr-4 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-sm focus:outline-none focus:border-store-500 focus:bg-white dark:focus:bg-gray-800 transition-all shadow-sm dark:text-gray-200"
                 />
               </div>
               <button type="submit" className="h-11 px-6 bg-store-600 text-white font-semibold rounded-xl hover:bg-store-700 shadow-sm transition-all text-sm">
                 Filter
               </button>
-              <button
+                <button
                 type="button"
                 onClick={handleReset}
-                className="h-11 px-6 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-all text-sm"
+                className="h-11 px-6 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-600 transition-all text-sm"
               >
                 Reset
               </button>
@@ -177,7 +177,7 @@ const Faqs = () => {
               <TableLoading row={4} col={3} width={250} height={20} />
             </div>
           ) : error ? (
-            <div className="text-center text-red-500 py-20 bg-white rounded-2xl border border-dashed border-red-200">
+            <div className="text-center text-red-500 py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-red-200 dark:border-red-900/50">
                <p className="font-bold">Backend Connection Failed</p>
                <p className="text-sm mt-2">{error}</p>
             </div>
@@ -186,17 +186,17 @@ const Faqs = () => {
               {/* VIDEO SECTION */}
               <section>
                 <div className="flex items-center justify-between mb-4 px-1">
-                  <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                  <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                     <FiVideo className="text-teal-600" /> Video Guides
                   </h2>
-                  <span className="text-xs text-gray-400 font-medium">{videoFaqs.length} items</span>
+                  <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">{videoFaqs.length} items</span>
                 </div>
                 {videoFaqs.length > 0 ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {videoFaqs.map((video) => {
                       const embedUrl = getEmbedUrl(video.videoUrl);
                       return (
-                        <div key={video._id} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 flex flex-col group hover:shadow-lg transition-all duration-300">
+                        <div key={video._id} className="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col group hover:shadow-lg transition-all duration-300">
                            <div className="relative w-full aspect-video bg-black">
                              {embedUrl ? (
                                <iframe
@@ -215,10 +215,10 @@ const Faqs = () => {
                              </div>
                            </div>
                            <div className="p-4 flex-1 flex flex-col">
-                              <h3 className="text-sm font-bold text-gray-800 mb-1">{video.question}</h3>
-                              <p className="text-[12px] text-gray-500 line-clamp-2 leading-relaxed flex-1">{video.answer || "No description provided."}</p>
-                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50">
-                                 <span className="text-[11px] text-gray-400 font-bold uppercase">Order: {video.sortOrder || 0}</span>
+                              <h3 className="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1">{video.question}</h3>
+                              <p className="text-[12px] text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed flex-1">{video.answer || "No description provided."}</p>
+                              <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-50 dark:border-gray-700">
+                                 <span className="text-[11px] text-gray-400 dark:text-gray-500 font-bold uppercase">Order: {video.sortOrder || 0}</span>
                                  <div className="flex items-center gap-1">
                                    <button onClick={() => openDrawer("video", video._id)} className="p-2 text-gray-400 hover:text-store-600 hover:bg-store-50 rounded-lg transition-colors"><FiEdit size={14} /></button>
                                    <button onClick={() => { setServiceId(video._id); setTitle(video.question); handleModalOpen(); }} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><FiTrash2 size={14} /></button>
@@ -230,9 +230,9 @@ const Faqs = () => {
                     })}
                   </div>
                 ) : (
-                  <div className="bg-white rounded-2xl py-12 flex flex-col items-center border border-gray-50 shadow-sm">
-                    <FiVideo className="text-gray-100 mb-4" size={50} />
-                    <p className="text-gray-400 text-sm font-medium">No video FAQs found.</p>
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl py-12 flex flex-col items-center border border-gray-50 dark:border-gray-700 shadow-sm">
+                    <FiVideo className="text-gray-100 dark:text-gray-700 mb-4" size={50} />
+                    <p className="text-gray-400 dark:text-gray-500 text-sm font-medium">No video FAQs found.</p>
                   </div>
                 )}
               </section>
@@ -240,17 +240,17 @@ const Faqs = () => {
               {/* QA SECTION */}
               <section>
                 <div className="flex items-center justify-between mb-4 px-1">
-                   <h2 className="text-lg font-bold text-gray-800 flex items-center gap-2">
+                   <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                      <FiHelpCircle className="text-store-600" /> General Questions
                    </h2>
-                   <span className="text-xs text-gray-400 font-medium">{qaFaqs.length} entries</span>
+                   <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">{qaFaqs.length} entries</span>
                 </div>
-                <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
                   {qaFaqs.length > 0 ? (
                     <TableContainer className="rounded-none border-none">
                       <Table>
                         <TableHeader>
-                          <tr className="bg-gray-50/70 text-gray-500 text-[10px] font-extrabold uppercase tracking-widest leading-relaxed border-b border-gray-100">
+                          <tr className="bg-gray-50/70 dark:bg-gray-900/70 text-gray-500 dark:text-gray-400 text-[10px] font-extrabold uppercase tracking-widest leading-relaxed border-b border-gray-100 dark:border-gray-700">
                             <TableCell className="py-4">Question</TableCell>
                             <TableCell className="py-4">Short Answer</TableCell>
                             <TableCell className="py-4 text-center">Status</TableCell>
@@ -258,16 +258,16 @@ const Faqs = () => {
                           </tr>
                         </TableHeader>
                         <TableBody>
-                          {qaFaqs.map((faq) => (
-                             <TableRow key={faq._id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-50">
-                               <TableCell className="py-4 font-bold text-gray-800 text-sm max-w-[300px]">
+                           {qaFaqs.map((faq) => (
+                             <TableRow key={faq._id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors border-b border-gray-50 dark:border-gray-700">
+                               <TableCell className="py-4 font-bold text-gray-800 dark:text-gray-200 text-sm max-w-[300px]">
                                   {faq.question}
                                </TableCell>
-                               <TableCell className="py-4 text-xs text-gray-500 max-w-[400px] leading-relaxed">
+                               <TableCell className="py-4 text-xs text-gray-500 dark:text-gray-400 max-w-[400px] leading-relaxed">
                                   {faq.answer?.substring(0, 120)}{faq.answer?.length > 120 ? "..." : ""}
                                </TableCell>
                                <TableCell className="text-center py-4">
-                                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full ${faq.status === "published" ? "bg-green-50 text-green-700 border border-green-100" : "bg-amber-50 text-amber-700 border border-amber-100"}`}>
+                                  <span className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full ${faq.status === "published" ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border border-green-100 dark:border-green-800" : "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border border-amber-100 dark:border-amber-800"}`}>
                                     {faq.status === "published" ? "Live" : "Draft"}
                                   </span>
                                </TableCell>
@@ -284,9 +284,9 @@ const Faqs = () => {
                     </TableContainer>
                   ) : (
                     <div className="py-20 flex flex-col items-center">
-                        <FiHelpCircle className="text-gray-100 mb-4" size={60} />
-                        <p className="text-gray-400 font-bold">No FAQ questions yet.</p>
-                        <button onClick={() => openDrawer("qa")} className="mt-4 text-sm text-store-600 font-bold hover:underline">+ Create first FAQ</button>
+                        <FiHelpCircle className="text-gray-100 dark:text-gray-700 mb-4" size={60} />
+                        <p className="text-gray-400 dark:text-gray-500 font-bold">No FAQ questions yet.</p>
+                        <button onClick={() => openDrawer("qa")} className="mt-4 text-sm text-store-600 dark:text-store-400 font-bold hover:underline">+ Create first FAQ</button>
                     </div>
                   )}
                 </div>

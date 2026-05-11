@@ -115,7 +115,7 @@ const Category = () => {
       <AnimatedContent>
         <div className="flex items-center gap-2 mb-4">
           <FiGrid className="text-orange-400 text-xl" />
-          <h1 className="text-lg font-bold text-gray-800">Add New Category</h1>
+          <h1 className="text-lg font-bold text-gray-800 dark:text-gray-200">Add New Category</h1>
         </div>
 
         <DeleteModal id={serviceId} category={true} />
@@ -273,9 +273,9 @@ const Category = () => {
                 />
               </Table>
 
-              <TableFooter className="bg-white border-t border-gray-50 px-6 py-6">
+              <TableFooter className="bg-white dark:bg-gray-800 border-t border-gray-50 dark:border-gray-700 px-6 py-6">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <span className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">
+                  <span className="text-[11px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                     Total {totalResults} Categories
                   </span>
                   <Pagination

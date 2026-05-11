@@ -34,16 +34,14 @@ const {
   clearCart,
   checkCustomerExistance,
   updateFcmToken,
+  verifyEmailOTP,
+  resendVerificationEmail,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
   emailVerificationLimit,
   phoneVerificationLimit,
 } = require("../lib/email-sender/sender");
-const {
-  verifyEmailOTP,
-  resendVerificationEmail,
-} = require("../controller/customerController");
 
 //verify email
 router.post("/verify-email", emailVerificationLimit, verifyEmailAddress);

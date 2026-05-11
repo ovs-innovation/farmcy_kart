@@ -1,0 +1,13 @@
+const customerController = require("d:/farmcy_kart/backend/controller/customerController");
+console.log("updateCustomer:", typeof customerController.updateCustomer);
+console.log("updateFcmToken:", typeof customerController.updateFcmToken);
+console.log("getCart:", typeof customerController.getCart);
+console.log("addToCart:", typeof customerController.addToCart);
+console.log("updateCartItem:", typeof customerController.updateCartItem);
+console.log("removeFromCart:", typeof customerController.removeFromCart);
+console.log("clearCart:", typeof customerController.clearCart);
+console.log("forgetPassword:", typeof customerController.forgetPassword);
+console.log("resetPassword:", typeof customerController.resetPassword);
+console.log("updateShippingAddress:", typeof customerController.updateShippingAddress);
+console.log("verifyEmailOTP:", typeof customerController.verifyEmailOTP);
+console.log("resendVerificationEmail:", typeof customerController.resendVerificationEmail);

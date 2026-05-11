@@ -39,6 +39,9 @@ const sendSMS = async (to, message, variables = {}) => {
       ]
     };
 
+    console.log(`[MSG91] Attempting to send notification to ${mobile}...`);
+    // console.log(`[MSG91] Payload:`, JSON.stringify(payload, null, 2));
+
     const response = await axios.post("https://api.msg91.com/api/v5/flow/", payload, {
       headers: {
         "authkey": authKey,
@@ -47,14 +50,18 @@ const sendSMS = async (to, message, variables = {}) => {
     });
 
     if (response.data && response.data.type === "success") {
-      // console.log(`[MSG91] Notification sent successfully to ${mobile}`);
+      console.log(`[MSG91] Notification sent successfully to ${mobile}`);
       return true;
     } else {
-      console.error("[MSG91] Error response:", response.data);
+      console.error("[MSG91] API returned an error:", JSON.stringify(response.data, null, 2));
       return false;
     }
   } catch (error) {
-    console.error("[MSG91] SMS sending failed:", error.response ? error.response.data : error.message);
+    if (error.response) {
+      console.error("[MSG91] SMS sending failed (HTTP Error):", error.response.status, JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error("[MSG91] SMS sending failed (Network Error):", error.message);
+    }
     return false;
   }
 };

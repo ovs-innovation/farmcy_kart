@@ -67,6 +67,7 @@ const CustomerServices = {
   },
 
   getShippingAddress: async ({ userId = "", addressId = "" }) => {
+    if (!userId) return null;
     const url = addressId
       ? `/customer/shipping/address/${userId}?id=${addressId}`
       : `/customer/shipping/address/${userId}`;
@@ -74,6 +75,7 @@ const CustomerServices = {
   },
 
   addShippingAddress: async ({ userId = "", shippingAddressData }) => {
+    if (!userId) return null;
     return requests.post(
       `/customer/shipping/address/${userId}`,
       shippingAddressData

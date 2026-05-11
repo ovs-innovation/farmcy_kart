@@ -69,27 +69,27 @@ const SidebarContent = () => {
     <div className="py-4 text-gray-500 dark:text-[#9fb1b1]">
       <a className="text-gray-900 dark:text-gray-200" href="/dashboard">
         {globalSetting?.logo ? (
-          <img
-            src={globalSetting?.logo}
-            alt="Logo"
-            width="135"
-            className="pl-6"
-          />
-        ) : mode === "dark" ? (
-          <img
-            src={logoLight}
-            alt="Farmacykart"
-            width="135"
-            className="pl-6"
-          />
-        ) : (
-          <img
-            src={logoDark}
-            alt="Farmacykart"
-            width="135"
-            className="pl-6"
-          />
-        )}
+            <img
+              src={globalSetting?.logo}
+              alt="Logo"
+              width="135"
+              className="pl-6 mix-blend-multiply"
+            />
+          ) : mode === "dark" ? (
+            <img
+              src={logoLight}
+              alt="Farmacykart"
+              width="135"
+              className="pl-6 mix-blend-multiply"
+            />
+          ) : (
+            <img
+              src={logoDark}
+              alt="Farmacykart"
+              width="135"
+              className="pl-6 mix-blend-multiply"
+            />
+          )}
       </a>
       <ul className="mt-8">
         {updatedSidebar?.map((route) =>

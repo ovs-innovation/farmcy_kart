@@ -92,6 +92,11 @@ const Dashboard = ({ title, description, children }) => {
       href: "/user/my-account",
       icon: FiUser,
     },
+    {
+      title: "Track Order",
+      href: "/user/track-order",
+      icon: FiTruck,
+    },
 
     {
       title: showingTranslateValue(

@@ -101,7 +101,7 @@ const ProductGallery = () => {
       </MainDrawer>
       <DeleteModal id={serviceId} title={title} />
 
-      <div className="bg-[#f0f2f5] min-h-screen pb-10">
+      <div className="bg-[#f0f2f5] dark:bg-gray-900 min-h-screen pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
           {/* Header */}
@@ -111,23 +111,23 @@ const ProductGallery = () => {
                 <FiImage className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-800 leading-tight">Product Gallery</h1>
-                <p className="text-xs text-gray-500 mt-0.5">Manage products in dynamic gallery view</p>
+                <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200 leading-tight">Product Gallery</h1>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Manage products in dynamic gallery view</p>
               </div>
-              <span className="ml-2 bg-gray-100 border border-gray-200 text-gray-700 text-sm font-bold px-3 py-1 rounded-lg">
+              <span className="ml-2 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-bold px-3 py-1 rounded-lg">
                 {totalDoc}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setViewMode("grid")}
-                className={`p-2.5 rounded-xl border transition-all ${viewMode === "grid" ? "bg-teal-600 text-white border-teal-600 shadow-md" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"}`}
+                className={`p-2.5 rounded-xl border transition-all ${viewMode === "grid" ? "bg-teal-600 text-white border-teal-600 shadow-md" : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"}`}
               >
                 <FiGrid size={16} />
               </button>
               <button
                 onClick={() => setViewMode("list")}
-                className={`p-2.5 rounded-xl border transition-all ${viewMode === "list" ? "bg-teal-600 text-white border-teal-600 shadow-md" : "bg-white text-gray-500 border-gray-200 hover:bg-gray-50"}`}
+                className={`p-2.5 rounded-xl border transition-all ${viewMode === "list" ? "bg-teal-600 text-white border-teal-600 shadow-md" : "bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"}`}
               >
                 <FiList size={16} />
               </button>
@@ -135,10 +135,10 @@ const ProductGallery = () => {
           </div>
 
           {/* Filter Card */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 mb-6">
             <div className="flex items-center gap-2 mb-4">
               <FiFilter className="text-teal-600" size={16} />
-              <h2 className="text-sm font-bold text-gray-700">Filters</h2>
+              <h2 className="text-sm font-bold text-gray-700 dark:text-gray-300">Filters</h2>
             </div>
             <form
               onSubmit={handleSearch}
@@ -151,7 +151,7 @@ const ProductGallery = () => {
                   onChange={(e) => setSearchInput(e.target.value)}
                   type="search"
                   placeholder="Search products..."
-                  className="rounded-r-none border-r-0 focus:border-teal-500"
+                  className="rounded-r-none border-r-0 focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200"
                 />
                 <button
                   type="submit"
@@ -165,22 +165,22 @@ const ProductGallery = () => {
               <SelectCategory setCategory={setCategory} lang={lang} />
 
               {/* Brand */}
-              <Select value={brand} onChange={(e) => setBrand(e.target.value)} className="focus:border-teal-500">
-                <option value="">All Brands</option>
+              <Select value={brand} onChange={(e) => setBrand(e.target.value)} className="focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                <option value="" className="dark:bg-gray-800">All Brands</option>
                 {brands?.map((b) => (
-                  <option key={b._id} value={b._id}>
+                  <option key={b._id} value={b._id} className="dark:bg-gray-800">
                     {formatText(b.name)}
                   </option>
                 ))}
               </Select>
 
               {/* Sort */}
-              <Select value={sortedField} onChange={(e) => { setSortedField(e.target.value); setCurrentPage(1); }} className="focus:border-teal-500">
-                <option value="">Sort By</option>
-                <option value="low">Price: Low to High</option>
-                <option value="high">Price: High to Low</option>
-                <option value="date-added-desc">Newest First</option>
-                <option value="date-added-asc">Oldest First</option>
+              <Select value={sortedField} onChange={(e) => { setSortedField(e.target.value); setCurrentPage(1); }} className="focus:border-teal-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
+                <option value="" className="dark:bg-gray-800">Sort By</option>
+                <option value="low" className="dark:bg-gray-800">Price: Low to High</option>
+                <option value="high" className="dark:bg-gray-800">Price: High to Low</option>
+                <option value="date-added-desc" className="dark:bg-gray-800">Newest First</option>
+                <option value="date-added-asc" className="dark:bg-gray-800">Oldest First</option>
               </Select>
 
               <div className="flex gap-2 sm:col-span-2 lg:col-span-5 justify-end">
@@ -190,10 +190,10 @@ const ProductGallery = () => {
                 >
                   Apply Filters
                 </button>
-                <button
+                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-6 py-2 bg-gray-100 text-gray-600 rounded-xl text-sm font-semibold hover:bg-gray-200 transition-all"
+                  className="px-6 py-2 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl text-sm font-semibold hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                 >
                   Reset
                 </button>
@@ -205,7 +205,7 @@ const ProductGallery = () => {
           {loading ? (
             <TableLoading row={4} col={4} width={180} height={20} />
           ) : error ? (
-            <div className="text-center text-red-500 py-16 bg-white rounded-2xl">{error}</div>
+            <div className="text-center text-red-500 py-16 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700">{error}</div>
           ) : products.length === 0 ? (
             <NotFound title="No products found in gallery." />
           ) : viewMode === "grid" ? (
@@ -223,10 +223,10 @@ const ProductGallery = () => {
                     key={product._id}
                     onMouseEnter={() => setHoveredProduct(product._id)}
                     onMouseLeave={() => setHoveredProduct(null)}
-                    className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden group"
+                    className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden group"
                   >
                     {/* Image */}
-                    <div className="relative aspect-square bg-gray-50 overflow-hidden">
+                    <div className="relative aspect-square bg-gray-50 dark:bg-gray-900 overflow-hidden">
                       {img ? (
                         <img
                           src={img}
@@ -252,21 +252,21 @@ const ProductGallery = () => {
                         <button
                           onClick={() => history.push(`/product/${product._id}`)}
                           title="View Details"
-                          className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-gray-800 hover:bg-teal-600 hover:text-white transition-colors shadow-md"
+                          className="w-9 h-9 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-teal-600 hover:text-white transition-colors shadow-md"
                         >
                           <FiEye size={15} />
                         </button>
                         <button
                           onClick={() => handleUpdate(product._id)}
                           title="Edit Product"
-                          className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-gray-800 hover:bg-blue-600 hover:text-white transition-colors shadow-md"
+                          className="w-9 h-9 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-gray-800 dark:text-gray-200 hover:bg-blue-600 hover:text-white transition-colors shadow-md"
                         >
                           <FiEdit size={15} />
                         </button>
                         <button
                           onClick={() => handleModalOpen(product._id, title)}
                           title="Delete Product"
-                          className="w-9 h-9 bg-white rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-600 hover:text-white transition-colors shadow-md"
+                          className="w-9 h-9 bg-white dark:bg-gray-700 rounded-full flex items-center justify-center text-rose-500 hover:bg-rose-600 hover:text-white transition-colors shadow-md"
                         >
                           <FiTrash2 size={15} />
                         </button>
@@ -275,10 +275,10 @@ const ProductGallery = () => {
 
                     {/* Info */}
                     <div className="p-4">
-                      <p className="text-[13px] text-gray-400 font-medium mb-1 truncate">
+                      <p className="text-[13px] text-gray-400 dark:text-gray-500 font-medium mb-1 truncate">
                         {formatText(product.category?.name) !== "N/A" ? formatText(product.category?.name) : "No Category"}
                       </p>
-                      <h3 className="text-[14px] font-bold text-gray-800 leading-snug mb-2 line-clamp-2">
+                      <h3 className="text-[14px] font-bold text-gray-800 dark:text-gray-200 leading-snug mb-2 line-clamp-2">
                         {title}
                       </h3>
                       <div className="flex items-center gap-2 mb-3">
@@ -288,13 +288,13 @@ const ProductGallery = () => {
                         )}
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${(product.stock ?? 0) > 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${(product.stock ?? 0) > 0 ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" : "bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400"}`}>
                           {(product.stock ?? 0) > 0 ? `${product.stock} in stock` : "Out of stock"}
                         </span>
                         {product.averageRating > 0 && (
                           <div className="flex items-center gap-1 text-amber-500">
                             <FiStar size={12} fill="currentColor" />
-                            <span className="text-[12px] font-bold text-gray-600">{product.averageRating?.toFixed(1)}</span>
+                            <span className="text-[12px] font-bold text-gray-600 dark:text-gray-400">{product.averageRating?.toFixed(1)}</span>
                           </div>
                         )}
                       </div>
@@ -305,8 +305,8 @@ const ProductGallery = () => {
             </div>
           ) : (
             /* LIST VIEW */
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-              <div className="divide-y divide-gray-50">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
+              <div className="divide-y divide-gray-50 dark:divide-gray-700">
                 {products.map((product) => {
                   const img = Array.isArray(product.image) ? product.image[0] : product.image;
                   const titleStr = formatText(product.title);
@@ -316,9 +316,9 @@ const ProductGallery = () => {
                   return (
                     <div
                       key={product._id}
-                      className="flex items-center gap-5 p-4 hover:bg-gray-50/80 transition-colors group"
+                      className="flex items-center gap-5 p-4 hover:bg-gray-50/80 dark:hover:bg-gray-700/50 transition-colors group"
                     >
-                      <div className="w-16 h-16 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+                      <div className="w-16 h-16 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0">
                         {img ? (
                           <img src={img} alt={titleStr} className="w-full h-full object-cover" />
                         ) : (
@@ -328,8 +328,8 @@ const ProductGallery = () => {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-[14px] font-bold text-gray-800 truncate">{titleStr}</h3>
-                        <p className="text-[12px] text-gray-400 mt-0.5">{formatText(product.category?.name)}</p>
+                        <h3 className="text-[14px] font-bold text-gray-800 dark:text-gray-200 truncate">{titleStr}</h3>
+                        <p className="text-[12px] text-gray-400 dark:text-gray-500 mt-0.5">{formatText(product.category?.name)}</p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-teal-600 font-bold text-[14px]">₹{price.toLocaleString()}</p>
@@ -338,7 +338,7 @@ const ProductGallery = () => {
                         )}
                       </div>
                       <div className="shrink-0 w-24 text-center">
-                        <span className={`text-[11px] font-bold px-2 py-1 rounded-full ${(product.stock ?? 0) > 0 ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}>
+                        <span className={`text-[11px] font-bold px-2 py-1 rounded-full ${(product.stock ?? 0) > 0 ? "bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400" : "bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400"}`}>
                           {(product.stock ?? 0) > 0 ? `${product.stock} in stock` : "Out"}
                         </span>
                       </div>

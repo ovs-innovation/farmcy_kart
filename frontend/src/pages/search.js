@@ -132,11 +132,12 @@ const Search = ({ products, attributes }) => {
       setIsLoading(true);
       try {
         const id = router.query._id;
+        const categorySlug = router.query.category;
         const q = router.query.query;
         const brand = router.query.brand;
 
         const response = await ProductServices.getShowingStoreProducts({
-          category: "", 
+          category: id ? id : categorySlug ? categorySlug : "", 
           title: q ? encodeURIComponent(q) : "",
           brand: brand ? brand : "",
         });
@@ -144,6 +145,7 @@ const Search = ({ products, attributes }) => {
         if (response?.products) {
           setInitialProducts(response.products);
           
+          // Sync selection with URL if not a sidebar action
           if (id && !isSidebarAction.current) {
             const findAndSelect = (cats, targetId) => {
               for (const c of cats) {
@@ -171,12 +173,13 @@ const Search = ({ products, attributes }) => {
     };
 
     if (router.isReady) {
+      // Clear selection ONLY if there is NO category in URL AND it's not a sidebar action
       if (!router.query._id && !isSidebarAction.current) {
         setSelectedCategories([]);
       }
       fetchByQuery();
     }
-  }, [router.isReady, router.query._id, router.query.query, router.query.brand, categories]);
+  }, [router.isReady, router.query._id, router.query.category, router.query.query, router.query.brand, categories]);
 
   // Clear search query and URL filters when sidebar filters are applied
   const clearSearchQuery = () => {
@@ -286,46 +289,6 @@ const Search = ({ products, attributes }) => {
     }
   }, [router.query.query]);
 
-  // Re-fetch products client-side when category/_id or brand or query changes in the URL
-  useEffect(() => {
-    const fetchByQuery = async () => {
-      setIsLoading(true);
-      try {
-        const id = router.query._id;
-        const q = router.query.query;
-        const brand = router.query.brand;
-
-        const response = await ProductServices.getShowingStoreProducts({
-          category: id ? id : "",
-          title: q ? encodeURIComponent(q) : "",
-          brand: brand ? brand : "",
-        });
-
-        if (response?.products) {
-          setInitialProducts(response.products);
-          
-          // Sync selection with URL if not a sidebar action
-          if (id && !isSidebarAction.current) {
-             setSelectedCategories([id]);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching products:", err);
-      } finally {
-        setIsLoading(false);
-        isSidebarAction.current = false;
-      }
-    };
-
-    if (router.isReady) {
-      // Clear selection ONLY if there is NO category in URL AND it's not a sidebar action
-      if (!router.query._id && !isSidebarAction.current) {
-        setSelectedCategories([]);
-      }
-      
-      fetchByQuery();
-    }
-  }, [router.isReady, router.query._id, router.query.query, router.query.brand]);
 
   const handleSearchChange = (value) => {
     setSearchText(value);
@@ -696,11 +659,11 @@ const Search = ({ products, attributes }) => {
 export default Search;
 
 export const getServerSideProps = async (context) => {
-  const { query, _id, brand } = context.query;
+  const { query, _id, brand, category } = context.query;
 
   const [data, attributes] = await Promise.all([
     ProductServices.getShowingStoreProducts({
-      category: _id ? _id : "",
+      category: _id ? _id : category ? category : "",
       title: query ? encodeURIComponent(query) : "",
       brand: brand ? brand : "",
     }),

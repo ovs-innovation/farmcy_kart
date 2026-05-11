@@ -24,23 +24,33 @@ const SliderCarousel = () => {
   const sliderData = [
     {
       img: storeCustomizationSetting?.slider?.first_img || "/slider/dss11.webp",
-      slug: storeCustomizationSetting?.slider?.first_productSlug
+      slug: storeCustomizationSetting?.slider?.first_productSlug,
+      catSlug: storeCustomizationSetting?.slider?.first_categorySlug,
+      catId: storeCustomizationSetting?.slider?.first_categoryId
     },
     {
       img: storeCustomizationSetting?.slider?.second_img || "/slider/dss22.webp",
-      slug: storeCustomizationSetting?.slider?.second_productSlug
+      slug: storeCustomizationSetting?.slider?.second_productSlug,
+      catSlug: storeCustomizationSetting?.slider?.second_categorySlug,
+      catId: storeCustomizationSetting?.slider?.second_categoryId
     },
     {
       img: storeCustomizationSetting?.slider?.third_img || "/slider/dss11.webp",
-      slug: storeCustomizationSetting?.slider?.third_productSlug
+      slug: storeCustomizationSetting?.slider?.third_productSlug,
+      catSlug: storeCustomizationSetting?.slider?.third_categorySlug,
+      catId: storeCustomizationSetting?.slider?.third_categoryId
     },
     {
       img: storeCustomizationSetting?.slider?.four_img || "/slider/dss11.webp",
-      slug: storeCustomizationSetting?.slider?.four_productSlug
+      slug: storeCustomizationSetting?.slider?.four_productSlug,
+      catSlug: storeCustomizationSetting?.slider?.four_categorySlug,
+      catId: storeCustomizationSetting?.slider?.four_categoryId
     },
     {
       img: storeCustomizationSetting?.slider?.five_img || "/slider/dss11.webp",
-      slug: storeCustomizationSetting?.slider?.five_productSlug
+      slug: storeCustomizationSetting?.slider?.five_productSlug,
+      catSlug: storeCustomizationSetting?.slider?.five_categorySlug,
+      catId: storeCustomizationSetting?.slider?.five_categoryId
     },
   ].filter(item => item.img).map(item => ({
     ...item,
@@ -96,6 +106,17 @@ const SliderCarousel = () => {
                 <div className="relative w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                   {item.slug ? (
                     <Link href={`/product/${item.slug}`}>
+                      <Image
+                        src={item.img}
+                        alt={`Slider ${index + 1}`}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-contain cursor-pointer hover:scale-105 transition-transform duration-500"
+                        priority={index === 0}
+                      />
+                    </Link>
+                  ) : item.catSlug ? (
+                    <Link href={`/search?category=${item.catSlug}${item.catId ? `&_id=${item.catId}` : ""}`}>
                       <Image
                         src={item.img}
                         alt={`Slider ${index + 1}`}

@@ -56,7 +56,7 @@ const PushNotificationTable = ({
               <div className="flex items-center">
                 {notification.image ? (
                   <Avatar
-                    className="hidden mr-3 md:block bg-gray-50 p-1"
+                    className="mr-3 bg-gray-50 p-1"
                     src={notification.image}
                     alt="image"
                   />
@@ -96,12 +96,6 @@ const PushNotificationTable = ({
 
             <TableCell>
               <div className="flex justify-end text-right">
-                <button
-                  type="button"
-                  className="p-2 cursor-pointer text-gray-400 hover:text-teal-600"
-                >
-                  <FiEye />
-                </button>
                 <button
                   onClick={() => handleUpdate(notification._id)}
                   className="p-2 cursor-pointer text-gray-400 hover:text-teal-600"

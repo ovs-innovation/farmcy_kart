@@ -122,7 +122,7 @@ const Reviews = () => {
 
   return (
     <AnimatedContent>
-      <div className="bg-[#f0f2f5] min-h-screen pb-10">
+      <div className="bg-[#f0f2f5] dark:bg-gray-900 min-h-screen pb-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
           {/* Header */}
@@ -131,17 +131,17 @@ const Reviews = () => {
               <FiStar className="w-5 h-5 text-white fill-white" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800 leading-tight">Item Reviews</h1>
-              <p className="text-xs text-gray-500">Manage and monitor product reviews</p>
+              <h1 className="text-xl font-bold text-gray-800 dark:text-gray-200 leading-tight">Item Reviews</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Manage and monitor product reviews</p>
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
             {/* Toolbar */}
-            <div className="p-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-gray-100">
+            <div className="p-5 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 border-b border-gray-100 dark:border-gray-700">
               <div className="flex items-center gap-3">
-                <h2 className="text-[17px] font-bold text-gray-700">Review List</h2>
-                <span className="bg-gray-100 border border-gray-200 text-gray-700 text-sm font-bold px-3 py-1 rounded-lg">
+                <h2 className="text-[17px] font-bold text-gray-700 dark:text-gray-300">Review List</h2>
+                <span className="bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm font-bold px-3 py-1 rounded-lg">
                   {totalResults}
                 </span>
               </div>
@@ -149,7 +149,7 @@ const Reviews = () => {
                 <div className="flex w-full sm:w-auto relative">
                   <Input
                     ref={searchRef}
-                    className="w-full sm:w-[300px] border-gray-200 rounded-r-none focus:border-teal-500 text-sm h-10"
+                    className="w-full sm:w-[300px] border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-r-none focus:border-teal-500 text-sm h-10"
                     placeholder="Search by item name, customer..."
                     onChange={(e) => setSearchText(e.target.value)}
                   />
@@ -157,10 +157,10 @@ const Reviews = () => {
                     <FiSearch className="w-4 h-4" />
                   </button>
                 </div>
-                <button className="flex items-center gap-2 px-4 h-10 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-600 font-medium text-sm transition-all whitespace-nowrap bg-white">
-                  <FiDownload className="w-4 h-4 text-gray-500" />
+                <button className="flex items-center gap-2 px-4 h-10 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium text-sm transition-all whitespace-nowrap bg-white dark:bg-gray-800">
+                  <FiDownload className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                   Export
-                  <FiChevronDown className="w-4 h-4 text-gray-400" />
+                  <FiChevronDown className="w-4 h-4 text-gray-400 dark:text-gray-500" />
                 </button>
               </div>
             </div>
@@ -176,9 +176,9 @@ const Reviews = () => {
               <TableContainer className="rounded-none border-none overflow-x-auto">
                 <Table className="w-full text-sm">
                   <TableHeader>
-                    <tr className="bg-gray-50/80 border-b border-gray-100">
+                    <tr className="bg-gray-50/80 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700">
                       {["Sl", "Review Id", "Item", "Customer", "Review", "Date", "Store Reply", "Action"].map((h, idx) => (
-                        <TableCell key={idx} className="py-4 font-extrabold text-gray-600 text-[12px] uppercase tracking-wide">
+                        <TableCell key={idx} className="py-4 font-extrabold text-gray-600 dark:text-gray-400 text-[12px] uppercase tracking-wide">
                           <div className={`flex items-center gap-1 ${idx <= 1 ? "justify-center" : idx >= 6 ? "justify-center" : "justify-start"}`}>
                             {h}
                             {h !== "Action" && <HiSelector className="text-gray-300 w-3.5 h-3.5 shrink-0" />}
@@ -191,7 +191,7 @@ const Reviews = () => {
                     {reviews.map((review, i) => (
                       <TableRow
                         key={review._id || i}
-                        className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
+                        className="border-b border-gray-50 dark:border-gray-700 hover:bg-gray-50/60 dark:hover:bg-gray-700/50 transition-colors"
                       >
                         {/* Sl */}
                         <TableCell className="text-center font-medium text-gray-400 text-[13px] w-12">
@@ -200,7 +200,7 @@ const Reviews = () => {
 
                         {/* Review ID */}
                         <TableCell className="text-center w-28">
-                          <span className="text-[12px] font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded-md">
+                          <span className="text-[12px] font-mono bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-2 py-0.5 rounded-md">
                             #{review._id?.substring(18, 24) || `${100137 + i}`}
                           </span>
                         </TableCell>
@@ -208,7 +208,7 @@ const Reviews = () => {
                         {/* Item */}
                         <TableCell className="min-w-[180px]">
                           <div className="flex items-center gap-3">
-                            <div className="w-11 h-11 rounded-xl bg-gray-50 border border-gray-100 overflow-hidden shrink-0">
+                            <div className="w-11 h-11 rounded-xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 overflow-hidden shrink-0">
                               {review.product?.image ? (
                                 <img
                                   src={Array.isArray(review.product.image) ? review.product.image[0] : review.product.image}
@@ -222,10 +222,10 @@ const Reviews = () => {
                               )}
                             </div>
                             <div>
-                              <p className="text-[13px] font-bold text-gray-800 leading-tight line-clamp-1 max-w-[160px]">
+                              <p className="text-[13px] font-bold text-gray-800 dark:text-gray-200 leading-tight line-clamp-1 max-w-[160px]">
                                 {formatText(review.product?.title, "Unknown Product")}
                               </p>
-                              <p className="text-[11px] text-gray-400 mt-0.5">
+                              <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                                 Order: #{review.orderInvoice || "—"}
                               </p>
                             </div>
@@ -252,10 +252,10 @@ const Reviews = () => {
 
                         {/* Date */}
                         <TableCell className="text-center w-28">
-                          <p className="text-[12px] font-medium text-gray-700">
+                          <p className="text-[12px] font-medium text-gray-700 dark:text-gray-200">
                             {dayjs(review.createdAt).format("DD MMM YYYY")}
                           </p>
-                          <p className="text-[11px] text-gray-400 mt-0.5">
+                          <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
                             {dayjs(review.createdAt).format("hh:mm A")}
                           </p>
                         </TableCell>
@@ -263,11 +263,11 @@ const Reviews = () => {
                         {/* Store Reply */}
                         <TableCell className="text-center w-28">
                           {review.reply ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30 px-2 py-1 rounded-full">
                               <FiCheck size={10} /> Replied
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 px-2 py-1 rounded-full">
                               <FiMessageSquare size={10} /> Not replied
                             </span>
                           )}
@@ -287,7 +287,7 @@ const Reviews = () => {
                     ))}
                   </TableBody>
                 </Table>
-                <TableFooter className="bg-white border-t border-gray-100 p-4">
+                <TableFooter className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 p-4">
                   <Pagination
                     totalResults={totalResults}
                     resultsPerPage={resultsPerPage}

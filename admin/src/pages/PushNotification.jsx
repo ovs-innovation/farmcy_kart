@@ -30,6 +30,7 @@ import MainDrawer from "@/components/drawer/MainDrawer";
 import TableLoading from "@/components/preloader/TableLoading";
 import CheckBox from "@/components/form/others/CheckBox";
 import PushNotificationTable from "@/components/push-notification/PushNotificationTable";
+import PushNotificationDrawer from "@/components/drawer/PushNotificationDrawer";
 import NotFound from "@/components/table/NotFound";
 import AnimatedContent from "@/components/common/AnimatedContent";
 import Uploader from "@/components/image-uploader/Uploader";
@@ -62,7 +63,19 @@ const PushNotification = () => {
     isSubmitting,
     handleReset,
     setValue,
+    watch,
   } = usePushNotificationSubmit(activeId);
+
+  const titleValue = watch("title") || "";
+  const descriptionValue = watch("description") || "";
+
+  useEffect(() => {
+    setTitleCount(titleValue.length);
+  }, [titleValue]);
+
+  useEffect(() => {
+    setDescCount(descriptionValue.length);
+  }, [descriptionValue]);
 
   const {
     dataTable,
@@ -86,7 +99,7 @@ const PushNotification = () => {
 
   const handleUpdate = (id) => {
     setActiveId(id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toggleDrawer();
   };
 
   return (
@@ -177,7 +190,7 @@ const PushNotification = () => {
                         }}
                       />
                       <div className="flex justify-end">
-                        <span className="text-xs text-gray-400">{titleCount}/100</span>
+                        <span className={`text-xs ${titleCount > 100 ? 'text-red-500' : 'text-gray-400'}`}>{titleCount}/100</span>
                       </div>
                       {errors.title && <span className="text-red-400 text-xs">{errors.title.message}</span>}
                     </div>
@@ -199,7 +212,7 @@ const PushNotification = () => {
                         }}
                       />
                       <div className="flex justify-end">
-                        <span className="text-xs text-gray-400">{descCount}/200</span>
+                        <span className={`text-xs ${descCount > 200 ? 'text-red-500' : 'text-gray-400'}`}>{descCount}/200</span>
                       </div>
                       {errors.description && <span className="text-red-400 text-xs">{errors.description.message}</span>}
                     </div>
@@ -345,6 +358,9 @@ const PushNotification = () => {
       ) : (
         <NotFound title="Sorry, There are no notifications right now." />
       )}
+      <MainDrawer>
+        <PushNotificationDrawer id={activeId} />
+      </MainDrawer>
     </>
   );
 };

@@ -12,6 +12,7 @@ import { SidebarContext } from "@/context/SidebarContext";
 import SettingServices from "@/services/SettingServices";
 import CouponServices from "@/services/CouponServices";
 import ProductServices from "@/services/ProductServices";
+import CategoryServices from "@/services/CategoryServices";
 
 const createEditorState = (text) => {
   const contentState = stateFromHTML(text);
@@ -28,24 +29,47 @@ const useStoreHomeSubmit = () => {
   const [couponList1, setCouponList1] = useState([]);
   const [language, setLanguage] = useState("en");
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   const [sliderProductId, setSliderProductId] = useState("");
   const [sliderProductSlug, setSliderProductSlug] = useState("");
+  const [sliderCategoryId, setSliderCategoryId] = useState("");
+  const [sliderCategorySlug, setSliderCategorySlug] = useState("");
+
   const [sliderProductIdTwo, setSliderProductIdTwo] = useState("");
   const [sliderProductSlugTwo, setSliderProductSlugTwo] = useState("");
+  const [sliderCategoryIdTwo, setSliderCategoryIdTwo] = useState("");
+  const [sliderCategorySlugTwo, setSliderCategorySlugTwo] = useState("");
+
   const [sliderProductIdThree, setSliderProductIdThree] = useState("");
   const [sliderProductSlugThree, setSliderProductSlugThree] = useState("");
+  const [sliderCategoryIdThree, setSliderCategoryIdThree] = useState("");
+  const [sliderCategorySlugThree, setSliderCategorySlugThree] = useState("");
+
   const [sliderProductIdFour, setSliderProductIdFour] = useState("");
   const [sliderProductSlugFour, setSliderProductSlugFour] = useState("");
+  const [sliderCategoryIdFour, setSliderCategoryIdFour] = useState("");
+  const [sliderCategorySlugFour, setSliderCategorySlugFour] = useState("");
+
   const [sliderProductIdFive, setSliderProductIdFive] = useState("");
   const [sliderProductSlugFive, setSliderProductSlugFive] = useState("");
+  const [sliderCategoryIdFive, setSliderCategoryIdFive] = useState("");
+  const [sliderCategorySlugFive, setSliderCategorySlugFive] = useState("");
 
   const [promoProductId1, setPromoProductId1] = useState("");
   const [promoProductSlug1, setPromoProductSlug1] = useState("");
+  const [promoCategoryId1, setPromoCategoryId1] = useState("");
+  const [promoCategorySlug1, setPromoCategorySlug1] = useState("");
+
   const [promoProductId2, setPromoProductId2] = useState("");
   const [promoProductSlug2, setPromoProductSlug2] = useState("");
+  const [promoCategoryId2, setPromoCategoryId2] = useState("");
+  const [promoCategorySlug2, setPromoCategorySlug2] = useState("");
+
   const [promoProductId3, setPromoProductId3] = useState("");
   const [promoProductSlug3, setPromoProductSlug3] = useState("");
+  const [promoCategoryId3, setPromoCategoryId3] = useState("");
+  const [promoCategorySlug3, setPromoCategorySlug3] = useState("");
 
   const [isSave, setIsSave] = useState(true);
   const [printSlip, setPrintSlip] = useState(true);
@@ -275,14 +299,20 @@ const useStoreHomeSubmit = () => {
             promotional_banner_link1: data.promotional_banner_link1 || "",
             promotional_banner_productId1: promoProductId1,
             promotional_banner_productSlug1: promoProductSlug1,
+            promotional_banner_categoryId1: promoCategoryId1,
+            promotional_banner_categorySlug1: promoCategorySlug1,
             promotional_banner_image2: promotionalBannerImage2,
             promotional_banner_link2: data.promotional_banner_link2 || "",
             promotional_banner_productId2: promoProductId2,
             promotional_banner_productSlug2: promoProductSlug2,
+            promotional_banner_categoryId2: promoCategoryId2,
+            promotional_banner_categorySlug2: promoCategorySlug2,
             promotional_banner_image3: promotionalBannerImage3,
             promotional_banner_link3: data.promotional_banner_link3 || "",
             promotional_banner_productId3: promoProductId3,
             promotional_banner_productSlug3: promoProductSlug3,
+            promotional_banner_categoryId3: promoCategoryId3,
+            promotional_banner_categorySlug3: promoCategorySlug3,
 
             discount_title: handleRemoveEmptyKey({
               ...resData?.home?.discount_title,
@@ -718,6 +748,8 @@ const useStoreHomeSubmit = () => {
             first_link: data.slider_button_link,
             first_productId: sliderProductId,
             first_productSlug: sliderProductSlug,
+            first_categoryId: sliderCategoryId,
+            first_categorySlug: sliderCategorySlug,
 
             second_img: sliderImageTwo,
             second_title: handleRemoveEmptyKey({
@@ -735,6 +767,8 @@ const useStoreHomeSubmit = () => {
             second_link: data.slider_button_link_two,
             second_productId: sliderProductIdTwo,
             second_productSlug: sliderProductSlugTwo,
+            second_categoryId: sliderCategoryIdTwo,
+            second_categorySlug: sliderCategorySlugTwo,
 
             third_img: sliderImageThree,
             third_title: handleRemoveEmptyKey({
@@ -752,6 +786,8 @@ const useStoreHomeSubmit = () => {
             third_link: data.slider_button_link_three,
             third_productId: sliderProductIdThree,
             third_productSlug: sliderProductSlugThree,
+            third_categoryId: sliderCategoryIdThree,
+            third_categorySlug: sliderCategorySlugThree,
 
             four_img: sliderImageFour,
             four_title: handleRemoveEmptyKey({
@@ -769,6 +805,8 @@ const useStoreHomeSubmit = () => {
             four_link: data.slider_button_link_four,
             four_productId: sliderProductIdFour,
             four_productSlug: sliderProductSlugFour,
+            four_categoryId: sliderCategoryIdFour,
+            four_categorySlug: sliderCategorySlugFour,
 
             five_img: sliderImageFive,
             five_title: handleRemoveEmptyKey({
@@ -786,6 +824,8 @@ const useStoreHomeSubmit = () => {
             five_link: data.slider_button_link_five,
             five_productId: sliderProductIdFive,
             five_productSlug: sliderProductSlugFive,
+            five_categoryId: sliderCategoryIdFive,
+            five_categorySlug: sliderCategorySlugFive,
           },
 
           checkout: {
@@ -1331,12 +1371,20 @@ const useStoreHomeSubmit = () => {
           setValue("promotional_banner_link1", res?.home?.promotional_banner_link1 || "");
           setPromoProductId1(res?.home?.promotional_banner_productId1 || "");
           setPromoProductSlug1(res?.home?.promotional_banner_productSlug1 || "");
+          setPromoCategoryId1(res?.home?.promotional_banner_categoryId1 || "");
+          setPromoCategorySlug1(res?.home?.promotional_banner_categorySlug1 || "");
+
           setValue("promotional_banner_link2", res?.home?.promotional_banner_link2 || "");
           setPromoProductId2(res?.home?.promotional_banner_productId2 || "");
           setPromoProductSlug2(res?.home?.promotional_banner_productSlug2 || "");
+          setPromoCategoryId2(res?.home?.promotional_banner_categoryId2 || "");
+          setPromoCategorySlug2(res?.home?.promotional_banner_categorySlug2 || "");
+
           setValue("promotional_banner_link3", res?.home?.promotional_banner_link3 || "");
           setPromoProductId3(res?.home?.promotional_banner_productId3 || "");
           setPromoProductSlug3(res?.home?.promotional_banner_productSlug3 || "");
+          setPromoCategoryId3(res?.home?.promotional_banner_categoryId3 || "");
+          setPromoCategorySlug3(res?.home?.promotional_banner_categorySlug3 || "");
           setValue(
             "latest_discount_title",
             res?.home?.latest_discount_title[language || "en"]
@@ -1372,14 +1420,28 @@ const useStoreHomeSubmit = () => {
 
           setSliderProductId(res?.slider?.first_productId || "");
           setSliderProductSlug(res?.slider?.first_productSlug || "");
+          setSliderCategoryId(res?.slider?.first_categoryId || "");
+          setSliderCategorySlug(res?.slider?.first_categorySlug || "");
+
           setSliderProductIdTwo(res?.slider?.second_productId || "");
           setSliderProductSlugTwo(res?.slider?.second_productSlug || "");
+          setSliderCategoryIdTwo(res?.slider?.second_categoryId || "");
+          setSliderCategorySlugTwo(res?.slider?.second_categorySlug || "");
+
           setSliderProductIdThree(res?.slider?.third_productId || "");
           setSliderProductSlugThree(res?.slider?.third_productSlug || "");
+          setSliderCategoryIdThree(res?.slider?.third_categoryId || "");
+          setSliderCategorySlugThree(res?.slider?.third_categorySlug || "");
+
           setSliderProductIdFour(res?.slider?.four_productId || "");
           setSliderProductSlugFour(res?.slider?.four_productSlug || "");
+          setSliderCategoryIdFour(res?.slider?.four_categoryId || "");
+          setSliderCategorySlugFour(res?.slider?.four_categorySlug || "");
+
           setSliderProductIdFive(res?.slider?.five_productId || "");
           setSliderProductSlugFive(res?.slider?.five_productSlug || "");
+          setSliderCategoryIdFive(res?.slider?.five_categoryId || "");
+          setSliderCategorySlugFive(res?.slider?.five_categorySlug || "");
 
           setValue("slider_title", res?.slider?.first_title[language || "en"]);
           setValue(
@@ -2100,6 +2162,10 @@ const useStoreHomeSubmit = () => {
             limit: 500,
           });
           setProducts(prodRes?.products);
+
+          // fetch all categories for selection
+          const catRes = await CategoryServices.getAllCategory();
+          setCategories(catRes);
         }
       } catch (err) {
         notifyError(err ? err?.response?.data?.message : err?.message);
@@ -2325,38 +2391,71 @@ const useStoreHomeSubmit = () => {
     setTermsConditionsTextEdit,
     isSubmitting,
     products,
+    categories,
     sliderProductId,
     setSliderProductId,
     sliderProductSlug,
     setSliderProductSlug,
+    sliderCategoryId,
+    setSliderCategoryId,
+    sliderCategorySlug,
+    setSliderCategorySlug,
     sliderProductIdTwo,
     setSliderProductIdTwo,
     sliderProductSlugTwo,
     setSliderProductSlugTwo,
+    sliderCategoryIdTwo,
+    setSliderCategoryIdTwo,
+    sliderCategorySlugTwo,
+    setSliderCategorySlugTwo,
     sliderProductIdThree,
     setSliderProductIdThree,
     sliderProductSlugThree,
     setSliderProductSlugThree,
+    sliderCategoryIdThree,
+    setSliderCategoryIdThree,
+    sliderCategorySlugThree,
+    setSliderCategorySlugThree,
     sliderProductIdFour,
     setSliderProductIdFour,
     sliderProductSlugFour,
     setSliderProductSlugFour,
+    sliderCategoryIdFour,
+    setSliderCategoryIdFour,
+    sliderCategorySlugFour,
+    setSliderCategorySlugFour,
     sliderProductIdFive,
     setSliderProductIdFive,
     sliderProductSlugFive,
     setSliderProductSlugFive,
+    sliderCategoryIdFive,
+    setSliderCategoryIdFive,
+    sliderCategorySlugFive,
+    setSliderCategorySlugFive,
     promoProductId1,
     setPromoProductId1,
     promoProductSlug1,
     setPromoProductSlug1,
+    promoCategoryId1,
+    setPromoCategoryId1,
+    promoCategorySlug1,
+    setPromoCategorySlug1,
     promoProductId2,
     setPromoProductId2,
     promoProductSlug2,
     setPromoProductSlug2,
+    promoCategoryId2,
+    setPromoCategoryId2,
+    promoCategorySlug2,
+    setPromoCategorySlug2,
     promoProductId3,
     setPromoProductId3,
     promoProductSlug3,
     setPromoProductSlug3,
+    promoCategoryId3,
+    setPromoCategoryId3,
+    promoCategorySlug3,
+    setPromoCategorySlug3,
   };
 };
 

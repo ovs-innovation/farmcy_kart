@@ -21,7 +21,40 @@ const Login = () => {
   const router = useRouter();
   const { dispatch } = useContext(UserContext);
   const [loginMethod, setLoginMethod] = useState("otp"); 
-  const { handleSubmit, submitHandler, register, errors, loading } = useLoginSubmit();
+  const { handleSubmit, submitHandler, register, reset, setValue, errors, loading } = useLoginSubmit();
+
+  useEffect(() => {
+    // Stage 1: Initial reset
+    reset({ email: "", password: "" });
+    setValue("email", "");
+    setValue("password", "");
+
+    // Stage 2: Aggressive interval clearing for 2 seconds (to catch late autofills)
+    const interval = setInterval(() => {
+      try {
+        const emailField = document.querySelector('input[name="email"]');
+        const passwordField = document.querySelector('input[name="password"]');
+        
+        // Clear if field has value and user is NOT currently typing in it
+        if (emailField && document.activeElement !== emailField && emailField.value !== "") {
+          emailField.value = "";
+          emailField.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        if (passwordField && document.activeElement !== passwordField && passwordField.value !== "") {
+          passwordField.value = "";
+          passwordField.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+      } catch (e) {}
+    }, 100);
+
+    // Stop the interval after 2 seconds
+    const timer = setTimeout(() => clearInterval(interval), 2000);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
+  }, [reset, setValue]);
 
   // OTP states
   const [step, setStep] = useState("phone");
@@ -58,20 +91,31 @@ const Login = () => {
     setOtpError("");
 
     try {
-      if (!auth) throw new Error("Auth not ready");
+      if (!auth) throw new Error("Firebase Auth is not initialized. Check your configuration.");
       
+      // 1. Check if user exists in our DB first
+      const checkRes = await CustomerServices.checkCustomerExistance({ phone: phoneNumber });
+      if (!checkRes.exists) {
+        setOtpError("Account not found. Please register first.");
+        setOtpLoading(false);
+        return;
+      }
+
       clearRecaptcha();
 
-      // Create Verifier
+      // 2. Create Verifier (Using invisible for better UX on production)
       const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "normal", // Using Visible for 100% success on localhost
+        size: "invisible",
         callback: (response) => {
-          console.log("reCAPTCHA solved manually");
+          console.log("reCAPTCHA solved");
         },
+        "expired-callback": () => {
+          setOtpError("reCAPTCHA expired. Please try again.");
+          clearRecaptcha();
+        }
       });
       
       window.recaptchaVerifier = verifier;
-      await verifier.render();
 
       const formattedPhone = phoneNumber.startsWith("+") 
         ? phoneNumber 
@@ -79,15 +123,27 @@ const Login = () => {
 
       console.log("Sending OTP to:", formattedPhone);
 
+      // 3. Send OTP
       const confirmation = await signInWithPhoneNumber(auth, formattedPhone, verifier);
       setConfirmationResult(confirmation);
       setStep("otp");
       notifySuccess("OTP sent successfully!");
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Firebase OTP Error:", error);
       let msg = "Failed to send OTP.";
-      if (error.code === "auth/invalid-app-credential") msg = "Verification failed. Check Firebase console for localhost domain.";
-      setOtpError(msg);
+      
+      // Specific Firebase Error handling
+      if (error.code === "auth/invalid-app-credential") {
+        msg = "Domain not authorized in Firebase Console.";
+      } else if (error.code === "auth/too-many-requests") {
+        msg = "Too many requests. Please try again later.";
+      } else if (error.code === "auth/operation-not-allowed") {
+        msg = "Phone Auth is not enabled in Firebase Console.";
+      } else {
+        msg = error.message || "Failed to send OTP.";
+      }
+
+      setOtpError(`${msg} (${error.code || 'unknown_error'})`);
       notifyError(msg);
       clearRecaptcha();
     } finally {
@@ -172,9 +228,12 @@ const Login = () => {
           </div>
 
           {loginMethod === "email" ? (
-            <form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-              <InputArea register={register} label="Email" name="email" type="email" placeholder="Email" Icon={FiMail} />
-              <InputArea register={register} label="Password" name="password" type="password" placeholder="Password" Icon={FiLock} />
+            <form onSubmit={handleSubmit(submitHandler)} className="space-y-4" autoComplete="off">
+              {/* Invisible Trap inputs to catch browser autofill (more effective than display: none) */}
+              <input type="text" name="dummy-email" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} tabIndex="-1" aria-hidden="true" />
+              <input type="password" name="dummy-password" style={{ opacity: 0, position: 'absolute', top: 0, left: 0, height: 0, width: 0, zIndex: -1 }} tabIndex="-1" aria-hidden="true" />
+              <InputArea register={register} label="Email" name="email" type="email" placeholder="Email" Icon={FiMail} autocomplete="new-password" />
+              <InputArea register={register} label="Password" name="password" type="password" placeholder="Password" Icon={FiLock} autocomplete="new-password" />
               <button disabled={loading} type="submit" className="w-full py-3 rounded bg-store-500 text-white h-12 flex items-center justify-center">
                 {loading ? "Loading..." : "Login"}
               </button>
