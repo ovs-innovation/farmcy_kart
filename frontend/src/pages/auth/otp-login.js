@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { useRouter } from "next/router";
 import { FiSmartphone, FiArrowLeft } from "react-icons/fi";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "@lib/firebase";
+// import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+// import { auth } from "@lib/firebase";
 import Cookies from "js-cookie";
 
 // Internal imports
@@ -23,19 +23,8 @@ const OTPLogin = () => {
   const [confirmationResult, setConfirmationResult] = useState(null);
   const otpInputRefs = useRef([]);
 
-  const clearRecaptcha = () => {
-    if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (e) {}
-      window.recaptchaVerifier = null;
-    }
-    const container = document.getElementById("recaptcha-container");
-    if (container) container.innerHTML = "";
-  };
-
   useEffect(() => {
-    return () => clearRecaptcha();
+    // No recaptcha cleanup needed for custom backend OTP
   }, []);
 
   const handleSendOTP = async (e) => {
@@ -49,33 +38,18 @@ const OTPLogin = () => {
     setError("");
 
     try {
-      if (!auth) throw new Error("Auth not ready");
+      // Use custom backend API to send OTP to registered email
+      const response = await CustomerServices.sendPhoneEmailOTP({ phoneNumber });
       
-      clearRecaptcha();
-
-      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "normal",
-        callback: () => {
-          console.log("reCAPTCHA solved manually");
-        },
-      });
-      
-      window.recaptchaVerifier = verifier;
-      await verifier.render();
-
-      const formattedPhone = phoneNumber.startsWith("+") 
-        ? phoneNumber 
-        : (phoneNumber.startsWith("91") ? `+${phoneNumber}` : `+91${phoneNumber}`);
-
-      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, verifier);
-      setConfirmationResult(confirmation);
-      setStep("otp");
-      notifySuccess("OTP sent successfully!");
+      if (response) {
+        setStep("otp");
+        notifySuccess(response.message || "OTP sent to your registered email!");
+      }
     } catch (err) {
-      console.error("Error:", err);
-      setError("Failed to send OTP.");
-      notifyError("Failed to send OTP.");
-      clearRecaptcha();
+      console.error("Send OTP Error:", err);
+      const msg = err.response?.data?.message || "Failed to send OTP. Please try again.";
+      setError(msg);
+      notifyError(msg);
     } finally {
       setLoading(false);
     }
@@ -84,16 +58,18 @@ const OTPLogin = () => {
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     const otpCode = otp.join("");
-    if (otpCode.length !== 6) return;
+    if (otpCode.length !== 6) {
+      setError("Please enter the 6-digit OTP");
+      return;
+    }
 
     setLoading(true);
+    setError("");
     try {
-      const result = await confirmationResult.confirm(otpCode);
-      const idToken = await result.user.getIdToken();
-      
-      const response = await CustomerServices.loginWithPhone({
-        phoneNumber: result.user.phoneNumber,
-        idToken,
+      // Use custom backend API to verify OTP
+      const response = await CustomerServices.verifyPhoneEmailOTP({
+        phoneNumber,
+        otp: otpCode,
       });
 
       if (response.token) {
@@ -113,13 +89,10 @@ const OTPLogin = () => {
         router.push("/");
       }
     } catch (err) {
-      const backendMessage = err.response?.data?.message || err.message;
-      if (backendMessage.includes("invalid-verification-code") || backendMessage.includes("Invalid OTP")) {
-        setError("Invalid OTP code. Please try again.");
-      } else {
-        setError(backendMessage || "Login failed. Please try again.");
-      }
-      console.error("Verification error:", err);
+      console.error("Verify OTP Error:", err);
+      const backendMessage = err.response?.data?.message || "OTP verification failed.";
+      setError(backendMessage);
+      notifyError(backendMessage);
     } finally {
       setLoading(false);
     }
@@ -158,7 +131,6 @@ const OTPLogin = () => {
                   maxLength="10"
                 />
               </div>
-              <div id="recaptcha-container" className="flex justify-center my-4 min-h-[80px]"></div>
               {error && <p className="text-red-500 text-sm text-center">{error}</p>}
               <button disabled={loading} type="submit" className="w-full bg-store-500 text-white py-3 rounded-lg h-12">
                 {loading ? "Sending..." : "Send OTP"}

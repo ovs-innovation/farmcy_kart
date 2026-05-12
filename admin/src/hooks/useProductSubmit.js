@@ -424,7 +424,7 @@ const useProductSubmit = (id) => {
           setVariants(normalizedResponseVariants);
           setDynamicSections(res.dynamicSections || []);
           setMediaSections(res.mediaSections || []);
-          setFaqs(hydrateFaqs(res.faqs || []));
+          setFaqSection(res.faqs || { enabled: true, icon: "", title: "FAQ", items: [] });
           setValue("productId", res.productId);
           setProductId(res.productId);
           setOriginalPrice(res?.prices?.originalPrice);
@@ -462,7 +462,7 @@ const useProductSubmit = (id) => {
 
           setDynamicSections(res.dynamicSections || []);
           setMediaSections(res.mediaSections || []);
-          setFaqs(hydrateFaqs(res.faqs || []));
+          setFaqSection(res.faqs || { enabled: true, icon: "", title: "FAQ", items: [] });
         }
 
         if (
@@ -1281,7 +1281,7 @@ const useProductSubmit = (id) => {
       brand: brand?._id || resData?.brand?._id || null,
       dynamicSections: sanitizeDynamicSections(dynamicSections),
       mediaSections: sanitizeMediaSections(mediaSections),
-      faqs: sanitizeFaqs(faqs),
+      faqs: sanitizeFaqs(faqSection?.items || []),
     };
 
     // Call API to update product with new variants

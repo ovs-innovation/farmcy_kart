@@ -200,6 +200,22 @@ const customerSchema = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    loginOtp: {
+      type: String,
+      required: false,
+    },
+    loginOtpExpires: {
+      type: Date,
+      required: false,
+    },
+    loginOtpAttempts: {
+      type: Number,
+      default: 0,
+    },
+    lastLoginOtpSentAt: {
+      type: Date,
+      required: false,
+    },
   },
   {
     timestamps: true,

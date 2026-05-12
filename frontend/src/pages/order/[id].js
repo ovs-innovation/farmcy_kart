@@ -1,7 +1,9 @@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import dynamic from "next/dynamic";
 import { useRef, useEffect, useContext } from "react";
-import { IoCloudDownloadOutline, IoPrintOutline } from "react-icons/io5";
+import { IoCloudDownloadOutline, IoPrintOutline, IoCopyOutline } from "react-icons/io5";
+import { FiTruck, FiExternalLink } from "react-icons/fi";
+import { notifySuccess } from "@utils/toast";
 import ReactToPrint from "react-to-print";
 import { useQuery } from "@tanstack/react-query";
 import Cookies from "js-cookie";
@@ -45,6 +47,11 @@ const Order = ({ params }) => {
   const { showingTranslateValue, getNumberTwo, currency } = useUtilsFunction();
   const { storeCustomizationSetting, globalSetting } = useGetSetting();
 
+  const handleCopyTracking = (num) => {
+    navigator.clipboard.writeText(num);
+    notifySuccess("Tracking number copied!");
+  };
+
   return (
     <Layout title="Invoice" description="order confirmation page">
       {isLoading ? (
@@ -69,39 +76,72 @@ const Order = ({ params }) => {
             </label>
           </div>
           <div className="bg-white rounded-lg shadow-sm p-4 sm:p-8">
-            <div className="flex justify-start mb-6 border-b pb-4 border-gray-100">
-              <PDFDownloadLink
-                document={
-                  <InvoiceForDownload
-                    data={data}
-                    currency={currency}
-                    globalSetting={globalSetting}
-                    getNumberTwo={getNumberTwo}
-                    logo={storeCustomizationSetting?.navbar?.logo}
-                    isWholesaler={isWholesaler}
-                  />
-                }
-                fileName="Invoice"
-              >
-                {({ blob, url, loading, error }) =>
-                  loading ? (
-                    "Loading..."
-                  ) : (
-                    <button className="flex items-center justify-center bg-store-500 text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md hover:bg-store-600 shadow-sm">
-                      {showingTranslateValue(
-                        storeCustomizationSetting?.dashboard?.download_button
-                      )}{" "}
-                      <span className="ml-2 text-base">
-                        <IoCloudDownloadOutline />
-                      </span>
-                    </button>
-                  )
-                }
-              </PDFDownloadLink>
+            <div className="flex flex-wrap gap-3 mb-8">
+               <PDFDownloadLink
+                 document={
+                   <InvoiceForDownload
+                     data={data}
+                     currency={currency}
+                     globalSetting={globalSetting}
+                     getNumberTwo={getNumberTwo}
+                     logo={storeCustomizationSetting?.navbar?.logo}
+                     isWholesaler={isWholesaler}
+                   />
+                 }
+                 fileName={`Invoice-${data.invoice}`}
+               >
+                 {({ blob, url, loading, error }) =>
+                   loading ? (
+                     "Loading..."
+                   ) : (
+                     <button className="flex items-center justify-center bg-store-500 text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md hover:bg-store-600 shadow-sm">
+                       {showingTranslateValue(
+                         storeCustomizationSetting?.dashboard?.download_button
+                       )}{" "}
+                       <span className="ml-2 text-base">
+                         <IoCloudDownloadOutline />
+                       </span>
+                     </button>
+                   )
+                 }
+               </PDFDownloadLink>
+
+               {data.trackingNumber && (
+                 <>
+                   <button 
+                     onClick={() => router.push(`/user/track-order?id=${data._id}`)}
+                     className="flex items-center justify-center bg-blue-500 text-white transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md hover:bg-blue-600 shadow-sm"
+                   >
+                     Track Shipment <FiTruck className="ml-2" />
+                   </button>
+                   
+                   <button 
+                     onClick={() => handleCopyTracking(data.trackingNumber)}
+                     className="flex items-center justify-center bg-gray-100 text-gray-700 transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md hover:bg-gray-200 shadow-sm"
+                   >
+                     Copy AWB <IoCopyOutline className="ml-2" />
+                   </button>
+
+                   {data.trackingUrl && (
+                     <a 
+                       href={data.trackingUrl}
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       className="flex items-center justify-center bg-indigo-50 text-indigo-700 transition-all font-serif text-sm font-semibold h-10 py-2 px-5 rounded-md hover:bg-indigo-100 shadow-sm"
+                     >
+                       Courier Tracking <FiExternalLink className="ml-2" />
+                     </a>
+                   )}
+                 </>
+               )}
             </div>
 
-            {/* Order Tracking removed from invoice - moved to User Track Order page */}
-            {/* <OrderTracking order={data} /> */}
+            {/* Live Tracking Section */}
+            {(data.trackingNumber || data.status === "Shipped" || data.status === "OutForDelivery") && (
+               <div className="mb-10">
+                  <OrderTracking order={data} />
+               </div>
+            )}
 
             <Invoice
               data={data}

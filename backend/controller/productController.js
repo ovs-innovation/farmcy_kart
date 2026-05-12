@@ -723,32 +723,50 @@ const getShowingStoreProducts = async (req, res) => {
     // console.log("title", title);
 
     // console.log("query", req);
-
     if (category) {
-      // Accept either a category ObjectId or a category name/slug
-      // If it's a valid ObjectId, use it directly; otherwise try to resolve by name (across languages)
       if (mongoose.Types.ObjectId.isValid(category)) {
-        queryObject.categories = { $in: [category] };
+        queryObject.$or = [
+          { category: category },
+          { categories: { $in: [category] } },
+        ];
       } else {
         try {
           const decoded = decodeURIComponent(category).toString();
-          // Try matching category name across languages using a case-insensitive regex
-          const categoryNameQueries = languageCodes.map((lang) => ({ [`name.${lang}`]: { $regex: decoded.replace(/[-]+/g, ' '), $options: 'i' } }));
-          const matchingCategories = await Category.find({ $or: categoryNameQueries, status: 'show' }).select('_id');
+          const categoryNameQueries = languageCodes.map((lang) => ({
+            [`name.${lang}`]: { $regex: decoded.replace(/[-]+/g, " "), $options: "i" },
+          }));
+          const matchingCategories = await Category.find({
+            $or: categoryNameQueries,
+            status: "show",
+          }).select("_id");
+
           if (matchingCategories && matchingCategories.length > 0) {
             const categoryIds = matchingCategories.map((c) => c._id);
-            queryObject.categories = { $in: categoryIds };
+            queryObject.$or = [
+              { category: { $in: categoryIds } },
+              { categories: { $in: categoryIds } },
+            ];
           } else {
-            // fallback: try loose regex with hyphens preserved
-            const looseQueries = languageCodes.map((lang) => ({ [`name.${lang}`]: { $regex: decoded, $options: 'i' } }));
-            const looseMatches = await Category.find({ $or: looseQueries, status: 'show' }).select('_id');
+            const looseQueries = languageCodes.map((lang) => ({
+              [`name.${lang}`]: { $regex: decoded, $options: "i" },
+            }));
+            const looseMatches = await Category.find({
+              $or: looseQueries,
+              status: "show",
+            }).select("_id");
             if (looseMatches && looseMatches.length > 0) {
-              queryObject.categories = { $in: looseMatches.map((c) => c._id) };
+              const categoryIds = looseMatches.map((c) => c._id);
+              queryObject.$or = [
+                { category: { $in: categoryIds } },
+                { categories: { $in: categoryIds } },
+              ];
             }
           }
         } catch (err) {
-          // If anything fails, fall back to treating category as-is (may be an id string)
-          queryObject.categories = { $in: [category] };
+          queryObject.$or = [
+            { category: category },
+            { categories: { $in: [category] } },
+          ];
         }
       }
     }

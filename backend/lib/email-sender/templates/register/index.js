@@ -391,4 +391,5 @@ const customerRegisterBody = (option) => {
 `;
 };
 const { otpEmailBody } = require("./otp");
-module.exports = { customerRegisterBody, otpEmailBody };
+const { loginOtpEmailBody } = require("./loginOtp");
+module.exports = { customerRegisterBody, otpEmailBody, loginOtpEmailBody };

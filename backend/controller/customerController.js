@@ -10,6 +10,7 @@ const { sendSMS } = require("../lib/sms-sender/sender");
 const {
   customerRegisterBody,
   otpEmailBody,
+  loginOtpEmailBody,
 } = require("../lib/email-sender/templates/register");
 const {
   forgetPasswordEmailBody,
@@ -93,7 +94,152 @@ const verifyPhoneNumber = async (req, res) => {
   }
 };
 
+const sendPhoneEmailOTP = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    if (!phoneNumber) {
+      return res.status(400).send({ message: "Phone number is required." });
+    }
+
+    // Find user by phone (allowing for full number or last 10 digits)
+    const user = await Customer.findOne({
+      $or: [
+        { phone: phoneNumber },
+        { phone: phoneNumber.slice(-10) }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).send({
+        message: "Account with this phone number does not exist. Please register first.",
+        error: "USER_NOT_FOUND",
+      });
+    }
+
+    // Check resend cooldown (60 seconds)
+    if (user.lastLoginOtpSentAt && (Date.now() - user.lastLoginOtpSentAt < 60 * 1000)) {
+      const remainingSeconds = Math.ceil(60 - (Date.now() - user.lastLoginOtpSentAt) / 1000);
+      return res.status(429).send({
+        message: `Please wait ${remainingSeconds} seconds before requesting a new OTP.`,
+      });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = bcrypt.hashSync(otp, 10);
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    user.loginOtp = hashedOtp;
+    user.loginOtpExpires = otpExpires;
+    user.loginOtpAttempts = 0; // Reset attempts on new OTP request
+    user.lastLoginOtpSentAt = new Date();
+    await user.save();
+
+    // Send OTP to registered email
+    const globalSetting = await Setting.findOne({ name: "globalSetting" });
+    const option = {
+      name: user.name,
+      email: user.email,
+      otp: otp,
+      contact_email: globalSetting?.setting?.email || "support@farmacykart.com",
+      shop_name: globalSetting?.setting?.shop_name || "Farmacykart",
+    };
+
+    const body = {
+      from: globalSetting?.setting?.email || process.env.EMAIL_USER,
+      to: user.email,
+      subject: "Your Login OTP - Farmacykart",
+      html: loginOtpEmailBody(option),
+    };
+
+    await sendEmail(body);
+
+    res.send({
+      message: `OTP sent successfully to your registered email: ${user.email.replace(/(.{2})(.*)(@.*)/, "$1***$3")}`,
+      email: user.email, // Frontend can use this to show where it was sent
+    });
+
+  } catch (err) {
+    console.error("sendPhoneEmailOTP error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
+const verifyPhoneEmailOTP = async (req, res) => {
+  try {
+    const { phoneNumber, otp } = req.body;
+
+    if (!phoneNumber || !otp) {
+      return res.status(400).send({ message: "Phone number and OTP are required." });
+    }
+
+    const user = await Customer.findOne({
+      $or: [
+        { phone: phoneNumber },
+        { phone: phoneNumber.slice(-10) }
+      ]
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    // Check if OTP exists and is not expired
+    if (!user.loginOtp || !user.loginOtpExpires || new Date() > user.loginOtpExpires) {
+      return res.status(400).send({ message: "OTP has expired or not found. Please request a new one." });
+    }
+
+    // Check attempt limits
+    if (user.loginOtpAttempts >= 5) {
+      return res.status(403).send({ message: "Too many failed attempts. Please request a new OTP." });
+    }
+
+    // Verify OTP
+    const isMatch = bcrypt.compareSync(otp, user.loginOtp);
+
+    if (!isMatch) {
+      user.loginOtpAttempts += 1;
+      await user.save();
+      return res.status(400).send({ message: "Invalid OTP code." });
+    }
+
+    // Success! Clear OTP fields
+    user.loginOtp = undefined;
+    user.loginOtpExpires = undefined;
+    user.loginOtpAttempts = 0;
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Fetch user with cart to return complete profile
+    const customerWithCart = await Customer.findById(user._id).populate({
+      path: "cart.productId",
+      select: "title prices image slug",
+    });
+
+    const token = signInToken(customerWithCart);
+    res.send({
+      token,
+      _id: customerWithCart._id,
+      name: customerWithCart.name,
+      email: customerWithCart.email,
+      phone: customerWithCart.phone,
+      address: customerWithCart.address || "",
+      image: customerWithCart.image || "",
+      role: customerWithCart.role || "customer",
+      cart: customerWithCart.cart,
+      message: "Login Successful!",
+    });
+
+  } catch (err) {
+    console.error("verifyPhoneEmailOTP error:", err);
+    res.status(500).send({ message: err.message });
+  }
+};
+
 const loginWithPhone = async (req, res) => {
+  // Keeping this for potential legacy or external use, but marking as deprecated if needed.
+  // Actually, I'll just keep it but the new flow won't use it.
   try {
     const { phoneNumber, idToken } = req.body;
 
@@ -1780,4 +1926,6 @@ module.exports = {
   updateFcmToken,
   verifyEmailOTP,
   resendVerificationEmail,
+  sendPhoneEmailOTP,
+  verifyPhoneEmailOTP,
 };

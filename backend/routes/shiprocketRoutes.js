@@ -40,6 +40,11 @@ router.post("/courier/link-shipment", linkShipmentToOrder);
 // Generate order invoice from Shiprocket
 router.get("/order/invoice", generateInvoice);
 
+const { handleShiprocketWebhook } = require("../controller/shiprocketWebhookController");
+
+// Webhook for Shiprocket updates
+router.post("/webhook", handleShiprocketWebhook);
+
 module.exports = router;
 
 

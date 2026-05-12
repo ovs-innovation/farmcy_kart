@@ -36,6 +36,8 @@ const {
   updateFcmToken,
   verifyEmailOTP,
   resendVerificationEmail,
+  sendPhoneEmailOTP,
+  verifyPhoneEmailOTP,
 } = require("../controller/customerController");
 const {
   passwordVerificationLimit,
@@ -57,6 +59,10 @@ router.post("/resend-verification", emailVerificationLimit, resendVerificationEm
 
 //login with phone
 router.post("/login-phone", loginWithPhone);
+
+// login with phone (email OTP)
+router.post("/login/send-phone-email-otp", sendPhoneEmailOTP);
+router.post("/login/verify-phone-email-otp", verifyPhoneEmailOTP);
 
 // shipping address send to array
 router.post("/shipping/address/:id", addShippingAddress);

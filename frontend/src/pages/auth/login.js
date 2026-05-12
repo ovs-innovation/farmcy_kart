@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { FiLock, FiMail, FiSmartphone } from "react-icons/fi";
 import Cookies from "js-cookie";
-import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import { auth } from "@lib/firebase";
+// Firebase is only used for FCM if needed, but for phone auth we are moving to custom backend
+// import { auth } from "@lib/firebase"; 
 
 //internal  import
 import Layout from "@layout/Layout";
@@ -65,19 +65,8 @@ const Login = () => {
   const otpInputRefs = useRef([]);
   const [phoneNumber, setPhoneNumber] = useState("");
 
-  const clearRecaptcha = () => {
-    if (window.recaptchaVerifier) {
-      try {
-        window.recaptchaVerifier.clear();
-      } catch (e) {}
-      window.recaptchaVerifier = null;
-    }
-    const container = document.getElementById("recaptcha-container");
-    if (container) container.innerHTML = "";
-  };
-
   useEffect(() => {
-    return () => clearRecaptcha();
+    // No recaptcha cleanup needed for custom backend OTP
   }, []);
 
   const handleSendOTP = async (e) => {
@@ -91,61 +80,18 @@ const Login = () => {
     setOtpError("");
 
     try {
-      if (!auth) throw new Error("Firebase Auth is not initialized. Check your configuration.");
+      // Use custom backend API to send OTP to registered email
+      const response = await CustomerServices.sendPhoneEmailOTP({ phoneNumber });
       
-      // 1. Check if user exists in our DB first
-      const checkRes = await CustomerServices.checkCustomerExistance({ phone: phoneNumber });
-      if (!checkRes.exists) {
-        setOtpError("Account not found. Please register first.");
-        setOtpLoading(false);
-        return;
+      if (response) {
+        setStep("otp");
+        notifySuccess(response.message || "OTP sent to your registered email!");
       }
-
-      clearRecaptcha();
-
-      // 2. Create Verifier (Using invisible for better UX on production)
-      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-        callback: (response) => {
-          console.log("reCAPTCHA solved");
-        },
-        "expired-callback": () => {
-          setOtpError("reCAPTCHA expired. Please try again.");
-          clearRecaptcha();
-        }
-      });
-      
-      window.recaptchaVerifier = verifier;
-
-      const formattedPhone = phoneNumber.startsWith("+") 
-        ? phoneNumber 
-        : (phoneNumber.startsWith("91") ? `+${phoneNumber}` : `+91${phoneNumber}`);
-
-      console.log("Sending OTP to:", formattedPhone);
-
-      // 3. Send OTP
-      const confirmation = await signInWithPhoneNumber(auth, formattedPhone, verifier);
-      setConfirmationResult(confirmation);
-      setStep("otp");
-      notifySuccess("OTP sent successfully!");
     } catch (error) {
-      console.error("Firebase OTP Error:", error);
-      let msg = "Failed to send OTP.";
-      
-      // Specific Firebase Error handling
-      if (error.code === "auth/invalid-app-credential") {
-        msg = "Domain not authorized in Firebase Console.";
-      } else if (error.code === "auth/too-many-requests") {
-        msg = "Too many requests. Please try again later.";
-      } else if (error.code === "auth/operation-not-allowed") {
-        msg = "Phone Auth is not enabled in Firebase Console.";
-      } else {
-        msg = error.message || "Failed to send OTP.";
-      }
-
-      setOtpError(`${msg} (${error.code || 'unknown_error'})`);
+      console.error("Send OTP Error:", error);
+      const msg = error.response?.data?.message || "Failed to send OTP. Please try again.";
+      setOtpError(msg);
       notifyError(msg);
-      clearRecaptcha();
     } finally {
       setOtpLoading(false);
     }
@@ -154,16 +100,18 @@ const Login = () => {
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
     const otpCode = otp.join("");
-    if (otpCode.length !== 6) return;
+    if (otpCode.length !== 6) {
+      setOtpError("Please enter the 6-digit OTP");
+      return;
+    }
 
     setOtpLoading(true);
+    setOtpError("");
     try {
-      const result = await confirmationResult.confirm(otpCode);
-      const idToken = await result.user.getIdToken();
-      
-      const response = await CustomerServices.loginWithPhone({
-        phoneNumber: result.user.phoneNumber,
-        idToken,
+      // Use custom backend API to verify OTP
+      const response = await CustomerServices.verifyPhoneEmailOTP({
+        phoneNumber,
+        otp: otpCode,
       });
 
       if (response.token) {
@@ -183,18 +131,10 @@ const Login = () => {
         router.push("/");
       }
     } catch (error) {
-      const backendMessage = error.response?.data?.message || error.message;
-      console.error("OTP Error:", error);
-      
-      if (backendMessage.includes("invalid-verification-code") || backendMessage.includes("Invalid OTP")) {
-        setOtpError("Invalid OTP code. Please try again.");
-      } else if (backendMessage.includes("session-expired") || backendMessage.includes("SESSION_EXPIRED")) {
-        setOtpError("OTP session expired. Please send OTP again.");
-        setStep("phone");
-      } else {
-        setOtpError(backendMessage || "Login failed. Please try again.");
-      }
-      notifyError(backendMessage || "Login failed.");
+      console.error("Verify OTP Error:", error);
+      const backendMessage = error.response?.data?.message || "OTP verification failed.";
+      setOtpError(backendMessage);
+      notifyError(backendMessage);
     } finally {
       setOtpLoading(false);
     }
@@ -255,9 +195,6 @@ const Login = () => {
                     />
                   </div>
                   {otpError && <p className="text-red-500 text-sm mt-2">{otpError}</p>}
-                  
-                  {/* VISIBLE container */}
-                  <div id="recaptcha-container" className="flex justify-center my-4 min-h-[80px]"></div>
 
                   <button disabled={otpLoading} type="submit" className="w-full py-3 rounded bg-store-500 text-white h-12 flex items-center justify-center">
                     {otpLoading ? "Sending..." : "Send OTP"}

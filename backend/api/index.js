@@ -30,6 +30,7 @@ const testimonialRoutes = require("../routes/testimonialRoutes");
 const locationRoutes = require("../routes/locationRoutes");
 const refundRoutes = require("../routes/refundRoutes");
 const pushNotificationRoutes = require("../routes/pushNotificationRoutes");
+const webhookRoutes = require("../routes/webhookRoutes");
 
 const { isAuth, isAdmin } = require("../config/auth");
 // const {
@@ -108,6 +109,7 @@ app.use("/api/testimonials", testimonialRoutes);
 app.use("/api/location", locationRoutes);
 app.use("/api/refund", refundRoutes);
 app.use("/api/push-notification", pushNotificationRoutes);
+app.use("/api/webhooks", webhookRoutes);
 //if you not use admin dashboard then these two route will not needed.
 app.use("/api/admin", adminRoutes);
 app.use("/api/orders", orderRoutes);

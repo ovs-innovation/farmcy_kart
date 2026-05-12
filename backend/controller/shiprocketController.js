@@ -1,5 +1,6 @@
 const { shiprocketRequest } = require("../services/shiprocketService");
 const Order = require("../models/Order");
+const { syncShiprocketTracking } = require("../services/shiprocketSyncService");
 
 // STEP 3 — Create Shiprocket Order (Business Logic + Auto Courier & AWB)
 const createShiprocketOrder = async (req, res) => {
@@ -237,13 +238,12 @@ const assignCourierAndGenerateAWB = async (req, res) => {
       }
     );
 
-    await mergeShiprocketData(orderId, {
+    await syncShiprocketTracking(orderId, {
       shipment_id: Number(shipment_id),
       courier_id: Number(courier_id),
       awb_code: response?.awb_code,
       courier_name: response?.courier_name,
       status: response?.status,
-      last_synced: new Date(),
     });
 
     res.json({
@@ -352,13 +352,7 @@ const trackShipment = async (req, res) => {
       `v1/external/courier/track/awb/${awb_code}`
     );
 
-    await mergeShiprocketData(orderId, {
-      tracking_data: response?.tracking_data,
-      status: response?.tracking_data?.shipment_status ||
-        response?.tracking_data?.current_status ||
-        response?.tracking_data?.current_status_id,
-      last_synced: new Date(),
-    });
+    await syncShiprocketTracking(orderId, response);
 
     res.json({
       message: "Shipment tracked successfully",
@@ -545,13 +539,12 @@ async function autoAssignBestCourier({
     }
   );
 
-  await mergeShiprocketData(orderId, {
+  await syncShiprocketTracking(orderId, {
     shipment_id: Number(shipmentId),
     courier_id: Number(courierId),
     awb_code: assignRes?.awb_code,
     courier_name: assignRes?.courier_name || best.courier_name,
     status: assignRes?.status || "AWB_ASSIGNED",
-    last_synced: new Date(),
   });
 }
 

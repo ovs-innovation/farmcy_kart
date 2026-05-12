@@ -148,6 +148,12 @@ const CustomerServices = {
   resendVerificationEmail: async (body) => {
     return requests.post("/customer/resend-verification", body);
   },
+  sendPhoneEmailOTP: async (body) => {
+    return requests.post("/customer/login/send-phone-email-otp", body);
+  },
+  verifyPhoneEmailOTP: async (body) => {
+    return requests.post("/customer/login/verify-phone-email-otp", body);
+  },
 };
 
 export default CustomerServices;
