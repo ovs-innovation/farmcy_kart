@@ -287,7 +287,7 @@ const Products = () => {
                 </TableCell>
                 <TableCell>{t("ProductNameTbl")}</TableCell>
                 <TableCell>{t("CategoryTbl")}</TableCell>
-                <TableCell>{t("PriceTbl")}</TableCell>
+                <TableCell>MRP Price</TableCell>
                 <TableCell>Sale Price</TableCell>
                 <TableCell>{t("StockTbl")}</TableCell>
                 <TableCell>{t("StatusTbl")}</TableCell>

@@ -97,8 +97,32 @@ const orderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["Pending", "Processing", "Delivered", "Cancel", "Accepted", "OutForDelivery", "Refunded", "Failed"],
+      enum: [
+        "Order Placed",
+        "Pending",
+        "Scheduled",
+        "Accepted",
+        "Processing",
+        "Order On The Way",
+        "Delivered",
+        "Cancelled",
+        "Refunded",
+        "Payment Failed",
+        // Legacy statuses for safety during migration
+        "Cancel",
+        "OutForDelivery",
+        "Failed"
+      ],
+      default: "Order Placed",
     },
+    statusHistory: [
+      {
+        status: { type: String },
+        note: { type: String },
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
+    // Keep trackingHistory for compatibility with existing data
     trackingHistory: [
       {
         status: { type: String },

@@ -130,10 +130,10 @@ const Price = ({
           }`}
         >
           {product?.isPriceInclusive
-            ? "Inclusive of all taxes"
+            ? "+ including GST"
             : "Price exclusive of taxes"}
           <span className="ml-2 inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-gray-600">
-            {taxBadgeText}
+            ({taxRateValue}%)
           </span>
         </p>
       )}

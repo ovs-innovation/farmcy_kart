@@ -413,11 +413,44 @@ const AddProduct = () => {
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 p-6">
             <h2 className="text-lg font-bold text-gray-800 dark:text-gray-200 mb-6">Price Information</h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-              <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Unit Price ₹ <span className="text-red-500">*</span></label><Input type="number" step="0.01" min="0" onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()} {...register("originalPrice")} placeholder="0" className="w-full border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" /></div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+              <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">MRP Price ₹ <span className="text-red-500">*</span></label><Input type="number" step="0.01" min="0" onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()} {...register("originalPrice")} placeholder="0" className="w-full border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" /></div>
               <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount Type</label><Select {...register("discountType")} className="w-full border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"><option value="flat" className="dark:bg-gray-800">Flat (₹)</option><option value="percentage" className="dark:bg-gray-800">Percentage (%)</option></Select></div>
               <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Discount</label><Input type="number" step="0.01" min="0" onKeyDown={(e) => (e.key === '-' || e.key === 'e') && e.preventDefault()} {...register("discount")} placeholder="0" className="w-full border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sale Price ₹</label><Input type="number" readOnly value={watch("discountType") === "percentage" ? (Math.max(0, (Number(watch("originalPrice")) || 0) - ((Number(watch("originalPrice")) || 0) * (Number(watch("discount")) || 0) / 100))).toFixed(2) : Math.max(0, (Number(watch("originalPrice")) || 0) - (Number(watch("discount")) || 0))} className="w-full border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/20 font-bold text-teal-700 dark:text-teal-400" /></div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">GST Tax</label>
+                <Select {...register("taxRate")} className="w-full border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                  {gstRates.map((rate) => (
+                    <option key={rate.value} value={rate.value} className="dark:bg-gray-800">
+                      {rate.label}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sale Price ₹</label>
+                <Input 
+                  type="number" 
+                  readOnly 
+                  value={(() => {
+                    const originalPrice = Number(watch("originalPrice")) || 0;
+                    const discount = Number(watch("discount")) || 0;
+                    const discountType = watch("discountType");
+                    const taxRate = Number(watch("taxRate")) || 0;
+                    
+                    let basePrice = originalPrice;
+                    if (discountType === "percentage") {
+                      basePrice = originalPrice - (originalPrice * discount / 100);
+                    } else {
+                      basePrice = originalPrice - discount;
+                    }
+                    
+                    const finalPrice = basePrice * (1 + taxRate / 100);
+                    return Math.max(0, finalPrice).toFixed(2);
+                  })()} 
+                  className="w-full border-teal-200 dark:border-teal-900/30 bg-teal-50 dark:bg-teal-900/20 font-bold text-teal-700 dark:text-teal-400" 
+                />
+              </div>
             </div>
           </div>
 

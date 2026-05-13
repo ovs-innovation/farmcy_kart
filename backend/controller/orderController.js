@@ -86,9 +86,11 @@ const getAllOrders = async (req, res) => {
 
   if (!status) {
     queryObject.$or = [
+      { status: { $regex: `Order Placed`, $options: "i" } },
       { status: { $regex: `Pending`, $options: "i" } },
       { status: { $regex: `Processing`, $options: "i" } },
       { status: { $regex: `Delivered`, $options: "i" } },
+      { status: { $regex: `Cancelled`, $options: "i" } },
       { status: { $regex: `Cancel`, $options: "i" } },
     ];
   }
@@ -321,38 +323,61 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const { ORDER_STATUS, VALID_TRANSITIONS } = require("../utils/orderStatus");
+
 const updateOrder = async (req, res) => {
   try {
     const { status, message, courierName, trackingNumber, trackingUrl, estimatedDeliveryDate } = req.body;
     
+    const order = await Order.findById(req.params.id);
+    if (!order) {
+      return res.status(404).send({ message: "Order not found" });
+    }
+
+    // Validate status transition
+    if (status && order.status !== status) {
+      const allowedTransitions = VALID_TRANSITIONS[order.status] || [];
+      // During migration, if current status is not in our new flow, we might need to allow it
+      // or if it's an admin update, we can be a bit more flexible but still warn
+      if (allowedTransitions.length > 0 && !allowedTransitions.includes(status)) {
+        // Just a warning for now to not break admin flow if they need to force something
+        console.warn(`Potentially invalid status transition: ${order.status} -> ${status}`);
+      }
+    }
+
     const updateData = { status };
     if (courierName) updateData.courierName = courierName;
     if (trackingNumber) updateData.trackingNumber = trackingNumber;
     if (trackingUrl) updateData.trackingUrl = trackingUrl;
     if (estimatedDeliveryDate) updateData.estimatedDeliveryDate = estimatedDeliveryDate;
 
-    const order = await Order.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: updateData,
-        $push: {
-          trackingHistory: {
-            status,
-            message: message || `Order status updated to ${status}`,
-            timestamp: new Date(),
-          },
+    // Build update object
+    const updateQuery = {
+      $set: updateData,
+      $push: {
+        statusHistory: {
+          status: status,
+          note: message || `Order status updated to ${status}`,
+          updatedAt: new Date(),
+        },
+        // Also keep legacy trackingHistory for now
+        trackingHistory: {
+          status,
+          message: message || `Order status updated to ${status}`,
+          timestamp: new Date(),
         },
       },
+    };
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      updateQuery,
       { new: true }
     );
 
-    if (!order) {
-      return res.status(404).send({ message: "Order not found" });
-    }
-
     res.status(200).send({
       message: "Order Updated Successfully!",
-      order,
+      order: updatedOrder,
     });
   } catch (err) {
     res.status(500).send({

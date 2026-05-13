@@ -27,33 +27,25 @@ import useCartDB from "@hooks/useCartDB";
 /* ─── Status badge ─── */
 const StatusBadge = ({ status }) => {
   const map = {
-    Delivered: {
-      bg: "bg-emerald-100 text-emerald-700 border-emerald-200",
-      Icon: FiCheck,
-      dot: "bg-emerald-500",
-    },
-    Pending: {
-      bg: "bg-amber-100 text-amber-700 border-amber-200",
-      Icon: FiClock,
-      dot: "bg-amber-500",
-    },
-    Processing: {
-      bg: "bg-indigo-100 text-indigo-700 border-indigo-200",
-      Icon: FiTruck,
-      dot: "bg-indigo-500",
-    },
-    Cancel: {
-      bg: "bg-red-100 text-red-700 border-red-200",
-      Icon: FiX,
-      dot: "bg-red-500",
-    },
+    "Order Placed": { bg: "bg-blue-100 text-blue-700 border-blue-200", dot: "bg-blue-500" },
+    "Pending": { bg: "bg-amber-100 text-amber-700 border-amber-200", dot: "bg-amber-500" },
+    "Scheduled": { bg: "bg-indigo-100 text-indigo-700 border-indigo-200", dot: "bg-indigo-500" },
+    "Accepted": { bg: "bg-cyan-100 text-cyan-700 border-cyan-200", dot: "bg-cyan-500" },
+    "Processing": { bg: "bg-orange-100 text-orange-700 border-orange-200", dot: "bg-orange-500" },
+    "Order On The Way": { bg: "bg-purple-100 text-purple-700 border-purple-200", dot: "bg-purple-500" },
+    "Delivered": { bg: "bg-emerald-100 text-emerald-700 border-emerald-200", dot: "bg-emerald-500" },
+    "Cancelled": { bg: "bg-red-100 text-red-700 border-red-200", dot: "bg-red-500" },
+    "Cancel": { bg: "bg-red-100 text-red-700 border-red-200", dot: "bg-red-500" },
+    "OutForDelivery": { bg: "bg-purple-100 text-purple-700 border-purple-200", dot: "bg-purple-500" },
+    "Payment Failed": { bg: "bg-rose-100 text-rose-700 border-rose-200", dot: "bg-rose-500" },
+    "Failed": { bg: "bg-rose-100 text-rose-700 border-rose-200", dot: "bg-rose-500" },
   };
   const s = map[status] || map.Pending;
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${s.bg}`}
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border uppercase tracking-wider shadow-sm ${s.bg}`}
     >
-      <span className={`w-1.5 h-1.5 rounded-full ${s.dot}`} />
+      <span className={`w-1.5 h-1.5 rounded-full ${s.dot} animate-pulse`} />
       {status || "Pending"}
     </span>
   );
@@ -357,12 +349,17 @@ const MyOrders = () => {
                           <td className="px-5 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               {/* Details */}
-                              <Link
-                                href={`/order/${order._id}`}
-                                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-600 hover:bg-store-500 hover:text-white transition-all"
-                              >
                                 <FiEye size={11} />
-                                View Invoice
+                                Invoice
+                              </Link>
+
+                              {/* Track Order */}
+                              <Link
+                                href={`/user/track-order?id=${order._id}`}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-store-50 text-store-600 border border-store-100 hover:bg-store-500 hover:text-white transition-all shadow-sm"
+                              >
+                                <FiTruck size={11} />
+                                Track
                               </Link>
 
                               {/* Re-order */}
@@ -472,12 +469,16 @@ const MyOrders = () => {
 
                       {/* Card footer – actions */}
                       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center gap-2 flex-wrap">
-                        <Link
-                          href={`/order/${order._id}`}
-                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-white border border-gray-200 text-gray-600 hover:border-store-400 hover:text-store-600 transition-all"
-                        >
                           <FiEye size={12} />
-                          View Details
+                          Invoice
+                        </Link>
+
+                        <Link
+                          href={`/user/track-order?id=${order._id}`}
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-store-50 border border-store-100 text-store-600 hover:bg-store-500 hover:text-white transition-all shadow-sm"
+                        >
+                          <FiTruck size={12} />
+                          Track
                         </Link>
 
                         <button

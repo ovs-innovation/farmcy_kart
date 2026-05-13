@@ -120,7 +120,7 @@ const useProductSubmit = (id) => {
     defaultValues: {
       hsnCode: "",
       taxRate: 0,
-      isPriceInclusive: false,
+      isPriceInclusive: true,
       discountType: "flat",
     },
   });
@@ -155,9 +155,12 @@ const useProductSubmit = (id) => {
       const variantsWithSku = ensureVariantsHaveSku(variants, baseSkuValue);
 
       const updatedVariants = variantsWithSku.map((v, i) => {
-        const variantPrice = data.discountType === "percentage" 
+        const baseVariantPrice = data.discountType === "percentage" 
           ? getNumberTwo(v?.originalPrice) - (getNumberTwo(v?.originalPrice) * getNumberTwo(v?.discount) / 100)
           : getNumberTwo(v?.originalPrice) - getNumberTwo(v?.discount);
+        
+        const taxRateValue = Number(data.taxRate || 0);
+        const variantPrice = baseVariantPrice * (1 + taxRateValue / 100);
 
         const newObj = {
           ...v,
@@ -171,9 +174,12 @@ const useProductSubmit = (id) => {
       });
 
       setIsBasicComplete(true);
-      const calculatedPrice = data.discountType === "percentage" 
+      const basePriceAfterDiscount = data.discountType === "percentage" 
         ? getNumberTwo(data.originalPrice) - (getNumberTwo(data.originalPrice) * getNumber(data.discount) / 100)
         : getNumberTwo(data.originalPrice) - getNumber(data.discount);
+      
+      const taxRateValue = Number(data.taxRate || 0);
+      const calculatedPrice = basePriceAfterDiscount * (1 + taxRateValue / 100);
 
       setPrice(calculatedPrice);
       setQuantity(data.stock);

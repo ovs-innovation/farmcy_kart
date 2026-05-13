@@ -49,35 +49,40 @@ async function syncShiprocketTracking(orderId, trackingData) {
     };
 
     // Map Shiprocket Status to Main Order Status
-    const statusMap = {
-      'shipped': 'Shipped',
-      'out for delivery': 'OutForDelivery',
-      'delivered': 'Delivered',
-      'cancelled': 'Cancel',
-      'canceled': 'Cancel',
-      'picked up': 'Processing',
-      'in transit': 'Processing',
-    };
-
-    const normalizedStatus = String(currentStatus).toLowerCase();
-    if (statusMap[normalizedStatus]) {
-      updates.status = statusMap[normalizedStatus];
+    const { MAP_SHIPROCKET_STATUS } = require("../utils/orderStatus");
+    const mappedStatus = MAP_SHIPROCKET_STATUS(currentStatus);
+    
+    if (mappedStatus) {
+      updates.status = mappedStatus;
     }
 
     // Update tracking history array
     if (history.length > 0) {
+      // Legacy trackingHistory
       updates.trackingHistory = history.map(h => ({
         status: h.status || h.activity,
         message: h.activity || h.sr_status_label || "",
         timestamp: h.date || h.timestamp || new Date(),
         location: h.location || ""
       })).reverse(); // Oldest to newest
+      
+      // New statusHistory
+      // We only add the latest activity to statusHistory if it's a significant status change
+      if (mappedStatus && mappedStatus !== order.status) {
+        updates.$push = {
+          statusHistory: {
+            status: mappedStatus,
+            note: lastActivity.activity || lastActivity.sr_status_label || `Order status updated to ${mappedStatus}`,
+            updatedAt: new Date(),
+          }
+        };
+      }
     }
 
     // Apply updates
     const updatedOrder = await Order.findByIdAndUpdate(
       orderId, 
-      { $set: updates }, 
+      updates.hasOwnProperty('$push') ? { $set: updates, ...updates.$push } : { $set: updates }, 
       { new: true }
     );
 

@@ -167,6 +167,9 @@ const ProductDetails = () => {
                 <span className="text-sm text-gray-500 dark:text-gray-400 font-medium pl-4">
                   {t("Quantity")}: {data?.stock}
                 </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium pl-4">
+                  MRP: {currency}{getNumberTwo(data?.prices?.originalPrice)}
+                </span>
               </div>
               <p className="text-sm leading-6 text-gray-500 dark:text-gray-400 md:leading-7">
                 {showingTranslateValue(data?.description)}
@@ -213,8 +216,8 @@ const ProductDetails = () => {
                   <TableCell>{t("Combination")}</TableCell>
                   <TableCell>{t("Sku")}</TableCell>
                   <TableCell>{t("Barcode")}</TableCell>
-                  <TableCell>{t("OrginalPrice")}</TableCell>
-                  <TableCell>{t("SalePrice")}</TableCell>
+                  <TableCell>MRP Price</TableCell>
+                  <TableCell>Sale Price</TableCell>
                   <TableCell>{t("Quantity")}</TableCell>
                   <TableCell>{t("Actions")}</TableCell>
                 </tr>
