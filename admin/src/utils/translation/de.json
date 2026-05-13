@@ -34,6 +34,7 @@
   "Dashboard": "Armaturenbrett",
   "Setting": "Einstellung",
   "Catalog": "Katalog",
+  "Push Notification": "Push-Benachrichtigung",
   "Products": "Produkte",
   "SideMenuCategory": "Kategorie",
   "Attributes": "Attribute",
@@ -1030,5 +1031,10 @@
   "ShippingTwoDes": "Shipping Two Description",
   "ShippingTwoCost": "Shipping Two Cost",
   "TranslationSecretKey": "Geheimer Schlüssel für die Übersetzung",
-  "AllowAutoTranslation": "Automatische Übersetzung zulassen"
+  "AllowAutoTranslation": "Automatische Übersetzung zulassen",
+  "TopBrands": "Top-Marken",
+  "TopSellingMeds": "Meistverkaufte Medikamente",
+  "MostLovedProducts": "Beliebteste Produkte",
+  "Sold": "Verkauft",
+  "ViewAll": "Alle ansehen"
 }

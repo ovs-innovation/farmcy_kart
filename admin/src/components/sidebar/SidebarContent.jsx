@@ -27,8 +27,6 @@ const SidebarContent = () => {
     Cookies.remove("adminInfo");
   };
 
-  console.log("Original Sidebar Data:", sidebar);
-
   // Filter out undefined values from the Effective Access List
   const effectiveAccessList =
     Array.isArray(accessList) && accessList.length > 0
@@ -36,8 +34,6 @@ const SidebarContent = () => {
       : sidebar
         .map((route) => route.path?.split("?")[0].split("/")[1])
         .filter(Boolean);
-
-  console.log("Effective Access List (Filtered):", effectiveAccessList);
 
   const updatedSidebar = sidebar
     .map((route) => {
@@ -62,8 +58,6 @@ const SidebarContent = () => {
       return routeKey && effectiveAccessList.includes(routeKey) ? route : null;
     })
     .filter(Boolean);
-
-  console.log("Filtered Sidebar Data (Updated Sidebar):", updatedSidebar);
 
   return (
     <div className="py-4 text-gray-500 dark:text-[#9fb1b1]">

@@ -64,7 +64,7 @@ const CategoryCarousel = () => {
           spaceBetween={24}
           navigation={true}
           allowTouchMove={true}
-          loop={data?.[0]?.children?.length >= 10}
+          loop={data?.[0]?.children?.length >= 12}
           breakpoints={{
             320: {
               slidesPerView: 2,
@@ -119,8 +119,7 @@ const CategoryCarousel = () => {
                       <div className="relative w-16 h-16 md:w-20 md:h-20">
                         <Image
                           src={
-                            category?.icon ||
-                            "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+                            category?.icon || "/placeholder.png"
                           }
                           alt={showingTranslateValue(category?.name) || "category"}
                           width={80}

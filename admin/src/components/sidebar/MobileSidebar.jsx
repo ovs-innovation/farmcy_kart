@@ -10,7 +10,7 @@ function MobileSidebar() {
   
   return (
     <Transition show={isSidebarOpen}>
-      <>
+      <div className="fixed inset-0 z-50 lg:hidden">
         <Transition
           enter="transition ease-in-out duration-150"
           enterFrom="opacity-0"
@@ -18,7 +18,9 @@ function MobileSidebar() {
           leave="transition ease-in-out duration-150"
           leaveFrom="opacity-100"
           leaveTo="opacity-0">
-      <Backdrop onClick={closeSidebar} />
+          <div>
+            <Backdrop onClick={closeSidebar} />
+          </div>
         </Transition>
 
         <Transition
@@ -33,7 +35,7 @@ function MobileSidebar() {
             <SidebarContent />
           </aside>
         </Transition>
-      </>
+      </div>
     </Transition>
   );
 }

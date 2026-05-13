@@ -88,15 +88,11 @@ const BrandSection = ({ brands = [] }) => {
                   <div className="border rounded-xl p-4 sm:p-6 h-full flex flex-col items-center justify-center text-center shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer">
                     <div className="relative w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 mb-3 sm:mb-4">
                       <Image
-                        src={
-                          brand.logo ||
-                          "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
-                        }
+                        src={brand.logo || "/placeholder.png"}
                         alt={showingTranslateValue(brand.name)}
                         fill
                         sizes="(max-width: 640px) 100px, (max-width: 1024px) 150px, 200px"
                         className="object-contain"
-                        style={{ width: 'auto', height: 'auto' }}
                       />
                     </div>
                     <h3 className="font-semibold text-xs sm:text-sm md:text-base text-gray-800 line-clamp-1">

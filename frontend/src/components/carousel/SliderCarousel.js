@@ -98,16 +98,16 @@ const SliderCarousel = () => {
               disableOnInteraction: false,
               pauseOnMouseEnter: false,
             }}
-            loop={sliderData.length > 1}
+            loop={sliderData.length >= 4}
             className="slider-carousel-swiper"
           >
             {sliderData.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="relative w-full h-[200px] sm:h-[250px] md:h-[300px] lg:h-[400px] rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                   {item.slug ? (
-                    <Link href={`/product/${item.slug}`}>
+                    <Link href={`/product/${item.slug}`} className="relative w-full h-full block">
                       <Image
-                        src={item.img}
+                        src={item.img || "/placeholder.png"}
                         alt={`Slider ${index + 1}`}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -116,9 +116,9 @@ const SliderCarousel = () => {
                       />
                     </Link>
                   ) : item.catSlug ? (
-                    <Link href={`/search?category=${item.catSlug}${item.catId ? `&_id=${item.catId}` : ""}`}>
+                    <Link href={`/search?category=${item.catSlug}${item.catId ? `&_id=${item.catId}` : ""}`} className="relative w-full h-full block">
                       <Image
-                        src={item.img}
+                        src={item.img || "/placeholder.png"}
                         alt={`Slider ${index + 1}`}
                         fill
                         sizes="(max-width: 768px) 100vw, 50vw"
@@ -128,7 +128,7 @@ const SliderCarousel = () => {
                     </Link>
                   ) : (
                     <Image
-                      src={item.img}
+                      src={item.img || "/placeholder.png"}
                       alt={`Slider ${index + 1}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"

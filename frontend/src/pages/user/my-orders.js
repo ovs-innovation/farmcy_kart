@@ -348,7 +348,10 @@ const MyOrders = () => {
                           {/* Actions */}
                           <td className="px-5 py-4 whitespace-nowrap">
                             <div className="flex items-center gap-2">
-                              {/* Details */}
+                              <Link
+                                href={`/order/${order._id}`}
+                                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
+                              >
                                 <FiEye size={11} />
                                 Invoice
                               </Link>
@@ -469,6 +472,10 @@ const MyOrders = () => {
 
                       {/* Card footer – actions */}
                       <div className="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center gap-2 flex-wrap">
+                        <Link
+                          href={`/order/${order._id}`}
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all"
+                        >
                           <FiEye size={12} />
                           Invoice
                         </Link>

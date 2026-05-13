@@ -31,6 +31,7 @@
   "Sell": "বিক্রি করুন",
   "Setting": "সেটিংস",
   "Catalog": "ক্যাটালগ",
+  "Push Notification": "পুশ বিজ্ঞপ্তি",
   "Products": "পণ্য",
   "SideMenuCategory": "বিভাগ",
   "Attributes": "গুণাবলী",
@@ -986,5 +987,10 @@
   "OtherTotal": "অন্যান্য মোট",
   "DownloadItemReport": "আইটেম রিপোর্ট ডাউনলোড করুন",
   "MonthlyZReport": "মাসিক জেড-রিপোর্ট",
-  "MenuIntegration": "মেনু ইন্টিগ্রেশন"
+  "MenuIntegration": "মেনু ইন্টিগ্রেশন",
+  "TopBrands": "সেরা ব্র্যান্ড",
+  "TopSellingMeds": "সবচেয়ে বেশি বিক্রি হওয়া ওষুধ",
+  "MostLovedProducts": "সবচেয়ে প্রিয় পণ্য",
+  "Sold": "বিক্রি হয়েছে",
+  "ViewAll": "সবগুলো দেখুন"
 }

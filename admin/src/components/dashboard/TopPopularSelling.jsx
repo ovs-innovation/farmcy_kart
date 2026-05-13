@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   MdHealthAndSafety,
   MdScience,
@@ -12,6 +13,7 @@ import { FiHeart } from "react-icons/fi";
 import useUtilsFunction from "@/hooks/useUtilsFunction";
 
 const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = [] }) => {
+  const { t } = useTranslation();
   const { showingTranslateValue } = useUtilsFunction();
 
   // Brand icons
@@ -59,32 +61,32 @@ const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = []
     {
       name: "Farmcy Organic Herbal Tea",
       hearts: 212,
-      img: "https://hips.hearstapps.com/hmg-prod/images/gettyimages-1144078174.jpg?crop=0.668xw:1.00xh;0.160xw,0&resize=1200:*",
+      img: "https://images.unsplash.com/photo-1594631252845-29fc458639a6?auto=format&fit=crop&q=80&w=400",
     },
     {
       name: "Pure Lavender Honey",
       hearts: 185,
-      img: "https://m.media-amazon.com/images/I/71YvU8-Vj1L.jpg",
+      img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=400",
     },
     {
       name: "Organic Aloe Vera Gel",
       hearts: 156,
-      img: "https://m.media-amazon.com/images/I/61NlH5+3T6L.jpg",
+      img: "https://images.unsplash.com/photo-1596755094514-b87a0423926c?auto=format&fit=crop&q=80&w=400",
     },
     {
       name: "Sun-Dried Chamomile",
       hearts: 142,
-      img: "https://m.media-amazon.com/images/I/71bXl9c8xNL.jpg",
+      img: "https://images.unsplash.com/photo-1544145945-f904253d0c7e?auto=format&fit=crop&q=80&w=400",
     },
     {
       name: "Farmcy Chia Seeds",
       hearts: 128,
-      img: "https://m.media-amazon.com/images/I/71X8k8yY1AL.jpg",
+      img: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=400",
     },
     {
       name: "Pure Turmeric Powder",
       hearts: 115,
-      img: "https://m.media-amazon.com/images/I/81I+rXj9A7L.jpg",
+      img: "https://images.unsplash.com/photo-1615485245832-378393c04205?auto=format&fit=crop&q=80&w=400",
     },
   ];
 
@@ -93,12 +95,12 @@ const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = []
       {/* Top Brands */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">Top Brands</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white">{t("TopBrands")}</h3>
           <Link
             to="/brands"
             className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
           >
-            View All
+            {t("ViewAll")}
           </Link>
         </div>
 
@@ -130,12 +132,12 @@ const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = []
       {/* Top Selling Meds */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-white">Top Selling Meds</h3>
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white">{t("TopSellingMeds")}</h3>
           <Link
             to="/products"
             className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
           >
-            View All
+            {t("ViewAll")}
           </Link>
         </div>
 
@@ -156,7 +158,7 @@ const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = []
 
               <div className="px-4 py-1.5 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 rounded-xl">
                 <span className="text-xs font-black text-blue-600 whitespace-nowrap">
-                  Sold : {med.sold}
+                  {t("Sold")} : {med.sold}
                 </span>
               </div>
             </div>
@@ -167,12 +169,12 @@ const TopPopularSelling = ({ bestSeller = [], topBrands = [], goldCustomers = []
       {/* Most Loved Products */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-[32px] shadow-sm border border-gray-100 dark:border-gray-700 transition-all duration-300">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-gray-800 dark:text-white">Most Loved Products</h3>
+          <h3 className="text-lg font-bold text-gray-800 dark:text-white">{t("MostLovedProducts")}</h3>
           <Link
             to="/products"
             className="text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors"
           >
-            View All
+            {t("ViewAll")}
           </Link>
         </div>
 

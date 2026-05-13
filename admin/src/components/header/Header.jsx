@@ -55,7 +55,7 @@ const Header = () => {
     () =>
       typeof Audio !== "undefined"
         ? new Audio(
-            "https://notificationsounds.com/storage/sounds/file-sounds-1150-pristine.mp3"
+            "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
           )
         : null
   );
@@ -167,7 +167,7 @@ const Header = () => {
               // Fallback chain
               productImage = productImage || 
                 latestOrderNotification.image ||
-                "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
+                "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=100";
               
               console.log("Order popup image:", productImage, "Order data:", orderData);
               
@@ -182,7 +182,7 @@ const Header = () => {
                 ...latestOrderNotification,
                 image:
                   latestOrderNotification.image ||
-                  "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+                  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=100",
               });
             }
             
@@ -264,14 +264,14 @@ const Header = () => {
                       src={
                         (orderPopup && orderPopup.image) 
                           ? orderPopup.image 
-                          : "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+                          : "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=100"
                       }
                       alt="Product"
                       className="w-24 h-24 md:w-32 md:h-32 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700 shadow-md bg-gray-100"
                       loading="eager"
                       referrerPolicy="no-referrer"
                       onError={(e) => {
-                        const placeholder = "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
+                        const placeholder = "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&q=80&w=100";
                         if (e.target.src !== placeholder) {
                           e.target.onerror = null;
                           e.target.src = placeholder;

@@ -4,21 +4,21 @@ const fallbackCategories = [
   {
     _id: "demo-cat-1",
     name: { en: "Medicines", de: "Medikamente" },
-    icon: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+    icon: "/placeholder.png",
     nested: [],
     children: []
   },
   {
     _id: "demo-cat-2",
     name: { en: "Vitamins & Supplements", de: "Vitamine & Nahrungsergänzungsmittel" },
-    icon: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+    icon: "/placeholder.png",
     nested: [],
     children: []
   },
   {
     _id: "demo-cat-3",
     name: { en: "Personal Care", de: "Körperpflege" },
-    icon: "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png",
+    icon: "/placeholder.png",
     nested: [],
     children: []
   }

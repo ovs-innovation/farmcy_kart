@@ -184,11 +184,11 @@ const ProductCard = ({ product, attributes, hidePriceAndAdd = false, hideDiscoun
                 width={300}
                 height={300}
                 className="max-w-full max-h-[120px] sm:max-h-[140px] md:max-h-[160px] lg:max-h-[190px] object-contain w-auto h-auto"
-                style={{ width: 'auto', height: 'auto', objectFit: 'contain' }}
+                style={{ width: 'auto', height: 'auto' }}
               />
             ) : (
               <Image
-                src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+                src="/placeholder.png"
                 width={300}
                 height={300}
                 style={{

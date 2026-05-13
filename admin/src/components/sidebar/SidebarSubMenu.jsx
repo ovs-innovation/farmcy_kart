@@ -59,8 +59,6 @@ const SidebarSubMenu = ({ route }) => {
             ))}
           </ul>
         )}
-        {/* Debugging: Log the route.routes to verify its structure */}
-        {console.log("Submenu Routes:", route.routes)}
       </li>
     </>
   );

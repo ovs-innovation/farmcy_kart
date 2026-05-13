@@ -28,6 +28,7 @@
   "Dashboard": "डैशबोर्ड",
   "Setting": "सेटिंग्स",
   "Catalog": "कैटलॉग",
+  "Push Notification": "पुश नोटिफिकेशन",
   "Products": "उत्पाद",
   "SideMenuCategory": "श्रेणी",
   "Attributes": "गुण",
@@ -680,5 +681,10 @@
   "InvoiceCompanyName": "कंपनी का नाम",
   "VatNumber": "वैट नंबर",
   "Vat": "वैट",
-  "MenuEditor": "मेनू संपादक"
+  "MenuEditor": "मेनू संपादक",
+  "TopBrands": "शीर्ष ब्रांड",
+  "TopSellingMeds": "सबसे अधिक बिकने वाली दवाएं",
+  "MostLovedProducts": "सबसे ज्यादा पसंद किए जाने वाले उत्पाद",
+  "Sold": "बेचा गया",
+  "ViewAll": "सभी देखें"
 }
